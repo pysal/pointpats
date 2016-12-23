@@ -10,23 +10,23 @@ This is work in progress towards [PEP 13](https://github.com/pysal/pysal/wiki/PE
 ### History
 
 #### 2016-12-23
-  
-  mkdir pysal_reorg
-  cd pysal_reorg
-  git clone git@github.com:sjsrey/pysal.git
-  cp -R pysal pysal-copy
-  cp -R pysal-copy pysal-points
-  cd pysal-points
-  git fetch origin
-  git branch -a
-  git checkout -b points origin/points_contrib
-  git filter-branch --subdirectory-filter pysal/contrib/points -- -- all
-  git remote -v
-  git remote add upstream git@github.com:cgiscourses/pysal-points.git
-  git push -u upstream points
-  git branch -d master
-  git checkout -b master
-  git push upstream master
+
+	mkdir pysal_reorg
+	cd pysal_reorg
+	git clone git@github.com:sjsrey/pysal.git
+	cp -R pysal pysal-copy
+	cp -R pysal-copy pysal-points
+	cd pysal-points
+	git fetch origin
+	git branch -a
+	git checkout -b points origin/points_contrib
+	git filter-branch --subdirectory-filter pysal/contrib/points -- -- all
+	git remote -v
+	git remote add upstream git@github.com:cgiscourses/pysal-points.git
+	git push -u upstream points
+	git branch -d master
+	git checkout -b master
+	git push upstream master
 
 
 
