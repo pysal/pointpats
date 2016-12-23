@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from pysal.contrib.points.pointpattern import PointPattern
+from points.pointpattern import PointPattern
 from pysal.common import RTOL
 
 

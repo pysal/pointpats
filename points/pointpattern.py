@@ -44,7 +44,7 @@ class PointPattern(object):
     Examples
     --------
 
-    >>> from pysal.contrib.points.pointpattern import PointPattern
+    >>> from points.pointpattern import PointPattern
     >>> points = [[66.22, 32.54], [22.52, 22.39], [31.01, 81.21],
     ...           [9.47, 31.02], [30.78, 60.10], [75.21, 58.93],
     ...           [79.26,  7.68], [8.23, 39.93], [98.73, 77.17],

@@ -191,7 +191,7 @@ class PoissonPointProcess(PointProcess):
     --------
     >>> import pysal as ps
     >>> import numpy as np
-    >>> from pysal.contrib.points.window import Window, poly_from_bbox
+    >>> from points.window import Window, poly_from_bbox
     >>> from pysal.contrib import shapely_ext
 
     Open the virginia polygon shapefile
@@ -340,7 +340,7 @@ class PoissonClusterPointProcess(PointProcess):
     --------
     >>> import pysal as ps
     >>> import numpy as np
-    >>> from pysal.contrib.points.window import Window, poly_from_bbox
+    >>> from points.window import Window, poly_from_bbox
     >>> from pysal.contrib import shapely_ext
 
     Open the virginia polygon shapefile

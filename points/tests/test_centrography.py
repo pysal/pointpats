@@ -2,7 +2,7 @@
 import unittest
 import numpy as np
 
-from pysal.contrib.points.centrography import *
+from points.centrography import *
 
 from pysal.common import RTOL
 
