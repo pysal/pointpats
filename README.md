@@ -29,6 +29,7 @@ This is work in progress towards [PEP 13](https://github.com/pysal/pysal/wiki/PE
 	git push upstream master
 
 
+After these steps, on the Github settings for the repos change the default branch from `points` to `master`.
 
 
 **Below here is from previous repos and will be updated**
