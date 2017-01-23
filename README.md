@@ -58,11 +58,6 @@ It currently works on cartesian coordinates. Users with data in geographic coord
 - shapely
 - descartes
 
-### Why in Contrib and Not Core?
-
-The initial implementation focuses on statistical functionality while using [pandas][] as an internal data structure. Future enhancements could either use core PySAL data structures, or swap in [GeoPandas][] for pandas. The former strategy would allow this to move into core, while the latter might postpone such a move until the team makes a decision on whether Pandas and/or GeoPandas were to be hard or soft dependencies in PySAL.
-
-
 ### TODO
 
 - Enhance internal data structures
