@@ -32,22 +32,21 @@ This is work in progress towards [PEP 13](https://github.com/pysal/pysal/wiki/PE
 After these steps, on the Github settings for the repos change the default branch from `points` to `master`.
 
 
-**Below here is from previous repos and will be updated**
 
 ### Introduction
 
-This PySAL [contrib][] module is intended to support the statistical analysis of planar point patterns.
+This PySAL  module is intended to support the statistical analysis of planar point patterns.
 
 It currently works on cartesian coordinates. Users with data in geographic coordinates need to project their data prior to using this module.
 
 
 ### Examples
 
-* [Basic point pattern structure](pointpattern.ipynb)
-* [Centrography and Visualization](centrography.ipynb)
-* [Marks](marks.ipynb)
-* [Simulation of point processes](process.ipynb)
-* [Distance based statistics](distance_statistics.ipynb)
+* [Basic point pattern structure](notebooks/pointpattern.ipynb)
+* [Centrography and Visualization](notebooks/centrography.ipynb)
+* [Marks](notebooks/marks.ipynb)
+* [Simulation of point processes](notebooks/process.ipynb)
+* [Distance based statistics](notebooks/distance_statistics.ipynb)
 
 ### Installation
 
@@ -61,6 +60,7 @@ It currently works on cartesian coordinates. Users with data in geographic coord
 ### TODO
 
 - Enhance internal data structures
+- Remove pysal and replace dependency with pysal_core
 
 
 [contrib]: http://pysal.readthedocs.org/en/latest/library/contrib/index.html
