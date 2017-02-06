@@ -17,17 +17,17 @@ before_install:
   - conda config --add channels conda-forge
   - conda create -y -q -n test-env python=$TRAVIS_PYTHON_VERSION
   - source activate test-env
-  - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then 2to3 -nw pointpat/ > /dev/null; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then 2to3 -nw pointpats/ > /dev/null; fi
 
 install:
   - conda install --yes pip
   - conda install --yes --file requirements.txt
-  - pip install git+https://github.com/pysal/pysal_core.git
+  - pip install git+https://github.com/pysal/libpysal.git
   - pip install -r requirements_dev.txt
 
 script:
   - python setup.py sdist >/dev/null
-  - nosetests --with-coverage --cover-package=pointpat;
+  - nosetests --with-coverage --cover-package=pointpats;
 notifications:
     email:
         recipients:
