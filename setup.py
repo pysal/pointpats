@@ -13,7 +13,7 @@ setup(name='pysal_points',
       maintainer_email='shaohutiger@gmail.com',
       test_suite = 'nose.collector',
       tests_require=['nose'],
-      keywords='spatial statistics'
+      keywords='spatial statistics',
       classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Science/Research',

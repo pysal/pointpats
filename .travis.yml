@@ -21,8 +21,8 @@ before_install:
 
 install:
   - conda install --yes pip
-  - pip install git+https://github.com/pysal/pysal_core.git
   - conda install --yes --file requirements.txt
+  - pip install git+https://github.com/pysal/pysal_core.git
   - pip install -r requirements_dev.txt
 
 script:
