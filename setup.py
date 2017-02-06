@@ -5,7 +5,7 @@ try:
 except ImportError:
     from distutils.command.build_py import build_py
 
-setup(name='pysal_points',
+setup(name='pointpat',
       version='1.0.0dev',
       description='Methods and Functions for planar point pattern analysis',
       url='https://github.com/pysal/pysal_points',

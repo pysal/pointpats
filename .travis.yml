@@ -17,7 +17,7 @@ before_install:
   - conda config --add channels conda-forge
   - conda create -y -q -n test-env python=$TRAVIS_PYTHON_VERSION
   - source activate test-env
-  - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then 2to3 -nw pysal_points/ > /dev/null; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then 2to3 -nw pointpat/ > /dev/null; fi
 
 install:
   - conda install --yes pip
@@ -27,7 +27,7 @@ install:
 
 script:
   - python setup.py sdist >/dev/null
-  - nosetests --with-coverage --cover-package=pysal_points;
+  - nosetests --with-coverage --cover-package=pointpat;
 notifications:
     email:
         recipients:
