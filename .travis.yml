@@ -21,10 +21,11 @@ before_install:
   - conda config --add channels conda-forge
   - conda create -y -q -n test-env python=$TRAVIS_PYTHON_VERSION
   - source activate test-env
-  - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then 2to3 -nw pysal_core/ > /dev/null; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then 2to3 -nw pysal_points/ > /dev/null; fi
 
 install:
   - conda install --yes pip
+  - pip install git+https://github.com/pysal/pysal_core.git
   - conda install --yes --file requirements.txt
   - pip install -r requirements_dev.txt
 
