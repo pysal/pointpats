@@ -11,9 +11,9 @@ TODO
 __author__ = "Serge Rey sjsrey@gmail.com"
 
 import numpy as np
-import pysal as ps
+import pysal_core as ps
 from numpy.random import poisson
-from pointpattern import PointPattern as PP
+from .pointpattern import PointPattern as PP
 
 
 def runif_in_circle(n, radius=1.0, center=(0., 0.), burn=2, verbose=False):

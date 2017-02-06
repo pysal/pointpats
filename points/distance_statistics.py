@@ -11,7 +11,7 @@ TODO
 """
 __author__ = "Serge Rey sjsrey@gmail.com"
 
-from process import PoissonPointProcess as csr
+from .process import PoissonPointProcess as csr
 import numpy as np
 from matplotlib import pyplot as plt
 

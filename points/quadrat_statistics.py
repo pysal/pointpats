@@ -15,7 +15,7 @@ __author__ = 'Serge Rey, Wei Kang, Hu Shao'
 import numpy as np
 from matplotlib import pyplot as plt
 import math
-from process import PoissonPointProcess as csr
+from .process import PoissonPointProcess as csr
 import scipy
 
 class RectangleM:
