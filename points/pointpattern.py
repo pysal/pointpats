@@ -4,7 +4,8 @@ Planar Point Pattern Class
 """
 import numpy as np
 import sys
-from pysal.cg import KDTree
+#from pysal.cg import KDTree
+from pysal_core.cg import KDTree
 from centrography import hull
 from window import as_window,  poly_from_bbox
 from util import cached_property

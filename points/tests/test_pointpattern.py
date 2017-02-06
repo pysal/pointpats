@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 
 from points.pointpattern import PointPattern
-from pysal.common import RTOL
+from pysal_core.common import RTOL
 
 
 class TestPointPattern(unittest.TestCase):
