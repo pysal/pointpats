@@ -25,17 +25,12 @@ before_install:
 
 install:
   - conda install --yes pip
-  - if [ "$PYSAL_PLUS" == true ]; then
-        echo 'plus testing'; conda install --yes --file requirements_plus.txt;
-        else conda install --yes --file requirements.txt;
-    fi;
+  - conda install --yes --file requirements.txt
   - pip install -r requirements_dev.txt
 
 script:
   - python setup.py sdist >/dev/null
-  - echo "check_stable=False" >pysal_core/config.py
-  - nosetests --with-coverage --cover-package=pysal_core;
-  #- cd doc; make pickle; make doctest
+  - nosetests --with-coverage --cover-package=pysal_points;
 notifications:
     email:
         recipients:
