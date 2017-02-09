@@ -4,7 +4,7 @@ Window class for point patterns
 
 __author__ = "Serge Rey sjsrey@gmail.com"
 
-import pysal_core as ps
+import libpysal as ps
 import numpy as np
 
 
