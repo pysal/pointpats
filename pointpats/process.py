@@ -11,7 +11,7 @@ TODO
 __author__ = "Serge Rey sjsrey@gmail.com"
 
 import numpy as np
-import pysal_core as ps
+import libpysal as ps
 from numpy.random import poisson
 from .pointpattern import PointPattern as PP
 
