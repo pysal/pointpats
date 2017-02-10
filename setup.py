@@ -5,15 +5,15 @@ try:
 except ImportError:
     from distutils.command.build_py import build_py
 
-setup(name='pysal_points',
+setup(name='pointpats',
       version='1.0.0dev',
       description='Methods and Functions for planar point pattern analysis',
-      url='https://github.com/pysal/pysal_points',
+      url='https://github.com/pysal/pointpats',
       maintainer='Hu Shao',
       maintainer_email='shaohutiger@gmail.com',
       test_suite = 'nose.collector',
       tests_require=['nose'],
-      keywords='spatial statistics'
+      keywords='spatial statistics',
       classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Science/Research',
@@ -29,7 +29,7 @@ setup(name='pysal_points',
         'Programming Language :: Python :: 3.4'
         ],
       license='3-Clause BSD',
-      packages=['points'],
+      packages=['pointpats'],
       install_requires=['numpy', 'scipy', 'matplotlib', 'pysal_core'],
       zip_safe=False,
       cmdclass = {'build.py':build_py})
