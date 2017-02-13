@@ -30,6 +30,6 @@ setup(name='pointpats',
         ],
       license='3-Clause BSD',
       packages=['pointpats'],
-      install_requires=['numpy', 'scipy', 'matplotlib', 'pysal_core'],
+      install_requires=['numpy', 'scipy', 'matplotlib', 'libpysal'],
       zip_safe=False,
       cmdclass = {'build.py':build_py})
