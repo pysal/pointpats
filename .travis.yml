@@ -8,6 +8,10 @@ python:
   - "3.5"
   - "3.6"
 
+env:
+  - PYSAL_PLUS=false
+  - PYSAL_PLUS=true
+
 before_install:
   - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
@@ -25,7 +29,7 @@ install:
   - cd ../ && git clone https://github.com/pysal/libpysal.git
   - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then 2to3 -nw libpysal/ > /dev/null; fi
   - pip install -e ./libpysal
-  - cd ./libpysal
+  - cd libpysal
   - pip install -r requirements_dev.txt
 
 script:

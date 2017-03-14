@@ -11,6 +11,7 @@ TODO
 """
 
 __author__ = 'Serge Rey, Wei Kang, Hu Shao'
+__all__ = ['RectangleM', 'HexagonM', 'QStatistic']
 
 import numpy as np
 from matplotlib import pyplot as plt
