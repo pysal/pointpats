@@ -1,9 +1,15 @@
 from setuptools import setup
+import os.path
 
 try:
     from distutils.command.build_py import build_py_2to3 as build_py
 except ImportError:
     from distutils.command.build_py import build_py
+
+pth = os.path.dirname(os.path.abspath(__file__))+ '/requirements.txt'
+
+REQUIREMENTS = [i.strip() for i in open(pth).readlines()]
+
 
 setup(name='pointpats',
       version='1.0.0dev',
