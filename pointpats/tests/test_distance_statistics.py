@@ -61,11 +61,12 @@ class TestDistanceStatistics(unittest.TestCase):
             0.0, 1.73156208378, 3.46312416757, 5.19468625135,
             6.92624833514, 8.65781041892, 10.3893725027, 12.1209345865,
             13.8524966703, 15.5840587541, 17.3156208378, 19.0471829216,
-            20.7787450054
+            20.7787450054, 22.5103070892
         ]
         for val in j.ev:
             np.testing.assert_approx_equal(val, 1.0)
-        np.testing.assert_array_almost_equal(j.d, distance_domain_sequence)
+        for i in range(min(len(j.d), len(distance_domain_sequence))):
+            np.testing.assert_approx_equal(j.d[i], distance_domain_sequence[i])
 
     def test_distance_statistics_K(self):
         k = K(self.pp, intervals=20)
