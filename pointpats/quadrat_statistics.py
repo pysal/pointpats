@@ -75,8 +75,8 @@ class RectangleM:
             self.rectangle_height = rectangle_height
 
             # calculate column count and row count
-            self.count_column = int(math.ceil(x_range/ rectangle_width))
-            self.count_row = int(math.ceil(y_range/ rectangle_height))
+            self.count_column = int(math.ceil(x_range / rectangle_width))
+            self.count_row = int(math.ceil(y_range / rectangle_height))
         else:
             self.count_column = count_column
             self.count_row = count_row
@@ -194,7 +194,7 @@ class HexagonM:
 
         # calculate column count
         self.count_column = 1
-        if self.h_length/2 < range_x:
+        if self.h_length/2.0 < range_x:
             temp = math.ceil((range_x - self.h_length/2) / (
                 1.5 * self.h_length))
             self.count_column += int(temp)
@@ -211,9 +211,9 @@ class HexagonM:
         self.count_row_odd = int(math.ceil(range_y/(self.semi_height*2)))
 
         # quadrat number
-        self.num = self.count_row_odd * (self.count_column/2 +
+        self.num = self.count_row_odd * (int(self.count_column/2) +
                                          self.count_column%2) + \
-                   self.count_row_even * (self.count_column/2)
+                   self.count_row_even * int(self.count_column/2)
 
     def point_location_sta(self):
         """
