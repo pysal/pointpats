@@ -3,3 +3,4 @@
 .rope*
 .idea/
 notebooks/.ipynb_checkpoints/
+.DS_Store
