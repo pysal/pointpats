@@ -63,12 +63,8 @@ class TestDistanceStatistics(unittest.TestCase):
             13.8524966703, 15.5840587541, 17.3156208378, 19.0471829216,
             20.7787450054, 22.5103070892
         ]
-        envelop = [
-            1.0, 1.0, 1.0, 1.0, 1.0,
-            1.0, 1.0, 1.0, 1.0, 1.0,
-            1.0, 1.0, 1.0, 1.0
-        ]
-        np.testing.assert_array_almost_equal(j.ev, envelop)
+        for val in j.ev:
+            np.testing.assert_approx_equal(val, 1.0)
         np.testing.assert_array_almost_equal(j.d, distance_domain_sequence)
 
     def test_distance_statistics_K(self):
