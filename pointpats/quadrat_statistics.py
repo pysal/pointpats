@@ -258,7 +258,7 @@ class HexagonM:
                     center_index_y = possible_y_index_even
                 dict_id_count[center_index_x + center_index_y * self.count_column] += 1
             else: # two columns of cells can be possible
-                center_index_x = intercept_degree_x/3
+                center_index_x = int(intercept_degree_x/3)
                 center_x = center_index_x*semi_cell_length*3 + x_min
                 center_index_y = possible_y_index_odd
                 center_y = (center_index_y*2+1)*self.semi_height + y_min
