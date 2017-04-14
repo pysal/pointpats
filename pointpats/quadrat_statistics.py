@@ -103,8 +103,8 @@ class RectangleM:
                 dict_id_count[j+i*self.count_column] = 0
 
         for point in self.points:
-            index_x = int((point[0]-self.mbb[0]) / self.rectangle_width)
-            index_y = int((point[1]-self.mbb[1]) / self.rectangle_height)
+            index_x = (point[0]-self.mbb[0]) // self.rectangle_width
+            index_y = (point[1]-self.mbb[1]) // self.rectangle_height
             if index_x == self.count_column:
                 index_x -= 1
             if index_y == self.count_row:
@@ -211,9 +211,9 @@ class HexagonM:
         self.count_row_odd = int(math.ceil(range_y/(self.semi_height*2)))
 
         # quadrat number
-        self.num = self.count_row_odd * (int(self.count_column/2) +
-                                         self.count_column%2) + \
-                   self.count_row_even * int(self.count_column/2)
+        self.num = self.count_row_odd * ((self.count_column // 2) +
+                                         self.count_column % 2) + \
+                   self.count_row_even * (self.count_column // 2)
 
     def point_location_sta(self):
         """
@@ -244,7 +244,7 @@ class HexagonM:
         points = np.array(self.points)
         for point in points:
             # find the possible x index
-            intercept_degree_x = int((point[0]-x_min)/semi_cell_length)
+            intercept_degree_x = ((point[0]-x_min)//semi_cell_length)
 
             # find the possible y index
             possible_y_index_even = int((point[1]+ self.semi_height -
@@ -252,13 +252,13 @@ class HexagonM:
             possible_y_index_odd = int((point[1] - y_min) / (
                 self.semi_height * 2))
             if intercept_degree_x % 3 != 1:
-                center_index_x = int((intercept_degree_x+1)/3)
+                center_index_x = (intercept_degree_x+1) // 3
                 center_index_y = possible_y_index_odd
                 if center_index_x % 2 == 0:
                     center_index_y = possible_y_index_even
                 dict_id_count[center_index_x + center_index_y * self.count_column] += 1
             else: # two columns of cells can be possible
-                center_index_x = int(intercept_degree_x/3)
+                center_index_x = intercept_degree_x//3
                 center_x = center_index_x*semi_cell_length*3 + x_min
                 center_index_y = possible_y_index_odd
                 center_y = (center_index_y*2+1)*self.semi_height + y_min
@@ -305,7 +305,7 @@ class HexagonM:
         dict_id_count = self.point_location_sta()
         for id in dict_id_count.keys():
             index_x = id % self.count_column
-            index_y = int(id / self.count_column)
+            index_y = id // self.count_column
             center_x = index_x*self.h_length/2.0*3.0 + x_min
             center_y = index_y*self.semi_height*2.0 + y_min
             if index_x % 2 == 1:  # for the odd columns
