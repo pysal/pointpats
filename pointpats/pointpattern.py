@@ -14,6 +14,7 @@ from matplotlib.collections import PatchCollection
 from matplotlib.patches import Polygon
 
 __author__ = "Serge Rey sjsrey@gmail.com"
+__all__ = ['PointPattern']
 
 if sys.version_info[0] > 2:
     xrange = range

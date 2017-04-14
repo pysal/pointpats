@@ -9,6 +9,7 @@ TODO
 """
 
 __author__ = "Serge Rey sjsrey@gmail.com"
+__all__ = ['PointProcess', 'PoissonPointProcess', 'PoissonClusterPointProcess']
 
 import numpy as np
 import libpysal as ps
