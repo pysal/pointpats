@@ -1,10 +1,12 @@
 ## Point Pattern Analysis in PySAL
 
+[![Build Status](https://travis-ci.org/pysal/pointpats.svg?branch=master)](https://travis-ci.org/pysal/pointpats)
+
 Statistical analysis of planar point patterns
 
 ### Introduction
 
-This PySAL package is intended to support the statistical analysis of planar point patterns.
+This [PySAL](https://github.com/pysal) package is intended to support the statistical analysis of planar point patterns.
 
 It currently works on cartesian coordinates. Users with data in geographic coordinates need to project their data prior to using this module.
 
@@ -12,7 +14,7 @@ It currently works on cartesian coordinates. Users with data in geographic coord
 ### Examples
 
 * [Basic point pattern structure](notebooks/pointpattern.ipynb)
-* [Centrography and Visualization](notebooks/centrography.ipynb)
+* [Centrography and visualization](notebooks/centrography.ipynb)
 * [Marks](notebooks/marks.ipynb)
 * [Simulation of point processes](notebooks/process.ipynb)
 * [Distance based statistics](notebooks/distance_statistics.ipynb)
@@ -25,45 +27,13 @@ It currently works on cartesian coordinates. Users with data in geographic coord
 - shapely
 - descartes
 
-### TODO
 
-- Enhance internal data structures
+## Development
 
-**REORG IN PROGRESS**
+pointpats development is hosted on [github](https://github.com/pysal/pointpats).
 
-This is work in progress towards [PEP 13](https://github.com/pysal/pysal/wiki/PEP-13:-Refactor-PySAL-Using-Submodules)
+As part of the PySAL project, pointpat development follows these [guidelines](
 
+## Bug rereports
 
-### Origins
-
-#### 2016-12-23
-
-	mkdir pysal_reorg
-	cd pysal_reorg
-	git clone git@github.com:sjsrey/pysal.git
-	cp -R pysal pysal-copy
-	cp -R pysal-copy pysal-points
-	cd pysal-points
-	git fetch origin
-	git branch -a
-	git checkout -b points origin/points_contrib
-	git filter-branch --subdirectory-filter pysal/contrib/points -- -- all
-	git remote -v
-	git remote add upstream git@github.com:cgiscourses/pysal-points.git
-	git push -u upstream points
-	git branch -d master
-	git checkout -b master
-	git push upstream master
-
-
-After these steps, on the Github settings for the repos change the default branch from `points` to `master`.
-
-
-
-[contrib]: http://pysal.readthedocs.org/en/latest/library/contrib/index.html
-[GeoPandas]: http://geopandas.org
-[pandas]: http://pandas.pydata.org
-
-
-
-
+To search for or report bugs, please see pointpat's [issues](https://github.com/pysal/pointpats/issues)
