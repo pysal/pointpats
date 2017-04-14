@@ -32,8 +32,8 @@ It currently works on cartesian coordinates. Users with data in geographic coord
 
 pointpats development is hosted on [github](https://github.com/pysal/pointpats).
 
-As part of the PySAL project, pointpat development follows these [guidelines](
+As part of the PySAL project, pointpat development follows these [guidelines](http://pysal.readthedocs.io/en/latest/developers/index.html).
 
 ## Bug rereports
 
-To search for or report bugs, please see pointpat's [issues](https://github.com/pysal/pointpats/issues)
+To search for or report bugs, please see pointpat's [issues](https://github.com/pysal/pointpats/issues).
