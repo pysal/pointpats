@@ -39,13 +39,11 @@ Requirements
 ***************
 Development
 ***************
-pointpats development is hosted on `github <https://github.com/pysal/pointpats>`_
-.
+pointpats development is hosted on `github <https://github.com/pysal/pointpats>`_.
 
-As part of the PySAL project, pointpat development follows these `guidelines <http://pysal.readthedocs.io/en/latest/developers/index.html>`_
-.
+As part of the PySAL project, pointpat development follows these `guidelines <http://pysal.readthedocs.io/en/latest/developers/index.html>`_.
 
 ***************
 Bug rereports
 ***************
-To search for or report bugs, please see pointpat's `issues <https://github.com/pysal/pointpats/issues>`_
+To search for or report bugs, please see pointpat's `issues <https://github.com/pysal/pointpats/issues>`_.
