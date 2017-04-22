@@ -33,7 +33,6 @@ Installation
 Requirements
 ------------------
 - libpysal
-- shapely
 - descartes
 
 ***************
