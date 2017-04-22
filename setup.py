@@ -12,7 +12,7 @@ REQUIREMENTS = [i.strip() for i in open(pth).readlines()]
 
 
 setup(name='pointpats',
-      version='1.0.0dev',
+      version='1.0.0',
       description='Methods and Functions for planar point pattern analysis',
       url='https://github.com/pysal/pointpats',
       maintainer='Hu Shao',
