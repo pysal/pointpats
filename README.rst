@@ -20,11 +20,11 @@ It currently works on cartesian coordinates. Users with data in geographic coord
 ***************
 Examples
 ***************
-- `Basic point pattern structure <notebooks/pointpattern.ipynb>`_
-- `Centrography and visualization <notebooks/centrography.ipynb>`_
-- `Marks <notebooks/marks.ipynb>`_
-- `Simulation of point processes <notebooks/process.ipynb>`_
-- `Distance based statistics <notebooks/distance_statistics.ipynb>`_
+- `Basic point pattern structure <https://github.com/pysal/pointpats/tree/master/notebooks/pointpattern.ipynb>`_
+- `Centrography and visualization <https://github.com/pysal/pointpats/tree/master/notebooks/centrography.ipynb>`_
+- `Marks <https://github.com/pysal/pointpats/tree/master/notebooks/marks.ipynb>`_
+- `Simulation of point processes <https://github.com/pysal/pointpats/tree/master/notebooks/process.ipynb>`_
+- `Distance based statistics <https://github.com/pysal/pointpats/tree/master/notebooks/distance_statistics.ipynb>`_
 
 ***************
 Installation
