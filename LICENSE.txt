@@ -1,4 +1,4 @@
-Copyright 2016, pysal_points developers 
+Copyright 2017-, pysal-pointpats Developers
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
