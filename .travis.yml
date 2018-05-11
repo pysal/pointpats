@@ -17,7 +17,6 @@ before_install:
   - conda config --add channels conda-forge
   - conda create -y -q -n test-env python=$TRAVIS_PYTHON_VERSION
   - source activate test-env
-  - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then 2to3 -nw pointpats/ > /dev/null; fi
 
 install:
   - conda install --yes pip

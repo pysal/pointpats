@@ -42,14 +42,14 @@ class TestQuadratStatistics(unittest.TestCase):
         np.testing.assert_allclose(q_r.chi2_pvalue, 6.3759506952e-22, RTOL)
         assert q_r.df == 41
 
-    def test_RectangleM(self):
+    def test_RectangleM1(self):
         rm = RectangleM(self.pp, count_column = 3, count_row = 3)
-        np.testing.assert_array_equal(rm.point_location_sta().values(),
+        np.testing.assert_array_equal(list(rm.point_location_sta().values()),
                                       [12, 22, 4, 11, 26, 22, 22, 33, 16])
 
-    def test_RectangleM(self):
+    def test_RectangleM2(self):
         hm = HexagonM(self.pp, lh = 10)
-        np.testing.assert_array_equal(hm.point_location_sta().values(),
+        np.testing.assert_array_equal(list(hm.point_location_sta().values()),
                                       [0, 2, 4, 5, 0, 0, 0, 0, 9, 6, 10, 7, 3, 0, 2, 2, 3, 7, 4,
                                        13, 1, 1, 1, 4, 11, 3, 0, 4, 0, 5, 15, 15, 3, 10, 0, 0,
                                        0, 9, 0, 7, 1, 1])

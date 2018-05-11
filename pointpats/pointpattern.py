@@ -81,7 +81,7 @@ class PointPattern(object):
         if names is None:
             col_names = coord_names
             if p > 2:
-                for m in xrange(2, p):
+                for m in range(2, p):
                     col_names.append("mark_{}".format(m-2))
             coord_names = coord_names[:2]
         else:
@@ -160,7 +160,7 @@ class PointPattern(object):
 
     def add_marks(self, marks, mark_names=None):
         if mark_names is None:
-            nm = xrange(len(marks))
+            nm = range(len(marks))
             mark_names = ["mark_{}".format(self._n_marks+1+j) for j in nm]
         for name, mark in zip(mark_names, marks):
             self.df[name] = mark
