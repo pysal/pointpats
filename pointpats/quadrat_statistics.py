@@ -402,7 +402,7 @@ class QStatistic:
         # calculate chi2 test statisitc for the observed point pattern
         dict_id_count = self.mr.point_location_sta()
         self.chi2,self.chi2_pvalue = scipy.stats.chisquare(
-                dict_id_count.values())
+                list(dict_id_count.values()))
 
         self.df = self.mr.num - 1
 
