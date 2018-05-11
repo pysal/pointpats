@@ -9,7 +9,7 @@ REQUIREMENTS = [i.strip() for i in open(pth).readlines()]
 
 
 setup(name='pointpats',
-      version='1.0.0',
+      version='1.0.1',
       description='Methods and Functions for planar point pattern analysis',
       url='https://github.com/pysal/pointpats',
       maintainer='Hu Shao',
@@ -29,7 +29,9 @@ setup(name='pointpats',
         'Programming Language :: Python :: 2.5',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.4'
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6'
         ],
       license='3-Clause BSD',
       packages=['pointpats'],
