@@ -45,7 +45,7 @@ class PointPattern(object):
     Examples
     --------
 
-    >>> from points.pointpattern import PointPattern
+    >>> from pointpats.pointpattern import PointPattern
     >>> points = [[66.22, 32.54], [22.52, 22.39], [31.01, 81.21],
     ...           [9.47, 31.02], [30.78, 60.10], [75.21, 58.93],
     ...           [79.26,  7.68], [8.23, 39.93], [98.73, 77.17],
@@ -60,9 +60,9 @@ class PointPattern(object):
     >>> pp.lambda_hull
     0.0022667153468973137
     >>> pp.hull_area
-    5294.0039500000003
+    5294.00395
     >>> pp.mbb_area
-    7638.2000000000007
+    7638.200000000001
 
     """
     def __init__(self, points, window=None, names=None, coord_names=None):

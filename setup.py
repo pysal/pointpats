@@ -3,17 +3,27 @@ import os.path
 
 from distutils.command.build_py import build_py
 
+with open('README.rst') as file:
+    long_description = file.read()
+
 pth = os.path.dirname(os.path.abspath(__file__))+ '/requirements.txt'
 
 REQUIREMENTS = [i.strip() for i in open(pth).readlines()]
 
+Major = 1
+Feature = 1
+Bug = 0
+version = '%d.%d.%d' % (Major, Feature, Bug)
 
 setup(name='pointpats',
-      version='1.0.1',
+      version=version,
       description='Methods and Functions for planar point pattern analysis',
+      long_description = long_description,
       url='https://github.com/pysal/pointpats',
       maintainer='Hu Shao',
       maintainer_email='shaohutiger@gmail.com',
+      py_modules=['pointpats'],
+      python_requires='>3.4',
       test_suite = 'nose.collector',
       tests_require=['nose'],
       keywords='spatial statistics',
