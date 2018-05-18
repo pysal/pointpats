@@ -4,7 +4,6 @@ branches:
 only:
   - master
 python:
-  - "2.7"
   - "3.5"
   - "3.6"
 
@@ -22,7 +21,6 @@ install:
   - conda install --yes pip
   - pip install -r requirements.txt
   - cd ../ && git clone https://github.com/pysal/libpysal.git
-  - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then 2to3 -nw libpysal/ > /dev/null; fi
   - pip install -e ./libpysal
   - cd ./pointpats
   - pip install -r requirements_dev.txt
