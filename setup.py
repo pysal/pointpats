@@ -3,7 +3,7 @@ import os.path
 
 from distutils.command.build_py import build_py
 
-with open('README.rst') as file:
+with open('README.rst', 'r', encoding='utf8') as file:
     long_description = file.read()
 
 pth = os.path.dirname(os.path.abspath(__file__))+ '/requirements.txt'
