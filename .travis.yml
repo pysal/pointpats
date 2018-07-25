@@ -19,15 +19,12 @@ before_install:
 
 install:
   - conda install --yes pip
+  - conda install --yes nose
   - pip install -r requirements.txt
-  - cd ../ && git clone https://github.com/pysal/libpysal.git
-  - pip install -e ./libpysal
-  - cd ./pointpats
-  - pip install -r requirements_dev.txt
 
 script:
-  - python setup.py sdist >/dev/null
-  - nosetests --with-coverage --cover-package=pointpats;
+  - nosetests --verbose --with-coverage --cover-package=pointpats;
+
 notifications:
     email:
         recipients:
