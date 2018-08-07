@@ -1,11 +1,22 @@
 language: python
 sudo: false
 branches:
-only:
-  - master
+  only:
+    - master
 python:
-  - "3.5"
-  - "3.6"
+  - 3.5
+  - 3.6
+
+env:
+  - PYSAL_PYPI=true MPLBACKEND='pdf'
+  - PYSAL_PYPI=false MPLBACKEND='pdf'
+
+matrix:
+  allow_failures: #allow travis tests to fail if using the github version of libpysal
+      - python: 3.5
+        env: PYSAL_PYPI=false MPLBACKEND='pdf'
+      - python: 3.6
+        env: PYSAL_PYPI=false MPLBACKEND='pdf'
 
 before_install:
   - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
@@ -19,10 +30,17 @@ before_install:
 
 install:
   - conda install --yes pip
-  - conda install --yes nose
   - pip install -r requirements.txt
+  - pip install -r requirements_tests.txt
+  # configure dual tests (for dependency libpysal)
+  - if "$PYSAL_PYPI"; then
+        echo 'testing pypi libpysal' && pip install libpysal;
+        else echo 'testing git libpysal'; git clone https://github.com/pysal/libpysal.git; cd libpysal; pip install .; cd ../;
+    fi;
 
 script:
+  - python setup.py sdist >/dev/null
+  - python setup.py install
   - nosetests --verbose --with-coverage --cover-package=pointpats;
 
 notifications:
@@ -32,7 +50,7 @@ notifications:
             - levi.john.wolf@gmail.com
             - weikang9009@gmail.com
             - shaohutiger@gmail.com
-        on_change: always
+        on_success: change
         on_failure: always
 
 after_success:
