@@ -17,10 +17,6 @@ This `pointpats <https://github.com/pysal/pointpats>`_ package is intended to su
 
 It currently works on cartesian coordinates. Users with data in geographic coordinates need to project their data prior to using this module.
 
-Mimicking parts of the original PySAL api can be done with
-
-``import pointpats.api as ps``
-
 ********
 Examples
 ********
