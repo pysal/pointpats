@@ -1,6 +1,5 @@
-from setuptools import setup
+from setuptools import setup,find_packages
 import os.path
-
 from distutils.command.build_py import build_py
 
 with open('README.rst', 'r', encoding='utf8') as file:
@@ -36,12 +35,11 @@ setup(name='pointpats',
         'Topic :: Scientific/Engineering :: GIS',
         'License :: OSI Approved :: BSD License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6'
         ],
       license='3-Clause BSD',
-      packages=['pointpats'],
+      packages=find_packages(),
       install_requires=REQUIREMENTS,
       zip_safe=False,
       cmdclass = {'build.py':build_py})
