@@ -1,6 +1,11 @@
 from setuptools import setup,find_packages
-import os.path
+import os
 from distutils.command.build_py import build_py
+
+# BEFORE importing distutils, remove MANIFEST. distutils doesn't properly
+# update it when the contents of directories change.
+if os.path.exists('MANIFEST'):
+    os.remove('MANIFEST')
 
 # Get __version__ from PACKAGE_NAME/__init__.py without importing the package
 # __version__ has to be defined in the first line
