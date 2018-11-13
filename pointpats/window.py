@@ -22,6 +22,20 @@ def to_ccf(poly):
 
 
 def as_window(pysal_polygon):
+    """
+    Convert a libpysal polygon to a Window.
+
+    Parameters
+    ----------
+    pysal_polygon: libpysal.cg.shapes.Polygon
+                   libpysal Polygon instance.
+
+    Returns
+    -------
+    Window
+                   A Window instance.
+    """
+
     if pysal_polygon.holes == [[]]:
         return Window(pysal_polygon.parts)
     else:
@@ -34,11 +48,10 @@ class Window(ps.cg.Polygon):
 
     A window is used to define the area over which the pattern is observed.
     This area is used in estimating the intensity of the point pattern.
-    See :py:attr:`~.pointpattern.PointPattern.lambda_window`.
+    See :attr:`PointPattern.lambda_window`.
 
     Parameters
     ----------
-
     parts: sequence
            A sequence of rings which bound the positive space  point
            pattern.

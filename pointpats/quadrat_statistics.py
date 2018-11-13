@@ -24,7 +24,7 @@ class RectangleM:
 
     Parameters
     ----------
-    pp                : :py:class:`~.pointpattern.PointPattern`
+    pp                : :class:`.PointPattern`
                         Point Pattern instance.
     count_column      : integer
                         Number of rectangles in the horizontal
@@ -47,7 +47,7 @@ class RectangleM:
 
     Attributes
     ----------
-    pp                : :py:class:`~.pointpattern.PointPattern`
+    pp                : :class:`.PointPattern`
                         Point Pattern instance.
     mbb               : array
                         Minimum bounding box for the point pattern.
@@ -113,6 +113,15 @@ class RectangleM:
         return dict_id_count
 
     def plot(self, title="Quadrat Count"):
+        '''
+        Plot rectangle tessellation as well as the number of points falling in each rectangle.
+
+        Parameters
+        ----------
+        title:   str, optional
+                 Title of the plot. Default is "Quadrat Count".
+
+        '''
 
         line_width_cell = 1
         line_color_cell = 'red'
@@ -155,14 +164,14 @@ class HexagonM:
 
     Parameters
     ----------
-    pp                : :py:class:`~.pointpattern.PointPattern`
+    pp                : :class:`.PointPattern`
                         Point Pattern instance.
     lh                : float
                         Hexagon length (hexagon).
 
     Attributes
     ----------
-    pp                : :py:class:`~.pointpattern.PointPattern`
+    pp                : :class:`.PointPattern`
                         Point Pattern instance.
     h_length          : float
                         Hexagon length (hexagon).
@@ -290,6 +299,15 @@ class HexagonM:
         return dict_id_count
 
     def plot(self, title="Quadrat Count"):
+        '''
+        Plot hexagon quadrats as well as the number of points falling in each quadrat.
+
+        Parameters
+        ----------
+        title:   str, optional
+                 Title of the plot. Default is "Quadrat Count".
+
+        '''
         line_width_cell = 1
         line_color_cell = 'red'
 
@@ -343,7 +361,7 @@ class QStatistic:
 
     Parameters
     ----------
-    pp                : :py:class:`~.pointpattern.PointPattern`
+    pp                : :class:`.PointPattern`
                         Point Pattern instance.
     shape             : string
                         Grid structure. Either "rectangle" or "hexagon".
@@ -360,17 +378,18 @@ class QStatistic:
                         Hexagon length (hexagon). Only when shape is
                         specified as "hexagon" will lh be considered.
                         Incompatible with nx & ny.
-    realizations      : :py:class:`~.process.PointProcess`
+    realizations      : :class:`PointProcess`
                         Point process instance with more than 1 point
                         pattern realizations which would be used for
                         simulation based inference. Default is 0
                         where no simulation based inference is
                         performed.
+                        
     Attributes
     ----------
-    pp                : :py:class:`~.pointpattern.PointPattern`
+    pp                : :class:`.PointPattern`
                         Point Pattern instance.
-    mr                : :py:class:`~.RectangleM` or `~.HexagonM`
+    mr                : :class:`.RectangleM` or :class:`.HexagonM`
                         RectangleM or HexagonM instance.
     chi2              : float
                         Chi-squared test statistic for the observed
@@ -432,11 +451,14 @@ class QStatistic:
             self.chi2_r_pvalue = (larger_chi2 + 1.)/(sim_n+ 1.)
 
     def plot(self, title = "Quadrat Count"):
+        '''
+        Plot quadrats as well as the number of points falling in each quadrat.
+
+        Parameters
+        ----------
+        title:   str, optional
+                 Title of the plot. Default is "Quadrat Count".
+
+        '''
+
         self.mr.plot(title = title)
-
-
-
-
-
-
-

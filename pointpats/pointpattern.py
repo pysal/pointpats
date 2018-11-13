@@ -22,17 +22,16 @@ if sys.version_info[0] > 2:
 
 class PointPattern(object):
     """
-    Planar Point Pattern Class 2-D
+    Planar Point Pattern Class 2-D.
 
     Parameters
     ----------
-
     points:       array
                   (n,p), n points with p >= 2 attributes on each
                   point. Two attributes must comprise the spatial
                   coordinate pair. Default is that the first two
                   attributes are the x and y spatial coordinates.
-    window:       :py:class:`~.window.Window`
+    window:       :class:`.Window`
                   Bounding geometric object for the point pattern.
                   If not specified, window will be set to the minimum
                   bounding rectangle of the point pattern.
@@ -152,6 +151,10 @@ class PointPattern(object):
     window = property(get_window, set_window)
 
     def summary(self):
+        '''
+        Description of the point pattern.
+        '''
+
         print('Point Pattern')
         print("{} points".format(self.n))
         print("Bounding rectangle [({},{}), ({},{})]".format(*self.mbb))
@@ -170,6 +173,8 @@ class PointPattern(object):
     def plot(self, window=False, title="Point Pattern", hull=False,
              get_ax=False):
         """
+        Plot function for a point pattern.
+
         Parameters
         ----------
         window  : boolean
@@ -182,6 +187,7 @@ class PointPattern(object):
                   pattern. If not, don't plot convex hull.
         get_ax  : boolean
                   If get_ax is True, return the current plot ax.
+                  
         Returns
         -------
         ax      : matplotlib.axes._subplots.AxesSubplot
