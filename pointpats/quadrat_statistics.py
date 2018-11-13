@@ -24,7 +24,7 @@ class RectangleM:
 
     Parameters
     ----------
-    pp                : :py:class:`~.pointpattern.PointPattern`
+    pp                : :class:`.PointPattern`
                         Point Pattern instance.
     count_column      : integer
                         Number of rectangles in the horizontal
@@ -47,7 +47,7 @@ class RectangleM:
 
     Attributes
     ----------
-    pp                : :py:class:`~.pointpattern.PointPattern`
+    pp                : :class:`.PointPattern`
                         Point Pattern instance.
     mbb               : array
                         Minimum bounding box for the point pattern.
@@ -155,14 +155,14 @@ class HexagonM:
 
     Parameters
     ----------
-    pp                : :py:class:`~.pointpattern.PointPattern`
+    pp                : :class:`.PointPattern`
                         Point Pattern instance.
     lh                : float
                         Hexagon length (hexagon).
 
     Attributes
     ----------
-    pp                : :py:class:`~.pointpattern.PointPattern`
+    pp                : :class:`.PointPattern`
                         Point Pattern instance.
     h_length          : float
                         Hexagon length (hexagon).
@@ -343,7 +343,7 @@ class QStatistic:
 
     Parameters
     ----------
-    pp                : :py:class:`~.pointpattern.PointPattern`
+    pp                : :class:`.PointPattern`
                         Point Pattern instance.
     shape             : string
                         Grid structure. Either "rectangle" or "hexagon".
@@ -360,17 +360,18 @@ class QStatistic:
                         Hexagon length (hexagon). Only when shape is
                         specified as "hexagon" will lh be considered.
                         Incompatible with nx & ny.
-    realizations      : :py:class:`~.process.PointProcess`
+    realizations      : :class:`PointProcess`
                         Point process instance with more than 1 point
                         pattern realizations which would be used for
                         simulation based inference. Default is 0
                         where no simulation based inference is
                         performed.
+                        
     Attributes
     ----------
-    pp                : :py:class:`~.pointpattern.PointPattern`
+    pp                : :class:`.PointPattern`
                         Point Pattern instance.
-    mr                : :py:class:`~.RectangleM` or `~.HexagonM`
+    mr                : :class:`.RectangleM` or :class:`.HexagonM`
                         RectangleM or HexagonM instance.
     chi2              : float
                         Chi-squared test statistic for the observed
@@ -433,10 +434,3 @@ class QStatistic:
 
     def plot(self, title = "Quadrat Count"):
         self.mr.plot(title = title)
-
-
-
-
-
-
-
