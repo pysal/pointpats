@@ -113,6 +113,15 @@ class RectangleM:
         return dict_id_count
 
     def plot(self, title="Quadrat Count"):
+        '''
+        Plot rectangle tessellation as well as the number of points falling in each rectangle.
+
+        Parameters
+        ----------
+        title:   str, optional
+                 Title of the plot. Default is "Quadrat Count".
+
+        '''
 
         line_width_cell = 1
         line_color_cell = 'red'
@@ -290,6 +299,15 @@ class HexagonM:
         return dict_id_count
 
     def plot(self, title="Quadrat Count"):
+        '''
+        Plot hexagon quadrats as well as the number of points falling in each quadrat.
+
+        Parameters
+        ----------
+        title:   str, optional
+                 Title of the plot. Default is "Quadrat Count".
+
+        '''
         line_width_cell = 1
         line_color_cell = 'red'
 
@@ -433,4 +451,14 @@ class QStatistic:
             self.chi2_r_pvalue = (larger_chi2 + 1.)/(sim_n+ 1.)
 
     def plot(self, title = "Quadrat Count"):
+        '''
+        Plot quadrats as well as the number of points falling in each quadrat.
+
+        Parameters
+        ----------
+        title:   str, optional
+                 Title of the plot. Default is "Quadrat Count".
+
+        '''
+
         self.mr.plot(title = title)
