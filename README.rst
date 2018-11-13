@@ -7,6 +7,9 @@ Point Pattern Analysis in PySAL
    :target: https://pointpats.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
+.. image:: https://badge.fury.io/py/pointpats.svg
+   :target: https://badge.fury.io/py/pointpats
+
 Statistical analysis of planar point patterns.
 
 This package is part of a `refactoring of PySAL
