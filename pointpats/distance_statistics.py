@@ -166,7 +166,7 @@ class F(DStatistic):
 
 class J(DStatistic):
     """
-    Estimates the J function for a point pattern [VanLieshout1996]_
+    Estimates the J function for a point pattern :cite:`VanLieshout1996`
 
     Parameters
     ----------
