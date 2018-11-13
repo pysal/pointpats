@@ -170,6 +170,8 @@ class PointPattern(object):
     def plot(self, window=False, title="Point Pattern", hull=False,
              get_ax=False):
         """
+        Plot function for a point pattern.
+
         Parameters
         ----------
         window  : boolean
@@ -182,6 +184,7 @@ class PointPattern(object):
                   pattern. If not, don't plot convex hull.
         get_ax  : boolean
                   If get_ax is True, return the current plot ax.
+                  
         Returns
         -------
         ax      : matplotlib.axes._subplots.AxesSubplot
