@@ -44,7 +44,7 @@ def setup_package():
           maintainer='Hu Shao',
           maintainer_email='shaohutiger@gmail.com',
           py_modules=['pointpats'],
-          python_requires='>3.4',
+          python_requires='>3.5',
           test_suite = 'nose.collector',
           tests_require=['nose'],
           keywords='spatial statistics',
