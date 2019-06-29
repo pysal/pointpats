@@ -3,8 +3,8 @@
 Installation
 ============
 
-pointpats supports python `3.5`_ and `3.6`_ only. Please make sure that you are
-operating in a python 3 environment.
+From version 2.1.0, pointpats supports python `3.6`_ and `3.7`_ only.
+Please make sure that you are operating in a python 3 environment.
 
 Installing released version
 ---------------------------
@@ -20,6 +20,11 @@ destination. Open a command shell and navigate to the decompressed folder.
 Type::
 
   pip install .
+
+You may also install the latest stable pointpats via `conda-forge`_ channel by
+running::
+
+  $ conda install --channel conda-forge pointpats
 
 Installing development version
 ------------------------------
@@ -41,3 +46,4 @@ contribute to the pointpats development.
 .. _Python Package Index: https://pypi.org/project/pointpats/
 .. _pysal/pointpats: https://github.com/pysal/pointpats
 .. _fork: https://help.github.com/articles/fork-a-repo/
+.. _conda-forge: https://github.com/conda-forge/pointpats-feedstock
