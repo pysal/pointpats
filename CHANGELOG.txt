@@ -1,4 +1,47 @@
-v<2.0.0>, (2018-10-30)
+# Version 2.1.0 (2019-07-01)
+
+We closed a total of 27 issues (enhancements and bug fixes) through 13 pull requests, since our last release on 2018-10-30.
+
+## Issues Closed
+  - update setup.py to accommodate the transition to python3.6 and 3.7 (#34)
+  - prepare for release of v2.1.0 (#31)
+  - (docs) reference label style (#33)
+  - (docs) change the css to accommodate new versions of sphinx and sphinx bootstrap theme (#32)
+  - (docs) migrate from readthedocs configuration file v1 to v2  (#30)
+  - (docs) updating supported python versions (3.6 and 3.7) in setup.py (#29)
+  - doc: edits to notebook (#28)
+  - require libpysal>=4.0.0 (#27)
+  - `README` in markdown instead of `.rst`? (#24)
+  - add README.md to resolve issue #24 (#26)
+  - fix missing reference labels in rendered sphinx docs (#25)
+  - add badges for docs and pypi release (#23)
+  - Online docs for pointpats (#22)
+  - add changelog for release 2.0.0 (#21)
+
+## Pull Requests
+  - update setup.py to accommodate the transition to python3.6 and 3.7 (#34)
+  - prepare for release of v2.1.0 (#31)
+  - (docs) reference label style (#33)
+  - (docs) change the css to accommodate new versions of sphinx and sphinx bootstrap theme (#32)
+  - (docs) migrate from readthedocs configuration file v1 to v2  (#30)
+  - (docs) updating supported python versions (3.6 and 3.7) in setup.py (#29)
+  - doc: edits to notebook (#28)
+  - require libpysal>=4.0.0 (#27)
+  - add README.md to resolve issue #24 (#26)
+  - fix missing reference labels in rendered sphinx docs (#25)
+  - add badges for docs and pypi release (#23)
+  - Online docs for pointpats (#22)
+  - add changelog for release 2.0.0 (#21)
+
+The following individuals contributed to this release:
+
+  - Hu Shao
+  - Wei Kang
+  - James Gaboardi
+  - Serge Rey
+  - Dani Arribas-Bel
+
+# Version 2.0.0 (2018-10-30)
 
 We closed a total of 16 issues (enhancements and bug fixes) through 8 pull requests, since our last release on 2018-05-18.
 
