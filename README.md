@@ -2,9 +2,7 @@ pointpats: Point Pattern Analysis in PySAL
 ==========================================
 
 [![image](https://api.travis-ci.org/pysal/pointpats.svg)](https://travis-ci.org/pysal/pointpats)
-
 [![Documentation Status](https://readthedocs.org/projects/pointpats/badge/?version=latest)](https://pointpats.readthedocs.io/en/latest/?badge=latest)
-
 [![PyPI version](https://badge.fury.io/py/pointpats.svg)](https://badge.fury.io/py/pointpats)
 
 Statistical analysis of planar point patterns.
