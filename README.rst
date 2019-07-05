@@ -10,6 +10,9 @@ Point Pattern Analysis in PySAL
 .. image:: https://badge.fury.io/py/pointpats.svg
     :target: https://badge.fury.io/py/pointpats
 
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3265637.svg
+   :target: https://doi.org/10.5281/zenodo.3265637
+
 Statistical analysis of planar point patterns.
 
 This package is part of a `refactoring of PySAL
@@ -63,3 +66,23 @@ Bug reports
 ***********
 
 To search for or report bugs, please see pointpat's `issues <https://github.com/pysal/pointpats/issues>`_.
+
+***************
+BibTeX Citation
+***************
+
+.. code-block::
+    @misc{sergio_rey_2019_3265637,
+      author       = {Sergio Rey and
+                      Wei Kang and
+                      Hu Shao and
+                      Levi John Wolf and
+                      Mridul Seth and
+                      James Gaboardi and
+                      Dani Arribas-Bel},
+      title        = {pysal/pointpats: pointpats 2.1.0},
+      month        = jul,
+      year         = 2019,
+      doi          = {10.5281/zenodo.3265637},
+      url          = {https://doi.org/10.5281/zenodo.3265637}
+    }
