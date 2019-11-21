@@ -21,6 +21,7 @@ class SpaceTimeEvents:
     """
     Method for reformatting event data stored in a shapefile for use in
     calculating metrics of spatio-temporal interaction.
+
     Parameters
     ----------
     path            : string
@@ -33,6 +34,7 @@ class SpaceTimeEvents:
                       if the column containing the timestamp is formatted as
                       calendar dates, try to coerce them into Python datetime
                       objects (the default is False).
+
     Attributes
     ----------
     n               : int
@@ -49,6 +51,7 @@ class SpaceTimeEvents:
     time            : array
                       (n, 2), array of the temporal coordinates (t,1) for the
                       events, the second column is a vector of ones.
+
     Examples
     --------
     Read in the example shapefile data, ensuring to omit the file
@@ -56,40 +59,49 @@ class SpaceTimeEvents:
     associated with the shapefile should have a column of values that are a
     timestamp for the events. This timestamp may be a numerical value
     or a date. Date inference was added in version 1.6.
+
     >>> import libpysal as lps
     >>> path = lps.examples.get_path("burkitt.shp")
     >>> from pointpats import SpaceTimeEvents
 
     Create an instance of SpaceTimeEvents from a shapefile, where the
     temporal information is stored in a column named "T".
+
     >>> events = SpaceTimeEvents(path,'T')
 
     See how many events are in the instance.
+
     >>> events.n
     188
 
     Check the spatial coordinates of the first event.
+
     >>> events.space[0]
     array([300., 302.])
 
     Check the time of the first event.
+
     >>> events.t[0]
     array([413.])
 
     Calculate the time difference between the first two events.
+
     >>> events.t[1] - events.t[0]
     array([59.])
 
     New, in 1.6, date support:
     Now, create an instance of SpaceTimeEvents from a shapefile, where the
     temporal information is stored in a column named "DATE".
+
     >>> events = SpaceTimeEvents(path,'DATE')
 
     See how many events are in the instance.
+
     >>> events.n
     188
 
     Check the spatial coordinates of the first event.
+
     >>> events.space[0]
     array([300., 302.])
 
@@ -100,6 +112,7 @@ class SpaceTimeEvents:
     datetime.date(1901, 2, 16)
 
     Calculate the time difference between the first two events.
+
     >>> (events.t[1][0] - events.t[0][0]).days
     59
     """
@@ -145,6 +158,7 @@ class SpaceTimeEvents:
 def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):
     """
     Knox test for spatio-temporal interaction. [Knox1964]_
+
     Parameters
     ----------
     s_coords        : array
@@ -161,6 +175,7 @@ def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):
     debug           : bool, optional
                       if true, debugging information is printed (the default is
                       False).
+
     Returns
     -------
     knox_result     : dictionary
@@ -172,6 +187,7 @@ def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):
                       pseudo p-value associated with the statistic.
     counts          : int
                       count of space time neighbors.
+
     Examples
     --------
     >>> import numpy as np
@@ -179,22 +195,26 @@ def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):
     >>> from pointpats import SpaceTimeEvents, knox
 
     Read in the example data and create an instance of SpaceTimeEvents.
+
     >>> path = lps.examples.get_path("burkitt.shp")
     >>> events = SpaceTimeEvents(path,'T')
 
     Set the random seed generator. This is used by the permutation based
     inference to replicate the pseudo-significance of our example results -
     the end-user will normally omit this step.
+
     >>> np.random.seed(100)
 
     Run the Knox test with distance and time thresholds of 20 and 5,
     respectively. This counts the events that are closer than 20 units in
     space, and 5 units in time.
+
     >>> result = knox(events.space, events.t, delta=20, tau=5, permutations=99)
 
     Next, we examine the results. First, we call the statistic from the
     results dictionary. This reports that there are 13 events close
     in both space and time, according to our threshold definitions.
+
     >>> result['stat'] == 13
     True
 
@@ -241,6 +261,7 @@ def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):
 def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, tpow=-1.0):
     """
     Standardized Mantel test for spatio-temporal interaction. [Mantel1967]_
+
     Parameters
     ----------
     s_coords        : array
@@ -260,6 +281,7 @@ def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, t
     tpow            : float, optional
                       value for power transformation for temporal distances
                       (the default is -1.0).
+
     Returns
     -------
     mantel_result   : dictionary
@@ -269,6 +291,7 @@ def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, t
                       value of the knox test for the dataset.
     pvalue          : float
                       pseudo p-value associated with the statistic.
+
     Examples
     --------
     >>> import numpy as np
@@ -276,12 +299,14 @@ def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, t
     >>> from pointpats import SpaceTimeEvents, mantel
 
     Read in the example data and create an instance of SpaceTimeEvents.
+
     >>> path = lps.examples.get_path("burkitt.shp")
     >>> events = SpaceTimeEvents(path,'T')
 
     Set the random seed generator. This is used by the permutation based
     inference to replicate the pseudo-significance of our example results -
     the end-user will normally omit this step.
+
     >>> np.random.seed(100)
 
     The standardized Mantel test is a measure of matrix correlation between
@@ -290,9 +315,11 @@ def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, t
     or transformation; however, as recommended by Mantel (1967) [2]_, these
     should be added by the user. This can be done by adjusting the constant
     and power parameters.
+
     >>> result = mantel(events.space, events.t, 99, scon=1.0, spow=-1.0, tcon=1.0, tpow=-1.0)
 
     Next, we examine the result of the test.
+
     >>> print("%6.6f"%result['stat'])
     0.048368
 
@@ -300,6 +327,7 @@ def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, t
     permuting the timestamps and rerunning the statistic for each of the 99
     permutations. According to these parameters, the results indicate
     space-time interaction between the events.
+
     >>> print("%2.2f"%result['pvalue'])
     0.01
 
@@ -357,6 +385,7 @@ def jacquez(s_coords, t_coords, k, permutations=99):
     permutations    : int, optional
                       the number of permutations used to establish pseudo-
                       significance (the default is 99).
+
     Returns
     -------
     jacquez_result  : dictionary
@@ -376,6 +405,7 @@ def jacquez(s_coords, t_coords, k, permutations=99):
     >>> from pointpats import SpaceTimeEvents, jacquez
 
     Read in the example data and create an instance of SpaceTimeEvents.
+
     >>> path = lps.examples.get_path("burkitt.shp")
     >>> events = SpaceTimeEvents(path,'T')
 
@@ -385,6 +415,7 @@ def jacquez(s_coords, t_coords, k, permutations=99):
     there are 13 instances where events are nearest neighbors in both space
     and time.
     # turning off as kdtree changes from scipy < 0.12 return 13
+
     >>> np.random.seed(100)
     >>> result = jacquez(events.space, events.t ,k=3,permutations=99)
     >>> print(result['stat'])
@@ -393,6 +424,7 @@ def jacquez(s_coords, t_coords, k, permutations=99):
     The significance of this can be assessed by calling the p-
     value from the results dictionary, as shown below. Again, no
     space-time interaction is observed.
+
     >>> result['pvalue'] < 0.01
     False
 
@@ -469,6 +501,7 @@ def modified_knox(s_coords, t_coords, delta, tau, permutations=99):
     permutations    : int, optional
                       the number of permutations used to establish pseudo-
                       significance (the default is 99).
+
     Returns
     -------
     modknox_result  : dictionary
@@ -486,17 +519,20 @@ def modified_knox(s_coords, t_coords, delta, tau, permutations=99):
     >>> from pointpats import SpaceTimeEvents, modified_knox
 
     Read in the example data and create an instance of SpaceTimeEvents.
+
     >>> path = lps.examples.get_path("burkitt.shp")
     >>> events = SpaceTimeEvents(path, 'T')
 
     Set the random seed generator. This is used by the permutation based
     inference to replicate the pseudo-significance of our example results -
     the end-user will normally omit this step.
+
     >>> np.random.seed(100)
 
     Run the modified Knox test with distance and time thresholds of 20 and 5,
     respectively. This counts the events that are closer than 20 units in
     space, and 5 units in time.
+
     >>> result = modified_knox(events.space, events.t, delta=20, tau=5, permutations=99)
 
     Next, we examine the results. First, we call the statistic from the
@@ -509,6 +545,7 @@ def modified_knox(s_coords, t_coords, delta, tau, permutations=99):
     Next, we look at the pseudo-significance of this value, calculated by
     permuting the timestamps and rerunning the statistics. In this case,
     the results indicate there is likely no space-time interaction.
+
     >>> print("%2.2f" % result['pvalue'])
     0.11
 
