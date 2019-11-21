@@ -41,7 +41,6 @@ your fork. By making changes
 to your local clone and submitting a pull request to `pysal/pointpats`_, you can
 contribute to the pointpats development.
 
-.. _3.5: https://docs.python.org/3.5/
 .. _3.6: https://docs.python.org/3.6/
 .. _3.7: https://docs.python.org/3.7/
 .. _Python Package Index: https://pypi.org/project/pointpats/
