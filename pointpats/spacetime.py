@@ -339,9 +339,9 @@ def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, t
     timemat = cg.distance_matrix(t)
 
     # calculate the transformed standardized statistic
-    timevec = (_get_lower(timemat) + tcon) ** tpow
-    distvec = (_get_lower(distmat) + scon) ** spow
-    stat = stats.pearsonr(timevec.flatten(), distvec.flatten())[0].sum()
+    timevec = (timemat[np.tril_indices(timemat.shape[0], k = -1)] + tcon) ** tpow
+    distvec = (distmat[np.tril_indices(distmat.shape[0], k = -1)] + scon) ** spow
+    stat = stats.pearsonr(timevec, distvec)[0].sum()
 
     # return the results (if no inference)
     if not permutations:
@@ -351,8 +351,8 @@ def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, t
     dist = []
     for i in range(permutations):
         trand = _shuffle_matrix(timemat, np.arange(n))
-        timevec = (_get_lower(trand) + tcon) ** tpow
-        m = stats.pearsonr(timevec.flatten(), distvec.flatten())[0].sum()
+        timevec = (trand[np.tril_indices(trand.shape[0], k = -1)] + tcon) ** tpow
+        m = stats.pearsonr(timevec, distvec)[0].sum()
         dist.append(m)
 
     ## establish the pseudo significance of the observed statistic
@@ -618,7 +618,7 @@ def _shuffle_matrix(X, ids):
     Parameters
     ----------
     X   : array
-          (k, k), array to be permutated.
+          (k, k), array to be permuted.
     ids : array
           range (k, ).
 
@@ -629,30 +629,3 @@ def _shuffle_matrix(X, ids):
     """
     np.random.shuffle(ids)
     return X[ids, :][:, ids]
-
-
-def _get_lower(matrix):
-    """
-    Flattens the lower part of an n x n matrix into an n*(n-1)/2 x 1 vector.
-
-    Parameters
-    ----------
-    matrix  : array
-              (n, n) numpy array, a distance matrix.
-
-    Returns
-    -------
-    lowvec  : array
-              numpy array, the lower half of the distance matrix flattened into
-              a vector of length n*(n-1)/2.
-
-    """
-    n = matrix.shape[0]
-    lowerlist = []
-    for i in range(n):
-        for j in range(n):
-            if i > j:
-                lowerlist.append(matrix[i, j])
-    veclen = n * (n - 1) / 2
-    lowvec = np.reshape(np.array(lowerlist), (int(veclen), 1))
-    return lowvec
