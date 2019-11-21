@@ -656,24 +656,3 @@ def _get_lower(matrix):
     veclen = n * (n - 1) / 2
     lowvec = np.reshape(np.array(lowerlist), (int(veclen), 1))
     return lowvec
-
-def _shuffle_matrix(X, ids):
-    """
-    Random permutation of rows and columns of a matrix
-
-    Parameters
-    ----------
-    X   : array
-          (k, k), array to be permutated.
-    ids : array
-          range (k, ).
-
-    Returns
-    -------
-    X   : array
-          (k, k) with rows and columns randomly shuffled.
-
-
-    """
-    np.random.shuffle(ids)
-    return X[ids, :][:, ids]
