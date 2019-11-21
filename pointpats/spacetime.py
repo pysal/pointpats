@@ -12,7 +12,6 @@ import libpysal as lps
 import numpy as np
 import scipy.stats as stats
 from libpysal import cg
-from giddy import util
 from datetime import date
 
 class SpaceTimeEvents:
@@ -340,8 +339,8 @@ def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, t
     timemat = cg.distance_matrix(t)
 
     # calculate the transformed standardized statistic
-    timevec = (util.get_lower(timemat) + tcon) ** tpow
-    distvec = (util.get_lower(distmat) + scon) ** spow
+    timevec = (_get_lower(timemat) + tcon) ** tpow
+    distvec = (_get_lower(distmat) + scon) ** spow
     stat = stats.pearsonr(timevec.flatten(), distvec.flatten())[0].sum()
 
     # return the results (if no inference)
@@ -351,8 +350,8 @@ def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, t
     # loop for generating a random distribution to assess significance
     dist = []
     for i in range(permutations):
-        trand = util.shuffle_matrix(timemat, np.arange(n))
-        timevec = (util.get_lower(trand) + tcon) ** tpow
+        trand = _shuffle_matrix(timemat, np.arange(n))
+        timevec = (_get_lower(trand) + tcon) ** tpow
         m = stats.pearsonr(timevec.flatten(), distvec.flatten())[0].sum()
         dist.append(m)
 
@@ -584,7 +583,7 @@ def modified_knox(s_coords, t_coords, delta, tau, permutations=99):
 
     # loop for generating a random distribution to assess significance
     for p in range(permutations):
-        rtdistmat = util.shuffle_matrix(tdistmat, list(range(n)))
+        rtdistmat = _shuffle_matrix(tdistmat, list(range(n)))
         timemat = np.ones((n, n))
         timebin = rtdistmat <= tau
         timemat = timemat * timebin
@@ -612,6 +611,69 @@ def modified_knox(s_coords, t_coords, delta, tau, permutations=99):
     modknox_result = {'stat': stat, 'pvalue': pvalue}
     return modknox_result
 
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()
+def _shuffle_matrix(X, ids):
+    """
+    Random permutation of rows and columns of a matrix
+
+    Parameters
+    ----------
+    X   : array
+          (k, k), array to be permutated.
+    ids : array
+          range (k, ).
+
+    Returns
+    -------
+        : array
+          (k, k) with rows and columns randomly shuffled.
+    """
+    np.random.shuffle(ids)
+    return X[ids, :][:, ids]
+
+
+def _get_lower(matrix):
+    """
+    Flattens the lower part of an n x n matrix into an n*(n-1)/2 x 1 vector.
+
+    Parameters
+    ----------
+    matrix  : array
+              (n, n) numpy array, a distance matrix.
+
+    Returns
+    -------
+    lowvec  : array
+              numpy array, the lower half of the distance matrix flattened into
+              a vector of length n*(n-1)/2.
+
+    """
+    n = matrix.shape[0]
+    lowerlist = []
+    for i in range(n):
+        for j in range(n):
+            if i > j:
+                lowerlist.append(matrix[i, j])
+    veclen = n * (n - 1) / 2
+    lowvec = np.reshape(np.array(lowerlist), (int(veclen), 1))
+    return lowvec
+
+def _shuffle_matrix(X, ids):
+    """
+    Random permutation of rows and columns of a matrix
+
+    Parameters
+    ----------
+    X   : array
+          (k, k), array to be permutated.
+    ids : array
+          range (k, ).
+
+    Returns
+    -------
+    X   : array
+          (k, k) with rows and columns randomly shuffled.
+
+
+    """
+    np.random.shuffle(ids)
+    return X[ids, :][:, ids]

@@ -3,4 +3,3 @@ numpy>=1.3
 pandas
 matplotlib
 libpysal>=4.0.0
-giddy>=2.2.2
