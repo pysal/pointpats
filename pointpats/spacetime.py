@@ -11,8 +11,6 @@ import os
 import libpysal as lps
 import numpy as np
 import scipy.stats as stats
-#import pysal.weights.Distance as Distance
-#from pysal.weights.user import knnW_from_array
 from libpysal import cg
 from giddy import util
 from datetime import date
@@ -157,7 +155,7 @@ class SpaceTimeEvents:
 
 def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):
     """
-    Knox test for spatio-temporal interaction. [Knox1964]_
+    Knox test for spatio-temporal interaction. :cite:`Knox:1964`
 
     Parameters
     ----------
@@ -260,7 +258,7 @@ def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):
 
 def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, tpow=-1.0):
     """
-    Standardized Mantel test for spatio-temporal interaction. [Mantel1967]_
+    Standardized Mantel test for spatio-temporal interaction. :cite:`Mantel:1967`
 
     Parameters
     ----------
@@ -372,7 +370,7 @@ def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, t
 def jacquez(s_coords, t_coords, k, permutations=99):
     """
     Jacquez k nearest neighbors test for spatio-temporal interaction.
-    [Jacquez1996]_
+    :cite:`Jacquez:1996`
 
     Parameters
     ----------
@@ -486,7 +484,8 @@ def jacquez(s_coords, t_coords, k, permutations=99):
 
 def modified_knox(s_coords, t_coords, delta, tau, permutations=99):
     """
-    Baker's modified Knox test for spatio-temporal interaction. [Baker2004]_
+    Baker's modified Knox test for spatio-temporal interaction.
+    :cite:`Baker:2004`
 
     Parameters
     ----------
