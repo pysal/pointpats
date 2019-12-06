@@ -93,3 +93,17 @@ Window functions
    as_window
    poly_from_bbox
    to_ccf
+
+
+
+Space-Time Interaction Tests
+-----------------------------
+
+.. autosummary::
+   :toctree: generated/
+
+   SpaceTimeEvents
+   knox
+   mantel
+   jacquez
+   modified_knox
