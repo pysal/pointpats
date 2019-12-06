@@ -268,7 +268,8 @@ numpydoc_use_plots = True
 
 # automatically document class members
 autodoc_default_options = {
-    'members': True
+    'members': True,
+    'undoc-members': True
 }
 # display the source code for Plot directive
 plot_include_source = True
