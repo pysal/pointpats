@@ -261,11 +261,15 @@ texinfo_documents = [
 
 # Generate the API documentation when building
 autosummary_generate = True
-numpydoc_show_class_members = True
-class_members_toctree = True
-numpydoc_show_inherited_class_members = True
+
+# avoid showing members twice
+numpydoc_show_class_members = False
 numpydoc_use_plots = True
 
+# automatically document class members
+autodoc_default_options = {
+    'members': True
+}
 # display the source code for Plot directive
 plot_include_source = True
 
@@ -273,5 +277,12 @@ def setup(app):
     app.add_stylesheet("pysal-styles.css")
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/3.6/': None}
+intersphinx_mapping = {"python": ('https://docs.python.org/3', None),
+                       'numpy': ('https://docs.scipy.org/doc/numpy', None),
+                       'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
+                       'libpysal': ('https://pysal.org/libpysal/', None),
+                       'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
+                       'matplotlib':("https://matplotlib.org/", None)
+                       }
+
 

@@ -265,12 +265,15 @@ def skyum(points, not_hull=True):
     """
     Implements Skyum (1990)'s algorithm for the minimum bounding circle in R^2.
 
-    0. Store points clockwise.
-    1. Find p in S that maximizes angle(prec(p), p, succ(p) THEN radius(prec(p),
-    p, succ(p)). This is also called the lexicographic maximum, and is the last
+    Store points clockwise.
+    Find p in S that maximizes angle(prec(p), p, succ(p) THEN radius(prec(
+    p), p, succ(p)). This is also called the lexicographic maximum, and is the last
     entry of a list of (radius, angle) in lexicographical order.
-    2a. If angle(prec(p), p, succ(p)) <= 90 degrees, then finish.
-    2b. If not, remove p from set.
+
+    * If angle(prec(p), p, succ(p)) <= 90 degrees, then finish.
+
+    * If not, remove p from set.
+
     """
     points = hull(points).tolist()
     if not_clockwise(points):

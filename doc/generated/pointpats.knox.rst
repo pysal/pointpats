@@ -1,7 +1,6 @@
-pointpats.Genv
+pointpats.knox
 ==============
 
 .. currentmodule:: pointpats
 
-.. automethod:: Genv.calc
-
+.. autofunction:: knox

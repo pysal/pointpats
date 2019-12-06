@@ -9,6 +9,14 @@ pointpats.QStatistic
    .. automethod:: __init__
 
    
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~QStatistic.__init__
+      ~QStatistic.plot
+   
+   
 
    
    

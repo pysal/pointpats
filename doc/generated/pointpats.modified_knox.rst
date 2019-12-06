@@ -1,0 +1,6 @@
+pointpats.modified\_knox
+========================
+
+.. currentmodule:: pointpats
+
+.. autofunction:: modified_knox

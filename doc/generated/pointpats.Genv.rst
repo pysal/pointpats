@@ -7,3 +7,19 @@ pointpats.Genv
 
    
    .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Genv.__init__
+      ~Genv.calc
+      ~Genv.mapper
+      ~Genv.plot
+   
+   
+
+   
+   
+   

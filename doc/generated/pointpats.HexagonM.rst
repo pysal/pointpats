@@ -7,6 +7,16 @@ pointpats.HexagonM
 
    
    .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~HexagonM.__init__
+      ~HexagonM.plot
+      ~HexagonM.point_location_sta
+   
    
 
    

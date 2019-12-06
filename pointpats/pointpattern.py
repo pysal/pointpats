@@ -390,8 +390,8 @@ class PointPattern(object):
 
         Parameters
         ----------
-        other: :class:`PointPattern`
-
+        other:  PointPattern
+                :py:class:`pointpats.PointPattern`
         k:      int
                 number of nearest neighbors to find
 
