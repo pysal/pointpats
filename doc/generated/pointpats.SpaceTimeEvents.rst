@@ -1,9 +1,9 @@
-pointpats.F
-===========
+pointpats.SpaceTimeEvents
+=========================
 
 .. currentmodule:: pointpats
 
-.. autoclass:: F
+.. autoclass:: SpaceTimeEvents
 
    
    .. automethod:: __init__
@@ -13,8 +13,7 @@ pointpats.F
 
    .. autosummary::
    
-      ~F.__init__
-      ~F.plot
+      ~SpaceTimeEvents.__init__
    
    
 

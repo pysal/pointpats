@@ -9,6 +9,16 @@ pointpats.PoissonPointProcess
    .. automethod:: __init__
 
    
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PoissonPointProcess.__init__
+      ~PoissonPointProcess.draw
+      ~PoissonPointProcess.realize
+      ~PoissonPointProcess.setup
+   
+   
 
    
    

@@ -7,3 +7,17 @@ pointpats.K
 
    
    .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~K.__init__
+      ~K.plot
+   
+   
+
+   
+   
+   

@@ -7,4 +7,33 @@ pointpats.Window
 
    
    .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Window.__init__
+      ~Window.build_quad_tree_structure
+      ~Window.contains_point
+      ~Window.filter_contained
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Window.area
+      ~Window.bbox
+      ~Window.bounding_box
+      ~Window.centroid
+      ~Window.holes
+      ~Window.len
+      ~Window.parts
+      ~Window.perimeter
+      ~Window.vertices
+   
    

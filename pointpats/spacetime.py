@@ -309,7 +309,7 @@ def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, t
     The standardized Mantel test is a measure of matrix correlation between
     the spatial and temporal distance matrices of the event dataset. The
     following example runs the standardized Mantel test without a constant
-    or transformation; however, as recommended by Mantel (1967) [2]_, these
+    or transformation; however, as recommended by :cite:`Mantel:1967`, these
     should be added by the user. This can be done by adjusting the constant
     and power parameters.
 

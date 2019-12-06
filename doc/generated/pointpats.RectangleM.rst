@@ -9,6 +9,15 @@ pointpats.RectangleM
    .. automethod:: __init__
 
    
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~RectangleM.__init__
+      ~RectangleM.plot
+      ~RectangleM.point_location_sta
+   
+   
 
    
    

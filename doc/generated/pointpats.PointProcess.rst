@@ -7,6 +7,16 @@ pointpats.PointProcess
 
    
    .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PointProcess.__init__
+      ~PointProcess.draw
+      ~PointProcess.realize
+      ~PointProcess.setup
    
    
 

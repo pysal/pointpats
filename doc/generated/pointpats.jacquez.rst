@@ -1,0 +1,6 @@
+pointpats.jacquez
+=================
+
+.. currentmodule:: pointpats
+
+.. autofunction:: jacquez
