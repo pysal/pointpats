@@ -243,6 +243,17 @@ class PointPattern(object):
 
     n = cached_property(_n)
 
+    def _rot(self):
+        """
+        Ripley's rule of thumb for distance range in plotting k and related functions
+
+        One-quarter the smallest side of the mbb.
+        """
+        w, s, n, e = self.mbb
+        return 0.25 * min(e-w, n-s)
+
+    rot = cached_property(_rot)
+
     def _lambda_mbb(self):
         """
         Intensity based on minimum bounding box
