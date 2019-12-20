@@ -240,8 +240,19 @@ class K(DStatistic):
     ----------
     d          : array
                  The distance domain sequence.
-    j          : array
+    k          : array
                  K function over d.
+
+    Notes
+    -----
+
+    The :math:`K` function is estimated using
+
+    .. math::
+
+             \\hat{K}(h) = \\frac{a}{n (n-1)} \\sum_{i} \\sum_{j \\ne i} I(d_{i,j} \\le h)
+
+    where :math:`a` is the area of the window, :math:`n` the number of event points, and :math:`I(d_{i,j} \le h)` is an indicator function returning 1 when points i and j are separated by a distance of :math:`h` or less, 0 otherwise.
 
     """
     def __init__(self, pp, intervals=10, dmin=0.0, dmax=None, d=None):
@@ -448,8 +459,7 @@ def _k(pp, intervals=10, dmin=0.0, dmax=None, d=None):
     dmin     : float
                Lower limit of distance range.
     dmax     : float
-               Upper limit of distance range. If dmax is None, dmax will be set
-               to length of bounding box diagonal.
+               Upper limit of distance range. If dmax is None, dmax will be set to one-quarter of the minimum side of the minimum bounding rectangle.
     d        : sequence
                The distance domain sequence. If d is specified, intervals, dmin
                and dmax are ignored.
@@ -463,20 +473,17 @@ def _k(pp, intervals=10, dmin=0.0, dmax=None, d=None):
 
     Notes
     -----
-    See :class:`.K`
 
+    See :class:`.K`
     """
 
     if d is None:
-        # use length of bounding box diagonal as max distance
-        bb = pp.mbb
-        dbb = np.sqrt((bb[0]-bb[2])**2 + (bb[1]-bb[3])**2)
-        w = dbb/intervals
+        w = pp.rot/intervals
         if dmax:
             w = dmax/intervals
         d = [w*i for i in range(intervals + 2)]
-    den = pp.lambda_window * pp.n * 2.
-    kcdf = np.asarray([(di, len(pp.tree.query_pairs(di))/den) for di in d])
+    den = pp.lambda_window * (pp.n - 1)
+    kcdf = np.asarray([(di, len(pp.tree.query_pairs(di)) * 2 / den  ) for di in d])
     return kcdf
 
 
