@@ -15,8 +15,15 @@ class TestCentrography(unittest.TestCase):
                        [79.26,  7.68], [8.23, 39.93], [98.73, 77.17],
                        [89.78, 42.53], [65.19, 92.08], [54.46, 8.48]]
 
+    def test_centrography_mar(self):
+        min_x, min_y, max_x, max_y = minimum_area_rectangle(self.points)
+        np.testing.assert_array_almost_equal(min_x, [36.40165, 104.61744])
+        np.testing.assert_array_almost_equal(min_y, [ 4.0872803, 30.417528 ])
+        np.testing.assert_array_almost_equal(max_x, [75.599075,  -0.7261505])
+        np.testing.assert_array_almost_equal(max_y, [107.913445,  73.47376 ])
+
     def test_centrography_mbr(self):
-        min_x, min_y, max_x, max_y = mbr(self.points)
+        min_x, min_y, max_x, max_y = minimum_bounding_rectangle(self.points)
         np.testing.assert_allclose(min_x, 8.2300000000000004, RTOL)
         np.testing.assert_allclose(min_y, 7.6799999999999997, RTOL)
         np.testing.assert_allclose(max_x, 98.730000000000004, RTOL)
