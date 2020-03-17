@@ -28,7 +28,7 @@ from scipy.optimize import minimize
 not_clockwise = lambda x: not is_clockwise(x)
 
 MAXD = sys.float_info.max
-MIND = sys.float_info.minz
+MIND = sys.float_info.min
 
 def minimum_area_rectangle(points):
     """
