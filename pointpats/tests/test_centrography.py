@@ -20,7 +20,7 @@ class TestCentrography(unittest.TestCase):
         np.testing.assert_array_almost_equal(min_x, [36.40165, 104.61744])
         np.testing.assert_array_almost_equal(min_y, [ 4.0872803, 30.417528 ])
         np.testing.assert_array_almost_equal(max_x, [75.599075,  -0.7261505])
-        np.testing.assert_array_almost_equal(max_y, [107.913445,  73.47376 ])
+        np.testing.assert_array_almost_equal(max_y, [107.913445,  73.47376251220703 ])
 
     def test_centrography_mbr(self):
         min_x, min_y, max_x, max_y = minimum_bounding_rectangle(self.points)
