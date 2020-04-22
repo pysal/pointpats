@@ -265,7 +265,7 @@ class K(DStatistic):
 
 class L(DStatistic):
     """
-    Estimates the L function for a point pattern.
+    Estimates the :math:`L` function for a point pattern :cite:`Sullivan2010`.
 
     Parameters
     ----------
@@ -291,7 +291,7 @@ class L(DStatistic):
     Notes
     -----
 
-    In the analysis of planar point processes, :math:`L` function
+    In the analysis of planar point processes, the :math:`L` function
     is a scaled version of :math:`K` function. Its estimate is also
     typically compared to the value expected from a process that displays
     complete spatial randomness (CSR):
@@ -304,7 +304,7 @@ class L(DStatistic):
     and :math:`d` is distance.
 
     The expectation under the null of CSR is 0 (a horizonal line at 0).
-    For a clustered pattern, the empirical L
+    For a clustered pattern, the empirical :math:`L`
     function will be above the expectation, while for a uniform pattern the
     empirical function falls below the expectation.
 
