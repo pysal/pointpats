@@ -249,7 +249,7 @@ class PointPattern(object):
 
         One-quarter the smallest side of the mbb.
         """
-        w, s, n, e = self.mbb
+        w, s, e, n = self.mbb
         return 0.25 * min(e-w, n-s)
 
     rot = cached_property(_rot)
