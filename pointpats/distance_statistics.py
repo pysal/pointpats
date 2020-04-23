@@ -265,7 +265,7 @@ class K(DStatistic):
 
 class L(DStatistic):
     """
-    Estimates the l function for a point pattern.
+    Estimates the :math:`L` function for a point pattern :cite:`Sullivan2010`.
 
     Parameters
     ----------
@@ -287,6 +287,27 @@ class L(DStatistic):
                  The distance domain sequence.
     l          : array
                  L function over d.
+
+    Notes
+    -----
+
+    In the analysis of planar point processes, the :math:`L` function
+    is a scaled version of :math:`K` function. Its estimate is also
+    typically compared to the value expected from a process that displays
+    complete spatial randomness (CSR):
+
+    .. math::
+
+            L(d) = \\sqrt{\\frac{K(d)}{\\pi}}-d
+
+    where :math:`K(d)` is the estimator for the :math:`K` function
+    and :math:`d` is distance.
+
+    The expectation under the null of CSR is 0 (a horizonal line at 0).
+    For a clustered pattern, the empirical :math:`L`
+    function will be above the expectation, while for a uniform pattern the
+    empirical function falls below the expectation.
+
     """
     def __init__(self, pp, intervals=10, dmin=0.0, dmax=None, d=None):
         res = _l(pp, intervals, dmin, dmax, d)
