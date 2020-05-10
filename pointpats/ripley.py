@@ -115,17 +115,20 @@ def _(shape: spatial.ConvexHull, x: float, y: float):
 
 
 try:
-    import shapely
+    from shapely.geometry.base import BaseGeometry as _BaseGeometry
+    from shapely.geometry import Point as _ShapelyPoint
 
     HAS_SHAPELY = True
 
     @_contains.register
-    def _(shape: shapely.geometry.Polygon, x: float, y: float):
+    def _(
+        shape: _BaseGeometry, x: float, y: float,
+    ):
         """
         If we know we're working with a shapely polygon, 
         then use the contains method & cast input coords to a shapely point
         """
-        return shape.contains(shapely.geometry.Point((x, y)))
+        return shape.contains(_ShapelyPoint((x, y)))
 
 
 except ModuleNotFoundError:
