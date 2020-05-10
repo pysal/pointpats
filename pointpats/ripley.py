@@ -630,8 +630,9 @@ def j_function(
     if first_inf < len(hazard_ratio) and isinstance(support, int):
         warnings.warn(
             f"requested {support} bins to evaluate the J function, but"
-            f"it reaches infinity at d={gsupport[first_inf]}, meaning only"
-            f"{first_inf} bins will be used to characterize the J function."
+            f" it reaches infinity at d={gsupport[first_inf]:.4f}, meaning only"
+            f" {first_inf} bins will be used to characterize the J function.",
+            stacklevel=1,
         )
 
     return (gsupport[:first_inf], hazard_ratio[:first_inf])
