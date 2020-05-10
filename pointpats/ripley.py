@@ -795,18 +795,21 @@ def _ripley_test(
     n_replications=9999,
     **kwargs,
 ):
-    stat_function, result_container = dispatch.get(calltype)
-    core_kwargs = dict(
-        support=None, metric="euclidean", hull=None, edge_correction=None,
-    )
-    tree = _build_best_tree(coordinates, metric=metric)  # amortize this
-    hull = _prepare_hull(tree.data, hull)  # and this over replications
-    core_kwargs["hull"] = hull
+    stat_function, result_container = _ripley_dispatch.get(calltype)
+    core_kwargs = dict(support=None, metric="euclidean", edge_correction=None,)
+    tree = _build_best_tree(coordinates, metric=metric)
 
-    if calltype in ("F", "J"):
-        random = simulate_from(coordinates)
-        distances, _ = tree.query(random)
-        random_tree = _build_best_tree(random)
+    if calltype in ("F", "J"):  # these require simulations
+        core_kwargs["hull"] = hull
+        # amortize to avoid doing this every time
+        empty_space_points = simulate_from(coordinates, size=(1000, 1))
+        empty_space_distances, _ = _k_neighbors(tree, empty_space_points, k=1)
+        if calltype == "F":
+            distances = empty_space_distances.squeeze()
+        else:  # calltype == 'J':
+            n_distances, _ = _k_neighbors(tree, coordinates, k=1)
+            distances = (n_distances.squeeze(), empty_space_distances.squeeze())
+    core_kwargs.update(**kwargs)
 
     observed_support, observed_statistic = stat_function(
         tree, distances=distances, **core_kwargs
@@ -814,24 +817,32 @@ def _ripley_test(
     core_kwargs["support"] = observed_support
 
     if keep_replications:
-        replications = numpy.empty((len(observed_support), n_replications))
+        replications = numpy.empty((len(observed_support), n_replications)).T
     pvalues = numpy.ones_like(observed_support)
     for i_replication in range(n_replications):
         random_i = simulate_from(tree.data)
         if calltype in ("F", "J"):
-            distances, _ = random_tree(random_i)
-            core_kwargs["distance"] = distances
-        rep_support, replications_i = stat_function(random_i, **core_kwargs)[1]
+            random_tree = _build_best_tree(random_i, metric)
+            empty_distances, _ = random_tree.query(empty_space_points, k=1)
+            if calltype == "F":
+                core_kwargs["distances"] = empty_distances.squeeze()
+            else:  # calltype == 'J':
+                n_distances, _ = _k_neighbors(random_tree, random_i, k=1)
+                core_kwargs["distances"] = (
+                    n_distances.squeeze(),
+                    empty_distances.squeeze(),
+                )
+        rep_support, replications_i = stat_function(random_i, **core_kwargs)
         pvalues += replications_i >= observed_statistic
         if keep_replications:
-            replications[i] = replications_i
+            replications[i_replication] = replications_i
     pvalues /= n_replications + 1
     pvalues = numpy.minimum(pvalues, 1 - pvalues)
     return result_container(
         observed_support,
-        statistic,
+        observed_statistic,
         pvalues,
-        replications if keep_replications else None,
+        replications.T if keep_replications else None,
     )
 
 
