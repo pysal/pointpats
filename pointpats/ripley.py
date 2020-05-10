@@ -378,10 +378,9 @@ def simulate(hull, intensity=None, size=None):
                 f" to the number of replications."
                 f" Recieved: `intensity={intensity}, size={size}`"
             )
-
     elif intensity is not None and isinstance(size, int):
         # assume int size with specified intensity means n_replications at x intensity
-        n_observations = intensity * _area(hull)
+        n_observations = int(intensity * _area(hull))
         n_replications = size
     else:
         raise ValueError(
