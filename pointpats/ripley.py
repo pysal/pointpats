@@ -74,6 +74,7 @@ def _contains(shape, x, y):
     Try to use the shape's contains method directly on XY.
     Does not currently work on anything. 
     """
+    raise NotImplementedError()
     return shape.contains((x, y))
 
 
