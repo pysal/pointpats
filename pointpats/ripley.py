@@ -796,16 +796,23 @@ def _ripley_test(
 
     if keep_replications:
         replications = numpy.empty((len(observed_support), n_replications))
+    pvalues = numpy.ones_like(observed_support)
     for i_replication in range(n_replications):
-        random_i = simulate_from(tree.coordinates)
+        random_i = simulate_from(tree.data)
         if calltype in ("F", "J"):
             distances, _ = random_tree(random_i)
             core_kwargs["distance"] = distances
-        replications_i = stat_function(random_i, **core_kwargs)[1]
+        rep_support, replications_i = stat_function(random_i, **core_kwargs)[1]
+        pvalues += replications_i >= observed_statistic
         if keep_replications:
             replications[i] = replications_i
+    pvalues /= n_replications + 1
+    pvalues = numpy.minimum(pvalues, 1 - pvalues)
     return result_container(
-        observed_support, statistic, pvalue, replications if keep_replications else None
+        observed_support,
+        statistic,
+        pvalues,
+        replications if keep_replications else None,
     )
 
 
