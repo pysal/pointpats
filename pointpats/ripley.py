@@ -404,7 +404,7 @@ def simulate(hull, intensity=None, size=None):
             )
             if _contains(hull, x, y):
                 result[i_replication, i_observation] = (x, y)
-            i_observation += 1
+                i_observation += 1
     return result.squeeze()
 
 
@@ -415,9 +415,22 @@ def simulate_from(coordinates, hull=None, size=None):
 
     Note: will always assume the implicit intensity of the process. 
     """
-    n_observations = coordinates.shape[0]
+    if isinstance(size, int):
+        n_observations = coordinates.shape[0]
+        n_replications = size
+    elif isinstance(size, tuple):
+        assert len(size) == 2, (
+            f"`size` argument must be either an integer denoting the number"
+            f" of replications or a tuple containing "
+            f" (n_simulated_observations, n_replications). Instead, recieved"
+            f" a tuple of length {len(size)}: {size}"
+        )
+        n_observations, n_replications = size
+    elif size is None:
+        n_observations = coordinates.shape[0]
+        n_replications = 1
     hull = _prepare_hull(coordinates, hull)
-    return simulate(hull, intensity=None, size=(n_observations, size))
+    return simulate(hull, intensity=None, size=(n_observations, n_replications))
 
 
 ### Ripley's functions
@@ -452,7 +465,7 @@ def f_function(
         coordinates, support, distances, metric, hull, edge_correction
     )
     if distances is not None:
-        n_observations = coordinates.shape[0]
+        n = coordinates.shape[0]
         if distances.ndim == 2:
             k, p = distances.shape
             if k == p == n:
@@ -487,6 +500,7 @@ def f_function(
             tree = _build_best_tree(coordinates, metric)
         finally:
             distances, _ = tree.query(randoms, k=1)
+            distances = distances.squeeze()
 
     counts, bins = numpy.histogram(distances, bins=support)
     fracs = numpy.cumsum(counts) / counts.sum()
@@ -573,6 +587,7 @@ def j_function(
     metric="euclidean",
     hull=None,
     edge_correction=None,
+    truncate=True,
 ):
     """
     coordinates : numpy.ndarray, (n,2)
@@ -592,7 +607,7 @@ def j_function(
         the hull used to construct a random sample pattern for the f function.
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
-    trucnate: bool (default: True)
+    truncate: bool (default: True)
         whether or not to truncate the results when the F function reaches one. If the
         F function is one but the G function is less than one, this function will return
         numpy.nan values. 
@@ -705,7 +720,6 @@ def l_function(
     permutations=9999,
     distances=None,
     metric="euclidean",
-    hull=None,
     edge_correction=None,
     linearized=False,
 ):
@@ -736,7 +750,6 @@ def l_function(
         support=support,
         distances=distances,
         metric=metric,
-        hull=hull,
         edge_correction=edge_correction,
     )
 
