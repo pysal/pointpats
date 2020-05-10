@@ -177,6 +177,7 @@ def _build_best_tree(coordinates, metric):
     2. sklearn.BallTree if available and metric is complicated
     3. scipy.spatial.cKDTree if nothing else
     """
+    coordinates = numpy.asarray(coordinates)
     tree = spatial.cKDTree
     try:
         from sklearn.neighbors import KDTree, BallTree
@@ -205,7 +206,9 @@ def _prepare_hull(coordinates, hull):
         - a shapely shape using alpha_shape_auto
     """
     if (hull is None) or (hull == "bbox"):
-        return numpy.array([*coordinates.min(axis=0), *coordinates.max(axis=0)])
+        return numpy.array(
+            [*numpy.min(coordinates, axis=0), *numpy.max(coordinates, axis=0)]
+        )
     if isinstance(hull, numpy.ndarray):
         assert len(hull) == 4, f"bounding box provided is not shaped correctly! {hull}"
         assert hull.ndim == 1, f"bounding box provided is not shaped correctly! {hull}"
@@ -253,7 +256,11 @@ def _prepare(coordinates, support, distances, metric, hull, edge_correction):
         raise NotImplementedError("Edge correction is not currently implemented.")
 
     # cast to coordinate array
-    coordinates = numpy.asarray(coordinates)
+    if isinstance(coordinates, TREE_TYPES):
+        tree = coordinates
+        coordinates = tree.data
+    else:
+        coordinates = numpy.asarray(coordinates)
     hull = _prepare_hull(coordinates, hull)
 
     # evaluate distances
@@ -442,9 +449,6 @@ def f_function(
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
     """
-    if isinstance(coordinates, TREE_TYPES):
-        tree = coordinates
-        coordinates = tree.data
     coordinates, support, distances, metric, hull, _ = _prepare(
         coordinates, support, distances, metric, hull, edge_correction
     )
@@ -510,9 +514,6 @@ def g_function(
         whether or not to conduct edge correction. Not yet implemented.
     """
 
-    if isinstance(coordinates, (spatial.KDTree, spatial.cKDTree)):
-        tree = coordinates
-        coordinates = tree.data
     coordinates, support, distances, metric, *_ = _prepare(
         coordinates, support, distances, metric, None, edge_correction
     )
@@ -537,11 +538,11 @@ def g_function(
                     " `coordinates` to some other point in coordinates."
                 )
         elif distances.ndim == 1:
-            if distance.shape[0] != coordinates.shape[0]:
+            if distances.shape[0] != coordinates.shape[0]:
                 raise ValueError(
                     f"Distances are not aligned with coordinates! Distance"
                     f" matrix must be (n_coordinates, n_coordinates), but recieved"
-                    f" {distance.shape} instead of ({coordinates.shape[0]},)"
+                    f" {distances.shape} instead of ({coordinates.shape[0]},)"
                 )
         else:
             raise ValueError(
@@ -618,6 +619,11 @@ def j_function(
         edge_correction=edge_correction,
     )
 
+    if isinstance(support, numpy.ndarray):
+        if not numpy.allclose(gsupport, support):
+            gfunction = interpolate.interp1d(gsupport, gstats, fill_value=1)
+            gstats = gfunction(support)
+            gsupport = support
     if not (numpy.allclose(gsupport, fsupport)):
         ffunction = interpolate.interp1d(fsupport, fstats, fill_value=1)
         fstats = ffunction(gsupport)
@@ -625,30 +631,27 @@ def j_function(
 
     with numpy.errstate(invalid="ignore", divide="ignore"):
         hazard_ratio = (1 - gstats) / (1 - fstats)
-    both_zero = (gstats == 1) & (fstats == 1)
-    hazard_ratio[both_zero] = 1
-    is_inf = numpy.isinf(hazard_ratio)
-    first_inf = is_inf.argmax()
-    if not is_inf.any():
-        first_inf = len(hazard_ratio)
-    if first_inf < len(hazard_ratio) and isinstance(support, int):
-        warnings.warn(
-            f"requested {support} bins to evaluate the J function, but"
-            f" it reaches infinity at d={gsupport[first_inf]:.4f}, meaning only"
-            f" {first_inf} bins will be used to characterize the J function.",
-            stacklevel=1,
-        )
-
+    if truncate:
+        both_zero = (gstats == 1) & (fstats == 1)
+        hazard_ratio[both_zero] = 1
+        is_inf = numpy.isinf(hazard_ratio)
+        first_inf = is_inf.argmax()
+        if not is_inf.any():
+            first_inf = len(hazard_ratio)
+        if first_inf < len(hazard_ratio) and isinstance(support, int):
+            warnings.warn(
+                f"requested {support} bins to evaluate the J function, but"
+                f" it reaches infinity at d={gsupport[first_inf]:.4f}, meaning only"
+                f" {first_inf} bins will be used to characterize the J function.",
+                stacklevel=1,
+            )
+    else:
+        first_inf = len(gsupport) + 1
     return (gsupport[:first_inf], hazard_ratio[:first_inf])
 
 
 def k_function(
-    coordinates,
-    support=None,
-    distances=None,
-    metric="euclidean",
-    hull=None,
-    edge_correction=None,
+    coordinates, support=None, distances=None, metric="euclidean", edge_correction=None,
 ):
     """
     coordinates : numpy.ndarray, (n,2)
@@ -668,7 +671,7 @@ def k_function(
         whether or not to conduct edge correction. Not yet implemented.
     """
     coordinates, support, distances, metric, hull, edge_correction = _prepare(
-        coordinates, support, distances, metric, hull, edge_correction
+        coordinates, support, distances, metric, None, edge_correction
     )
     n = coordinates.shape[0]
     upper_tri_n = n * (n - 1) * 0.5
@@ -678,7 +681,7 @@ def k_function(
                 raise ValueError(
                     f"Shape of inputted distances is not square, nor is the upper triangular"
                     f" matrix matching the number of input points. The shape of the input matrix"
-                    f" is {distance.shape}, but required shape is ({upper_tri_n},) or ({n},{n})"
+                    f" is {distances.shape}, but required shape is ({upper_tri_n},) or ({n},{n})"
                 )
             upper_tri_distances = distances
         elif distances.shape[0] == distances.shape[1] == n:
@@ -687,7 +690,7 @@ def k_function(
             raise ValueError(
                 f"Shape of inputted distances is not square, nor is the upper triangular"
                 f" matrix matching the number of input points. The shape of the input matrix"
-                f" is {distance.shape}, but required shape is ({upper_tri_n},) or ({n},{n})"
+                f" is {distances.shape}, but required shape is ({upper_tri_n},) or ({n},{n})"
             )
     else:
         upper_tri_distances = spatial.distance.pdist(coordinates, metric=metric)
@@ -1047,6 +1050,7 @@ def l_test(
         metric=metric,
         hull=hull,
         edge_correction=edge_correction,
+        linearized=linearized,
         keep_replications=keep_replications,
         n_replications=n_replications,
     )
