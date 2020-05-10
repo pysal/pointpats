@@ -962,6 +962,7 @@ def k_test(
     metric="euclidean",
     hull=None,
     edge_correction=None,
+    keep_replications=False,
     n_replications=9999,
 ):
     """
@@ -1008,6 +1009,7 @@ def l_test(
     hull=None,
     edge_correction=None,
     linearized=False,
+    keep_replications=False,
     n_replications=9999,
 ):
     """
