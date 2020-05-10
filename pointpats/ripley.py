@@ -287,7 +287,7 @@ def _prepare(coordinates, support, distances, metric, hull, edge_correction):
     if isinstance(support, int):  # if just n_steps, use the max nnd
         # this is O(n log n) for kdtrees & balltrees
         tmp_tree = _build_best_tree(coordinates, metric=metric)
-        max_dist = tmp_tree.query(coordinates, k=2)[0].max()
+        max_dist = _k_neighbors(tmp_tree, coordinates, 1)[0].max()
         support = numpy.linspace(0, max_dist, num=support)
     # otherwise, we need to build it using (start, stop, step) semantics
     elif isinstance(support, tuple):
