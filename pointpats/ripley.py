@@ -21,7 +21,9 @@ __all__ = [
     "l_test",
 ]
 
-### Utilities and dispatching
+# ------------------------------------------------------------#
+# Utilities and dispatching                                  #
+# ------------------------------------------------------------#
 
 TREE_TYPES = (spatial.KDTree, spatial.cKDTree, Arc_KDTree)
 try:
@@ -42,8 +44,8 @@ def _area(shape):
     return shape.area
 
 
-@singledispatch
-def _area(shape: spatial.ConvexHull):
+@_area.register
+def _(shape: spatial.qhull.ConvexHull):
     """
     If a shape is a convex hull from scipy, 
     assure it's 2-dimensional and then use its volume. 
@@ -69,7 +71,7 @@ def _bbox(shape):
     Works for:
         shapely.geometry.Polygon
     """
-    return shape.bounds
+    return _bbox(numpy.asarray(shape))
 
 
 @_bbox.register
@@ -84,7 +86,7 @@ def _(shape: numpy.ndarray):
 
 
 @_bbox.register
-def _(shape: spatial.ConvexHull):
+def _(shape: spatial.qhull.ConvexHull):
     """
     For scipy.spatial.ConvexHulls, compute the bounding box from
     their boundary points.
@@ -124,23 +126,23 @@ def _(shape: spatial.Delaunay, x: float, y: float):
     If the returned simplex index is -1, then the point is not
     within a simplex of the triangulation. 
     """
-    return delaunay.find_simplex((x, y)) > 0
+    return shape.find_simplex((x, y)) > 0
 
 
 @_contains.register
-def _(shape: spatial.ConvexHull, x: float, y: float):
+def _(shape: spatial.qhull.ConvexHull, x: float, y: float):
     """
     For convex hulls, convert their exterior first into a Delaunay triangulation
     and then use the delaunay dispatcher.
     """
     exterior = shape.points[shape.vertices]
     delaunay = spatial.Delaunay(exterior)
-    return _contains(x, y, delaunay)
+    return _contains(delaunay, x, y)
 
 
 try:
     from shapely.geometry.base import BaseGeometry as _BaseGeometry
-    from shapely.geometry import Point as _ShapelyPoint
+    from shapely.geometry import Point as _ShapelyPoint, Polygon as _ShapelyPolygon
 
     HAS_SHAPELY = True
 
@@ -153,6 +155,14 @@ try:
         then use the contains method & cast input coords to a shapely point
         """
         return shape.contains(_ShapelyPoint((x, y)))
+
+    @_bbox.register
+    def _(shape: _ShapelyPolygon):
+        """
+        If a shape is an array of points, compute the minima/maxima 
+        or let it pass through if it's 1 dimensional & length 4
+        """
+        return numpy.asarray(list(shape.bounds))
 
 
 except ModuleNotFoundError:
@@ -192,6 +202,10 @@ try:
 except ModuleNotFoundError:
     HAS_PYGEOS = False
 
+# ------------------------------------------------------------#
+# Constructors for trees, prepared inputs, & neighbors        #
+# ------------------------------------------------------------#
+
 
 def _build_best_tree(coordinates, metric):
     """
@@ -211,13 +225,25 @@ def _build_best_tree(coordinates, metric):
         elif metric in BallTree.valid_metrics:
             tree = lambda coordinates: BallTree(coordinates, metric=metric)
         elif callable(metric):
-            warnings.Warn(
+            warnings.warn(
                 "Distance metrics defined in pure Python may "
-                " have unacceptable performance!"
+                " have unacceptable performance!",
+                stacklevel=2,
             )
             tree = lambda coordinates: BallTree(coordinates, metric=metric)
-    except ModuleNotFoundError:
-        pass
+        else:
+            raise KeyError(
+                f"Metric {metric} not found in set of available types."
+                f"BallTree metrics: {BallTree.valid_metrics}, and"
+                f"scikit KDTree metrics: {KDTree.valid_metrics}."
+            )
+    except ModuleNotFoundError as e:
+        if metric not in ("l2", "euclidean"):
+            raise KeyError(
+                f"Metric {metric} requested, but this requires"
+                f" scikit-learn to use. Without scikit-learn, only"
+                f" euclidean distance metric is supported."
+            )
     return tree(coordinates)
 
 
@@ -230,15 +256,13 @@ def _prepare_hull(coordinates, hull):
         - a shapely shape using alpha_shape_auto
     """
     if (hull is None) or (hull == "bbox"):
-        return numpy.array(
-            [*numpy.min(coordinates, axis=0), *numpy.max(coordinates, axis=0)]
-        )
+        return _bbox(coordinates)
     if isinstance(hull, numpy.ndarray):
         assert len(hull) == 4, f"bounding box provided is not shaped correctly! {hull}"
         assert hull.ndim == 1, f"bounding box provided is not shaped correctly! {hull}"
         return hull
     if HAS_SHAPELY:  # protect the isinstance check if import has failed
-        if isinstance(hull, shapely.geometry.Polygon):
+        if isinstance(hull, _ShapelyPolygon):
             return hull
     if HAS_PYGEOS:
         if isinstance(hull, pygeos.Geometry):
@@ -248,7 +272,8 @@ def _prepare_hull(coordinates, hull):
             return spatial.ConvexHull(coordinates)
         elif hull.startswith("alpha") or hull.startswith("α"):
             return alpha_shape_auto(coordinates)
-
+    elif isinstance(hull, spatial.qhull.ConvexHull):
+        return hull
     raise ValueError(
         f"Hull type {hull} not in the set of valid options:"
         f" (None, 'bbox', 'convex', 'alpha', 'α', "
@@ -298,10 +323,11 @@ def _prepare(coordinates, support, distances, metric, hull, edge_correction):
             f"`metric` argument must be callable or a string. Recieved: {metric}"
         )
     if distances is not None and metric != "euclidean":
-        warnings.Warn(
+        warnings.warn(
             "Distances were provided. The specified metric will be ignored."
             " To use precomputed distances with a custom distance metric,"
-            " do not specify a `metric` argument."
+            " do not specify a `metric` argument.",
+            stacklevel=2,
         )
         metric = "euclidean"
 
@@ -319,7 +345,7 @@ def _prepare(coordinates, support, distances, metric, hull, edge_correction):
             support = numpy.linspace(0, support[0], num=20)  # default support n bins
         elif len(support) == 2:
             support = numpy.linspace(*support, num=20)  # default support n bins
-        elif len(support == 3):
+        elif len(support) == 3:
             support = numpy.linspace(support[0], support[1], num=support[2])
     else:  # try to use it as is
         try:
@@ -352,7 +378,9 @@ def _k_neighbors(tree, coordinates, k, **kwargs):
     return distances, indices
 
 
-### simulators
+# ------------------------------------------------------------#
+# Simulators                                                 #
+# ------------------------------------------------------------#
 
 
 def simulate(hull, intensity=None, size=None):
@@ -380,8 +408,7 @@ def simulate(hull, intensity=None, size=None):
             n_observations = 100
         n_replications = 1
         size = (n_observations, n_replications)
-
-    if isinstance(size, tuple):
+    elif isinstance(size, tuple):
         if len(size) == 2 and intensity is None:
             n_observations, n_replications = size
             intensity = n_observations / _area(hull)
@@ -402,10 +429,15 @@ def simulate(hull, intensity=None, size=None):
                 f" to the number of replications."
                 f" Recieved: `intensity={intensity}, size={size}`"
             )
-    elif intensity is not None and isinstance(size, int):
+    elif isinstance(size, int):
         # assume int size with specified intensity means n_replications at x intensity
-        n_observations = int(intensity * _area(hull))
-        n_replications = size
+        if intensity is not None:
+            n_observations = int(intensity * _area(hull))
+            n_replications = size
+        else:  # assume we have one replication at the specified number of points
+            n_replications = 1
+            n_observations = size
+            intensity = n_observations / _area(hull)
     else:
         raise ValueError(
             f"Intensity and size not understood. Provide size as a tuple"
@@ -457,7 +489,9 @@ def simulate_from(coordinates, hull=None, size=None):
     return simulate(hull, intensity=None, size=(n_observations, n_replications))
 
 
-### Ripley's functions
+# ------------------------------------------------------------#
+# Statistical Functions                                       #
+# ------------------------------------------------------------#
 
 
 def f_function(
@@ -493,13 +527,14 @@ def f_function(
         if distances.ndim == 2:
             k, p = distances.shape
             if k == p == n:
-                warnings.Warn(
+                warnings.warn(
                     f"A full distance matrix is not required for this function, and"
                     f" the intput matrix is a square {n},{n} matrix. Only the"
                     f" distances from p random points to their nearest neighbor within"
                     f" the pattern is required, as an {n},p matrix. Assuming the"
                     f" provided distance matrix has rows pertaining to input"
-                    f" pattern and columns pertaining to the output points."
+                    f" pattern and columns pertaining to the output points.",
+                    stacklevel=2,
                 )
                 distances = distances.min(axis=0)
             elif k == n:
@@ -556,10 +591,11 @@ def g_function(
     if distances is not None:
         if distances.ndim == 2:
             if distances.shape[0] == distances.shape[1] == coordinates.shape[0]:
-                warnings.Warn(
+                warnings.warn(
                     "The full distance matrix is not required for this function,"
                     " only the distance to the nearest neighbor within the pattern."
-                    " Computing this and discarding the rest."
+                    " Computing this and discarding the rest.",
+                    stacklevel=2,
                 )
                 distances = distances.min(axis=1)
             else:
@@ -680,7 +716,7 @@ def j_function(
                 f"requested {support} bins to evaluate the J function, but"
                 f" it reaches infinity at d={gsupport[first_inf]:.4f}, meaning only"
                 f" {first_inf} bins will be used to characterize the J function.",
-                stacklevel=1,
+                stacklevel=2,
             )
     else:
         first_inf = len(gsupport) + 1
@@ -779,7 +815,9 @@ def l_function(
     return support, numpy.sqrt(k_estimate / numpy.pi) - linearized * support
 
 
-### Ripley tests
+# ------------------------------------------------------------#
+# Statistical Tests based on Ripley Functions                 #
+# ------------------------------------------------------------#
 
 FtestResult = namedtuple(
     "FtestResult", ("support", "statistic", "pvalue", "reference_distribution")
