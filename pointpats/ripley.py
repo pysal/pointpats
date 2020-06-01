@@ -6,6 +6,21 @@ from collections import namedtuple
 from libpysal.cg import alpha_shape_auto
 from libpysal.cg.kdtree import Arc_KDTree
 
+__all__ = [
+    "simulate",
+    "simulate_from",
+    "f_function",
+    "g_function",
+    "k_function",
+    "j_function",
+    "l_function",
+    "f_test",
+    "g_test",
+    "k_test",
+    "j_test",
+    "l_test",
+]
+
 ### Utilities and dispatching
 
 TREE_TYPES = (spatial.KDTree, spatial.cKDTree, Arc_KDTree)
@@ -527,9 +542,8 @@ def g_function(
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
         int, encoding number of equally-spaced intervals
         numpy.ndarray, used directly within numpy.histogram
-    distances: numpy.ndarray, (n, p) or (p,)
-        distances from every point in a random point set of size p
-        to some point in `coordinates`
+    distances: numpy.ndarray, (n, n) or (n,)
+        distances from every point in the point to another point in `coordinates`
     metric: str or callable
         distance metric to use when building search tree
     edge_correction: bool or str
