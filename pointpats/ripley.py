@@ -23,9 +23,18 @@ def _area(shape):
     If a shape has an area attribute, return it. 
     Works for: 
         shapely.geometry.Polygon
-        scipy.spatial.ConvexHull
     """
     return shape.area
+
+
+@singledispatch
+def _area(shape: spatial.ConvexHull):
+    """
+    If a shape is a convex hull from scipy, 
+    assure it's 2-dimensional and then use its volume. 
+    """
+    assert shape.points.shape[1] == 2
+    return shape.volume
 
 
 @_area.register
