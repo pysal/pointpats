@@ -595,7 +595,7 @@ def g_function(
         except NameError:
             tree = _build_best_tree(coordinates, metric)
         finally:
-            distances, indices = _k_neighbors(tree, coordinates, k=2)
+            distances, indices = _k_neighbors(tree, coordinates, k=1)
 
     counts, bins = numpy.histogram(distances.squeeze(), bins=support)
     fracs = numpy.cumsum(counts) / counts.sum()
