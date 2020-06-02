@@ -799,7 +799,7 @@ def l_function(
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
     linearized : bool
-        whether or not to subtract the expected value from l at each 
+        whether or not to subtract l from its expected value (support) at each 
         distance bin. This centers the l function on zero for all distances.
         Proposed by Besag (1977) #TODO: fix besag ref
     """
@@ -812,7 +812,11 @@ def l_function(
         edge_correction=edge_correction,
     )
 
-    return support, numpy.sqrt(k_estimate / numpy.pi) - linearized * support
+    l = numpy.sqrt(k_estimate / numpy.pi)
+
+    if linearized:
+        return support, support - l
+    return support, l
 
 
 # ------------------------------------------------------------#
