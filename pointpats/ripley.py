@@ -824,19 +824,19 @@ def l_function(
 # ------------------------------------------------------------#
 
 FtestResult = namedtuple(
-    "FtestResult", ("support", "statistic", "pvalue", "reference_distribution")
+    "FtestResult", ("support", "statistic", "pvalue", "replications")
 )
 GtestResult = namedtuple(
-    "GtestResult", ("support", "statistic", "pvalue", "reference_distribution")
+    "GtestResult", ("support", "statistic", "pvalue", "replications")
 )
 JtestResult = namedtuple(
-    "JtestResult", ("support", "statistic", "pvalue", "reference_distribution")
+    "JtestResult", ("support", "statistic", "pvalue", "replications")
 )
 KtestResult = namedtuple(
-    "KtestResult", ("support", "statistic", "pvalue", "reference_distribution")
+    "KtestResult", ("support", "statistic", "pvalue", "replications")
 )
 LtestResult = namedtuple(
-    "LtestResult", ("support", "statistic", "pvalue", "reference_distribution")
+    "LtestResult", ("support", "statistic", "pvalue", "replications")
 )
 
 _ripley_dispatch = {
@@ -939,7 +939,7 @@ def f_test(
         whether or not to conduct edge correction. Not yet implemented.
     keep_replications: bool
         whether or not to keep the simulation envelopes. If so, 
-        will be returned as the result's reference_distribution attribute
+        will be returned as the result's replications attribute
     n_replications: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness. 
@@ -986,7 +986,7 @@ def g_test(
         whether or not to conduct edge correction. Not yet implemented.
     keep_replications: bool
         whether or not to keep the simulation envelopes. If so, 
-        will be returned as the result's reference_distribution attribute
+        will be returned as the result's replications attribute
     n_replications: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness. 
@@ -1032,7 +1032,7 @@ def j_test(
         whether or not to conduct edge correction. Not yet implemented.
     keep_replications: bool
         whether or not to keep the simulation envelopes. If so, 
-        will be returned as the result's reference_distribution attribute
+        will be returned as the result's replications attribute
     n_replications: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness. 
@@ -1078,7 +1078,7 @@ def k_test(
         whether or not to conduct edge correction. Not yet implemented.
     keep_replications: bool
         whether or not to keep the simulation envelopes. If so, 
-        will be returned as the result's reference_distribution attribute
+        will be returned as the result's replications attribute
     n_replications: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness. 
@@ -1125,7 +1125,7 @@ def l_test(
         whether or not to conduct edge correction. Not yet implemented.
     keep_replications: bool
         whether or not to keep the simulation envelopes. If so, 
-        will be returned as the result's reference_distribution attribute
+        will be returned as the result's replications attribute
     n_replications: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness. 
