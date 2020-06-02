@@ -861,19 +861,22 @@ def _ripley_test(
     **kwargs,
 ):
     stat_function, result_container = _ripley_dispatch.get(calltype)
-    core_kwargs = dict(support=None, metric="euclidean", edge_correction=None,)
+    core_kwargs = dict(support=support, metric=metric, edge_correction=edge_correction,)
     tree = _build_best_tree(coordinates, metric=metric)
 
     if calltype in ("F", "J"):  # these require simulations
         core_kwargs["hull"] = hull
         # amortize to avoid doing this every time
         empty_space_points = simulate_from(coordinates, size=(1000, 1))
-        empty_space_distances, _ = _k_neighbors(tree, empty_space_points, k=1)
-        if calltype == "F":
-            distances = empty_space_distances.squeeze()
-        else:  # calltype == 'J':
-            n_distances, _ = _k_neighbors(tree, coordinates, k=1)
-            distances = (n_distances.squeeze(), empty_space_distances.squeeze())
+        if distances is None:
+            empty_space_distances, _ = _k_neighbors(tree, empty_space_points, k=1)
+            if calltype == "F":
+                distances = empty_space_distances.squeeze()
+            else:  # calltype == 'J':
+                n_distances, _ = _k_neighbors(tree, coordinates, k=1)
+                distances = (n_distances.squeeze(), empty_space_distances.squeeze())
+        else:
+            pass
     core_kwargs.update(**kwargs)
 
     observed_support, observed_statistic = stat_function(
