@@ -255,12 +255,12 @@ def _prepare_hull(coordinates, hull):
         - a scipy.spatial.ConvexHull object from the Qhull library
         - a shapely shape using alpha_shape_auto
     """
-    if (hull is None) or (hull == "bbox"):
-        return _bbox(coordinates)
     if isinstance(hull, numpy.ndarray):
         assert len(hull) == 4, f"bounding box provided is not shaped correctly! {hull}"
         assert hull.ndim == 1, f"bounding box provided is not shaped correctly! {hull}"
         return hull
+    if (hull is None) or (hull == "bbox"):
+        return _bbox(coordinates)
     if HAS_SHAPELY:  # protect the isinstance check if import has failed
         if isinstance(hull, _ShapelyPolygon):
             return hull
