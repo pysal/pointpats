@@ -910,7 +910,7 @@ def _ripley_test(
         observed_support,
         observed_statistic,
         pvalues,
-        replications.T if keep_replications else None,
+        replications if keep_replications else None,
     )
 
 
@@ -1014,6 +1014,7 @@ def j_test(
     metric="euclidean",
     hull=None,
     edge_correction=None,
+    truncate=True,
     keep_replications=False,
     n_replications=9999,
 ):
@@ -1050,6 +1051,7 @@ def j_test(
         edge_correction=edge_correction,
         keep_replications=keep_replications,
         n_replications=n_replications,
+        truncate=truncate,
     )
 
 
