@@ -9,16 +9,25 @@ TODO
 """
 
 __author__ = "Serge Rey sjsrey@gmail.com"
-__all__ = ['mbr', 'hull', 'mean_center', 'weighted_mean_center',
-           'manhattan_median', 'std_distance', 'euclidean_median', 'ellipse',
-           'skyum', 'dtot',"_circle"]
+__all__ = [
+    "mbr",
+    "hull",
+    "mean_center",
+    "weighted_mean_center",
+    "manhattan_median",
+    "std_distance",
+    "euclidean_median",
+    "ellipse",
+    "skyum",
+    "dtot",
+    "_circle",
+]
 
 
 import sys
 import numpy as np
 import warnings
 import copy
-from math import pi as PI
 from scipy.spatial import ConvexHull
 from libpysal.cg import get_angle_between, Ray, is_clockwise
 from scipy.spatial import distance as dist
