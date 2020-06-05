@@ -142,7 +142,7 @@ def _(shape: spatial.qhull.ConvexHull, x: float, y: float):
 
 try:
     from shapely.geometry.base import BaseGeometry as _BaseGeometry
-    from shapely.geometry import Point as _ShapelyPoint, Polygon as _ShapelyPolygon
+    from shapely.geometry import Point as _ShapelyPoint
 
     HAS_SHAPELY = True
 
@@ -157,7 +157,7 @@ try:
         return shape.contains(_ShapelyPoint((x, y)))
 
     @_bbox.register
-    def _(shape: _ShapelyPolygon):
+    def _(shape: _BaseGeometry):
         """
         If a shape is an array of points, compute the minima/maxima 
         or let it pass through if it's 1 dimensional & length 4
