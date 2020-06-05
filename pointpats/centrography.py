@@ -39,7 +39,7 @@ MAXD = sys.float_info.max
 MIND = sys.float_info.min
 
 
-def mbr(points):
+def minimum_bounding_rectangle(points):
     """
     Find minimum bounding rectangle of a point array.
 
@@ -74,6 +74,17 @@ def mbr(points):
         if y < min_y:
             min_y = y
     return min_x, min_y, max_x, max_y
+
+
+def mbr(points):
+    warnings.warn(
+        "This function will be deprecated in the next release of pointpats.",
+        DeprecationWarning,
+    )
+    return minimum_bounding_rectangle(points)
+
+
+mbr.__doc__ = minimum_bounding_rectangle.__doc__
 
 
 def hull(points):
@@ -268,9 +279,10 @@ def euclidean_median(points):
     points = np.asarray(points)
     start = mean_center(points)
     res = minimize(dtot, start, args=(points,))
-    return res['x']
+    return res["x"]
 
-def skyum(points, not_hull=True):
+
+def minimum_bounding_circle(points):
     """
     Implements Skyum (1990)'s algorithm for the minimum bounding circle in R^2.
 
