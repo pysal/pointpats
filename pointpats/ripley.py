@@ -815,7 +815,7 @@ def l_function(
     l = numpy.sqrt(k_estimate / numpy.pi)
 
     if linearized:
-        return support, support - l
+        return support, l - support
     return support, l
 
 
