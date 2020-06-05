@@ -75,6 +75,12 @@ def minimum_bounding_rectangle(points):
             min_y = y
     return min_x, min_y, max_x, max_y
 
+def minimum_rotated_rectangle(points):
+    try:
+        from cv2 import minAreaRect
+    except ModuleNotFoundError:
+        raise ModuleNotFoundError('OpenCV2 is required to use this function.')
+    return minAreaRect(points.astype(numpy.float32))
 
 def mbr(points):
     warnings.warn(
