@@ -406,51 +406,51 @@ def simulate(hull, intensity=None, size=None):
         else:
             # default to 100 points
             n_observations = 100
-        n_replications = 1
-        size = (n_observations, n_replications)
+        n_simulations = 1
+        size = (n_observations, n_simulations)
     elif isinstance(size, tuple):
         if len(size) == 2 and intensity is None:
-            n_observations, n_replications = size
+            n_observations, n_simulations = size
             intensity = n_observations / _area(hull)
         elif len(size) == 2 and intensity is not None:
             raise ValueError(
-                "Either intensity or size as (n observations, n replications)"
+                "Either intensity or size as (n observations, n simulations)"
                 " can be provided. Providing both creates statistical conflicts."
                 " between the requested intensity and implied intensity by"
                 " the number of observations and the area of the hull. If"
                 " you want to specify the intensity, use the intensity argument"
-                " and set size equal to the number of replications."
+                " and set size equal to the number of simulations."
             )
         else:
             raise ValueError(
                 f"Intensity and size not understood. Provide size as a tuple"
-                f" containing (number of observations, number of replications)"
+                f" containing (number of observations, number of simulations)"
                 f" with no specified intensity, or an intensity and size equal"
-                f" to the number of replications."
+                f" to the number of simulations."
                 f" Recieved: `intensity={intensity}, size={size}`"
             )
     elif isinstance(size, int):
-        # assume int size with specified intensity means n_replications at x intensity
+        # assume int size with specified intensity means n_simulations at x intensity
         if intensity is not None:
             n_observations = int(intensity * _area(hull))
-            n_replications = size
+            n_simulations = size
         else:  # assume we have one replication at the specified number of points
-            n_replications = 1
+            n_simulations = 1
             n_observations = size
             intensity = n_observations / _area(hull)
     else:
         raise ValueError(
             f"Intensity and size not understood. Provide size as a tuple"
-            f" containing (number of observations, number of replications)"
+            f" containing (number of observations, number of simulations)"
             f" with no specified intensity, or an intensity and size equal"
-            f" to the number of replications."
+            f" to the number of simulations."
             f" Recieved: `intensity={intensity}, size={size}`"
         )
-    result = numpy.empty((n_replications, n_observations, 2))
+    result = numpy.empty((n_simulations, n_observations, 2))
 
     bbox = _bbox(hull)
 
-    for i_replication in range(n_replications):
+    for i_replication in range(n_simulations):
         generating = True
         i_observation = 0
         while i_observation < n_observations:
@@ -473,20 +473,20 @@ def simulate_from(coordinates, hull=None, size=None):
     """
     if isinstance(size, int):
         n_observations = coordinates.shape[0]
-        n_replications = size
+        n_simulations = size
     elif isinstance(size, tuple):
         assert len(size) == 2, (
             f"`size` argument must be either an integer denoting the number"
-            f" of replications or a tuple containing "
-            f" (n_simulated_observations, n_replications). Instead, recieved"
+            f" of simulations or a tuple containing "
+            f" (n_simulated_observations, n_simulations). Instead, recieved"
             f" a tuple of length {len(size)}: {size}"
         )
-        n_observations, n_replications = size
+        n_observations, n_simulations = size
     elif size is None:
         n_observations = coordinates.shape[0]
-        n_replications = 1
+        n_simulations = 1
     hull = _prepare_hull(coordinates, hull)
-    return simulate(hull, intensity=None, size=(n_observations, n_replications))
+    return simulate(hull, intensity=None, size=(n_observations, n_simulations))
 
 
 # ------------------------------------------------------------#
@@ -824,19 +824,19 @@ def l_function(
 # ------------------------------------------------------------#
 
 FtestResult = namedtuple(
-    "FtestResult", ("support", "statistic", "pvalue", "replications")
+    "FtestResult", ("support", "statistic", "pvalue", "simulations")
 )
 GtestResult = namedtuple(
-    "GtestResult", ("support", "statistic", "pvalue", "replications")
+    "GtestResult", ("support", "statistic", "pvalue", "simulations")
 )
 JtestResult = namedtuple(
-    "JtestResult", ("support", "statistic", "pvalue", "replications")
+    "JtestResult", ("support", "statistic", "pvalue", "simulations")
 )
 KtestResult = namedtuple(
-    "KtestResult", ("support", "statistic", "pvalue", "replications")
+    "KtestResult", ("support", "statistic", "pvalue", "simulations")
 )
 LtestResult = namedtuple(
-    "LtestResult", ("support", "statistic", "pvalue", "replications")
+    "LtestResult", ("support", "statistic", "pvalue", "simulations")
 )
 
 _ripley_dispatch = {
@@ -856,8 +856,8 @@ def _ripley_test(
     metric="euclidean",
     hull=None,
     edge_correction=None,
-    keep_replications=False,
-    n_replications=9999,
+    keep_simulations=False,
+    n_simulations=9999,
     **kwargs,
 ):
     stat_function, result_container = _ripley_dispatch.get(calltype)
@@ -884,10 +884,10 @@ def _ripley_test(
     )
     core_kwargs["support"] = observed_support
 
-    if keep_replications:
-        replications = numpy.empty((len(observed_support), n_replications)).T
+    if keep_simulations:
+        simulations = numpy.empty((len(observed_support), n_simulations)).T
     pvalues = numpy.ones_like(observed_support)
-    for i_replication in range(n_replications):
+    for i_replication in range(n_simulations):
         random_i = simulate_from(tree.data)
         if calltype in ("F", "J"):
             random_tree = _build_best_tree(random_i, metric)
@@ -900,17 +900,17 @@ def _ripley_test(
                     n_distances.squeeze(),
                     empty_distances.squeeze(),
                 )
-        rep_support, replications_i = stat_function(random_i, **core_kwargs)
-        pvalues += replications_i >= observed_statistic
-        if keep_replications:
-            replications[i_replication] = replications_i
-    pvalues /= n_replications + 1
+        rep_support, simulations_i = stat_function(random_i, **core_kwargs)
+        pvalues += simulations_i >= observed_statistic
+        if keep_simulations:
+            simulations[i_replication] = simulations_i
+    pvalues /= n_simulations + 1
     pvalues = numpy.minimum(pvalues, 1 - pvalues)
     return result_container(
         observed_support,
         observed_statistic,
         pvalues,
-        replications if keep_replications else None,
+        simulations if keep_simulations else None,
     )
 
 
@@ -921,8 +921,8 @@ def f_test(
     metric="euclidean",
     hull=None,
     edge_correction=None,
-    keep_replications=False,
-    n_replications=9999,
+    keep_simulations=False,
+    n_simulations=9999,
 ):
     """
     coordinates : numpy.ndarray, (n,2)
@@ -940,10 +940,10 @@ def f_test(
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
-    keep_replications: bool
+    keep_simulations: bool
         whether or not to keep the simulation envelopes. If so, 
-        will be returned as the result's replications attribute
-    n_replications: int
+        will be returned as the result's simulations attribute
+    n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness. 
     """
@@ -956,8 +956,8 @@ def f_test(
         metric=metric,
         hull=hull,
         edge_correction=edge_correction,
-        keep_replications=keep_replications,
-        n_replications=n_replications,
+        keep_simulations=keep_simulations,
+        n_simulations=n_simulations,
     )
 
 
@@ -968,8 +968,8 @@ def g_test(
     metric="euclidean",
     hull=None,
     edge_correction=None,
-    keep_replications=False,
-    n_replications=9999,
+    keep_simulations=False,
+    n_simulations=9999,
 ):
     """
     coordinates : numpy.ndarray, (n,2)
@@ -987,10 +987,10 @@ def g_test(
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
-    keep_replications: bool
+    keep_simulations: bool
         whether or not to keep the simulation envelopes. If so, 
-        will be returned as the result's replications attribute
-    n_replications: int
+        will be returned as the result's simulations attribute
+    n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness. 
     """
@@ -1002,8 +1002,8 @@ def g_test(
         metric=metric,
         hull=hull,
         edge_correction=edge_correction,
-        keep_replications=keep_replications,
-        n_replications=n_replications,
+        keep_simulations=keep_simulations,
+        n_simulations=n_simulations,
     )
 
 
@@ -1015,8 +1015,8 @@ def j_test(
     hull=None,
     edge_correction=None,
     truncate=True,
-    keep_replications=False,
-    n_replications=9999,
+    keep_simulations=False,
+    n_simulations=9999,
 ):
     """
     coordinates : numpy.ndarray, (n,2)
@@ -1034,10 +1034,10 @@ def j_test(
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
-    keep_replications: bool
+    keep_simulations: bool
         whether or not to keep the simulation envelopes. If so, 
-        will be returned as the result's replications attribute
-    n_replications: int
+        will be returned as the result's simulations attribute
+    n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness. 
     """
@@ -1049,8 +1049,8 @@ def j_test(
         metric=metric,
         hull=hull,
         edge_correction=edge_correction,
-        keep_replications=keep_replications,
-        n_replications=n_replications,
+        keep_simulations=keep_simulations,
+        n_simulations=n_simulations,
         truncate=truncate,
     )
 
@@ -1062,8 +1062,8 @@ def k_test(
     metric="euclidean",
     hull=None,
     edge_correction=None,
-    keep_replications=False,
-    n_replications=9999,
+    keep_simulations=False,
+    n_simulations=9999,
 ):
     """
     coordinates : numpy.ndarray, (n,2)
@@ -1081,10 +1081,10 @@ def k_test(
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
-    keep_replications: bool
+    keep_simulations: bool
         whether or not to keep the simulation envelopes. If so, 
-        will be returned as the result's replications attribute
-    n_replications: int
+        will be returned as the result's simulations attribute
+    n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness. 
     """
@@ -1096,8 +1096,8 @@ def k_test(
         metric=metric,
         hull=hull,
         edge_correction=edge_correction,
-        keep_replications=keep_replications,
-        n_replications=n_replications,
+        keep_simulations=keep_simulations,
+        n_simulations=n_simulations,
     )
 
 
@@ -1109,8 +1109,8 @@ def l_test(
     hull=None,
     edge_correction=None,
     linearized=False,
-    keep_replications=False,
-    n_replications=9999,
+    keep_simulations=False,
+    n_simulations=9999,
 ):
     """
     coordinates : numpy.ndarray, (n,2)
@@ -1128,10 +1128,10 @@ def l_test(
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
-    keep_replications: bool
+    keep_simulations: bool
         whether or not to keep the simulation envelopes. If so, 
-        will be returned as the result's replications attribute
-    n_replications: int
+        will be returned as the result's simulations attribute
+    n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness. 
     """
@@ -1144,6 +1144,6 @@ def l_test(
         hull=hull,
         edge_correction=edge_correction,
         linearized=linearized,
-        keep_replications=keep_replications,
-        n_replications=n_replications,
+        keep_simulations=keep_simulations,
+        n_simulations=n_simulations,
     )
