@@ -142,14 +142,16 @@ def _(shape: spatial.qhull.ConvexHull, x: float, y: float):
 
 try:
     from shapely.geometry.base import BaseGeometry as _BaseGeometry
+    from shapely.geometry import (
+        Polygon as _ShapelyPolygon,
+        MultiPolygon as _ShapelyMultiPolygon,
+    )
     from shapely.geometry import Point as _ShapelyPoint
 
     HAS_SHAPELY = True
 
     @_contains.register
-    def _(
-        shape: _BaseGeometry, x: float, y: float,
-    ):
+    def _(shape: _BaseGeometry, x: float, y: float):
         """
         If we know we're working with a shapely polygon, 
         then use the contains method & cast input coords to a shapely point
@@ -262,7 +264,7 @@ def _prepare_hull(coordinates, hull):
     if (hull is None) or (hull == "bbox"):
         return _bbox(coordinates)
     if HAS_SHAPELY:  # protect the isinstance check if import has failed
-        if isinstance(hull, _ShapelyPolygon):
+        if isinstance(hull, (_ShapelyPolygon, _ShapelyMultiPolygon)):
             return hull
     if HAS_PYGEOS:
         if isinstance(hull, pygeos.Geometry):
