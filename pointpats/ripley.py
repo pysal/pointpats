@@ -473,6 +473,15 @@ def simulate_from(coordinates, hull=None, size=None):
 
     Note: will always assume the implicit intensity of the process. 
     """
+    try:
+        coordinates = numpy.asarray(coordinates)
+        assert coordinates.ndim == 2
+    except:
+        raise ValueError("This function requires a numpy array for input."
+                         " If `coordinates` is a shape, use simulate()."
+                         " Otherwise, use the `hull` argument to specify"
+                         " which hull you intend to compute for the input"
+                         " coordinates.")
     if isinstance(size, int):
         n_observations = coordinates.shape[0]
         n_simulations = size
