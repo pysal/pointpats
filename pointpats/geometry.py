@@ -32,7 +32,10 @@ def area(shape):
     Works for: 
         shapely.geometry.Polygon
     """
-    return shape.area
+    try:
+        return shape.area
+    except AttributeError:
+        return area(numpy.asarray(shape))
 
 
 @area.register
