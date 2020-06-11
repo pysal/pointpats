@@ -12,7 +12,7 @@ from .geometry import (
 from .random import poisson
 
 
-from ._deprecated_distance_statistics import G, F, J, K, L, Genv, Fenv, Jenv, Kenv, Lenv
+from ._deprecated_distance_statistics import *
 
 __all__ = [
     "f",
