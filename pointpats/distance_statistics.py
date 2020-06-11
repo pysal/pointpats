@@ -12,11 +12,11 @@ from .geometry import (
 from ._deprecated_distance_statistics import G, F, J, K, L, Genv, Fenv, Jenv, Kenv, Lenv
 
 __all__ = [
-    "f_function",
-    "g_function",
-    "k_function",
-    "j_function",
-    "l_function",
+    "f",
+    "g",
+    "k",
+    "j",
+    "l",
     "f_test",
     "g_test",
     "k_test",
@@ -110,7 +110,7 @@ def _prepare(coordinates, support, distances, metric, hull, edge_correction):
 # ------------------------------------------------------------#
 
 
-def f_function(
+def f(
     coordinates,
     support=None,
     distances=None,
@@ -183,7 +183,7 @@ def f_function(
     return bins, numpy.asarray([0, *fracs])
 
 
-def g_function(
+def g(
     coordinates, support=None, distances=None, metric="euclidean", edge_correction=None,
 ):
     """
@@ -255,7 +255,7 @@ def g_function(
     return bins, numpy.asarray([0, *fracs])
 
 
-def j_function(
+def j(
     coordinates,
     support=None,
     distances=None,
@@ -291,7 +291,7 @@ def j_function(
         g_distances, f_distances = distances
     else:
         g_distances = f_distances = None
-    fsupport, fstats = f_function(
+    fsupport, fstats = f(
         coordinates,
         support=support,
         distances=f_distances,
@@ -300,7 +300,7 @@ def j_function(
         edge_correction=edge_correction,
     )
 
-    gsupport, gstats = g_function(
+    gsupport, gstats = g(
         coordinates,
         support=support,
         distances=g_distances,
@@ -339,7 +339,7 @@ def j_function(
     return (gsupport[:first_inf], hazard_ratio[:first_inf])
 
 
-def k_function(
+def k(
     coordinates, support=None, distances=None, metric="euclidean", edge_correction=None,
 ):
     """
@@ -389,7 +389,7 @@ def k_function(
     return support, k_estimate
 
 
-def l_function(
+def l(
     coordinates,
     support=None,
     permutations=9999,
@@ -420,7 +420,7 @@ def l_function(
         Proposed by Besag (1977) #TODO: fix besag ref
     """
 
-    support, k_estimate = k_function(
+    support, k_estimate = k(
         coordinates,
         support=support,
         distances=distances,
@@ -456,11 +456,11 @@ LtestResult = namedtuple(
 )
 
 _ripley_dispatch = {
-    "F": (f_function, FtestResult),
-    "G": (g_function, GtestResult),
-    "J": (j_function, JtestResult),
-    "K": (k_function, KtestResult),
-    "L": (l_function, LtestResult),
+    "F": (f, FtestResult),
+    "G": (g, GtestResult),
+    "J": (j, JtestResult),
+    "K": (k, KtestResult),
+    "L": (l, LtestResult),
 }
 
 
@@ -476,7 +476,7 @@ def _ripley_test(
     n_simulations=9999,
     **kwargs,
 ):
-    stat_function, result_container = _ripley_dispatch.get(calltype)
+    stat, result_container = _ripley_dispatch.get(calltype)
     core_kwargs = dict(support=support, metric=metric, edge_correction=edge_correction,)
     tree = _build_best_tree(coordinates, metric=metric)
 
