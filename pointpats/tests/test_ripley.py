@@ -50,7 +50,7 @@ def test_primitives():
     assert area_bbox == geometry.area(bbox)
     area_chull = chull.volume
     assert area_chull == geometry.area(chull)
-    area_pgon = ripley._area(ashape)
+    area_pgon = geometry.area(ashape)
     assert area_pgon == ashape.area
     assert area_pgon == geometry.area(pygeos_ashape)
     point_in = list(ashape.centroid.coords)[0]
