@@ -130,7 +130,7 @@ def poisson(hull, intensity=None, size=None):
     return result.squeeze()
 
 
-def normal(hull, center=None, cov=1, size=None):
+def normal(hull, center=None, cov=None, size=None):
     """
     Simulate a multivariate random normal point cluster
 
@@ -172,6 +172,12 @@ def normal(hull, center=None, cov=1, size=None):
     n_observations, n_simulations, intensity = parse_size_and_intensity(
         hull, intensity=None, size=size
     )
+    if cov is None:
+        bbox = _bbox(hull)
+        width = bbox[2] - bbox[0]
+        height = bbox[3] - bbox[1]
+        cov = numpy.maximum(width / 2, height / 2) ** 2
+
     if isinstance(cov, (int, float)):
         sd = cov
         cov = numpy.eye(2) * sd
@@ -192,6 +198,7 @@ def normal(hull, center=None, cov=1, size=None):
             " or a 2 by 2 array expressing the covariance matrix of the "
             " bivariate normal distribution."
         )
+
     result = numpy.empty((n_simulations, n_observations, 2))
 
     bbox = _bbox(hull)
@@ -297,20 +304,22 @@ def cluster_poisson(
     return result.squeeze()
 
 
-def cluster_normal(hull, cov=1, size=None, n_seeds=2):
-    hull = _prepare_hull(
-        hull, hull
-    )  # should work if input is either point set or a hull.
+def cluster_normal(hull, cov=None, size=None, n_seeds=2):
+    if isinstance(hull, numpy.ndarray):
+        if hull.shape == (4,):
+            hull = hull
+        else:
+            hull = _prepare_hull(hull)
     n_observations, n_simulations, intensity = parse_size_and_intensity(
-        hull, intensity=intensity, size=size
+        hull, intensity=None, size=size
     )
-
     result = numpy.empty((n_simulations, n_observations, 2))
     for i_replication in range(n_simulations):
         seeds = poisson(hull, size=(n_seeds, n_simulations))
+        if cov is None:
+            cov = spatial.distance.pdist(seeds).mean() ** 2
         clusters = numpy.array_split(result[i_replication], n_seeds)
-        for i_cluster, radius in enumerate(cluster_radii):
-            seed = seeds[i_cluster]
+        for i_cluster, seed in enumerate(seeds):
             cluster_points = clusters[i_cluster]
             n_in_cluster = len(cluster_points)
             if n_in_cluster == 1:
