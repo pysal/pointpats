@@ -6,7 +6,10 @@ from .geometry import (
     area as _area,
     k_neighbors as _k_neighbors,
     build_best_tree as _build_best_tree,
+    prepare_hull as _prepare_hull,
+    TREE_TYPES,
 )
+from .random import poisson
 
 
 from ._deprecated_distance_statistics import G, F, J, K, L, Genv, Fenv, Jenv, Kenv, Lenv
