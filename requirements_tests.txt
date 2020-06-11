@@ -3,6 +3,6 @@ nose-progressive
 nose-exclude
 coverage
 coveralls
-shapely
-pygeos
+# shapely these need to be gotten from conda because they're incompatible from pypi
+# pygeos
 pytest
