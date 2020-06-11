@@ -538,10 +538,10 @@ def _ripley_test(
     n_simulations=9999,
     **kwargs,
 ):
-    stat, result_container = _ripley_dispatch.get(calltype)
+    stat_function, result_container = _ripley_dispatch.get(calltype)
     core_kwargs = dict(support=support, metric=metric, edge_correction=edge_correction,)
     tree = _build_best_tree(coordinates, metric=metric)
-
+    hull = _prepare_hull(coordinates, hull)
     if calltype in ("F", "J"):  # these require simulations
         core_kwargs["hull"] = hull
         # amortize to avoid doing this every time
