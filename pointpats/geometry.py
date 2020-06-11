@@ -267,6 +267,31 @@ def build_best_tree(coordinates, metric):
     1. sklearn.KDTree if available and metric is simple
     2. sklearn.BallTree if available and metric is complicated
     3. scipy.spatial.cKDTree if nothing else
+
+    Parameters
+    ----------
+    coordinates : numpy.ndarray
+        array of coordinates over which to build the tree.
+    metric : string or callable
+        either a metric supported by sklearn KDTrees or BallTrees, or a callabe function.
+        If sklearn is not installed, then this must be euclidean. 
+
+    Returns
+    -------
+        : a distance tree
+          a KDTree from either scikit-learn or scipy, or a BallTree if available.
+
+    Notes
+    -----
+        This will return a scikit-learn KDTree if the metric is supported and 
+        sklearn can be imported. 
+        If the metric is not supported by KDTree, a BallTree will be used if
+        sklearn can be imported. 
+        If the metric is a user-defined callable function, a Ball Tree will be used
+        if sklearn can be imported. 
+        If sklearn can't be imported, then a scipy.spatial.KDTree will be used
+        if the metric is euclidean. 
+        Otherwise, an error will be raised. 
     """
     coordinates = numpy.asarray(coordinates)
     tree = spatial.cKDTree
@@ -304,6 +329,23 @@ def k_neighbors(tree, coordinates, k, **kwargs):
     """
     Query a kdtree for k neighbors, handling the self-neighbor case
     in the case of coincident points. 
+
+    Arguments
+    ----------
+    tree : distance tree
+        a distance tree, such as a scipy KDTree or sklearn KDTree or BallTree
+        that supports a query argument.
+    coordinates : numpy.ndarray of shape n,2
+        coordinates to query for their neighbors within the tree. 
+    k : int
+        number of neighbors to query in the tree
+    **kwargs : mappable
+        arguments that may need to be passed down to the tree.query() function
+
+    Returns
+    --------
+    a tuple of (distances, indices) that is assured to not include the point itself
+    in its query result. 
     """
     distances, indices = tree.query(coordinates, k=k + 1, **kwargs)
     n, ks = distances.shape
@@ -324,6 +366,25 @@ def prepare_hull(coordinates, hull=None):
         - a bounding box array of [xmin, ymin, xmax, ymax]
         - a scipy.spatial.ConvexHull object from the Qhull library
         - a shapely shape using alpha_shape_auto
+
+    Parameters
+    ---------
+    coordinates : numpy.ndarray of shape (n,2) 
+        Points to use to construct a hull
+    hull : string or a pre-computed hull
+        A string denoting what kind of hull to compute (if required) or a hull
+        that has already been computed
+
+    Returns
+    --------
+    hull : A geometry-like object
+        This encodes the "space" in which to simulate the normal pattern. All points will
+        lie within this hull. Supported values are:
+        - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])
+        - an (N,2) array of points for which the bounding box will be computed & used
+        - a shapely polygon/multipolygon 
+        - a pygeos geometry
+        - a scipy.spatial.qhull.ConvexHull
     """
     if isinstance(hull, numpy.ndarray):
         assert len(hull) == 4, f"bounding box provided is not shaped correctly! {hull}"
