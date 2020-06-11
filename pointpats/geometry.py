@@ -3,7 +3,7 @@ from scipy import spatial
 from functools import singledispatch
 from libpysal.cg import alpha_shape_auto
 from libpysal.cg.kdtree import Arc_KDTree
-
+import warnings
 
 # ------------------------------------------------------------#
 # Utilities and dispatching                                   #
