@@ -1,8 +1,7 @@
 import numpy
 from scipy import spatial
-from pointpats import ripley
+from pointpats import distance_statistics as ripley, geometry, random
 from libpysal.cg import alpha_shape_auto
-from shapely import geometry
 import pygeos
 import warnings
 import pytest
@@ -38,8 +37,8 @@ d_self = spatial.distance.pdist(points)
 D_self = spatial.distance.squareform(d_self)
 try:
     numpy.random.seed(2478879)
-    random = ripley.simulate(bbox, size=500)
-    D_other = spatial.distance.cdist(points, random)
+    random_pattern = random.poisson(bbox, size=500)
+    D_other = spatial.distance.cdist(points, random_pattern)
 except:
     # will cause failures in all ripley tests later from NameErrors about D_other
     # If D_other is missing, then test_simulate should also fail.
@@ -48,30 +47,30 @@ except:
 
 def test_primitives():
     area_bbox = (bbox[2] - bbox[0]) * (bbox[3] - bbox[1])
-    assert area_bbox == ripley._area(bbox)
+    assert area_bbox == geometry.area(bbox)
     area_chull = chull.volume
-    assert area_chull == ripley._area(chull)
+    assert area_chull == geometry.area(chull)
     area_pgon = ripley._area(ashape)
     assert area_pgon == ashape.area
-    assert area_pgon == ripley._area(pygeos_ashape)
+    assert area_pgon == geometry.area(pygeos_ashape)
     point_in = list(ashape.centroid.coords)[0]
     point_out = (100, 100)
 
-    assert ripley._contains(chull, *point_in)
-    assert ripley._contains(ashape, *point_in)
-    assert ripley._contains(pygeos_ashape, *point_in)
-    assert ripley._contains(bbox, *point_in)
+    assert geometry.contains(chull, *point_in)
+    assert geometry.contains(ashape, *point_in)
+    assert geometry.contains(pygeos_ashape, *point_in)
+    assert geometry.contains(bbox, *point_in)
 
-    assert not (ripley._contains(chull, *point_out))
-    assert not (ripley._contains(ashape, *point_out))
-    assert not (ripley._contains(pygeos_ashape, *point_out))
-    assert not (ripley._contains(bbox, *point_out))
+    assert not (geometry.contains(chull, *point_out))
+    assert not (geometry.contains(ashape, *point_out))
+    assert not (geometry.contains(pygeos_ashape, *point_out))
+    assert not (geometry.contains(bbox, *point_out))
 
-    numpy.testing.assert_array_equal(bbox, ripley._bbox(bbox))
-    numpy.testing.assert_array_equal(bbox, ripley._bbox(ashape))
-    numpy.testing.assert_array_equal(bbox, ripley._bbox(pygeos_ashape))
-    numpy.testing.assert_array_equal(bbox, ripley._bbox(chull))
-    numpy.testing.assert_array_equal(bbox, ripley._bbox(points))
+    numpy.testing.assert_array_equal(bbox, geometry.bbox(bbox))
+    numpy.testing.assert_array_equal(bbox, geometry.bbox(ashape))
+    numpy.testing.assert_array_equal(bbox, geometry.bbox(pygeos_ashape))
+    numpy.testing.assert_array_equal(bbox, geometry.bbox(chull))
+    numpy.testing.assert_array_equal(bbox, geometry.bbox(points))
 
 
 def test_tree_functions():
@@ -192,25 +191,23 @@ def test_prepare():
 
 def test_simulate():
 
-    assert ripley.simulate(ashape).shape == (100, 2)
-    assert ripley.simulate(chull).shape == (100, 2)
-    assert ripley.simulate(bbox).shape == (100, 2)
+    assert random.poisson(ashape).shape == (100, 2)
+    assert random.poisson(chull).shape == (100, 2)
+    assert random.poisson(bbox).shape == (100, 2)
 
-    assert ripley.simulate(ashape, intensity=1e-2).shape == (50, 2)
-    assert ripley.simulate(chull, intensity=1e-2).shape == (52, 2)
-    assert ripley.simulate(bbox, intensity=1e-2).shape == (76, 2)
+    assert random.poisson(ashape, intensity=1e-2).shape == (50, 2)
+    assert random.poisson(chull, intensity=1e-2).shape == (52, 2)
+    assert random.poisson(bbox, intensity=1e-2).shape == (76, 2)
 
-    assert ripley.simulate(ashape, size=90).shape == (90, 2)
-    assert ripley.simulate(chull, intensity=1e-2).shape == (52, 2)
-    assert ripley.simulate(bbox, intensity=1e-2, size=3).shape == (3, 76, 2)
-    assert ripley.simulate(bbox, intensity=None, size=(10, 4)).shape == (4, 10, 2)
+    assert random.poisson(ashape, size=90).shape == (90, 2)
+    assert random.poisson(chull, intensity=1e-2).shape == (52, 2)
+    assert random.poisson(bbox, intensity=1e-2, size=3).shape == (3, 76, 2)
+    assert random.poisson(bbox, intensity=None, size=(10, 4)).shape == (4, 10, 2)
 
-    assert ripley.simulate_from(points, hull=None).shape == (12, 2)
-    assert ripley.simulate_from(points, hull=bbox).shape == (12, 2)
-    assert ripley.simulate_from(points, hull=ashape).shape == (12, 2)
-    assert ripley.simulate_from(points, hull=chull).shape == (12, 2)
-
-    assert ripley.simulate_from(points, hull=chull, size=3).shape == (3, 12, 2)
+    # still need to check the other simulators
+    # normal
+    # cluster poisson
+    # cluster normal
 
 
 def test_f():
@@ -222,25 +219,23 @@ def test_f():
     n_obs_at_dist, histogram_support = numpy.histogram(nn_other, bins=support)
     manual_f = numpy.asarray([0, *numpy.cumsum(n_obs_at_dist) / n_obs_at_dist.sum()])
     numpy.random.seed(2478879)
-    f_test = ripley.f_test(
-        points, support=support, distances=D_other, n_replications=99
-    )
+    f_test = ripley.f_test(points, support=support, distances=D_other, n_simulations=99)
 
     numpy.testing.assert_allclose(support, f_test.support)
     numpy.testing.assert_allclose(manual_f, f_test.statistic)
     numpy.testing.assert_allclose(
         f_test.pvalue < 0.05, [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1]
     )
-    assert f_test.replications is None
+    assert f_test.simulations is None
 
     f_test = ripley.f_test(
         points,
         support=support,
         distances=D_other,
-        n_replications=99,
-        keep_replications=True,
+        n_simulations=99,
+        keep_simulations=True,
     )
-    assert f_test.replications.shape == (99, 15)
+    assert f_test.simulations.shape == (99, 15)
 
 
 def test_g():
@@ -251,19 +246,19 @@ def test_g():
     n_obs_at_dist, histogram_support = numpy.histogram(nn_self, bins=support)
     numpy.random.seed(2478879)
     manual_g = numpy.asarray([0, *numpy.cumsum(n_obs_at_dist) / n_obs_at_dist.sum()])
-    g_test = ripley.g_test(points, support=support, n_replications=99)
+    g_test = ripley.g_test(points, support=support, n_simulations=99)
 
     numpy.testing.assert_allclose(support, g_test.support)
     numpy.testing.assert_allclose(manual_g, g_test.statistic)
     numpy.testing.assert_allclose(
         g_test.pvalue < 0.05, [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     )
-    assert g_test.replications is None
+    assert g_test.simulations is None
 
     g_test = ripley.g_test(
-        points, support=support, n_replications=99, keep_replications=True
+        points, support=support, n_simulations=99, keep_simulations=True
     )
-    assert g_test.replications.shape == (99, 15)
+    assert g_test.simulations.shape == (99, 15)
 
 
 def test_j():
@@ -271,16 +266,16 @@ def test_j():
     # Check j function works, matches manual, is truncated correctly
 
     numpy.random.seed(2478879)
-    j_test = ripley.j_test(points, support=support, n_replications=99)
+    j_test = ripley.j_test(points, support=support, n_simulations=99)
     numpy.random.seed(2478879)
     j_test_fullno = ripley.j_test(
-        points, support=support, n_replications=0, truncate=False
+        points, support=support, n_simulations=0, truncate=False
     )
     numpy.testing.assert_array_equal(j_test.support[:4], support[:4])
     numpy.testing.assert_array_equal(j_test_fullno.support, support)
     numpy.random.seed(2478879)
-    _, f_tmp = ripley.f_function(points, support=support)
-    _, g_tmp = ripley.g_function(points, support=support)
+    _, f_tmp = ripley.f(points, support=support)
+    _, g_tmp = ripley.g(points, support=support)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         manual_j = (1 - g_tmp) / (1 - f_tmp)
@@ -309,13 +304,13 @@ def test_k():
 def test_l():
     # -------------------------------------------------------------------------#
     # Check L Function works, can be linearized, and has the right value
-    _, k = ripley.k_function(points, support=support)
-    l_test = ripley.l_test(points, support=support, n_replications=0)
+    _, k = ripley.k(points, support=support)
+    l_test = ripley.l_test(points, support=support, n_simulations=0)
     l_test_lin = ripley.l_test(
-        points, support=support, n_replications=0, linearized=True
+        points, support=support, n_simulations=0, linearized=True
     )
 
     numpy.testing.assert_allclose(l_test.statistic, numpy.sqrt(k / numpy.pi))
     numpy.testing.assert_allclose(
-        l_test_lin.statistic, support - numpy.sqrt(k / numpy.pi)
+        l_test_lin.statistic, numpy.sqrt(k / numpy.pi) - l_test.support
     )
