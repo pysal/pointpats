@@ -261,9 +261,11 @@ def cluster_poisson(
         either an (n_replications, n_observations, 2) or (n_observations,2) array containing
         the simulated realizations. 
     """
-    hull = _prepare_hull(
-        hull, hull
-    )  # should work if input is either point set or a hull.
+    if isinstance(hull, numpy.ndarray):
+        if hull.shape == (4,):
+            hull = hull
+        else:
+            hull = _prepare_hull(hull)
 
     if isinstance(cluster_radius, numpy.ndarray):
         cluster_radii = cluster_radius.flatten()
