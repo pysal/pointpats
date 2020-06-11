@@ -1,1027 +1,765 @@
-"""
-Distance statistics for planar point patterns
+import numpy
+import warnings
+from scipy import spatial, interpolate
+from collections import namedtuple
+from .geometry import (
+    area as _area,
+    k_neighbors as _k_neighbors,
+    build_best_tree as _build_best_tree,
+)
 
-"""
-__author__ = "Serge Rey sjsrey@gmail.com"
-__all__ = ['DStatistic', 'G', 'F', 'J', 'K', 'L', 'Envelopes', 'Genv', 'Fenv', 'Jenv', 'Kenv', 'Lenv']
 
-from .process import PoissonPointProcess as csr
-import numpy as np
-from matplotlib import pyplot as plt
+from ._deprecated_distance_statistics import G, F, J, K, L, Genv, Fenv, Jenv, Kenv, Lenv
+
+__all__ = [
+    "f_function",
+    "g_function",
+    "k_function",
+    "j_function",
+    "l_function",
+    "f_test",
+    "g_test",
+    "k_test",
+    "j_test",
+    "l_test",
+]
 
 
-class DStatistic(object):
+def _prepare(coordinates, support, distances, metric, hull, edge_correction):
     """
-    Abstract Base Class for distance statistics.
-
-    Parameters
-    ----------
-    name       : string
-                 Name of the function. ("G", "F", "J", "K" or "L")
-
-    Attributes
-    ----------
-    d          : array
-                 The distance domain sequence.
-
+    prepare the arguments to convert into a standard format
+    1. cast the coordinates to a numpy array
+    2. precomputed metrics must have distances provided
+    3. metrics must be callable or string
+    4. warn if distances are specified and metric is not default
+    5. make distances a numpy.ndarray
+    6. construct the support, accepting:
+        - num_steps -> a linspace with len(support) == num_steps
+                       from zero to a quarter of the bounding box's smallest side
+        - (stop, ) -> a linspace with len(support) == 20
+                 from zero to stop
+        - (start, stop) -> a linspace with len(support) == 20
+                           from start to stop
+        - (start, stop, num_steps) -> a linspace with len(support) == num_steps
+                                      from start to stop
+        - numpy.ndarray -> passed through
     """
-    def __init__(self, name):
-        self.name = name
+    # Throw early if edge correction is requested
+    if edge_correction is not None:
+        raise NotImplementedError("Edge correction is not currently implemented.")
 
-    def plot(self, qq=False):
-        """
-        Plot the distance function
+    # cast to coordinate array
+    if isinstance(coordinates, TREE_TYPES):
+        tree = coordinates
+        coordinates = tree.data
+    else:
+        coordinates = numpy.asarray(coordinates)
+    hull = _prepare_hull(coordinates, hull)
 
-        Parameters
-        ----------
-        qq: Boolean
-            If False the statistic is plotted against distance. If Frue, the
-            quantile-quantile plot is generated, observed vs. CSR.
-        """
+    # evaluate distances
+    if (distances is None) and metric == "precomputed":
+        raise ValueError(
+            "If metric =`precomputed` then distances must"
+            " be provided as a (n,n) numpy array."
+        )
+    if not (isinstance(metric, str) or callable(metric)):
+        raise TypeError(
+            f"`metric` argument must be callable or a string. Recieved: {metric}"
+        )
+    if distances is not None and metric != "euclidean":
+        warnings.warn(
+            "Distances were provided. The specified metric will be ignored."
+            " To use precomputed distances with a custom distance metric,"
+            " do not specify a `metric` argument.",
+            stacklevel=2,
+        )
+        metric = "euclidean"
 
-        # assuming mpl
-        x = self.d
-        if qq:
-            plt.plot(self.ev, self._stat)
-            plt.plot(self.ev, self.ev)
+    if support is None:
+        support = 20
+
+    if isinstance(support, int):  # if just n_steps, use the max nnd
+        # this is O(n log n) for kdtrees & balltrees
+        tmp_tree = _build_best_tree(coordinates, metric=metric)
+        max_dist = _k_neighbors(tmp_tree, coordinates, 1)[0].max()
+        support = numpy.linspace(0, max_dist, num=support)
+    # otherwise, we need to build it using (start, stop, step) semantics
+    elif isinstance(support, tuple):
+        if len(support) == 1:  # assuming this is with zero implicit start
+            support = numpy.linspace(0, support[0], num=20)  # default support n bins
+        elif len(support) == 2:
+            support = numpy.linspace(*support, num=20)  # default support n bins
+        elif len(support) == 3:
+            support = numpy.linspace(support[0], support[1], num=support[2])
+    else:  # try to use it as is
+        try:
+            support = numpy.asarray(support)
+        except:
+            raise TypeError(
+                "`support` must be a tuple (either (start, stop, step), (start, stop) or (stop,)),"
+                " an int describing the number of breaks to use to evalute the function,"
+                " or an iterable containing the breaks to use to evaluate the function."
+                " Recieved object of type {}: {}".format(type(support), support)
+            )
+
+    return coordinates, support, distances, metric, hull, edge_correction
+
+
+# ------------------------------------------------------------#
+# Statistical Functions                                       #
+# ------------------------------------------------------------#
+
+
+def f_function(
+    coordinates,
+    support=None,
+    distances=None,
+    metric="euclidean",
+    hull=None,
+    edge_correction=None,
+):
+    """
+    coordinates : numpy.ndarray, (n,2)
+        input coordinates to function
+    support : tuple of length 1, 2, or 3, int, or numpy.ndarray
+        tuple, encoding (stop,), (start, stop), or (start, stop, num)
+        int, encoding number of equally-spaced intervals
+        numpy.ndarray, used directly within numpy.histogram
+    distances: numpy.ndarray, (n, p) or (p,)
+        distances from every point in a random point set of size p
+        to some point in `coordinates`
+    metric: str or callable
+        distance metric to use when building search tree
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+        the hull used to construct a random sample pattern, if distances is None
+    edge_correction: bool or str
+        whether or not to conduct edge correction. Not yet implemented.
+    """
+    coordinates, support, distances, metric, hull, _ = _prepare(
+        coordinates, support, distances, metric, hull, edge_correction
+    )
+    if distances is not None:
+        n = coordinates.shape[0]
+        if distances.ndim == 2:
+            k, p = distances.shape
+            if k == p == n:
+                warnings.warn(
+                    f"A full distance matrix is not required for this function, and"
+                    f" the intput matrix is a square {n},{n} matrix. Only the"
+                    f" distances from p random points to their nearest neighbor within"
+                    f" the pattern is required, as an {n},p matrix. Assuming the"
+                    f" provided distance matrix has rows pertaining to input"
+                    f" pattern and columns pertaining to the output points.",
+                    stacklevel=2,
+                )
+                distances = distances.min(axis=0)
+            elif k == n:
+                distances = distances.min(axis=0)
+            else:
+                raise ValueError(
+                    f"Distance matrix should have the same rows as the input"
+                    f" coordinates with p columns, where n may be equal to p."
+                    f" Recieved an {k},{p} distance matrix for {n} coordinates"
+                )
+        elif distances.ndim == 1:
+            p = len(distances)
+    else:
+        # Do 1000 empties. Users can control this by computing their own
+        # empty space distribution.
+        n_empty_points = 1000
+
+        randoms = poisson(hull=hull, size=(n_empty_points, 1))
+        try:
+            tree
+        except NameError:
+            tree = _build_best_tree(coordinates, metric)
+        finally:
+            distances, _ = tree.query(randoms, k=1)
+            distances = distances.squeeze()
+
+    counts, bins = numpy.histogram(distances, bins=support)
+    fracs = numpy.cumsum(counts) / counts.sum()
+
+    return bins, numpy.asarray([0, *fracs])
+
+
+def g_function(
+    coordinates, support=None, distances=None, metric="euclidean", edge_correction=None,
+):
+    """
+    coordinates : numpy.ndarray, (n,2)
+        input coordinates to function
+    support : tuple of length 1, 2, or 3, int, or numpy.ndarray
+        tuple, encoding (stop,), (start, stop), or (start, stop, num)
+        int, encoding number of equally-spaced intervals
+        numpy.ndarray, used directly within numpy.histogram
+    distances: numpy.ndarray, (n, n) or (n,)
+        distances from every point in the point to another point in `coordinates`
+    metric: str or callable
+        distance metric to use when building search tree
+    edge_correction: bool or str
+        whether or not to conduct edge correction. Not yet implemented.
+    """
+
+    coordinates, support, distances, metric, *_ = _prepare(
+        coordinates, support, distances, metric, None, edge_correction
+    )
+    if distances is not None:
+        if distances.ndim == 2:
+            if distances.shape[0] == distances.shape[1] == coordinates.shape[0]:
+                warnings.warn(
+                    "The full distance matrix is not required for this function,"
+                    " only the distance to the nearest neighbor within the pattern."
+                    " Computing this and discarding the rest.",
+                    stacklevel=2,
+                )
+                distances = distances.min(axis=1)
+            else:
+                k, p = distances.shape
+                n = coordinates.shape[0]
+                raise ValueError(
+                    " Input distance matrix has an invalid shape: {k},{p}."
+                    " Distances supplied can either be 2 dimensional"
+                    " square matrices with the same number of rows"
+                    " as `coordinates` ({n}) or 1 dimensional and contain"
+                    " the shortest distance from each point in "
+                    " `coordinates` to some other point in coordinates."
+                )
+        elif distances.ndim == 1:
+            if distances.shape[0] != coordinates.shape[0]:
+                raise ValueError(
+                    f"Distances are not aligned with coordinates! Distance"
+                    f" matrix must be (n_coordinates, n_coordinates), but recieved"
+                    f" {distances.shape} instead of ({coordinates.shape[0]},)"
+                )
         else:
-            plt.plot(x, self._stat, label='{}'.format(self.name))
-            plt.ylabel("{}(d)".format(self.name))
-            plt.xlabel('d')
-            plt.plot(x, self.ev, label='CSR')
-            plt.title("{} distance function".format(self.name))
+            raise ValueError(
+                "Distances supplied can either be 2 dimensional"
+                " square matrices with the same number of rows"
+                " as `coordinates` or 1 dimensional and contain"
+                " the shortest distance from each point in "
+                " `coordinates` to some other point in coordinates."
+                " Input matrix was {distances.ndim} dimensioanl"
+            )
+    else:
+        try:
+            tree
+        except NameError:
+            tree = _build_best_tree(coordinates, metric)
+        finally:
+            distances, indices = _k_neighbors(tree, coordinates, k=1)
+
+    counts, bins = numpy.histogram(distances.squeeze(), bins=support)
+    fracs = numpy.cumsum(counts) / counts.sum()
+
+    return bins, numpy.asarray([0, *fracs])
 
 
-class G(DStatistic):
+def j_function(
+    coordinates,
+    support=None,
+    distances=None,
+    metric="euclidean",
+    hull=None,
+    edge_correction=None,
+    truncate=True,
+):
     """
-    Estimates the nearest neighbor distance distribution function G for a
-    point pattern.
-
-    Parameters
-    ----------
-    pp         : :class:`.PointPattern`
-                 Point Pattern instance.
-    intervals  : int
-                 The length of distance domain sequence.
-    dmin       : float
-                 The minimum of the distance domain.
-    dmax       : float
-                 The maximum of the distance domain.
-    d          : sequence
-                 The distance domain sequence.
-                 If d is specified, intervals, dmin and dmax are ignored.
-
-    Attributes
-    ----------
-    name       : string
-                 Name of the function. ("G", "F", "J", "K" or "L")
-    d          : array
-                 The distance domain sequence.
-    G          : array
-                 The cumulative nearest neighbor distance distribution over d.
-
-    Notes
-    -----
-    In the analysis of planar point processes, the estimate of :math:`G` is
-    typically compared to the value expected from a completely spatial
-    random (CSR) process given as:
-
-    .. math::
-
-            G(d) = 1 - e^{-\lambda \pi  d^2}
-
-    where :math:`\lambda` is the intensity (points per unit area) of the point
-    process and :math:`d` is distance.
-
-    For a clustered pattern, the empirical function will be above the
-    expectation, while for a uniform pattern the empirical function falls below
-    the expectation.
-
+    coordinates : numpy.ndarray, (n,2)
+        input coordinates to function
+    support : tuple of length 1, 2, or 3, int, or numpy.ndarray
+        tuple, encoding (stop,), (start, stop), or (start, stop, num)
+        int, encoding number of equally-spaced intervals
+        numpy.ndarray, used directly within numpy.histogram
+    distances: tuple of numpy.ndarray
+        precomputed distances to use to evaluate the j function. 
+        The first must be of shape (n,n) or (n,) and is used in the g function.
+        the second must be of shape (n,p) or (p,) (with p possibly equal to n)
+        used in the f function.
+    metric: str or callable
+        distance metric to use when building search tree
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+        the hull used to construct a random sample pattern for the f function.
+    edge_correction: bool or str
+        whether or not to conduct edge correction. Not yet implemented.
+    truncate: bool (default: True)
+        whether or not to truncate the results when the F function reaches one. If the
+        F function is one but the G function is less than one, this function will return
+        numpy.nan values. 
     """
+    if distances is not None:
+        g_distances, f_distances = distances
+    else:
+        g_distances = f_distances = None
+    fsupport, fstats = f_function(
+        coordinates,
+        support=support,
+        distances=f_distances,
+        metric=metric,
+        hull=hull,
+        edge_correction=edge_correction,
+    )
 
-    def __init__(self, pp, intervals=10, dmin=0.0, dmax=None, d=None):
-        res = _g(pp, intervals, dmin, dmax, d)
-        self.d = res[:, 0]
-        self.G = self._stat = res[:, 1]
-        self.ev = 1 - np.exp(-pp.lambda_window * np.pi * self.d * self.d)
-        self.pp = pp
-        super(G, self).__init__(name="G")
+    gsupport, gstats = g_function(
+        coordinates,
+        support=support,
+        distances=g_distances,
+        metric=metric,
+        edge_correction=edge_correction,
+    )
+
+    if isinstance(support, numpy.ndarray):
+        if not numpy.allclose(gsupport, support):
+            gfunction = interpolate.interp1d(gsupport, gstats, fill_value=1)
+            gstats = gfunction(support)
+            gsupport = support
+    if not (numpy.allclose(gsupport, fsupport)):
+        ffunction = interpolate.interp1d(fsupport, fstats, fill_value=1)
+        fstats = ffunction(gsupport)
+        fsupport = gsupport
+
+    with numpy.errstate(invalid="ignore", divide="ignore"):
+        hazard_ratio = (1 - gstats) / (1 - fstats)
+    if truncate:
+        both_zero = (gstats == 1) & (fstats == 1)
+        hazard_ratio[both_zero] = 1
+        is_inf = numpy.isinf(hazard_ratio)
+        first_inf = is_inf.argmax()
+        if not is_inf.any():
+            first_inf = len(hazard_ratio)
+        if first_inf < len(hazard_ratio) and isinstance(support, int):
+            warnings.warn(
+                f"requested {support} bins to evaluate the J function, but"
+                f" it reaches infinity at d={gsupport[first_inf]:.4f}, meaning only"
+                f" {first_inf} bins will be used to characterize the J function.",
+                stacklevel=2,
+            )
+    else:
+        first_inf = len(gsupport) + 1
+    return (gsupport[:first_inf], hazard_ratio[:first_inf])
 
 
-class F(DStatistic):
+def k_function(
+    coordinates, support=None, distances=None, metric="euclidean", edge_correction=None,
+):
     """
-    Estimates the empty space distribution function for a point pattern: F(d).
-
-    Parameters
-    ----------
-    pp         : :class:`.PointPattern`
-                 Point Pattern instance.
-    n          : int
-                 Number of empty space points (random points).
-    intervals  : int
-                 The length of distance domain sequence.
-    dmin       : float
-                 The minimum of the distance domain.
-    dmax       : float
-                 The maximum of the distance domain.
-    d          : sequence
-                 The distance domain sequence.
-                 If d is specified, intervals, dmin and dmax are ignored.
-
-    Attributes
-    ----------
-    d          : array
-                 The distance domain sequence.
-    G          : array
-                 The cumulative empty space nearest event distance distribution
-                 over d.
-
-    Notes
-    -----
-    In the analysis of planar point processes, the estimate of :math:`F` is
-    typically compared to the value expected from a process that displays
-    complete spatial randomness (CSR):
-
-    .. math::
-
-            F(d) = 1 - e^{-\lambda \pi  d^2}
-
-    where :math:`\lambda` is the intensity (points per unit area) of the point
-    process and :math:`d` is distance.
-
-    The expectation is identical to the expectation for the :class:`G` function
-    for a CSR process.  However, for a clustered pattern, the empirical G
-    function will be below the expectation, while for a uniform pattern the
-    empirical function falls above the expectation.
-
+    coordinates : numpy.ndarray, (n,2)
+        input coordinates to function
+    support : tuple of length 1, 2, or 3, int, or numpy.ndarray
+        tuple, encoding (stop,), (start, stop), or (start, stop, num)
+        int, encoding number of equally-spaced intervals
+        numpy.ndarray, used directly within numpy.histogram
+    distances: numpy.ndarray, (n, p) or (p,)
+        distances from every point in a random point set of size p
+        to some point in `coordinates`
+    metric: str or callable
+        distance metric to use when building search tree
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+        the hull used to construct a random sample pattern, if distances is None
+    edge_correction: bool or str
+        whether or not to conduct edge correction. Not yet implemented.
     """
+    coordinates, support, distances, metric, hull, edge_correction = _prepare(
+        coordinates, support, distances, metric, None, edge_correction
+    )
+    n = coordinates.shape[0]
+    upper_tri_n = n * (n - 1) * 0.5
+    if distances is not None:
+        if distances.ndim == 1:
+            if distances.shape[0] != upper_tri_n:
+                raise ValueError(
+                    f"Shape of inputted distances is not square, nor is the upper triangular"
+                    f" matrix matching the number of input points. The shape of the input matrix"
+                    f" is {distances.shape}, but required shape is ({upper_tri_n},) or ({n},{n})"
+                )
+            upper_tri_distances = distances
+        elif distances.shape[0] == distances.shape[1] == n:
+            upper_tri_distances = distances[numpy.triu_indices_from(distances, k=1)]
+        else:
+            raise ValueError(
+                f"Shape of inputted distances is not square, nor is the upper triangular"
+                f" matrix matching the number of input points. The shape of the input matrix"
+                f" is {distances.shape}, but required shape is ({upper_tri_n},) or ({n},{n})"
+            )
+    else:
+        upper_tri_distances = spatial.distance.pdist(coordinates, metric=metric)
+    n_pairs_less_than_d = (upper_tri_distances < support.reshape(-1, 1)).sum(axis=1)
+    intensity = n / _area(hull)
+    k_estimate = ((n_pairs_less_than_d * 2) / n) / intensity
+    return support, k_estimate
 
-    def __init__(self, pp, n=100, intervals=10, dmin=0.0, dmax=None, d=None):
-        res = _f(pp, n, intervals, dmin, dmax, d)
-        self.d = res[:, 0]
-        self.F = self._stat = res[:, 1]
-        self.ev = 1 - np.exp(-pp.lambda_window * np.pi * self.d * self.d)
-        super(F, self).__init__(name="F")
 
-
-class J(DStatistic):
+def l_function(
+    coordinates,
+    support=None,
+    permutations=9999,
+    distances=None,
+    metric="euclidean",
+    edge_correction=None,
+    linearized=False,
+):
     """
-    Estimates the J function for a point pattern :cite:`VanLieshout1996`
-
-    Parameters
-    ----------
-    pp         : :class:`.PointPattern`
-                 Point Pattern instance.
-    n          : int
-                 Number of empty space points (random points).
-    intervals  : int
-                 The length of distance domain sequence.
-    dmin       : float
-                 The minimum of the distance domain.
-    dmax       : float
-                 The maximum of the distance domain.
-    d          : sequence
-                 The distance domain sequence.
-                 If d is specified, intervals, dmin and dmax are ignored.
-
-    Attributes
-    ----------
-    d          : array
-                 The distance domain sequence.
-    j          : array
-                 F function over d.
-
-    Notes
-    -----
-
-    The :math:`J` function is a ratio of the hazard functions defined for
-    :math:`G` and :math:`F`:
-
-    .. math::
-
-            J(d) = \\frac{1-G(d) }{1-F(d)}
-
-    where :math:`G(d)` is the nearest neighbor distance distribution function
-    (see :class:`G`)
-    and :math:`F(d)` is the empty space function (see :class:`F`).
-
-    For a CSR process the J function equals 1. Empirical values larger than 1
-    are indicative of uniformity, while values below 1 suggest clustering.
-
-
-    """
-    def __init__(self, pp, n=100, intervals=10, dmin=0.0, dmax=None, d=None):
-        res = _j(pp, n, intervals, dmin, dmax, d)
-        self.d = res[:, 0]
-        self.j = self._stat = res[:, 1]
-        self.ev = self.j / self.j
-        super(J, self).__init__(name="J")
-
-
-class K(DStatistic):
-    """
-    Estimates the  K function for a point pattern.
-
-    Parameters
-    ----------
-    pp         : :class:`.PointPattern`
-                 Point Pattern instance.
-    intervals  : int
-                 The length of distance domain sequence.
-    dmin       : float
-                 The minimum of the distance domain.
-    dmax       : float
-                 The maximum of the distance domain.
-    d          : sequence
-                 The distance domain sequence.
-                 If d is specified, intervals, dmin and dmax are ignored.
-
-    Attributes
-    ----------
-    d          : array
-                 The distance domain sequence.
-    k          : array
-                 K function over d.
-
-    Notes
-    -----
-
-    The :math:`K` function is estimated using
-
-    .. math::
-
-             \\hat{K}(h) = \\frac{a}{n (n-1)} \\sum_{i} \\sum_{j \\ne i} I(d_{i,j} \\le h)
-
-    where :math:`a` is the area of the window, :math:`n` the number of event points, and :math:`I(d_{i,j} \le h)` is an indicator function returning 1 when points i and j are separated by a distance of :math:`h` or less, 0 otherwise.
-
-    """
-    def __init__(self, pp, intervals=10, dmin=0.0, dmax=None, d=None):
-        res = _k(pp, intervals, dmin, dmax, d)
-        self.d = res[:, 0]
-        self.k = self._stat = res[:, 1]
-        self.ev = np.pi * self.d * self.d
-        super(K, self).__init__(name="K")
-
-
-class L(DStatistic):
-    """
-    Estimates the :math:`L` function for a point pattern :cite:`Sullivan2010`.
-
-    Parameters
-    ----------
-    pp         : :class:`.PointPattern`
-                 Point Pattern instance.
-    intervals  : int
-                 The length of distance domain sequence.
-    dmin       : float
-                 The minimum of the distance domain.
-    dmax       : float
-                 The maximum of the distance domain.
-    d          : sequence
-                 The distance domain sequence.
-                 If d is specified, intervals, dmin and dmax are ignored.
-
-    Attributes
-    ----------
-    d          : array
-                 The distance domain sequence.
-    l          : array
-                 L function over d.
-
-    Notes
-    -----
-
-    In the analysis of planar point processes, the :math:`L` function
-    is a scaled version of :math:`K` function. Its estimate is also
-    typically compared to the value expected from a process that displays
-    complete spatial randomness (CSR):
-
-    .. math::
-
-            L(d) = \\sqrt{\\frac{K(d)}{\\pi}}-d
-
-    where :math:`K(d)` is the estimator for the :math:`K` function
-    and :math:`d` is distance.
-
-    The expectation under the null of CSR is 0 (a horizonal line at 0).
-    For a clustered pattern, the empirical :math:`L`
-    function will be above the expectation, while for a uniform pattern the
-    empirical function falls below the expectation.
-
-    """
-    def __init__(self, pp, intervals=10, dmin=0.0, dmax=None, d=None):
-        res = _l(pp, intervals, dmin, dmax, d)
-        self.d = res[:, 0]
-        self.l = self._stat = res[:, 1]
-        super(L, self).__init__(name="L")
-
-    def plot(self):
-        # assuming mpl
-        x = self.d
-        plt.plot(x, self._stat, label='{}'.format(self.name))
-        plt.ylabel("{}(d)".format(self.name))
-        plt.xlabel('d')
-        plt.title("{} distance function".format(self.name))
-
-
-def _g(pp, intervals=10, dmin=0.0, dmax=None, d=None):
-    """
-    Estimate the nearest neighbor distances function G.
-
-    Parameters
-    ----------
-    pp       : :class:`.PointPattern`
-               Point Pattern instance.
-    intevals : int
-               Number of intervals to evaluate F over.
-    dmin     : float
-               Lower limit of distance range.
-    dmax     : float
-               Upper limit of distance range. If dmax is None, dmax will be set
-               to maximum nearest neighor distance.
-    d        : sequence
-               The distance domain sequence. If d is specified, intervals, dmin
-               and dmax are ignored.
-
-    Returns
-    -------
-             : array
-               A 2-dimensional numpy array of 2 columns. The first column is
-               the distance domain sequence for the point pattern. The second
-               column is the cumulative nearest neighbor distance distribution.
-
-    Notes
-    -----
-    See :class:`G`.
-
-    """
-    if d is None:
-        w = pp.max_nnd/intervals
-        if dmax:
-            w = dmax/intervals
-        d = [w*i for i in range(intervals + 2)]
-    cdf = [0] * len(d)
-    for i, d_i in enumerate(d):
-        smaller = [nndi for nndi in pp.nnd if nndi <= d_i]
-        cdf[i] = len(smaller)*1./pp.n
-    return np.vstack((d, cdf)).T
-
-
-def _f(pp, n=100, intervals=10, dmin=0.0, dmax=None, d=None):
-    """
-    F empty space function.
-
-    Parameters
-    ----------
-    pp       : :class:`.PointPattern`
-               Point Pattern instance.
-    n        : int
-               Number of empty space points (random points).
-    intevals : int
-               Number of intervals to evaluate F over.
-    dmin     : float
-               Lower limit of distance range.
-    dmax     : float
-               Upper limit of distance range. If dmax is None, dmax will be set
-               to maximum nearest neighor distance.
-    d        : sequence
-               The distance domain sequence. If d is specified, intervals, dmin
-               and dmax are ignored.
-
-    Returns
-    -------
-             : array
-               A 2-dimensional numpy array of 2 columns. The first column is
-               the distance domain sequence for the point pattern. The second
-               column is corresponding F function.
-
-    Notes
-    -----
-    See :class:`.F`
-
+    coordinates : numpy.ndarray, (n,2)
+        input coordinates to function
+    support : tuple of length 1, 2, or 3, int, or numpy.ndarray
+        tuple, encoding (stop,), (start, stop), or (start, stop, num)
+        int, encoding number of equally-spaced intervals
+        numpy.ndarray, used directly within numpy.histogram
+    distances: numpy.ndarray, (n, p) or (p,)
+        distances from every point in a random point set of size p
+        to some point in `coordinates`
+    metric: str or callable
+        distance metric to use when building search tree
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+        the hull used to construct a random sample pattern, if distances is None
+    edge_correction: bool or str
+        whether or not to conduct edge correction. Not yet implemented.
+    linearized : bool
+        whether or not to subtract l from its expected value (support) at each 
+        distance bin. This centers the l function on zero for all distances.
+        Proposed by Besag (1977) #TODO: fix besag ref
     """
 
-    # get a csr pattern in window of pp
-    c = csr(pp.window, n, 1, asPP=True).realizations[0]
-    # for each point in csr pattern find the closest point in pp and the
-    # associated distance
-    nnids, nnds = pp.knn_other(c, k=1)
+    support, k_estimate = k_function(
+        coordinates,
+        support=support,
+        distances=distances,
+        metric=metric,
+        edge_correction=edge_correction,
+    )
 
-    if d is None:
-        w = pp.max_nnd/intervals
-        if dmax:
-            w = dmax/intervals
-        d = [w*i for i in range(intervals + 2)]
-    cdf = [0] * len(d)
+    l = numpy.sqrt(k_estimate / numpy.pi)
 
-    for i, d_i in enumerate(d):
-        smaller = [nndi for nndi in nnds if nndi <= d_i]
-        cdf[i] = len(smaller)*1./n
-    return np.vstack((d, cdf)).T
+    if linearized:
+        return support, l - support
+    return support, l
 
 
-def _j(pp, n=100, intervals=10, dmin=0.0, dmax=None, d=None):
+# ------------------------------------------------------------#
+# Statistical Tests based on Ripley Functions                 #
+# ------------------------------------------------------------#
+
+FtestResult = namedtuple(
+    "FtestResult", ("support", "statistic", "pvalue", "simulations")
+)
+GtestResult = namedtuple(
+    "GtestResult", ("support", "statistic", "pvalue", "simulations")
+)
+JtestResult = namedtuple(
+    "JtestResult", ("support", "statistic", "pvalue", "simulations")
+)
+KtestResult = namedtuple(
+    "KtestResult", ("support", "statistic", "pvalue", "simulations")
+)
+LtestResult = namedtuple(
+    "LtestResult", ("support", "statistic", "pvalue", "simulations")
+)
+
+_ripley_dispatch = {
+    "F": (f_function, FtestResult),
+    "G": (g_function, GtestResult),
+    "J": (j_function, JtestResult),
+    "K": (k_function, KtestResult),
+    "L": (l_function, LtestResult),
+}
+
+
+def _ripley_test(
+    calltype,
+    coordinates,
+    support=None,
+    distances=None,
+    metric="euclidean",
+    hull=None,
+    edge_correction=None,
+    keep_simulations=False,
+    n_simulations=9999,
+    **kwargs,
+):
+    stat_function, result_container = _ripley_dispatch.get(calltype)
+    core_kwargs = dict(support=support, metric=metric, edge_correction=edge_correction,)
+    tree = _build_best_tree(coordinates, metric=metric)
+
+    if calltype in ("F", "J"):  # these require simulations
+        core_kwargs["hull"] = hull
+        # amortize to avoid doing this every time
+        empty_space_points = poisson(coordinates, size=(1000, 1))
+        if distances is None:
+            empty_space_distances, _ = _k_neighbors(tree, empty_space_points, k=1)
+            if calltype == "F":
+                distances = empty_space_distances.squeeze()
+            else:  # calltype == 'J':
+                n_distances, _ = _k_neighbors(tree, coordinates, k=1)
+                distances = (n_distances.squeeze(), empty_space_distances.squeeze())
+        else:
+            pass
+    core_kwargs.update(**kwargs)
+
+    observed_support, observed_statistic = stat_function(
+        tree, distances=distances, **core_kwargs
+    )
+    core_kwargs["support"] = observed_support
+
+    if keep_simulations:
+        simulations = numpy.empty((len(observed_support), n_simulations)).T
+    pvalues = numpy.ones_like(observed_support)
+    for i_replication in range(n_simulations):
+        random_i = poisson(tree.data)
+        if calltype in ("F", "J"):
+            random_tree = _build_best_tree(random_i, metric)
+            empty_distances, _ = random_tree.query(empty_space_points, k=1)
+            if calltype == "F":
+                core_kwargs["distances"] = empty_distances.squeeze()
+            else:  # calltype == 'J':
+                n_distances, _ = _k_neighbors(random_tree, random_i, k=1)
+                core_kwargs["distances"] = (
+                    n_distances.squeeze(),
+                    empty_distances.squeeze(),
+                )
+        rep_support, simulations_i = stat_function(random_i, **core_kwargs)
+        pvalues += simulations_i >= observed_statistic
+        if keep_simulations:
+            simulations[i_replication] = simulations_i
+    pvalues /= n_simulations + 1
+    pvalues = numpy.minimum(pvalues, 1 - pvalues)
+    return result_container(
+        observed_support,
+        observed_statistic,
+        pvalues,
+        simulations if keep_simulations else None,
+    )
+
+
+def f_test(
+    coordinates,
+    support=None,
+    distances=None,
+    metric="euclidean",
+    hull=None,
+    edge_correction=None,
+    keep_simulations=False,
+    n_simulations=9999,
+):
     """
-    J function: Ratio of hazard functions for F and G.
-
-    Parameters
-    ----------
-    pp       : :class:`.PointPattern`
-               Point Pattern instance.
-    n        : int
-               Number of empty space points (random points).
-    intevals : int
-               Number of intervals to evaluate F over.
-    dmin     : float
-               Lower limit of distance range.
-    dmax     : float
-               Upper limit of distance range. If dmax is None, dmax will be set
-               to maximum nearest neighor distance.
-    d        : sequence
-               The distance domain sequence. If d is specified, intervals, dmin
-               and dmax are ignored.
-
-    Returns
-    -------
-             : array
-               A 2-dimensional numpy array of 2 columns. The first column is
-               the distance domain sequence for the point pattern. The second
-               column is corresponding J function.
-
-    Notes
-    -----
-    See :class:`.J`
-
-    """
-
-    F = _f(pp, n, intervals=intervals, dmin=dmin, dmax=dmax, d=d)
-    G = _g(pp, intervals=intervals, dmin=dmin, dmax=dmax, d=d)
-    FC = 1 - F[:, 1]
-    GC = 1 - G[:, 1]
-    last_id = len(GC) + 1
-    if np.any(FC == 0):
-        last_id = np.where(FC == 0)[0][0]
-
-    return np.vstack((F[:last_id, 0], GC[:last_id]/FC[:last_id])).T
-
-
-def _k(pp, intervals=10, dmin=0.0, dmax=None, d=None):
-    """
-    Interevent K function.
-
-    Parameters
-    ----------
-    pp       : :class:`.PointPattern`
-               Point Pattern instance.
-    n        : int
-               Number of empty space points (random points).
-    intevals : int
-               Number of intervals to evaluate F over.
-    dmin     : float
-               Lower limit of distance range.
-    dmax     : float
-               Upper limit of distance range. If dmax is None, dmax will be set to one-quarter of the minimum side of the minimum bounding rectangle.
-    d        : sequence
-               The distance domain sequence. If d is specified, intervals, dmin
-               and dmax are ignored.
-
-    Returns
-    -------
-    kcdf     : array
-               A 2-dimensional numpy array of 2 columns. The first column is
-               the distance domain sequence for the point pattern. The second
-               column is corresponding K function.
-
-    Notes
-    -----
-
-    See :class:`.K`
-    """
-
-    if d is None:
-        w = pp.rot/intervals
-        if dmax:
-            w = dmax/intervals
-        d = [w*i for i in range(intervals + 2)]
-    den = pp.lambda_window * (pp.n - 1)
-    kcdf = np.asarray([(di, len(pp.tree.query_pairs(di)) * 2 / den  ) for di in d])
-    return kcdf
-
-
-def _l(pp, intervals=10, dmin=0.0, dmax=None, d=None):
-    """
-    Interevent L function.
-
-    Parameters
-    ----------
-    pp       : :class:`.PointPattern`
-               Point Pattern instance.
-    n        : int
-               Number of empty space points (random points).
-    intevals : int
-               Number of intervals to evaluate F over.
-    dmin     : float
-               Lower limit of distance range.
-    dmax     : float
-               Upper limit of distance range. If dmax is None, dmax will be set
-               to length of bounding box diagonal.
-    d        : sequence
-               The distance domain sequence. If d is specified, intervals, dmin
-               and dmax are ignored.
-
-    Returns
-    -------
-    kf       : array
-               A 2-dimensional numpy array of 2 columns. The first column is
-               the distance domain sequence for the point pattern. The second
-               column is corresponding L function.
-
-    Notes
-    -----
-    See :class:`.L`
-
-    """
-
-    kf = _k(pp, intervals, dmin, dmax, d)
-    kf[:, 1] = np.sqrt(kf[:, 1] / np.pi) - kf[:, 0]
-    return kf
-
-
-class Envelopes(object):
-    """
-    Abstract base class for simulation envelopes.
-
-    Parameters
-    ----------
-    pp          : :class:`.PointPattern`
-                  Point Pattern instance.
-    intervals   : int
-                  The length of distance domain sequence. Default is 10.
-    dmin        : float
-                  The minimum of the distance domain.
-    dmax        : float
-                  The maximum of the distance domain.
-    d           : sequence
-                  The distance domain sequence.
-                  If d is specified, intervals, dmin and dmax are ignored.
-    pct         : float
-                  1-alpha, alpha is the significance level. Default is 0.05,
-                  1-alpha is the confidence level for the envelope.
-    realizations: :class:`.PointProcess`
-                  Point process instance with more than 1 realizations.
-
-    Attributes
-    ----------
-    name        : string
-                  Name of the function. ("G", "F", "J", "K" or "L")
-    observed    : array
-                  A 2-dimensional numpy array of 2 columns. The first column is
-                  the distance domain sequence for the observed point pattern.
-                  The second column is the specific function ("G", "F", "J",
-                  "K" or "L") over the distance domain sequence for the
-                  observed point pattern.
-    low         : array
-                  A 1-dimensional numpy array. Lower bound of the simulation
-                  envelope.
-    high        : array
-                  A 1-dimensional numpy array. Higher bound of the simulation
-                  envelope.
-    mean        : array
-                  A 1-dimensional numpy array. Mean values of the simulation
-                  envelope.
-
-    """
-    def __init__(self, *args,  **kwargs):
-        # setup arguments
-        self.name = kwargs['name']
-
-        # calculate observed function
-        self.pp = args[0]
-        self.observed = self.calc(*args, **kwargs)
-        self.d = self.observed[:, 0]  # domain to be used in all realizations
-
-        # do realizations
-        self.mapper(kwargs['realizations'])
-
-    def mapper(self, realizations):
-        reals = realizations.realizations
-        res = np.asarray([self.calc(reals[p]) for p in reals])
-
-        # When calculating the J function for all the simulations, the length
-        # of the returned interval domains might be different.
-
-        if self.name == "J":
-            res = []
-            for p in reals:
-                j = self.calc(reals[p])
-                if j.shape[0] < self.d.shape[0]:
-                    diff = self.d.shape[0]-j.shape[0]
-                    for i in range(diff):
-                        j = np.append(j, [[self.d[i+diff], np.inf]], axis=0)
-                res.append(j)
-            res = np.array(res)
-
-        res = res[:, :, -1]
-        res.sort(axis=0)
-        nres = len(res)
-        self.low = res[np.int(nres * self.pct/2.)]
-        self.high = res[np.int(nres * (1-self.pct/2.))]
-        self.mean = res.mean(axis=0)
-
-    def calc(self, *args, **kwargs):
-        print('implement in subclass')
-
-    def plot(self):
-        # assuming mpl
-        x = self.d
-        plt.plot(x, self.observed[:, 1], label='{}'.format(self.name))
-        plt.plot(x, self.mean, 'g-.', label='CSR')
-        plt.plot(x, self.low, 'r-.', label='LB')
-        plt.plot(x, self.high, 'r-.', label="UB")
-        plt.ylabel("{}(d)".format(self.name))
-        plt.xlabel('d')
-        plt.title("{} Simulation Envelopes".format(self.name))
-        plt.legend(loc=0)
-
-
-class Genv(Envelopes):
-    """
-    Simulation envelope for G function.
-
-    Parameters
-    ----------
-    pp          : :class:`.PointPattern`
-                  Point Pattern instance.
-    intervals   : int
-                  The length of distance domain sequence. Default is 10.
-    dmin        : float
-                  The minimum of the distance domain.
-    dmax        : float
-                  Upper limit of distance range. If dmax is None, dmax will be
-                  set to maximum nearest neighbor distance.
-    d           : sequence
-                  The distance domain sequence.
-                  If d is specified, intervals, dmin and dmax are ignored.
-    pct         : float
-                  1-alpha, alpha is the significance level. Default is 0.05,
-                  which means 95% confidence level for the envelopes.
-    realizations: :class:`.PointProcess`
-                  Point process instance with more than 1 realizations.
-
-    Attributes
-    ----------
-    name        : string
-                  Name of the function. ("G", "F", "J", "K" or "L")
-    observed    : array
-                  A 2-dimensional numpy array of 2 columns. The first column is
-                  the distance domain sequence for the observed point pattern.
-                  The second column is cumulative nearest neighbor distance
-                  distribution (G function) for the observed point pattern.
-    low         : array
-                  A 1-dimensional numpy array. Lower bound of the simulation
-                  envelope.
-    high        : array
-                  A 1-dimensional numpy array. Higher bound of the simulation
-                  envelope.
-    mean        : array
-                  A 1-dimensional numpy array. Mean values of the simulation
-                  envelope.
-
-    Examples
-    --------
-    .. plot::
-
-       >>> import libpysal as ps
-       >>> from pointpats import Genv, PoissonPointProcess, Window
-       >>> from libpysal.cg import shapely_ext
-       >>> va = ps.io.open(ps.examples.get_path("vautm17n.shp"))
-       >>> polys = [shp for shp in va]
-       >>> state = shapely_ext.cascaded_union(polys)
-       >>> pp = PoissonPointProcess(Window(state.parts), 100, 1, asPP=True).realizations[0]
-       >>> csrs = PoissonPointProcess(pp.window, 100, 100, asPP=True)
-       >>> genv_bb = Genv(pp, realizations=csrs)
-       >>> genv_bb.plot()
-
+    coordinates : numpy.ndarray, (n,2)
+        input coordinates to function
+    support : tuple of length 1, 2, or 3, int, or numpy.ndarray
+        tuple, encoding (stop,), (start, stop), or (start, stop, num)
+        int, encoding number of equally-spaced intervals
+        numpy.ndarray, used directly within numpy.histogram
+    distances: numpy.ndarray, (n, p) or (p,)
+        distances from every point in a random point set of size p
+        to some point in `coordinates`
+    metric: str or callable
+        distance metric to use when building search tree
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+        the hull used to construct a random sample pattern, if distances is None
+    edge_correction: bool or str
+        whether or not to conduct edge correction. Not yet implemented.
+    keep_simulations: bool
+        whether or not to keep the simulation envelopes. If so, 
+        will be returned as the result's simulations attribute
+    n_simulations: int
+        how many simulations to conduct, assuming that the reference pattern
+        has complete spatial randomness. 
     """
 
-    def __init__(self, pp, intervals=10, dmin=0.0, dmax=None, d=None, pct=0.05,
-                 realizations=None):
-        self.pp = pp
-        self.intervals = intervals
-        self.dmin = dmin
-        self.dmax = dmax
-        self.d = d
-        self.pct = pct
-        super(Genv, self).__init__(pp, realizations=realizations, name="G")
-
-    def calc(self, *args, **kwargs):
-        pp = args[0]
-        return _g(pp, intervals=self.intervals, dmin=self.dmin, dmax=self.dmax,
-                  d=self.d)
+    return _ripley_test(
+        "F",
+        coordinates,
+        support=support,
+        distances=distances,
+        metric=metric,
+        hull=hull,
+        edge_correction=edge_correction,
+        keep_simulations=keep_simulations,
+        n_simulations=n_simulations,
+    )
 
 
-class Fenv(Envelopes):
+def g_test(
+    coordinates,
+    support=None,
+    distances=None,
+    metric="euclidean",
+    hull=None,
+    edge_correction=None,
+    keep_simulations=False,
+    n_simulations=9999,
+):
     """
-    Simulation envelope for F function.
-
-    Parameters
-    ----------
-    pp          : :class:`.PointPattern`
-                  Point Pattern instance.
-    n           : int
-                  Number of empty space points (random points).
-    intervals   : int
-                  The length of distance domain sequence. Default is 10.
-    dmin        : float
-                  The minimum of the distance domain.
-    dmax        : float
-                  Upper limit of distance range. If dmax is None, dmax will be
-                  set to maximum nearest neighbor distance.
-    d           : sequence
-                  The distance domain sequence.
-                  If d is specified, intervals, dmin and dmax are ignored.
-    pct         : float
-                  1-alpha, alpha is the significance level. Default is 0.05,
-                  which means 95% confidence level for the envelopes.
-    realizations: :class:`.PointProcess`
-                  Point process instance with more than 1 realizations.
-
-    Attributes
-    ----------
-    name        : string
-                  Name of the function. ("G", "F", "J", "K" or "L")
-    observed    : array
-                  A 2-dimensional numpy array of 2 columns. The first column is
-                  the distance domain sequence for the observed point pattern.
-                  The second column is F function for the observed point
-                  pattern.
-    low         : array
-                  A 1-dimensional numpy array. Lower bound of the simulation
-                  envelope.
-    high        : array
-                  A 1-dimensional numpy array. Higher bound of the simulation
-                  envelope.
-    mean        : array
-                  A 1-dimensional numpy array. Mean values of the simulation
-                  envelope.
-
-    Examples
-    --------
-    .. plot::
-
-       >>> import libpysal as ps
-       >>> from libpysal.cg import shapely_ext
-       >>> from pointpats import PoissonPointProcess,Window,Fenv
-       >>> va = ps.io.open(ps.examples.get_path("vautm17n.shp"))
-       >>> polys = [shp for shp in va]
-       >>> state = shapely_ext.cascaded_union(polys)
-       >>> pp = PoissonPointProcess(Window(state.parts), 100, 1, asPP=True).realizations[0]
-       >>> csrs = PoissonPointProcess(pp.window, 100, 100, asPP=True)
-       >>> fenv = Fenv(pp, realizations=csrs)
-       >>> fenv.plot()
-
+    coordinates : numpy.ndarray, (n,2)
+        input coordinates to function
+    support : tuple of length 1, 2, or 3, int, or numpy.ndarray
+        tuple, encoding (stop,), (start, stop), or (start, stop, num)
+        int, encoding number of equally-spaced intervals
+        numpy.ndarray, used directly within numpy.histogram
+    distances: numpy.ndarray, (n, p) or (p,)
+        distances from every point in a random point set of size p
+        to some point in `coordinates`
+    metric: str or callable
+        distance metric to use when building search tree
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+        the hull used to construct a random sample pattern, if distances is None
+    edge_correction: bool or str
+        whether or not to conduct edge correction. Not yet implemented.
+    keep_simulations: bool
+        whether or not to keep the simulation envelopes. If so, 
+        will be returned as the result's simulations attribute
+    n_simulations: int
+        how many simulations to conduct, assuming that the reference pattern
+        has complete spatial randomness. 
     """
-    def __init__(self, pp, n=100, intervals=10, dmin=0.0, dmax=None, d=None,
-                 pct=0.05, realizations=None):
-        self.pp = pp
-        self.n = n
-        self.intervals = intervals
-        self.dmin = dmin
-        self.dmax = dmax
-        self.d = d
-        self.pct = pct
-        super(Fenv, self).__init__(pp, realizations=realizations, name="F")
-
-    def calc(self, *args, **kwargs):
-        pp = args[0]
-        return _f(pp, self.n, intervals=self.intervals, dmin=self.dmin,
-                  dmax=self.dmax, d=self.d)
+    return _ripley_test(
+        "G",
+        coordinates,
+        support=support,
+        distances=distances,
+        metric=metric,
+        hull=hull,
+        edge_correction=edge_correction,
+        keep_simulations=keep_simulations,
+        n_simulations=n_simulations,
+    )
 
 
-class Jenv(Envelopes):
+def j_test(
+    coordinates,
+    support=None,
+    distances=None,
+    metric="euclidean",
+    hull=None,
+    edge_correction=None,
+    truncate=True,
+    keep_simulations=False,
+    n_simulations=9999,
+):
     """
-    Simulation envelope for J function.
-
-    Parameters
-    ----------
-    pp          : :class:`.PointPattern`
-                  Point Pattern instance.
-    n           : int
-                  Number of empty space points (random points).
-    intervals   : int
-                  The length of distance domain sequence. Default is 10.
-    dmin        : float
-                  The minimum of the distance domain.
-    dmax        : float
-                  Upper limit of distance range. If dmax is None, dmax will be
-                  set to maximum nearest neighbor distance.
-    d           : sequence
-                  The distance domain sequence.
-                  If d is specified, intervals, dmin and dmax are ignored.
-    pct         : float
-                  1-alpha, alpha is the significance level. Default is 0.05,
-                  which means 95% confidence level for the envelopes.
-    realizations: :class:`.PointProcess`
-                  Point process instance with more than 1 realizations.
-
-    Attributes
-    ----------
-    name        : string
-                  Name of the function. ("G", "F", "J", "K" or "L")
-    observed    : array
-                  A 2-dimensional numpy array of 2 columns. The first column is
-                  the distance domain sequence for the observed point pattern.
-                  The second column is J function for the observed point
-                  pattern.
-    low         : array
-                  A 1-dimensional numpy array. Lower bound of the simulation
-                  envelope.
-    high        : array
-                  A 1-dimensional numpy array. Higher bound of the simulation
-                  envelope.
-    mean        : array
-                  A 1-dimensional numpy array. Mean values of the simulation
-                  envelope.
-
-    Examples
-    --------
-    .. plot::
-
-       >>> import libpysal as ps
-       >>> from pointpats import Jenv, PoissonPointProcess, Window
-       >>> from libpysal.cg import shapely_ext
-       >>> va = ps.io.open(ps.examples.get_path("vautm17n.shp"))
-       >>> polys = [shp for shp in va]
-       >>> state = shapely_ext.cascaded_union(polys)
-       >>> pp = PoissonPointProcess(Window(state.parts), 100, 1, asPP=True).realizations[0]
-       >>> csrs = PoissonPointProcess(pp.window, 100, 100, asPP=True)
-       >>> jenv = Jenv(pp, realizations=csrs)
-       >>> jenv.plot()
-
+    coordinates : numpy.ndarray, (n,2)
+        input coordinates to function
+    support : tuple of length 1, 2, or 3, int, or numpy.ndarray
+        tuple, encoding (stop,), (start, stop), or (start, stop, num)
+        int, encoding number of equally-spaced intervals
+        numpy.ndarray, used directly within numpy.histogram
+    distances: numpy.ndarray, (n, p) or (p,)
+        distances from every point in a random point set of size p
+        to some point in `coordinates`
+    metric: str or callable
+        distance metric to use when building search tree
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+        the hull used to construct a random sample pattern, if distances is None
+    edge_correction: bool or str
+        whether or not to conduct edge correction. Not yet implemented.
+    keep_simulations: bool
+        whether or not to keep the simulation envelopes. If so, 
+        will be returned as the result's simulations attribute
+    n_simulations: int
+        how many simulations to conduct, assuming that the reference pattern
+        has complete spatial randomness. 
     """
-    def __init__(self, pp, n=100, intervals=10, dmin=0.0, dmax=None, d=None,
-                 pct=0.05, realizations=None):
-        self.pp = pp
-        self.n = n
-        self.intervals = intervals
-        self.dmin = dmin
-        self.dmax = dmax
-        self.d = d
-        self.pct = pct
-        super(Jenv, self).__init__(pp, realizations=realizations, name="J")
-
-    def calc(self, *args, **kwargs):
-        pp = args[0]
-        return _j(pp, self.n, intervals=self.intervals, dmin=self.dmin,
-                  dmax=self.dmax, d=self.d)
+    return _ripley_test(
+        "J",
+        coordinates,
+        support=support,
+        distances=distances,
+        metric=metric,
+        hull=hull,
+        edge_correction=edge_correction,
+        keep_simulations=keep_simulations,
+        n_simulations=n_simulations,
+        truncate=truncate,
+    )
 
 
-class Kenv(Envelopes):
+def k_test(
+    coordinates,
+    support=None,
+    distances=None,
+    metric="euclidean",
+    hull=None,
+    edge_correction=None,
+    keep_simulations=False,
+    n_simulations=9999,
+):
     """
-    Simulation envelope for K function.
-
-    Parameters
-    ----------
-    pp          : :class:`.PointPattern`
-                  Point Pattern instance.
-    intervals   : int
-                  The length of distance domain sequence. Default is 10.
-    dmin        : float
-                  The minimum of the distance domain.
-    dmax        : float
-                  Upper limit of distance range. If dmax is None, dmax will be
-                  set to maximum nearest neighbor distance.
-    d           : sequence
-                  The distance domain sequence.
-                  If d is specified, intervals, dmin and dmax are ignored.
-    pct         : float
-                  1-alpha, alpha is the significance level. Default is 0.05,
-                  which means 95% confidence level for the envelope.
-    realizations: :class:`.PointProcess`
-                  Point process instance with more than 1 realizations.
-
-    Attributes
-    ----------
-    name        : string
-                  Name of the function. ("G", "F", "J", "K" or "L")
-    observed    : array
-                  A 2-dimensional numpy array of 2 columns. The first column is
-                  the distance domain sequence for the observed point pattern.
-                  The second column is K function for the observed point
-                  pattern.
-    low         : array
-                  A 1-dimensional numpy array. Lower bound of the simulation
-                  envelope.
-    high        : array
-                  A 1-dimensional numpy array. Higher bound of the simulation
-                  envelope.
-    mean        : array
-                  A 1-dimensional numpy array. Mean values of the simulation
-                  envelope.
-
-    Examples
-    --------
-    .. plot::
-
-       >>> import libpysal as ps
-       >>> from pointpats import Kenv, PoissonPointProcess, Window
-       >>> from libpysal.cg import shapely_ext
-       >>> va = ps.io.open(ps.examples.get_path("vautm17n.shp"))
-       >>> polys = [shp for shp in va]
-       >>> state = shapely_ext.cascaded_union(polys)
-       >>> pp = PoissonPointProcess(Window(state.parts), 100, 1, asPP=True).realizations[0]
-       >>> csrs = PoissonPointProcess(pp.window, 100, 100, asPP=True)
-       >>> kenv = Kenv(pp, realizations=csrs)
-       >>> kenv.plot()
-
+    coordinates : numpy.ndarray, (n,2)
+        input coordinates to function
+    support : tuple of length 1, 2, or 3, int, or numpy.ndarray
+        tuple, encoding (stop,), (start, stop), or (start, stop, num)
+        int, encoding number of equally-spaced intervals
+        numpy.ndarray, used directly within numpy.histogram
+    distances: numpy.ndarray, (n, p) or (p,)
+        distances from every point in a random point set of size p
+        to some point in `coordinates`
+    metric: str or callable
+        distance metric to use when building search tree
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+        the hull used to construct a random sample pattern, if distances is None
+    edge_correction: bool or str
+        whether or not to conduct edge correction. Not yet implemented.
+    keep_simulations: bool
+        whether or not to keep the simulation envelopes. If so, 
+        will be returned as the result's simulations attribute
+    n_simulations: int
+        how many simulations to conduct, assuming that the reference pattern
+        has complete spatial randomness. 
     """
-    def __init__(self, pp, intervals=10, dmin=0.0, dmax=None, d=None,
-                 pct=0.05, realizations=None):
-        self.pp = pp
-        self.intervals = intervals
-        self.dmin = dmin
-        self.dmax = dmax
-        self.d = d
-        self.pct = pct
-        super(Kenv, self).__init__(pp, realizations=realizations, name="K")
-
-    def calc(self, *args, **kwargs):
-        pp = args[0]
-        return _k(pp, intervals=self.intervals, dmin=self.dmin, dmax=self.dmax,
-                  d=self.d)
+    return _ripley_test(
+        "K",
+        coordinates,
+        support=support,
+        distances=distances,
+        metric=metric,
+        hull=hull,
+        edge_correction=edge_correction,
+        keep_simulations=keep_simulations,
+        n_simulations=n_simulations,
+    )
 
 
-class Lenv(Envelopes):
+def l_test(
+    coordinates,
+    support=None,
+    distances=None,
+    metric="euclidean",
+    hull=None,
+    edge_correction=None,
+    linearized=False,
+    keep_simulations=False,
+    n_simulations=9999,
+):
     """
-    Simulation envelope for L function.
-
-    Parameters
-    ----------
-    pp          : :class:`.PointPattern`
-                  Point Pattern instance.
-    intervals   : int
-                  The length of distance domain sequence. Default is 10.
-    dmin        : float
-                  The minimum of the distance domain.
-    dmax        : float
-                  Upper limit of distance range. If dmax is None, dmax will be
-                  set to maximum nearest neighbor distance.
-    d           : sequence
-                  The distance domain sequence.
-                  If d is specified, intervals, dmin and dmax are ignored.
-    pct         : float
-                  1-alpha, alpha is the significance level. Default is 0.05,
-                  which means 95% confidence level for the envelopes.
-    realizations: :class:`.PointProcess`
-                  Point process instance with more than 1 realizations.
-
-    Attributes
-    ----------
-    name        : string
-                  Name of the function. ("G", "F", "J", "K" or "L")
-    observed    : array
-                  A 2-dimensional numpy array of 2 columns. The first column is
-                  the distance domain sequence for the observed point pattern.
-                  The second column is L function for the observed point
-                  pattern.
-    low         : array
-                  A 1-dimensional numpy array. Lower bound of the simulation
-                  envelope.
-    high        : array
-                  A 1-dimensional numpy array. Higher bound of the simulation
-                  envelope.
-    mean        : array
-                  A 1-dimensional numpy array. Mean values of the simulation
-                  envelope.
-
-    Examples
-    --------
-    .. plot::
-
-       >>> import libpysal as ps
-       >>> from pointpats import Lenv, PoissonPointProcess, Window
-       >>> from libpysal.cg import shapely_ext
-       >>> va = ps.io.open(ps.examples.get_path("vautm17n.shp"))
-       >>> polys = [shp for shp in va]
-       >>> state = shapely_ext.cascaded_union(polys)
-       >>> pp = PoissonPointProcess(Window(state.parts), 100, 1, asPP=True).realizations[0]
-       >>> csrs = PoissonPointProcess(pp.window, 100, 100, asPP=True)
-       >>> lenv = Lenv(pp, realizations=csrs)
-       >>> lenv.plot()
-
+    coordinates : numpy.ndarray, (n,2)
+        input coordinates to function
+    support : tuple of length 1, 2, or 3, int, or numpy.ndarray
+        tuple, encoding (stop,), (start, stop), or (start, stop, num)
+        int, encoding number of equally-spaced intervals
+        numpy.ndarray, used directly within numpy.histogram
+    distances: numpy.ndarray, (n, p) or (p,)
+        distances from every point in a random point set of size p
+        to some point in `coordinates`
+    metric: str or callable
+        distance metric to use when building search tree
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+        the hull used to construct a random sample pattern, if distances is None
+    edge_correction: bool or str
+        whether or not to conduct edge correction. Not yet implemented.
+    keep_simulations: bool
+        whether or not to keep the simulation envelopes. If so, 
+        will be returned as the result's simulations attribute
+    n_simulations: int
+        how many simulations to conduct, assuming that the reference pattern
+        has complete spatial randomness. 
     """
-
-    def __init__(self, pp, intervals=10, dmin=0.0, dmax=None, d=None,
-                 pct=0.05, realizations=None):
-        self.pp = pp
-        self.intervals = intervals
-        self.dmin = dmin
-        self.dmax = dmax
-        self.d = d
-        self.pct = pct
-        super(Lenv, self).__init__(pp, realizations=realizations, name="L")
-
-    def calc(self, *args, **kwargs):
-        pp = args[0]
-        return _l(pp, intervals=self.intervals, dmin=self.dmin, dmax=self.dmax,
-                  d=self.d)
+    return _ripley_test(
+        "L",
+        coordinates,
+        support=support,
+        distances=distances,
+        metric=metric,
+        hull=hull,
+        edge_correction=edge_correction,
+        linearized=linearized,
+        keep_simulations=keep_simulations,
+        n_simulations=n_simulations,
+    )
