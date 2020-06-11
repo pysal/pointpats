@@ -15,6 +15,34 @@ from .geometry import (
 
 
 def parse_size_and_intensity(hull, intensity=None, size=None):
+    """
+    Given a hull, an intensity, and a size int/tuple, correctly
+    compute the resulting missing quantities. Defaults to 100 points in one
+    replication, meaning the intensity will be computed on the fly 
+    if nothing is provided. 
+
+    Parameters
+    ----------
+    hull : A geometry-like object
+        This encodes the "space" in which to simulate the normal pattern. All points will
+        lie within this hull. Supported values are:
+        - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])
+        - an (N,2) array of points for which the bounding box will be computed & used
+        - a shapely polygon/multipolygon 
+        - a pygeos geometry
+        - a scipy convexh hull
+    intensity : float
+        the number of observations per unit area in the hull to use. If provided,
+        then the number of observations is determined using the intensity * area(hull) and
+        the size is assumed to represent n_replications (if provided). 
+    size : tuple or int
+        a tuple of (n_observations, n_replications), where the first number is the number
+        of points to simulate in each replication and the second number is the number of
+        total replications. So, (10, 4) indicates 10 points, 4 times. 
+        If an integer is provided and intensity is None, n_replications is assumed to be 1.
+        If size is an integer and intensity is also provided, then size indicates n_replications,
+        and the number of observations is computed on the fly using intensity and area. 
+    """
     if size is None:
         if intensity is not None:
             # if intensity is provided, assume
@@ -146,10 +174,11 @@ def normal(hull, center=None, cov=None, size=None):
         - a scipy convexh hull
     center : iterable of shape (2, )
         A point where the simulations will be centered.
-    cov : float or a numpy array of shape (2,2)
+    cov : float or a numpy array of shape (2,2) 
         either the standard deviation of an independent and identically distributed
         normal distribution, or a 2 by 2 covariance matrix expressing the covariance
-        of the x and y for the distribution.
+        of the x and y for the distribution. Default is half of the width or height
+        of the hull's bounding box, whichever is larger. 
     size : tuple or int
         a tuple of (n_observations, n_replications), where the first number is the number
         of points to simulate in each replication and the second number is the number of
@@ -311,6 +340,40 @@ def cluster_poisson(
 
 
 def cluster_normal(hull, cov=None, size=None, n_seeds=2):
+    """
+    Simulate a cluster poisson random point process with a specified intensity & number of seeds.
+    A cluster poisson process is a poisson process where the center of each "cluster" is
+    itself distributed according to a spatial poisson process.
+
+    Parameters
+    ----------
+    hull : A geometry-like object
+        This encodes the "space" in which to simulate the normal pattern. All points will
+        lie within this hull. Supported values are:
+        - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])
+        - an (N,2) array of points for which the bounding box will be computed & used
+        - a shapely polygon/multipolygon 
+        - a pygeos geometry
+        - a scipy convexh hull
+    cov : float, int, or numpy.ndarray of shape (2,2)
+        The covariance structure for clusters. By default, this is the squared 
+        average distance between cluster seeds.
+    size : tuple or int
+        a tuple of (n_observations, n_replications), where the first number is the number
+        of points to simulate in each replication and the second number is the number of
+        total replications. So, (10, 4) indicates 10 points, 4 times. 
+        If an integer is provided and intensity is None, n_replications is assumed to be 1.
+        If size is an integer and intensity is also provided, then size indicates n_replications,
+        and the number of observations is computed from the intensity.  
+    n_seeds : int
+        the number of sub-clusters to use.
+
+    Returns
+    --------
+        :   numpy.ndarray
+        either an (n_replications, n_observations, 2) or (n_observations,2) array containing
+        the simulated realizations. 
+    """
     if isinstance(hull, numpy.ndarray):
         if hull.shape == (4,):
             hull = hull
