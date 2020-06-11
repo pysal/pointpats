@@ -207,8 +207,12 @@ def normal(hull, center=None, cov=None, size=None):
         generating = True
         i_observation = 0
         replication_cov = cov[i] if cov.ndim == 3 else cov
+        replication_sd = numpy.diagonal(replication_cov) ** 0.5
+        replication_cor = (1 / replication_sd) * replication_cov * (1 / replication_sd)
+
         while i_observation < n_observations:
-            x, y = numpy.random.multivariate_normal(center, cov)
+            candidate = numpy.random.multivariate_normal((0, 0), replication_cor)
+            x, y = center + candidate * replication_sd
             if _contains(hull, x, y):
                 result[i_replication, i_observation] = (x, y)
                 i_observation += 1
