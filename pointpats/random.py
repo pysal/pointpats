@@ -379,9 +379,12 @@ def _uniform_circle(n, radius=1.0, center=(0.0, 0.0), burn=2, verbose=False, hul
             in_hull = True
         else:
             in_hull = numpy.asarray(
-                [_contains(hull, xi + center_x, yi + center_y) for xi, yi in zip(x, y)]
-            )
-        ids, *_ = numpy.where((x * x + y * y <= r2) & in_hull)
+                [
+                    _contains(hull, xi + center_x, yi + center_y)
+                    for xi, yi in numpy.column_stack((x, y))
+                ]
+            ).reshape(-1, 1)
+        ids, *_ = numpy.where(((x * x + y * y) <= r2) & in_hull)
         candidates = numpy.hstack((x, y))[ids]
         nc = candidates.shape[0]
         need = n - c
