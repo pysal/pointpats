@@ -3,11 +3,25 @@ Distance statistics for planar point patterns
 
 """
 __author__ = "Serge Rey sjsrey@gmail.com"
-__all__ = ['DStatistic', 'G', 'F', 'J', 'K', 'L', 'Envelopes', 'Genv', 'Fenv', 'Jenv', 'Kenv', 'Lenv']
+__all__ = [
+    "DStatistic",
+    "G",
+    "F",
+    "J",
+    "K",
+    "L",
+    "Envelopes",
+    "Genv",
+    "Fenv",
+    "Jenv",
+    "Kenv",
+    "Lenv",
+]
 
 from .process import PoissonPointProcess as csr
 import numpy as np
 from matplotlib import pyplot as plt
+import warnings
 
 
 class DStatistic(object):
@@ -25,8 +39,15 @@ class DStatistic(object):
                  The distance domain sequence.
 
     """
+
     def __init__(self, name):
         self.name = name
+        warnings.warn(
+            f"This class is deprecated! Please use the alternative function"
+            f" {name.lower()} in pointpats.distance_statistics.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
     def plot(self, qq=False):
         """
@@ -45,10 +66,10 @@ class DStatistic(object):
             plt.plot(self.ev, self._stat)
             plt.plot(self.ev, self.ev)
         else:
-            plt.plot(x, self._stat, label='{}'.format(self.name))
+            plt.plot(x, self._stat, label="{}".format(self.name))
             plt.ylabel("{}(d)".format(self.name))
-            plt.xlabel('d')
-            plt.plot(x, self.ev, label='CSR')
+            plt.xlabel("d")
+            plt.plot(x, self.ev, label="CSR")
             plt.title("{} distance function".format(self.name))
 
 
@@ -210,6 +231,7 @@ class J(DStatistic):
 
 
     """
+
     def __init__(self, pp, n=100, intervals=10, dmin=0.0, dmax=None, d=None):
         res = _j(pp, n, intervals, dmin, dmax, d)
         self.d = res[:, 0]
@@ -255,6 +277,7 @@ class K(DStatistic):
     where :math:`a` is the area of the window, :math:`n` the number of event points, and :math:`I(d_{i,j} \le h)` is an indicator function returning 1 when points i and j are separated by a distance of :math:`h` or less, 0 otherwise.
 
     """
+
     def __init__(self, pp, intervals=10, dmin=0.0, dmax=None, d=None):
         res = _k(pp, intervals, dmin, dmax, d)
         self.d = res[:, 0]
@@ -309,6 +332,7 @@ class L(DStatistic):
     empirical function falls below the expectation.
 
     """
+
     def __init__(self, pp, intervals=10, dmin=0.0, dmax=None, d=None):
         res = _l(pp, intervals, dmin, dmax, d)
         self.d = res[:, 0]
@@ -318,9 +342,9 @@ class L(DStatistic):
     def plot(self):
         # assuming mpl
         x = self.d
-        plt.plot(x, self._stat, label='{}'.format(self.name))
+        plt.plot(x, self._stat, label="{}".format(self.name))
         plt.ylabel("{}(d)".format(self.name))
-        plt.xlabel('d')
+        plt.xlabel("d")
         plt.title("{} distance function".format(self.name))
 
 
@@ -356,14 +380,14 @@ def _g(pp, intervals=10, dmin=0.0, dmax=None, d=None):
 
     """
     if d is None:
-        w = pp.max_nnd/intervals
+        w = pp.max_nnd / intervals
         if dmax:
-            w = dmax/intervals
-        d = [w*i for i in range(intervals + 2)]
+            w = dmax / intervals
+        d = [w * i for i in range(intervals + 2)]
     cdf = [0] * len(d)
     for i, d_i in enumerate(d):
         smaller = [nndi for nndi in pp.nnd if nndi <= d_i]
-        cdf[i] = len(smaller)*1./pp.n
+        cdf[i] = len(smaller) * 1.0 / pp.n
     return np.vstack((d, cdf)).T
 
 
@@ -408,15 +432,15 @@ def _f(pp, n=100, intervals=10, dmin=0.0, dmax=None, d=None):
     nnids, nnds = pp.knn_other(c, k=1)
 
     if d is None:
-        w = pp.max_nnd/intervals
+        w = pp.max_nnd / intervals
         if dmax:
-            w = dmax/intervals
-        d = [w*i for i in range(intervals + 2)]
+            w = dmax / intervals
+        d = [w * i for i in range(intervals + 2)]
     cdf = [0] * len(d)
 
     for i, d_i in enumerate(d):
         smaller = [nndi for nndi in nnds if nndi <= d_i]
-        cdf[i] = len(smaller)*1./n
+        cdf[i] = len(smaller) * 1.0 / n
     return np.vstack((d, cdf)).T
 
 
@@ -462,7 +486,7 @@ def _j(pp, n=100, intervals=10, dmin=0.0, dmax=None, d=None):
     if np.any(FC == 0):
         last_id = np.where(FC == 0)[0][0]
 
-    return np.vstack((F[:last_id, 0], GC[:last_id]/FC[:last_id])).T
+    return np.vstack((F[:last_id, 0], GC[:last_id] / FC[:last_id])).T
 
 
 def _k(pp, intervals=10, dmin=0.0, dmax=None, d=None):
@@ -499,12 +523,12 @@ def _k(pp, intervals=10, dmin=0.0, dmax=None, d=None):
     """
 
     if d is None:
-        w = pp.rot/intervals
+        w = pp.rot / intervals
         if dmax:
-            w = dmax/intervals
-        d = [w*i for i in range(intervals + 2)]
+            w = dmax / intervals
+        d = [w * i for i in range(intervals + 2)]
     den = pp.lambda_window * (pp.n - 1)
-    kcdf = np.asarray([(di, len(pp.tree.query_pairs(di)) * 2 / den  ) for di in d])
+    kcdf = np.asarray([(di, len(pp.tree.query_pairs(di)) * 2 / den) for di in d])
     return kcdf
 
 
@@ -591,9 +615,16 @@ class Envelopes(object):
                   envelope.
 
     """
-    def __init__(self, *args,  **kwargs):
+
+    def __init__(self, *args, **kwargs):
         # setup arguments
-        self.name = kwargs['name']
+        self.name = kwargs["name"]
+        warnings.warn(
+            f"This class is deprecated! Please use the alternative statistical test"
+            f" {self.name.lower()}_test in pointpats.distance_statistics.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
         # calculate observed function
         self.pp = args[0]
@@ -601,7 +632,7 @@ class Envelopes(object):
         self.d = self.observed[:, 0]  # domain to be used in all realizations
 
         # do realizations
-        self.mapper(kwargs['realizations'])
+        self.mapper(kwargs["realizations"])
 
     def mapper(self, realizations):
         reals = realizations.realizations
@@ -615,31 +646,31 @@ class Envelopes(object):
             for p in reals:
                 j = self.calc(reals[p])
                 if j.shape[0] < self.d.shape[0]:
-                    diff = self.d.shape[0]-j.shape[0]
+                    diff = self.d.shape[0] - j.shape[0]
                     for i in range(diff):
-                        j = np.append(j, [[self.d[i+diff], np.inf]], axis=0)
+                        j = np.append(j, [[self.d[i + diff], np.inf]], axis=0)
                 res.append(j)
             res = np.array(res)
 
         res = res[:, :, -1]
         res.sort(axis=0)
         nres = len(res)
-        self.low = res[np.int(nres * self.pct/2.)]
-        self.high = res[np.int(nres * (1-self.pct/2.))]
+        self.low = res[np.int(nres * self.pct / 2.0)]
+        self.high = res[np.int(nres * (1 - self.pct / 2.0))]
         self.mean = res.mean(axis=0)
 
     def calc(self, *args, **kwargs):
-        print('implement in subclass')
+        print("implement in subclass")
 
     def plot(self):
         # assuming mpl
         x = self.d
-        plt.plot(x, self.observed[:, 1], label='{}'.format(self.name))
-        plt.plot(x, self.mean, 'g-.', label='CSR')
-        plt.plot(x, self.low, 'r-.', label='LB')
-        plt.plot(x, self.high, 'r-.', label="UB")
+        plt.plot(x, self.observed[:, 1], label="{}".format(self.name))
+        plt.plot(x, self.mean, "g-.", label="CSR")
+        plt.plot(x, self.low, "r-.", label="LB")
+        plt.plot(x, self.high, "r-.", label="UB")
         plt.ylabel("{}(d)".format(self.name))
-        plt.xlabel('d')
+        plt.xlabel("d")
         plt.title("{} Simulation Envelopes".format(self.name))
         plt.legend(loc=0)
 
@@ -704,8 +735,9 @@ class Genv(Envelopes):
 
     """
 
-    def __init__(self, pp, intervals=10, dmin=0.0, dmax=None, d=None, pct=0.05,
-                 realizations=None):
+    def __init__(
+        self, pp, intervals=10, dmin=0.0, dmax=None, d=None, pct=0.05, realizations=None
+    ):
         self.pp = pp
         self.intervals = intervals
         self.dmin = dmin
@@ -716,8 +748,9 @@ class Genv(Envelopes):
 
     def calc(self, *args, **kwargs):
         pp = args[0]
-        return _g(pp, intervals=self.intervals, dmin=self.dmin, dmax=self.dmax,
-                  d=self.d)
+        return _g(
+            pp, intervals=self.intervals, dmin=self.dmin, dmax=self.dmax, d=self.d
+        )
 
 
 class Fenv(Envelopes):
@@ -781,8 +814,18 @@ class Fenv(Envelopes):
        >>> fenv.plot()
 
     """
-    def __init__(self, pp, n=100, intervals=10, dmin=0.0, dmax=None, d=None,
-                 pct=0.05, realizations=None):
+
+    def __init__(
+        self,
+        pp,
+        n=100,
+        intervals=10,
+        dmin=0.0,
+        dmax=None,
+        d=None,
+        pct=0.05,
+        realizations=None,
+    ):
         self.pp = pp
         self.n = n
         self.intervals = intervals
@@ -794,8 +837,14 @@ class Fenv(Envelopes):
 
     def calc(self, *args, **kwargs):
         pp = args[0]
-        return _f(pp, self.n, intervals=self.intervals, dmin=self.dmin,
-                  dmax=self.dmax, d=self.d)
+        return _f(
+            pp,
+            self.n,
+            intervals=self.intervals,
+            dmin=self.dmin,
+            dmax=self.dmax,
+            d=self.d,
+        )
 
 
 class Jenv(Envelopes):
@@ -859,8 +908,18 @@ class Jenv(Envelopes):
        >>> jenv.plot()
 
     """
-    def __init__(self, pp, n=100, intervals=10, dmin=0.0, dmax=None, d=None,
-                 pct=0.05, realizations=None):
+
+    def __init__(
+        self,
+        pp,
+        n=100,
+        intervals=10,
+        dmin=0.0,
+        dmax=None,
+        d=None,
+        pct=0.05,
+        realizations=None,
+    ):
         self.pp = pp
         self.n = n
         self.intervals = intervals
@@ -872,8 +931,14 @@ class Jenv(Envelopes):
 
     def calc(self, *args, **kwargs):
         pp = args[0]
-        return _j(pp, self.n, intervals=self.intervals, dmin=self.dmin,
-                  dmax=self.dmax, d=self.d)
+        return _j(
+            pp,
+            self.n,
+            intervals=self.intervals,
+            dmin=self.dmin,
+            dmax=self.dmax,
+            d=self.d,
+        )
 
 
 class Kenv(Envelopes):
@@ -935,8 +1000,10 @@ class Kenv(Envelopes):
        >>> kenv.plot()
 
     """
-    def __init__(self, pp, intervals=10, dmin=0.0, dmax=None, d=None,
-                 pct=0.05, realizations=None):
+
+    def __init__(
+        self, pp, intervals=10, dmin=0.0, dmax=None, d=None, pct=0.05, realizations=None
+    ):
         self.pp = pp
         self.intervals = intervals
         self.dmin = dmin
@@ -947,8 +1014,9 @@ class Kenv(Envelopes):
 
     def calc(self, *args, **kwargs):
         pp = args[0]
-        return _k(pp, intervals=self.intervals, dmin=self.dmin, dmax=self.dmax,
-                  d=self.d)
+        return _k(
+            pp, intervals=self.intervals, dmin=self.dmin, dmax=self.dmax, d=self.d
+        )
 
 
 class Lenv(Envelopes):
@@ -1011,8 +1079,9 @@ class Lenv(Envelopes):
 
     """
 
-    def __init__(self, pp, intervals=10, dmin=0.0, dmax=None, d=None,
-                 pct=0.05, realizations=None):
+    def __init__(
+        self, pp, intervals=10, dmin=0.0, dmax=None, d=None, pct=0.05, realizations=None
+    ):
         self.pp = pp
         self.intervals = intervals
         self.dmin = dmin
@@ -1023,5 +1092,6 @@ class Lenv(Envelopes):
 
     def calc(self, *args, **kwargs):
         pp = args[0]
-        return _l(pp, intervals=self.intervals, dmin=self.dmin, dmax=self.dmax,
-                  d=self.d)
+        return _l(
+            pp, intervals=self.intervals, dmin=self.dmin, dmax=self.dmax, d=self.d
+        )
