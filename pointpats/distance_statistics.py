@@ -561,12 +561,13 @@ def _ripley_test(
         tree, distances=distances, **core_kwargs
     )
     core_kwargs["support"] = observed_support
+    n_observations = coordinates.shape[0]
 
     if keep_simulations:
         simulations = numpy.empty((len(observed_support), n_simulations)).T
     pvalues = numpy.ones_like(observed_support)
     for i_replication in range(n_simulations):
-        random_i = poisson(tree.data)
+        random_i = poisson(hull, size=n_observations)
         if calltype in ("F", "J"):
             random_tree = _build_best_tree(random_i, metric)
             empty_distances, _ = random_tree.query(empty_space_points, k=1)
