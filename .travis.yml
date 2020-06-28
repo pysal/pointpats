@@ -46,7 +46,8 @@ install:
 script:
   - python setup.py sdist >/dev/null
   - python setup.py install
-  - nosetests --verbose --with-coverage --cover-package=pointpats;
+  # - nosetests --verbose --with-coverage --cover-package=pointpats;
+  - pytest pointpats --cov pointpats -v --cov-report term-missing
 
 notifications:
     email:
