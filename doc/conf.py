@@ -284,7 +284,8 @@ intersphinx_mapping = {"python": ('https://docs.python.org/3', None),
                        'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
                        'libpysal': ('https://pysal.org/libpysal/', None),
                        'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
-                       'matplotlib':("https://matplotlib.org/", None)
+                       'matplotlib':("https://matplotlib.org/", None),
+                       'opencv-contrib-python':("https://docs.opencv.org/3.4/index.html", None), 
                        }
 
 

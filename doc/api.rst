@@ -34,8 +34,8 @@ Centrography
 
 .. autosummary::
    :toctree: generated/
-
-    mbr
+    minimum_area_rectangle
+    minimum_bounding_rectangle
     hull
     mean_center
     weighted_mean_center
