@@ -62,9 +62,10 @@ def _(shape: numpy.ndarray):
 @singledispatch
 def bbox(shape):
     """
-    If a shape has bounds, use those.
+    If a shape can be cast to an array, use that.
     Works for:
-        shapely.geometry.Polygon
+        lists of tuples
+        scikit memory arrays
     """
     return bbox(numpy.asarray(shape))
 
