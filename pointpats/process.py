@@ -9,15 +9,16 @@ TODO
 """
 
 __author__ = "Serge Rey sjsrey@gmail.com"
-__all__ = ['PointProcess', 'PoissonPointProcess', 'PoissonClusterPointProcess']
+__all__ = ["PointProcess", "PoissonPointProcess", "PoissonClusterPointProcess"]
 
 import numpy as np
 import libpysal as ps
 from numpy.random import poisson
 from .pointpattern import PointPattern as PP
+import warnings
 
 
-def runif_in_circle(n, radius=1.0, center=(0., 0.), burn=2, verbose=False):
+def runif_in_circle(n, radius=1.0, center=(0.0, 0.0), burn=2, verbose=False):
     """
     Generate n points within a circle of given radius.
 
@@ -44,20 +45,20 @@ def runif_in_circle(n, radius=1.0, center=(0., 0.), burn=2, verbose=False):
     r2 = r * r
     it = 0
     while c < n:
-        x = np.random.uniform(-r, r, (burn*n, 1))
-        y = np.random.uniform(-r, r, (burn*n, 1))
-        ids = np.where(x*x + y*y <= r2)
+        x = np.random.uniform(-r, r, (burn * n, 1))
+        y = np.random.uniform(-r, r, (burn * n, 1))
+        ids = np.where(x * x + y * y <= r2)
         candidates = np.hstack((x, y))[ids[0]]
         nc = candidates.shape[0]
         need = n - c
         if nc > need:  # more than we need
             good[c:] = candidates[:need]
         else:  # use them all and keep going
-            good[c:c+nc] = candidates
+            good[c : c + nc] = candidates
         c += nc
         it += 1
     if verbose:
-        print('Iterations: {}'.format(it))
+        print("Iterations: {}".format(it))
     return good + np.asarray(center)
 
 
@@ -110,6 +111,12 @@ class PointProcess(object):
             for sample in self.realizations:
                 points = self.realizations[sample]
                 self.realizations[sample] = PP(points, window=self.window)
+        warnings.warn(
+            "These point pattern simulators are deprecated! Please replace them"
+            " with equivalent functions in pointpats.random",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
     def draw(self, parameter):
         """
@@ -129,7 +136,7 @@ class PointProcess(object):
         """
         c = 0
         sample = []
-        n = parameter['n']
+        n = parameter["n"]
         while c < n:
             pnts = self.realize(n)
             pnts = [ps.cg.shapes.Point((x, y)) for x, y in pnts]
@@ -254,10 +261,10 @@ class PoissonPointProcess(PointProcess):
         if self.conditioning:
             lambdas = poisson(self.n, self.samples)
             for i, l in enumerate(lambdas):
-                self.parameters[i] = {'n': l}
+                self.parameters[i] = {"n": l}
         else:
             for i in range(self.samples):
-                self.parameters[i] = {'n': self.n}
+                self.parameters[i] = {"n": self.n}
 
     def realize(self, n):
         """
@@ -391,16 +398,24 @@ class PoissonClusterPointProcess(PointProcess):
 
     """
 
-    def __init__(self, window, n, parents, radius, samples, keep=False,
-                 asPP=False, conditioning=False):
+    def __init__(
+        self,
+        window,
+        n,
+        parents,
+        radius,
+        samples,
+        keep=False,
+        asPP=False,
+        conditioning=False,
+    ):
 
         self.conditioning = conditioning
         self.parents = parents
-        self.children = int(np.ceil(n * 1. / parents))
+        self.children = int(np.ceil(n * 1.0 / parents))
         self.radius = radius
         self.keep = keep
-        super(PoissonClusterPointProcess, self).__init__(window, n, samples,
-                                                         asPP)
+        super(PoissonClusterPointProcess, self).__init__(window, n, samples, asPP)
 
     def setup(self):
         """
@@ -418,11 +433,11 @@ class PoissonClusterPointProcess(PointProcess):
             lambdas = poisson(self.parents, self.samples)
             for i, l in enumerate(lambdas):
                 num = l * self.children
-                self.parameters[i] = {'n': num}
+                self.parameters[i] = {"n": num}
                 self.num_parents[i] = l
         else:
             for i in range(self.samples):
-                self.parameters[i] = {'n': self.n}
+                self.parameters[i] = {"n": self.n}
                 self.num_parents[i] = self.parents
 
     def realize(self, n):
@@ -444,8 +459,8 @@ class PoissonClusterPointProcess(PointProcess):
         l, b, r, t = self.window.bbox
         d = self.radius
         # get parent points
-        pxs = np.random.uniform(l, r, (int(n/self.children), 1))
-        pys = np.random.uniform(b, t, (int(n/self.children), 1))
+        pxs = np.random.uniform(l, r, (int(n / self.children), 1))
+        pys = np.random.uniform(b, t, (int(n / self.children), 1))
         cents = np.hstack((pxs, pys))
         # generate children points
         pnts = [runif_in_circle(self.children, d, center) for center in cents]
