@@ -75,17 +75,48 @@ def minimum_bounding_rectangle(points):
             min_y = y
     return min_x, min_y, max_x, max_y
 
-def minimum_rotated_rectangle(points):
+
+def minimum_rotated_rectangle(points, return_angle=True):
+    """
+    Compute the minimum rotated rectangle for an input point set. 
+
+    This is the smallest enclosing rectangle (possibly rotated) 
+    for the input point set. It is computed using OpenCV2, so 
+    if that is not available, then this function will fail. 
+    
+    Parameters
+    ----------
+    points : numpy.ndarray
+        A numpy array of shape (n_observations, 2) containing the point
+        locations to compute the rotated rectangle
+    return_angle : bool
+        whether to return the angle (in degrees) of the angle between 
+        the horizontal axis of the rectanle and the first side (i.e. length).
+        Computed directly from cv2.minAreaRect.
+
+    Returns
+    -------
+    an numpy.ndarray of shape (4, 2) containing the coordinates 
+    of the minimum rotated rectangle. If return_angle is True,
+    also return the angle (in degrees) of the rotated rectangle.
+    
+    """
     try:
-        from cv2 import minAreaRect
+        from cv2 import minAreaRect, boxPoints
     except ModuleNotFoundError:
-        raise ModuleNotFoundError('OpenCV2 is required to use this function.')
-    return minAreaRect(points.astype(numpy.float32))
+        raise ModuleNotFoundError("OpenCV2 is required to use this function.")
+    ((x, y), (w, h), angle) = rot_rect = minAreaRect(points.astype(np.float32))
+    out_points = boxPoints(rot_rect)
+    if return_angle:
+        return (out_points, angle)
+    return out_points
+
 
 def mbr(points):
     warnings.warn(
         "This function will be deprecated in the next release of pointpats.",
-        DeprecationWarning,
+        FutureWarning,
+        stacklevel=2,
     )
     return minimum_bounding_rectangle(points)
 
@@ -301,6 +332,15 @@ def minimum_bounding_circle(points):
 
     * If not, remove p from set.
 
+    Parameters
+    ----------
+    points  :   numpy.ndarray
+        a numpy array of shape (n_observations, 2) to compute 
+        the minimum bounding circle
+
+    Returns
+    -------
+    (x,y),center for the minimum bounding circle.
     """
     points = hull(points)
     if not_clockwise(points):
@@ -311,20 +351,25 @@ def minimum_bounding_circle(points):
     removed = []
     i = 0
     if HAS_NUMBA:
-        return _skyum_numba(points)[0]
+        circ = _skyum_numba(POINTS)[0]
     else:
-        return _skyum_lists(points)[0]
+        circ = _skyum_lists(POINTS)[0]
+    return (circ[0], circ[1]), circ[2]
 
 
 def skyum(points):
     warnings.warn(
         "This function will be deprecated in the next release of pointpats.",
-        DeprecationWarning,
+        FutureWarning,
+        stacklevel=2,
     )
     return minimum_bounding_circle(points)
 
 
-skyum.__doc__ = minimum_bounding_circle.__doc__
+skyum.__doc__ = (
+    "WARNING: This function is deprecated in favor "
+    "of minimum_bounding_circle\n" + minimum_bounding_circle.__doc__
+)
 
 
 def _skyum_lists(points):
@@ -504,6 +549,7 @@ if __name__ == "__main__":
     # ]
     sn = centrography._skyum_numba(cpoints)
     # sl = centrography._skyum_lists(cpoints)
+    s = centrography.minimum_bounding_circle(cpoints)
 
     import matplotlib.pyplot as plt
 
