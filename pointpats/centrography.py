@@ -18,6 +18,8 @@ __all__ = [
     "std_distance",
     "euclidean_median",
     "ellipse",
+    "minimum_area_rectangle",
+    "minimum_bounding_rectangle",
     "skyum",
     "dtot",
     "_circle",
@@ -78,28 +80,28 @@ def minimum_bounding_rectangle(points):
 
 def minimum_rotated_rectangle(points, return_angle=True):
     """
-    Compute the minimum rotated rectangle for an input point set. 
+    Compute the minimum rotated rectangle for an input point set.
 
-    This is the smallest enclosing rectangle (possibly rotated) 
-    for the input point set. It is computed using OpenCV2, so 
-    if that is not available, then this function will fail. 
-    
+    This is the smallest enclosing rectangle (possibly rotated)
+    for the input point set. It is computed using OpenCV2, so
+    if that is not available, then this function will fail.
+
     Parameters
     ----------
     points : numpy.ndarray
         A numpy array of shape (n_observations, 2) containing the point
         locations to compute the rotated rectangle
     return_angle : bool
-        whether to return the angle (in degrees) of the angle between 
+        whether to return the angle (in degrees) of the angle between
         the horizontal axis of the rectanle and the first side (i.e. length).
         Computed directly from cv2.minAreaRect.
 
     Returns
     -------
-    an numpy.ndarray of shape (4, 2) containing the coordinates 
+    an numpy.ndarray of shape (4, 2) containing the coordinates
     of the minimum rotated rectangle. If return_angle is True,
     also return the angle (in degrees) of the rotated rectangle.
-    
+
     """
     try:
         from cv2 import minAreaRect, boxPoints
@@ -335,7 +337,7 @@ def minimum_bounding_circle(points):
     Parameters
     ----------
     points  :   numpy.ndarray
-        a numpy array of shape (n_observations, 2) to compute 
+        a numpy array of shape (n_observations, 2) to compute
         the minimum bounding circle
 
     Returns
@@ -367,8 +369,8 @@ def skyum(points):
 
 
 skyum.__doc__ = (
-    "WARNING: This function is deprecated in favor "
-    "of minimum_bounding_circle\n" + minimum_bounding_circle.__doc__
+    "WARNING: This function is deprecated in favor of minimum_bounding_circle\n"
+    + minimum_bounding_circle.__doc__
 )
 
 
