@@ -48,11 +48,7 @@ class Jacquez_Tester(unittest.TestCase):
     def test_jacquez(self):
         result = jacquez(self.events.space,
                 self.events.t, k=3, permutations=1)
-        if scp_version > 11:
-            self.assertEquals(result['stat'], 12)
-        else:
-            self.assertEquals(result['stat'], 13)
-            
+        self.assertEquals(result['stat'], 12)
 
 
 class ModifiedKnox_Tester(unittest.TestCase):
