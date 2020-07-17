@@ -19,7 +19,7 @@ __all__ = [
     "std_distance",
     "euclidean_median",
     "ellipse",
-    "minimum_area_rectangle",
+    "minimum_rotated_rectangle",
     "minimum_bounding_rectangle",
     "skyum",
     "dtot",
@@ -32,7 +32,6 @@ import numpy as np
 import warnings
 import copy
 
-import cv2 as cv
 from math import pi as PI
 from scipy.spatial import ConvexHull
 from libpysal.cg import get_angle_between, Ray, is_clockwise
@@ -44,32 +43,6 @@ not_clockwise = lambda x: not is_clockwise(x)
 MAXD = sys.float_info.max
 MIND = sys.float_info.min
 
-def minimum_area_rectangle(points):
-    """
-    Find minimum area rectangle of a point array.
-
-    Parameters
-    ----------
-    points : arraylike
-             (n,2), (x,y) coordinates of a series of event points.
-
-    Returns
-    -------
-    min_x  : float
-             leftmost value of the vertices of minimum bounding rectangle.
-    min_y  : float
-             downmost value of the vertices of minimum bounding rectangle.
-    max_x  : float
-             rightmost value of the vertices of minimum bounding rectangle.
-    max_y  : float
-             upmost value of the vertices of minimum bounding rectangle.
-
-    """
-    points = np.array(points)
-    points = np.float32(points[:, np.newaxis, :])
-    rect = cv.minAreaRect(points)
-    min_x, min_y, max_x, max_y = cv.boxPoints(rect)
-    return min_x, min_y, max_x, max_y
 
 def minimum_bounding_rectangle(points):
     """
@@ -543,44 +516,3 @@ def _circle(p, q, r, dmetric=_euclidean_distance):
         ) / float(D)
         radius = _euclidean_distance(center_x, center_y, px, py)
     return radius, center_x, center_y
-
-
-if __name__ == "__main__":
-    import numpy
-    from pointpats import centrography
-    from scipy import spatial
-
-    points = numpy.random.random(size=(1000, 2))
-    plist = points.tolist()
-    chull = spatial.ConvexHull(points)
-    cpoints = chull.points[chull.vertices]
-
-    # n = points.shape[0]
-    # new_angles = np.empty((n,))
-    # new_circles = np.empty((n, 3))
-    # for i in range(n):
-    #     p = points[(i - 1) % n]
-    #     q = points[i % n]
-    #     r = points[(i + 1) % n]
-    #     new_angles[i] = _angle(p, q, r)
-    #     new_circles[i] = _circle(p, q, r)
-    # old_angles = [
-    #     _angle(np.asarray(_prec(p, plist)), np.asarray(p), np.asarray(_succ(p, plist)),)
-    #     for p in plist
-    # ]
-    # old_circles = [
-    #     _circle(
-    #         np.asarray(_prec(p, plist)), np.asarray(p), np.asarray(_succ(p, plist)),
-    #     )
-    #     for p in plist
-    # ]
-    sn = centrography._skyum_numba(cpoints)
-    # sl = centrography._skyum_lists(cpoints)
-    s = centrography.minimum_bounding_circle(cpoints)
-
-    import matplotlib.pyplot as plt
-
-    circ = plt.Circle(tuple(sn[0][1:]), radius=sn[0][0])
-    plt.gca().add_artist(circ)
-    plt.scatter(*points.T, color="k")
-    plt.show()
