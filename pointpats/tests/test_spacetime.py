@@ -49,9 +49,9 @@ class Jacquez_Tester(unittest.TestCase):
         self.events = SpaceTimeEvents(path, "T")
 
     def test_jacquez(self):
-        result = jacquez(self.events.space, self.events.t, k=3, permutations=1)
-        self.assertEquals(result["stat"], 12)
-
+        result = jacquez(self.events.space,
+                self.events.t, k=3, permutations=1)
+        self.assertEquals(result['stat'], 12)
 
 class ModifiedKnox_Tester(unittest.TestCase):
     def setUp(self):

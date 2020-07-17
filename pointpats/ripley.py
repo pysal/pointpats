@@ -1,31 +1,286 @@
 import numpy
 import warnings
 from scipy import spatial, interpolate
+from functools import singledispatch
 from collections import namedtuple
-from .geometry import (
-    area as _area,
-    k_neighbors as _k_neighbors,
-    build_best_tree as _build_best_tree,
-    prepare_hull as _prepare_hull,
-    TREE_TYPES,
-)
-from .random import poisson
-
-
-from ._deprecated_distance_statistics import *
+from libpysal.cg import alpha_shape_auto
+from libpysal.cg.kdtree import Arc_KDTree
 
 __all__ = [
-    "f",
-    "g",
-    "k",
-    "j",
-    "l",
+    "simulate",
+    "simulate_from",
+    "f_function",
+    "g_function",
+    "k_function",
+    "j_function",
+    "l_function",
     "f_test",
     "g_test",
     "k_test",
     "j_test",
     "l_test",
 ]
+
+# ------------------------------------------------------------#
+# Utilities and dispatching                                  #
+# ------------------------------------------------------------#
+
+TREE_TYPES = (spatial.KDTree, spatial.cKDTree, Arc_KDTree)
+try:
+    from sklearn.neighbors import KDTree, BallTree
+
+    TREE_TYPES = (*TREE_TYPES, KDTree, BallTree)
+except ModuleNotFoundError:
+    pass
+
+## Define default dispatches and special dispatches without GEOS
+@singledispatch
+def _area(shape):
+    """
+    If a shape has an area attribute, return it. 
+    Works for: 
+        shapely.geometry.Polygon
+    """
+    return shape.area
+
+
+@_area.register
+def _(shape: spatial.qhull.ConvexHull):
+    """
+    If a shape is a convex hull from scipy, 
+    assure it's 2-dimensional and then use its volume. 
+    """
+    assert shape.points.shape[1] == 2
+    return shape.volume
+
+
+@_area.register
+def _(shape: numpy.ndarray):
+    """
+    If a shape describes a bounding box, compute length times width
+    """
+    assert len(shape) == 4, "shape is not a bounding box!"
+    width, height = shape[2] - shape[0], shape[3] - shape[1]
+    return numpy.abs(width * height)
+
+
+@singledispatch
+def _bbox(shape):
+    """
+    If a shape has bounds, use those.
+    Works for:
+        shapely.geometry.Polygon
+    """
+    return _bbox(numpy.asarray(shape))
+
+
+@_bbox.register
+def _(shape: numpy.ndarray):
+    """
+    If a shape is an array of points, compute the minima/maxima 
+    or let it pass through if it's 1 dimensional & length 4
+    """
+    if (shape.ndim == 1) & (len(shape) == 4):
+        return shape
+    return numpy.array([*shape.min(axis=0), *shape.max(axis=0)])
+
+
+@_bbox.register
+def _(shape: spatial.qhull.ConvexHull):
+    """
+    For scipy.spatial.ConvexHulls, compute the bounding box from
+    their boundary points.
+    """
+    return _bbox(shape.points[shape.vertices])
+
+
+@singledispatch
+def _contains(shape, x, y):
+    """
+    Try to use the shape's contains method directly on XY.
+    Does not currently work on anything. 
+    """
+    raise NotImplementedError()
+    return shape.contains((x, y))
+
+
+@_contains.register
+def _(shape: numpy.ndarray, x: float, y: float):
+    """
+    If provided an ndarray, assume it's a bbox
+    and return whether the point falls inside
+    """
+    xmin, xmax = shape[0], shape[2]
+    ymin, ymax = shape[1], shape[3]
+    in_x = (xmin <= x) and (x <= xmax)
+    in_y = (ymin <= y) and (y <= ymax)
+    return in_x & in_y
+
+
+@_contains.register
+def _(shape: spatial.Delaunay, x: float, y: float):
+    """
+    For points and a delaunay triangulation, use the find_simplex
+    method to identify whether a point is inside the triangulation.
+
+    If the returned simplex index is -1, then the point is not
+    within a simplex of the triangulation. 
+    """
+    return shape.find_simplex((x, y)) > 0
+
+
+@_contains.register
+def _(shape: spatial.qhull.ConvexHull, x: float, y: float):
+    """
+    For convex hulls, convert their exterior first into a Delaunay triangulation
+    and then use the delaunay dispatcher.
+    """
+    exterior = shape.points[shape.vertices]
+    delaunay = spatial.Delaunay(exterior)
+    return _contains(delaunay, x, y)
+
+
+try:
+    from shapely.geometry.base import BaseGeometry as _BaseGeometry
+    from shapely.geometry import (
+        Polygon as _ShapelyPolygon,
+        MultiPolygon as _ShapelyMultiPolygon,
+    )
+    from shapely.geometry import Point as _ShapelyPoint
+
+    HAS_SHAPELY = True
+
+    @_contains.register
+    def _(shape: _BaseGeometry, x: float, y: float):
+        """
+        If we know we're working with a shapely polygon, 
+        then use the contains method & cast input coords to a shapely point
+        """
+        return shape.contains(_ShapelyPoint((x, y)))
+
+    @_bbox.register
+    def _(shape: _BaseGeometry):
+        """
+        If a shape is an array of points, compute the minima/maxima 
+        or let it pass through if it's 1 dimensional & length 4
+        """
+        return numpy.asarray(list(shape.bounds))
+
+
+except ModuleNotFoundError:
+    HAS_SHAPELY = False
+
+
+try:
+    import pygeos
+
+    HAS_PYGEOS = True
+
+    @_area.register
+    def _(shape: pygeos.Geometry):
+        """
+        If we know we're working with a pygeos polygon, 
+        then use pygeos.area
+        """
+        return pygeos.area(shape)
+
+    @_contains.register
+    def _(shape: pygeos.Geometry, x: float, y: float):
+        """
+        If we know we're working with a pygeos polygon, 
+        then use pygeos.within casting the points to a pygeos object too
+        """
+        return pygeos.within(pygeos.points((x, y)), shape)
+
+    @_bbox.register
+    def _(shape: pygeos.Geometry):
+        """
+        If we know we're working with a pygeos polygon, 
+        then use pygeos.bounds
+        """
+        return pygeos.bounds(shape)
+
+
+except ModuleNotFoundError:
+    HAS_PYGEOS = False
+
+# ------------------------------------------------------------#
+# Constructors for trees, prepared inputs, & neighbors        #
+# ------------------------------------------------------------#
+
+
+def _build_best_tree(coordinates, metric):
+    """
+    Build the best query tree that can support the application.
+    Chooses from:
+    1. sklearn.KDTree if available and metric is simple
+    2. sklearn.BallTree if available and metric is complicated
+    3. scipy.spatial.cKDTree if nothing else
+    """
+    coordinates = numpy.asarray(coordinates)
+    tree = spatial.cKDTree
+    try:
+        from sklearn.neighbors import KDTree, BallTree
+
+        if metric in KDTree.valid_metrics:
+            tree = lambda coordinates: KDTree(coordinates, metric=metric)
+        elif metric in BallTree.valid_metrics:
+            tree = lambda coordinates: BallTree(coordinates, metric=metric)
+        elif callable(metric):
+            warnings.warn(
+                "Distance metrics defined in pure Python may "
+                " have unacceptable performance!",
+                stacklevel=2,
+            )
+            tree = lambda coordinates: BallTree(coordinates, metric=metric)
+        else:
+            raise KeyError(
+                f"Metric {metric} not found in set of available types."
+                f"BallTree metrics: {BallTree.valid_metrics}, and"
+                f"scikit KDTree metrics: {KDTree.valid_metrics}."
+            )
+    except ModuleNotFoundError as e:
+        if metric not in ("l2", "euclidean"):
+            raise KeyError(
+                f"Metric {metric} requested, but this requires"
+                f" scikit-learn to use. Without scikit-learn, only"
+                f" euclidean distance metric is supported."
+            )
+    return tree(coordinates)
+
+
+def _prepare_hull(coordinates, hull):
+    """
+    Construct a hull from the coordinates given a hull type
+    Will either return:
+        - a bounding box array of [xmin, ymin, xmax, ymax]
+        - a scipy.spatial.ConvexHull object from the Qhull library
+        - a shapely shape using alpha_shape_auto
+    """
+    if isinstance(hull, numpy.ndarray):
+        assert len(hull) == 4, f"bounding box provided is not shaped correctly! {hull}"
+        assert hull.ndim == 1, f"bounding box provided is not shaped correctly! {hull}"
+        return hull
+    if (hull is None) or (hull == "bbox"):
+        return _bbox(coordinates)
+    if HAS_SHAPELY:  # protect the isinstance check if import has failed
+        if isinstance(hull, (_ShapelyPolygon, _ShapelyMultiPolygon)):
+            return hull
+    if HAS_PYGEOS:
+        if isinstance(hull, pygeos.Geometry):
+            return hull
+    if isinstance(hull, str):
+        if hull.startswith("convex"):
+            return spatial.ConvexHull(coordinates)
+        elif hull.startswith("alpha") or hull.startswith("α"):
+            return alpha_shape_auto(coordinates)
+    elif isinstance(hull, spatial.qhull.ConvexHull):
+        return hull
+    raise ValueError(
+        f"Hull type {hull} not in the set of valid options:"
+        f" (None, 'bbox', 'convex', 'alpha', 'α', "
+        f" shapely.geometry.Polygon, pygeos.Geometry)"
+    )
 
 
 def _prepare(coordinates, support, distances, metric, hull, edge_correction):
@@ -108,12 +363,149 @@ def _prepare(coordinates, support, distances, metric, hull, edge_correction):
     return coordinates, support, distances, metric, hull, edge_correction
 
 
+def _k_neighbors(tree, coordinates, k, **kwargs):
+    """
+    Query a kdtree for k neighbors, handling the self-neighbor case
+    in the case of coincident points. 
+    """
+    distances, indices = tree.query(coordinates, k=k + 1, **kwargs)
+    n, ks = distances.shape
+    assert ks == k + 1
+    full_indices = numpy.arange(n)
+    other_index_mask = indices != full_indices.reshape(n, 1)
+    has_k_indices = other_index_mask.sum(axis=1) == (k + 1)
+    other_index_mask[has_k_indices, -1] = False
+    distances = distances[other_index_mask].reshape(n, k)
+    indices = indices[other_index_mask].reshape(n, k)
+    return distances, indices
+
+
+# ------------------------------------------------------------#
+# Simulators                                                 #
+# ------------------------------------------------------------#
+
+
+def simulate(hull, intensity=None, size=None):
+    """
+    Simulate from the given hull with a specified intensity or size.
+    
+    Hulls can be:
+    - bounding boxes (numpy.ndarray with dim==1 and len == 4)
+    - scipy.spatial.ConvexHull
+    - shapely.geometry.Polygon
+    - pygeos.Geometry
+
+    If intensity is specified, size must be an integer reflecting
+    the number of realizations. 
+    If the size is specified as a tuple, then the intensity is 
+    determined by the area of the hull. 
+    """
+    if size is None:
+        if intensity is not None:
+            # if intensity is provided, assume
+            # n_observations
+            n_observations = int(_area(hull) * intensity)
+        else:
+            # default to 100 points
+            n_observations = 100
+        n_simulations = 1
+        size = (n_observations, n_simulations)
+    elif isinstance(size, tuple):
+        if len(size) == 2 and intensity is None:
+            n_observations, n_simulations = size
+            intensity = n_observations / _area(hull)
+        elif len(size) == 2 and intensity is not None:
+            raise ValueError(
+                "Either intensity or size as (n observations, n simulations)"
+                " can be provided. Providing both creates statistical conflicts."
+                " between the requested intensity and implied intensity by"
+                " the number of observations and the area of the hull. If"
+                " you want to specify the intensity, use the intensity argument"
+                " and set size equal to the number of simulations."
+            )
+        else:
+            raise ValueError(
+                f"Intensity and size not understood. Provide size as a tuple"
+                f" containing (number of observations, number of simulations)"
+                f" with no specified intensity, or an intensity and size equal"
+                f" to the number of simulations."
+                f" Recieved: `intensity={intensity}, size={size}`"
+            )
+    elif isinstance(size, int):
+        # assume int size with specified intensity means n_simulations at x intensity
+        if intensity is not None:
+            n_observations = int(intensity * _area(hull))
+            n_simulations = size
+        else:  # assume we have one replication at the specified number of points
+            n_simulations = 1
+            n_observations = size
+            intensity = n_observations / _area(hull)
+    else:
+        raise ValueError(
+            f"Intensity and size not understood. Provide size as a tuple"
+            f" containing (number of observations, number of simulations)"
+            f" with no specified intensity, or an intensity and size equal"
+            f" to the number of simulations."
+            f" Recieved: `intensity={intensity}, size={size}`"
+        )
+    result = numpy.empty((n_simulations, n_observations, 2))
+
+    bbox = _bbox(hull)
+
+    for i_replication in range(n_simulations):
+        generating = True
+        i_observation = 0
+        while i_observation < n_observations:
+            x, y = (
+                numpy.random.uniform(bbox[0], bbox[2]),
+                numpy.random.uniform(bbox[1], bbox[3]),
+            )
+            if _contains(hull, x, y):
+                result[i_replication, i_observation] = (x, y)
+                i_observation += 1
+    return result.squeeze()
+
+
+def simulate_from(coordinates, hull=None, size=None):
+    """
+    Simulate a pattern from the coordinates provided using a given assumption
+    about the hull of the process. 
+
+    Note: will always assume the implicit intensity of the process. 
+    """
+    try:
+        coordinates = numpy.asarray(coordinates)
+        assert coordinates.ndim == 2
+    except:
+        raise ValueError("This function requires a numpy array for input."
+                         " If `coordinates` is a shape, use simulate()."
+                         " Otherwise, use the `hull` argument to specify"
+                         " which hull you intend to compute for the input"
+                         " coordinates.")
+    if isinstance(size, int):
+        n_observations = coordinates.shape[0]
+        n_simulations = size
+    elif isinstance(size, tuple):
+        assert len(size) == 2, (
+            f"`size` argument must be either an integer denoting the number"
+            f" of simulations or a tuple containing "
+            f" (n_simulated_observations, n_simulations). Instead, recieved"
+            f" a tuple of length {len(size)}: {size}"
+        )
+        n_observations, n_simulations = size
+    elif size is None:
+        n_observations = coordinates.shape[0]
+        n_simulations = 1
+    hull = _prepare_hull(coordinates, hull)
+    return simulate(hull, intensity=None, size=(n_observations, n_simulations))
+
+
 # ------------------------------------------------------------#
 # Statistical Functions                                       #
 # ------------------------------------------------------------#
 
 
-def f(
+def f_function(
     coordinates,
     support=None,
     distances=None,
@@ -122,14 +514,7 @@ def f(
     edge_correction=None,
 ):
     """
-    Ripley's F function
-
-    The so-called "empty space" function, this is the cumulative density function of 
-    the distances from a random set of points to the known points in the pattern.
-
-    Parameters
-    ----------
-    coordinates : numpy.ndarray of shape (n,2)
+    coordinates : numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
@@ -144,11 +529,6 @@ def f(
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
-
-    Returns
-    -------
-    a tuple containing the support values used to evalute the function
-    and the values of the function at each distance value in the support. 
     """
     coordinates, support, distances, metric, hull, _ = _prepare(
         coordinates, support, distances, metric, hull, edge_correction
@@ -183,7 +563,7 @@ def f(
         # empty space distribution.
         n_empty_points = 1000
 
-        randoms = poisson(hull=hull, size=(n_empty_points, 1))
+        randoms = simulate(hull=hull, size=(n_empty_points, 1))
         try:
             tree
         except NameError:
@@ -198,18 +578,11 @@ def f(
     return bins, numpy.asarray([0, *fracs])
 
 
-def g(
+def g_function(
     coordinates, support=None, distances=None, metric="euclidean", edge_correction=None,
 ):
     """
-    Ripley's G function
-
-    The G function is computed from the cumulative density function of the nearest neighbor 
-    distances between points in the pattern. 
-
-    Parameters
-    -----------
-    coordinates : numpy.ndarray of shape (n,2)
+    coordinates : numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
@@ -221,12 +594,6 @@ def g(
         distance metric to use when building search tree
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
-
-    Returns
-    -------
-    a tuple containing the support values used to evalute the function
-    and the values of the function at each distance value in the support. 
-
     """
 
     coordinates, support, distances, metric, *_ = _prepare(
@@ -283,7 +650,7 @@ def g(
     return bins, numpy.asarray([0, *fracs])
 
 
-def j(
+def j_function(
     coordinates,
     support=None,
     distances=None,
@@ -293,12 +660,6 @@ def j(
     truncate=True,
 ):
     """
-    Ripely's J function
-
-    The so-called "spatial hazard" function, this is a function relating the F and G functions.
-    
-    Parameters
-    -----------
     coordinates : numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
@@ -320,17 +681,12 @@ def j(
         whether or not to truncate the results when the F function reaches one. If the
         F function is one but the G function is less than one, this function will return
         numpy.nan values. 
-
-    Returns
-    -------
-    a tuple containing the support values used to evalute the function
-    and the values of the function at each distance value in the support. 
     """
     if distances is not None:
         g_distances, f_distances = distances
     else:
         g_distances = f_distances = None
-    fsupport, fstats = f(
+    fsupport, fstats = f_function(
         coordinates,
         support=support,
         distances=f_distances,
@@ -339,7 +695,7 @@ def j(
         edge_correction=edge_correction,
     )
 
-    gsupport, gstats = g(
+    gsupport, gstats = g_function(
         coordinates,
         support=support,
         distances=g_distances,
@@ -378,15 +734,10 @@ def j(
     return (gsupport[:first_inf], hazard_ratio[:first_inf])
 
 
-def k(
+def k_function(
     coordinates, support=None, distances=None, metric="euclidean", edge_correction=None,
 ):
     """
-    Ripley's K function
-
-    This function counts the number of pairs of points that are closer than a given distance.
-    As d increases, K approaches the number of point pairs. 
-
     coordinates : numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
@@ -402,11 +753,6 @@ def k(
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
-
-    Returns
-    -------
-    a tuple containing the support values used to evalute the function
-    and the values of the function at each distance value in the support. 
     """
     coordinates, support, distances, metric, hull, edge_correction = _prepare(
         coordinates, support, distances, metric, None, edge_correction
@@ -438,7 +784,7 @@ def k(
     return support, k_estimate
 
 
-def l(
+def l_function(
     coordinates,
     support=None,
     permutations=9999,
@@ -448,14 +794,6 @@ def l(
     linearized=False,
 ):
     """
-    Ripley's L function
-
-    This is a scaled and shifted version of the K function that accounts for the K function's
-    increasing expected value as distances increase. This means that the L function, for a 
-    completely random pattern, should be close to zero at all distance values in the support. 
-
-    Parameters
-    ----------
     coordinates : numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
@@ -474,15 +812,10 @@ def l(
     linearized : bool
         whether or not to subtract l from its expected value (support) at each 
         distance bin. This centers the l function on zero for all distances.
-        Proposed by Besag (1977)
-
-    Returns
-    -------
-    a tuple containing the support values used to evalute the function
-    and the values of the function at each distance value in the support. 
+        Proposed by Besag (1977) #TODO: fix besag ref
     """
 
-    support, k_estimate = k(
+    support, k_estimate = k_function(
         coordinates,
         support=support,
         distances=distances,
@@ -518,11 +851,11 @@ LtestResult = namedtuple(
 )
 
 _ripley_dispatch = {
-    "F": (f, FtestResult),
-    "G": (g, GtestResult),
-    "J": (j, JtestResult),
-    "K": (k, KtestResult),
-    "L": (l, LtestResult),
+    "F": (f_function, FtestResult),
+    "G": (g_function, GtestResult),
+    "J": (j_function, JtestResult),
+    "K": (k_function, KtestResult),
+    "L": (l_function, LtestResult),
 }
 
 
@@ -541,11 +874,11 @@ def _ripley_test(
     stat_function, result_container = _ripley_dispatch.get(calltype)
     core_kwargs = dict(support=support, metric=metric, edge_correction=edge_correction,)
     tree = _build_best_tree(coordinates, metric=metric)
-    hull = _prepare_hull(coordinates, hull)
+
     if calltype in ("F", "J"):  # these require simulations
         core_kwargs["hull"] = hull
         # amortize to avoid doing this every time
-        empty_space_points = poisson(coordinates, size=(1000, 1))
+        empty_space_points = simulate_from(coordinates, size=(1000, 1))
         if distances is None:
             empty_space_distances, _ = _k_neighbors(tree, empty_space_points, k=1)
             if calltype == "F":
@@ -561,13 +894,12 @@ def _ripley_test(
         tree, distances=distances, **core_kwargs
     )
     core_kwargs["support"] = observed_support
-    n_observations = coordinates.shape[0]
 
     if keep_simulations:
         simulations = numpy.empty((len(observed_support), n_simulations)).T
     pvalues = numpy.ones_like(observed_support)
     for i_replication in range(n_simulations):
-        random_i = poisson(hull, size=n_observations)
+        random_i = simulate_from(tree.data)
         if calltype in ("F", "J"):
             random_tree = _build_best_tree(random_i, metric)
             empty_distances, _ = random_tree.query(empty_space_points, k=1)
@@ -604,16 +936,6 @@ def f_test(
     n_simulations=9999,
 ):
     """
-    Ripley's F function
-
-    The so-called "empty space" function, this is the cumulative density function of 
-    the distances from a random set of points to the known points in the pattern.
-
-    When the estimated statistic is larger than simulated values at a given distance, then
-    the pattern is considered "dispersed" or "regular"
-
-    Parameters
-    -----------
     coordinates : numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
@@ -635,15 +957,6 @@ def f_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness. 
-
-    Returns
-    -------
-    a named tuple with properties 
-    - support, the exact distance values used to evalute the statistic
-    - statistic, the values of the statistic at each distance
-    - pvalue, the percent of simulations that were as extreme as the observed value
-    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))
-        or None if keep_simulations=False (which is the default)
     """
 
     return _ripley_test(
@@ -670,15 +983,6 @@ def g_test(
     n_simulations=9999,
 ):
     """
-    Ripley's G function
-
-    The G function is computed from the cumulative density function of the nearest neighbor 
-    distances between points in the pattern. 
-
-    When the G function is below the simulated values, it suggests dispersion. 
-
-    Parameters
-    ----------
     coordinates : numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
@@ -700,15 +1004,6 @@ def g_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness. 
-
-    Returns
-    -------
-    a named tuple with properties 
-    - support, the exact distance values used to evalute the statistic
-    - statistic, the values of the statistic at each distance
-    - pvalue, the percent of simulations that were as extreme as the observed value
-    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))
-        or None if keep_simulations=False (which is the default)
     """
     return _ripley_test(
         "G",
@@ -735,13 +1030,6 @@ def j_test(
     n_simulations=9999,
 ):
     """
-    Ripley's J function
-
-    The so-called "spatial hazard" function, this is a function relating the F and G functions.
-   
-    When the J function is consistently below 1, then it indicates clustering. 
-    When consistently above 1, it suggests dispersion. 
-
     coordinates : numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
@@ -763,15 +1051,6 @@ def j_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness. 
-
-    Returns
-    -------
-    a named tuple with properties 
-    - support, the exact distance values used to evalute the statistic
-    - statistic, the values of the statistic at each distance
-    - pvalue, the percent of simulations that were as extreme as the observed value
-    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))
-        or None if keep_simulations=False (which is the default)
     """
     return _ripley_test(
         "J",
@@ -798,15 +1077,6 @@ def k_test(
     n_simulations=9999,
 ):
     """
-    Ripley's K function
-
-    This function counts the number of pairs of points that are closer than a given distance.
-    As d increases, K approaches the number of point pairs. 
-
-    When the K function is below simulated values, it suggests that the pattern is dispersed. 
-
-    Parameters
-    ----------
     coordinates : numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
@@ -828,15 +1098,6 @@ def k_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness. 
-
-    Returns
-    -------
-    a named tuple with properties 
-    - support, the exact distance values used to evalute the statistic
-    - statistic, the values of the statistic at each distance
-    - pvalue, the percent of simulations that were as extreme as the observed value
-    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))
-        or None if keep_simulations=False (which is the default)
     """
     return _ripley_test(
         "K",
@@ -863,16 +1124,6 @@ def l_test(
     n_simulations=9999,
 ):
     """
-    Ripley's L function
-
-    This is a scaled and shifted version of the K function that accounts for the K function's
-    increasing expected value as distances increase. This means that the L function, for a 
-    completely random pattern, should be close to zero at all distance values in the support. 
-
-    When the L function is negative, this suggests dispersion. 
-
-    Parameters
-    ----------
     coordinates : numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
@@ -894,15 +1145,6 @@ def l_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness. 
-
-    Returns
-    -------
-    a named tuple with properties 
-    - support, the exact distance values used to evalute the statistic
-    - statistic, the values of the statistic at each distance
-    - pvalue, the percent of simulations that were as extreme as the observed value
-    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))
-        or None if keep_simulations=False (which is the default)
     """
     return _ripley_test(
         "L",
