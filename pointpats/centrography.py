@@ -355,7 +355,7 @@ def minimum_bounding_circle(points):
         circ = _skyum_numba(POINTS)[0]
     else:
         circ = _skyum_lists(POINTS)[0]
-    return (circ[0], circ[1]), circ[2]
+    return (circ[1], circ[2]), circ[0]
 
 
 def skyum(points):
