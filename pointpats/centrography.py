@@ -9,6 +9,7 @@ TODO
 """
 
 __author__ = "Serge Rey sjsrey@gmail.com"
+
 __all__ = [
     "mbr",
     "hull",
@@ -30,6 +31,9 @@ import sys
 import numpy as np
 import warnings
 import copy
+
+import cv2 as cv
+from math import pi as PI
 from scipy.spatial import ConvexHull
 from libpysal.cg import get_angle_between, Ray, is_clockwise
 from scipy.spatial import distance as dist
@@ -40,6 +44,32 @@ not_clockwise = lambda x: not is_clockwise(x)
 MAXD = sys.float_info.max
 MIND = sys.float_info.min
 
+def minimum_area_rectangle(points):
+    """
+    Find minimum area rectangle of a point array.
+
+    Parameters
+    ----------
+    points : arraylike
+             (n,2), (x,y) coordinates of a series of event points.
+
+    Returns
+    -------
+    min_x  : float
+             leftmost value of the vertices of minimum bounding rectangle.
+    min_y  : float
+             downmost value of the vertices of minimum bounding rectangle.
+    max_x  : float
+             rightmost value of the vertices of minimum bounding rectangle.
+    max_y  : float
+             upmost value of the vertices of minimum bounding rectangle.
+
+    """
+    points = np.array(points)
+    points = np.float32(points[:, np.newaxis, :])
+    rect = cv.minAreaRect(points)
+    min_x, min_y, max_x, max_y = cv.boxPoints(rect)
+    return min_x, min_y, max_x, max_y
 
 def minimum_bounding_rectangle(points):
     """
@@ -65,16 +95,11 @@ def minimum_bounding_rectangle(points):
     points = np.asarray(points)
     min_x = min_y = MAXD
     max_x = max_y = MIND
-    for point in points:
-        x, y = point
-        if x > max_x:
-            max_x = x
-        if x < min_x:
-            min_x = x
-        if y > max_y:
-            max_y = y
-        if y < min_y:
-            min_y = y
+    x, y = zip(*points)
+    min_x = min(x)
+    min_y = min(y)
+    max_x = max(x)
+    max_y = max(y)
     return min_x, min_y, max_x, max_y
 
 
