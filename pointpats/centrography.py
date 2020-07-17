@@ -76,7 +76,7 @@ def minimum_bounding_rectangle(points):
     return min_x, min_y, max_x, max_y
 
 
-def minimum_rotated_rectangle(points, return_angle=True):
+def minimum_rotated_rectangle(points, return_angle=False):
     """
     Compute the minimum rotated rectangle for an input point set.
 
