@@ -101,6 +101,7 @@ def minimum_rotated_rectangle(points, return_angle=False):
     also return the angle (in degrees) of the rotated rectangle.
 
     """
+    points = np.asarray(points)
     try:
         from cv2 import minAreaRect, boxPoints
     except ModuleNotFoundError:
