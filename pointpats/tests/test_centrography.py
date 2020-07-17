@@ -8,19 +8,30 @@ from libpysal.common import RTOL
 
 
 class TestCentrography(unittest.TestCase):
-
     def setUp(self):
-        self.points = [[66.22, 32.54], [22.52, 22.39], [31.01, 81.21],
-                       [9.47, 31.02], [30.78, 60.10], [75.21, 58.93],
-                       [79.26,  7.68], [8.23, 39.93], [98.73, 77.17],
-                       [89.78, 42.53], [65.19, 92.08], [54.46, 8.48]]
+        self.points = np.array(
+            [
+                [66.22, 32.54],
+                [22.52, 22.39],
+                [31.01, 81.21],
+                [9.47, 31.02],
+                [30.78, 60.10],
+                [75.21, 58.93],
+                [79.26, 7.68],
+                [8.23, 39.93],
+                [98.73, 77.17],
+                [89.78, 42.53],
+                [65.19, 92.08],
+                [54.46, 8.48],
+            ]
+        )
 
     def test_centrography_mar(self):
-        min_x, min_y, max_x, max_y = minimum_area_rectangle(self.points)
+        min_x, min_y, max_x, max_y = minimum_rotated_rectangle(self.points)
         np.testing.assert_array_almost_equal(min_x, [36.40165, 104.61744])
-        np.testing.assert_array_almost_equal(min_y, [ 4.0872803, 30.417528 ])
-        np.testing.assert_array_almost_equal(max_x, [75.599075,  -0.7261505])
-        np.testing.assert_array_almost_equal(max_y, [107.913445,  73.47376251220703 ])
+        np.testing.assert_array_almost_equal(min_y, [4.0872803, 30.417528])
+        np.testing.assert_array_almost_equal(max_x, [75.599075, -0.7261505])
+        np.testing.assert_array_almost_equal(max_y, [107.913445, 73.47376251220703])
 
     def test_centrography_mbr(self):
         min_x, min_y, max_x, max_y = minimum_bounding_rectangle(self.points)
@@ -31,9 +42,19 @@ class TestCentrography(unittest.TestCase):
 
     def test_centrography_hull(self):
         hull_array = hull(self.points)
-        res = np.array([[31.01, 81.21], [8.23, 39.93], [9.47, 31.02],
-                        [22.52, 22.39], [54.46, 8.48], [79.26, 7.68],
-                        [89.78, 42.53], [98.73, 77.17], [65.19, 92.08]])
+        res = np.array(
+            [
+                [31.01, 81.21],
+                [8.23, 39.93],
+                [9.47, 31.02],
+                [22.52, 22.39],
+                [54.46, 8.48],
+                [79.26, 7.68],
+                [89.78, 42.53],
+                [98.73, 77.17],
+                [65.19, 92.08],
+            ]
+        )
         np.testing.assert_array_equal(hull_array, res)
 
     def test_centrography_mean_center(self):
