@@ -364,8 +364,9 @@ class QStatistic:
 
     Parameters
     ----------
-    pp                : :class:`.PointPattern`
-                        Point Pattern instance.
+    pp                : :class:`.PointPattern` or numpy.ndarray
+                        Point Pattern instance, or (n_observations, 2) array
+                        that can be used to construct a Point Pattern instance.
     shape             : string
                         Grid structure. Either "rectangle" or "hexagon".
                         Default is "rectangle".
