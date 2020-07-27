@@ -12,7 +12,7 @@ if os.path.exists('MANIFEST'):
 with open('pointpats/__init__.py', 'r') as f:
     exec(f.readline())
 
-with open('README.rst', 'r', encoding='utf8') as file:
+with open('README.md', 'r', encoding='utf8') as file:
     long_description = file.read()
 
 def _get_requirements_from_files(groups_files):
@@ -40,7 +40,7 @@ def setup_package():
           version=__version__,
           description='Methods and Functions for planar point pattern analysis',
           long_description = long_description,
-          long_description_content_type='text/x-rst',
+          long_description_content_type='text/markdown',
           url='https://github.com/pysal/pointpats',
           maintainer='Hu Shao',
           maintainer_email='shaohutiger@gmail.com',

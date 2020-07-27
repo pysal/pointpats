@@ -8,7 +8,7 @@ pointpats: Point Pattern Analysis in PySAL
 
 Statistical analysis of planar point patterns.
 
-This package is part of a [refactoring of PySAL](https://github.com/pysal/pysal/wiki/PEP-13:-Refactor-PySAL-Using-Submodules).
+This package is part of [PySAL](https://pysal.org): The Python Spatial Analysis Library.
 
 Introduction
 ------------
