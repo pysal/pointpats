@@ -1,10 +1,7 @@
-nose
-nose-progressive
-nose-exclude
+codecov
 coverage
-coveralls
-scikit-learn
-# shapely these need to be gotten from conda because they're incompatible from pypi
-# pygeos
-# geopandas
+geopandas
+pygeos
 pytest
+pytest-cov
+scikit-learn
