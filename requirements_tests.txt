@@ -1,7 +1,5 @@
 codecov
 coverage
-geopandas
-pygeos
 pytest
 pytest-cov
-scikit-learn
+
