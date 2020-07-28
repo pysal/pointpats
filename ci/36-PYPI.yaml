@@ -15,3 +15,7 @@
    - codecov
    - pytest
    - pytest-cov
+   # fetch packages with pip
+   - pip
+   - pip:
+     - opencv-contrib-python>=4.2.0

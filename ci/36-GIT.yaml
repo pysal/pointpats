@@ -14,7 +14,8 @@
    - codecov
    - pytest
    - pytest-cov
-   # fetch libpysal master from github
+   # fetch packages with pip
    - pip
    - pip:
      - git+https://github.com/pysal/libpysal.git@master
+     - opencv-contrib-python>=4.2.0
