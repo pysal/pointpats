@@ -4,7 +4,7 @@ import numpy as np
 
 from ..centrography import *
 
-from libpysal.common import RTOL,ATOL
+from libpysal.common import RTOL, ATOL
 
 
 class TestCentrography(unittest.TestCase):
@@ -29,16 +29,26 @@ class TestCentrography(unittest.TestCase):
     def test_centrography_mar(self):
         mrr = minimum_rotated_rectangle(self.points)
         known = np.array(
-                [
-                    [36.40165, 104.61744],
-                    [4.087286, 30.417522],
-                    [75.59908, -0.726158],
-                    [107.913445, 73.47376251220703],
-                            
-                ]
+            [
+                [36.40165, 104.61744],
+                [4.087286, 30.417522],
+                [75.59908, -0.726158],
+                [107.913445, 73.47376251220703],
+            ]
         )
-        np.testing.assert_allclose(mrr, known, rtol=RTOL, atol=ATOL*100)
-    
+        i = 0
+        while i < 5:
+            success = np.allclose(mrr, np.roll(known, i), rtol=RTOL, atol=ATOL * 100)
+            if success:
+                break
+        if not success:
+            raise AssertionError(
+                f"Minimum Rotated Rectangle cannot be"
+                f"aligned with correct answer:"
+                f"\ncomputed {mrr}\nknown: {known}"
+            )
+        np.testing.assert_allclose(mrr, known, rtol=RTOL, atol=ATOL * 100)
+
     def test_centrography_mbr(self):
         min_x, min_y, max_x, max_y = minimum_bounding_rectangle(self.points)
         np.testing.assert_allclose(min_x, 8.2300000000000004, RTOL)
