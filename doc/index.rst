@@ -34,7 +34,7 @@ for the inclusion of many newly proposed analytics for point patterns.
             </a>
         </div>
         <div class="col-sm-3 col-xs-12">
-            <a href="https://nbviewer.jupyter.org/github/pysal/pointpats/blob/master/notebooks/distance_statistics.ipynb" class="thumbnail">
+            <a href="https://nbviewer.jupyter.org/github/pysal/pointpats/blob/master/notebooks/distance_statistics-numpy-oriented.ipynb" class="thumbnail">
                 <img src="_static/images/G_sim_envelope.png"
                 class="img-responsive center-block">
                 <div class="caption text-center">
