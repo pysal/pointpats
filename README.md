@@ -34,7 +34,7 @@ Online documentation is available
 -   [Simulation of point
     processes](https://github.com/pysal/pointpats/tree/master/notebooks/process.ipynb)
 -   [Distance based
-    statistics](https://github.com/pysal/pointpats/tree/master/notebooks/distance_statistics.ipynb)
+    statistics](https://github.com/pysal/pointpats/tree/master/notebooks/distance_statistics-numpy-oriented.ipynb)
 
 ##  Installation
 

@@ -126,7 +126,7 @@ def _(shape: spatial.Delaunay, x: float, y: float):
     If the returned simplex index is -1, then the point is not
     within a simplex of the triangulation. 
     """
-    return shape.find_simplex((x, y)) > 0
+    return shape.find_simplex((x, y)) >= 0
 
 
 @_contains.register
