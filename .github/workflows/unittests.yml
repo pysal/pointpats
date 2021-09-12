@@ -33,16 +33,16 @@
            environment-file: ${{ matrix.environment-file }}
            micromamba-version: 'latest'
      
-      - name: install bleeding edge libpysal (only Ubuntu / Python 3.9)
+       - name: install bleeding edge libpysal (only Ubuntu / Python 3.9)
          shell: bash -l {0}
          run: |
            pip install git+https://github.com/pysal/libpysal.git@master
          if: matrix.os == 'ubuntu-latest' && contains(matrix.environment-file, 'DEV')
      
-     - name: run tests - bash
-         shell: bash -l {0}
-         run: pytest -v pointpats --cov=pointpats --doctest-modules --cov-config=.coveragerc --cov-report=xml
-         if: matrix.os != 'windows-latest'
+       - name: run tests - bash
+           shell: bash -l {0}
+           run: pytest -v pointpats --cov=pointpats --doctest-modules --cov-config=.coveragerc --cov-report=xml
+           if: matrix.os != 'windows-latest'
        
        - name: run tests - powershell
          shell: powershell
