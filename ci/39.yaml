@@ -2,15 +2,16 @@
  channels:
    - conda-forge
  dependencies:
-   - python=3.6
+   - python=3.9
    # required
    - geopandas
+   - libpysal
    - matplotlib
-   - numpy>=1.3
+   - numpy
    - pandas
    - pygeos
    - scikit-learn
-   - scipy>=0.11
+   - scipy
    # testing/formatting
    - codecov
    - pytest
@@ -18,5 +19,4 @@
    # fetch packages with pip
    - pip
    - pip:
-     - git+https://github.com/pysal/libpysal.git@master
      - opencv-contrib-python>=4.2.0
