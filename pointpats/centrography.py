@@ -105,7 +105,7 @@ def minimum_rotated_rectangle(points, return_angle=False):
     try:
         from cv2 import minAreaRect, boxPoints
     except ModuleNotFoundError:
-        raise ModuleNotFoundError("OpenCV2 is required to use this function.")
+        raise ModuleNotFoundError("OpenCV2 is required to use this function. Please install it with `pip install opencv-contrib-python`")
     ((x, y), (w, h), angle) = rot_rect = minAreaRect(points.astype(np.float32))
     out_points = boxPoints(rot_rect)
     if return_angle:
