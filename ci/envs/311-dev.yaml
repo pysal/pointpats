@@ -10,20 +10,16 @@ dependencies:
   - libpysal
   - py-opencv
   # tests
-  - nose
-  - nose-exclude
-  - coverage
-  - coveralls
   - scikit-learn
   - shapely
   - pygeos
   - pyproj
   - fiona
   - pytest
+  - pytest-cov
+  - codecov
   - pip
   - pip:
       - opencv-contrib-python
-      - nose-progressive
       - git+https://github.com/geopandas/geopandas.git
       - git+https://github.com/pysal/libpysal.git
-

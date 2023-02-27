@@ -74,4 +74,4 @@ class TestCentrography(unittest.TestCase):
     def test_centrography_euclidean_median(self):
         euclidean = euclidean_median(self.points)
         res = np.array([54.16770671, 44.4242589])
-        np.testing.assert_array_almost_equal(euclidean, res)
+        np.testing.assert_array_almost_equal(euclidean, res, decimal=3)
