@@ -85,7 +85,7 @@ release = pointpats.__version__
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -97,6 +97,8 @@ pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
+
+bibtex_bibfiles = ['_static/references.bib']
 
 # -- Options for HTML output ----------------------------------------------
 
@@ -276,7 +278,7 @@ autodoc_default_options = {
 plot_include_source = True
 
 def setup(app):
-    app.add_stylesheet("pysal-styles.css")
+    app.add_css_file("pysal-styles.css")
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {"python": ('https://docs.python.org/3', None),
@@ -285,7 +287,7 @@ intersphinx_mapping = {"python": ('https://docs.python.org/3', None),
                        'libpysal': ('https://pysal.org/libpysal/', None),
                        'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
                        'matplotlib':("https://matplotlib.org/", None),
-                       'opencv-contrib-python':("https://docs.opencv.org/3.4/index.html", None), 
+                       'opencv-contrib-python':("https://docs.opencv.org/3.4/index.html", None),
                        }
 
 
