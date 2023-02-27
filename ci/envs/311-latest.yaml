@@ -10,8 +10,6 @@ dependencies:
   - libpysal
   - py-opencv
   # tests
-  - nose
-  - nose-exclude
   - scikit-learn
   - shapely
   - pygeos
