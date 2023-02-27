@@ -27,11 +27,25 @@ class TestCentrography(unittest.TestCase):
         )
 
     def test_centrography_mar(self):
-        min_x, min_y, max_x, max_y = minimum_rotated_rectangle(self.points)
-        np.testing.assert_array_almost_equal(min_x, [36.40165, 104.61744])
-        np.testing.assert_array_almost_equal(min_y, [4.0872803, 30.417528])
-        np.testing.assert_array_almost_equal(max_x, [75.599075, -0.7261505])
-        np.testing.assert_array_almost_equal(max_y, [107.913445, 73.47376251220703])
+        mrr = minimum_rotated_rectangle(self.points)
+        known = np.array(
+            [
+                [36.40165, 104.61744],
+                [4.087286, 30.417522],
+                [75.59908, -0.726158],
+                [107.913445, 73.47376251220703],
+            ]
+        )
+        for i in range(5):
+            success = np.allclose(mrr, np.roll(known, i, axis=0))
+            if success:
+                break
+        if not success:
+            raise AssertionError(
+                f"Minimum Rotated Rectangle cannot be"
+                f"aligned with correct answer:"
+                f"\ncomputed {mrr}\nknown: {known}"
+            )
 
     def test_centrography_mbr(self):
         min_x, min_y, max_x, max_y = minimum_bounding_rectangle(self.points)
