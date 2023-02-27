@@ -124,7 +124,7 @@ def f(
     """
     Ripley's F function
 
-    The so-called "empty space" function, this is the cumulative density function of 
+    The so-called "empty space" function, this is the cumulative density function of
     the distances from a random set of points to the known points in the pattern.
 
     Parameters
@@ -148,7 +148,7 @@ def f(
     Returns
     -------
     a tuple containing the support values used to evalute the function
-    and the values of the function at each distance value in the support. 
+    and the values of the function at each distance value in the support.
     """
     coordinates, support, distances, metric, hull, _ = _prepare(
         coordinates, support, distances, metric, hull, edge_correction
@@ -204,8 +204,8 @@ def g(
     """
     Ripley's G function
 
-    The G function is computed from the cumulative density function of the nearest neighbor 
-    distances between points in the pattern. 
+    The G function is computed from the cumulative density function of the nearest neighbor
+    distances between points in the pattern.
 
     Parameters
     -----------
@@ -225,7 +225,7 @@ def g(
     Returns
     -------
     a tuple containing the support values used to evalute the function
-    and the values of the function at each distance value in the support. 
+    and the values of the function at each distance value in the support.
 
     """
 
@@ -296,7 +296,7 @@ def j(
     Ripely's J function
 
     The so-called "spatial hazard" function, this is a function relating the F and G functions.
-    
+
     Parameters
     -----------
     coordinates : numpy.ndarray, (n,2)
@@ -306,7 +306,7 @@ def j(
         int, encoding number of equally-spaced intervals
         numpy.ndarray, used directly within numpy.histogram
     distances: tuple of numpy.ndarray
-        precomputed distances to use to evaluate the j function. 
+        precomputed distances to use to evaluate the j function.
         The first must be of shape (n,n) or (n,) and is used in the g function.
         the second must be of shape (n,p) or (p,) (with p possibly equal to n)
         used in the f function.
@@ -319,12 +319,12 @@ def j(
     truncate: bool (default: True)
         whether or not to truncate the results when the F function reaches one. If the
         F function is one but the G function is less than one, this function will return
-        numpy.nan values. 
+        numpy.nan values.
 
     Returns
     -------
     a tuple containing the support values used to evalute the function
-    and the values of the function at each distance value in the support. 
+    and the values of the function at each distance value in the support.
     """
     if distances is not None:
         g_distances, f_distances = distances
@@ -385,7 +385,7 @@ def k(
     Ripley's K function
 
     This function counts the number of pairs of points that are closer than a given distance.
-    As d increases, K approaches the number of point pairs. 
+    As d increases, K approaches the number of point pairs.
 
     coordinates : numpy.ndarray, (n,2)
         input coordinates to function
@@ -406,7 +406,7 @@ def k(
     Returns
     -------
     a tuple containing the support values used to evalute the function
-    and the values of the function at each distance value in the support. 
+    and the values of the function at each distance value in the support.
     """
     coordinates, support, distances, metric, hull, edge_correction = _prepare(
         coordinates, support, distances, metric, None, edge_correction
@@ -451,8 +451,8 @@ def l(
     Ripley's L function
 
     This is a scaled and shifted version of the K function that accounts for the K function's
-    increasing expected value as distances increase. This means that the L function, for a 
-    completely random pattern, should be close to zero at all distance values in the support. 
+    increasing expected value as distances increase. This means that the L function, for a
+    completely random pattern, should be close to zero at all distance values in the support.
 
     Parameters
     ----------
@@ -472,14 +472,14 @@ def l(
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
     linearized : bool
-        whether or not to subtract l from its expected value (support) at each 
+        whether or not to subtract l from its expected value (support) at each
         distance bin. This centers the l function on zero for all distances.
         Proposed by Besag (1977)
 
     Returns
     -------
     a tuple containing the support values used to evalute the function
-    and the values of the function at each distance value in the support. 
+    and the values of the function at each distance value in the support.
     """
 
     support, k_estimate = k(
@@ -606,7 +606,7 @@ def f_test(
     """
     Ripley's F function
 
-    The so-called "empty space" function, this is the cumulative density function of 
+    The so-called "empty space" function, this is the cumulative density function of
     the distances from a random set of points to the known points in the pattern.
 
     When the estimated statistic is larger than simulated values at a given distance, then
@@ -630,15 +630,15 @@ def f_test(
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
     keep_simulations: bool
-        whether or not to keep the simulation envelopes. If so, 
+        whether or not to keep the simulation envelopes. If so,
         will be returned as the result's simulations attribute
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
-        has complete spatial randomness. 
+        has complete spatial randomness.
 
     Returns
     -------
-    a named tuple with properties 
+    a named tuple with properties
     - support, the exact distance values used to evalute the statistic
     - statistic, the values of the statistic at each distance
     - pvalue, the percent of simulations that were as extreme as the observed value
@@ -672,10 +672,10 @@ def g_test(
     """
     Ripley's G function
 
-    The G function is computed from the cumulative density function of the nearest neighbor 
-    distances between points in the pattern. 
+    The G function is computed from the cumulative density function of the nearest neighbor
+    distances between points in the pattern.
 
-    When the G function is below the simulated values, it suggests dispersion. 
+    When the G function is below the simulated values, it suggests dispersion.
 
     Parameters
     ----------
@@ -695,15 +695,15 @@ def g_test(
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
     keep_simulations: bool
-        whether or not to keep the simulation envelopes. If so, 
+        whether or not to keep the simulation envelopes. If so,
         will be returned as the result's simulations attribute
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
-        has complete spatial randomness. 
+        has complete spatial randomness.
 
     Returns
     -------
-    a named tuple with properties 
+    a named tuple with properties
     - support, the exact distance values used to evalute the statistic
     - statistic, the values of the statistic at each distance
     - pvalue, the percent of simulations that were as extreme as the observed value
@@ -738,9 +738,9 @@ def j_test(
     Ripley's J function
 
     The so-called "spatial hazard" function, this is a function relating the F and G functions.
-   
-    When the J function is consistently below 1, then it indicates clustering. 
-    When consistently above 1, it suggests dispersion. 
+
+    When the J function is consistently below 1, then it indicates clustering.
+    When consistently above 1, it suggests dispersion.
 
     coordinates : numpy.ndarray, (n,2)
         input coordinates to function
@@ -758,15 +758,15 @@ def j_test(
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
     keep_simulations: bool
-        whether or not to keep the simulation envelopes. If so, 
+        whether or not to keep the simulation envelopes. If so,
         will be returned as the result's simulations attribute
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
-        has complete spatial randomness. 
+        has complete spatial randomness.
 
     Returns
     -------
-    a named tuple with properties 
+    a named tuple with properties
     - support, the exact distance values used to evalute the statistic
     - statistic, the values of the statistic at each distance
     - pvalue, the percent of simulations that were as extreme as the observed value
@@ -801,9 +801,9 @@ def k_test(
     Ripley's K function
 
     This function counts the number of pairs of points that are closer than a given distance.
-    As d increases, K approaches the number of point pairs. 
+    As d increases, K approaches the number of point pairs.
 
-    When the K function is below simulated values, it suggests that the pattern is dispersed. 
+    When the K function is below simulated values, it suggests that the pattern is dispersed.
 
     Parameters
     ----------
@@ -823,15 +823,15 @@ def k_test(
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
     keep_simulations: bool
-        whether or not to keep the simulation envelopes. If so, 
+        whether or not to keep the simulation envelopes. If so,
         will be returned as the result's simulations attribute
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
-        has complete spatial randomness. 
+        has complete spatial randomness.
 
     Returns
     -------
-    a named tuple with properties 
+    a named tuple with properties
     - support, the exact distance values used to evalute the statistic
     - statistic, the values of the statistic at each distance
     - pvalue, the percent of simulations that were as extreme as the observed value
@@ -866,10 +866,10 @@ def l_test(
     Ripley's L function
 
     This is a scaled and shifted version of the K function that accounts for the K function's
-    increasing expected value as distances increase. This means that the L function, for a 
-    completely random pattern, should be close to zero at all distance values in the support. 
+    increasing expected value as distances increase. This means that the L function, for a
+    completely random pattern, should be close to zero at all distance values in the support.
 
-    When the L function is negative, this suggests dispersion. 
+    When the L function is negative, this suggests dispersion.
 
     Parameters
     ----------
@@ -889,15 +889,15 @@ def l_test(
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
     keep_simulations: bool
-        whether or not to keep the simulation envelopes. If so, 
+        whether or not to keep the simulation envelopes. If so,
         will be returned as the result's simulations attribute
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
-        has complete spatial randomness. 
+        has complete spatial randomness.
 
     Returns
     -------
-    a named tuple with properties 
+    a named tuple with properties
     - support, the exact distance values used to evalute the statistic
     - statistic, the values of the statistic at each distance
     - pvalue, the percent of simulations that were as extreme as the observed value
