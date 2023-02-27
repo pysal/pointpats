@@ -1,0 +1,22 @@
+name: test
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - scipy
+  - numpy
+  - pandas
+  - matplotlib
+  - libpysal
+  - py-opencv
+  # tests
+  - scikit-learn
+  - shapely
+  - pygeos
+  - geopandas
+  - pytest
+  - pytest-cov
+  - codecov
+  - pip
+  - pip:
+      - opencv-contrib-python

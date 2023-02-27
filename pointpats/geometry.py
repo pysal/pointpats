@@ -5,6 +5,8 @@ from libpysal.cg import alpha_shape_auto
 from libpysal.cg.kdtree import Arc_KDTree
 import warnings
 
+__all__ = ["area", "bbox", "contains", "k_neighbors", "build_best_tree", "prepare_hull"]
+
 # ------------------------------------------------------------#
 # Utilities and dispatching                                   #
 # ------------------------------------------------------------#
@@ -28,8 +30,8 @@ HULL_TYPES = (
 @singledispatch
 def area(shape):
     """
-    If a shape has an area attribute, return it. 
-    Works for: 
+    If a shape has an area attribute, return it.
+    Works for:
         shapely.geometry.Polygon
     """
     try:
@@ -41,8 +43,8 @@ def area(shape):
 @area.register
 def _(shape: spatial.qhull.ConvexHull):
     """
-    If a shape is a convex hull from scipy, 
-    assure it's 2-dimensional and then use its volume. 
+    If a shape is a convex hull from scipy,
+    assure it's 2-dimensional and then use its volume.
     """
     assert shape.points.shape[1] == 2
     return shape.volume
@@ -73,7 +75,7 @@ def bbox(shape):
 @bbox.register
 def _(shape: numpy.ndarray):
     """
-    If a shape is an array of points, compute the minima/maxima 
+    If a shape is an array of points, compute the minima/maxima
     or let it pass through if it's 1 dimensional & length 4
     """
     if (shape.ndim == 1) & (len(shape) == 4):
@@ -97,7 +99,7 @@ def _(shape: spatial.qhull.ConvexHull):
 def contains(shape, x, y):
     """
     Try to use the shape's contains method directly on XY.
-    Does not currently work on anything. 
+    Does not currently work on anything.
     """
     raise NotImplementedError()
     return shape.contains((x, y))
@@ -123,9 +125,9 @@ def _(shape: spatial.Delaunay, x: float, y: float):
     method to identify whether a point is inside the triangulation.
 
     If the returned simplex index is -1, then the point is not
-    within a simplex of the triangulation. 
+    within a simplex of the triangulation.
     """
-    return shape.find_simplex((x, y)) > 0
+    return shape.find_simplex((x, y)) >= 0
 
 
 @contains.register
@@ -192,7 +194,7 @@ try:
     @contains.register
     def _(shape: _BaseGeometry, x: float, y: float):
         """
-        If we know we're working with a shapely polygon, 
+        If we know we're working with a shapely polygon,
         then use the contains method & cast input coords to a shapely point
         """
         return shape.contains(_ShapelyPoint((x, y)))
@@ -200,7 +202,7 @@ try:
     @bbox.register
     def _(shape: _BaseGeometry):
         """
-        If a shape is an array of points, compute the minima/maxima 
+        If a shape is an array of points, compute the minima/maxima
         or let it pass through if it's 1 dimensional & length 4
         """
         return numpy.asarray(list(shape.bounds))
@@ -226,7 +228,7 @@ try:
     @area.register
     def _(shape: pygeos.Geometry):
         """
-        If we know we're working with a pygeos polygon, 
+        If we know we're working with a pygeos polygon,
         then use pygeos.area
         """
         return pygeos.area(shape)
@@ -234,7 +236,7 @@ try:
     @contains.register
     def _(shape: pygeos.Geometry, x: float, y: float):
         """
-        If we know we're working with a pygeos polygon, 
+        If we know we're working with a pygeos polygon,
         then use pygeos.within casting the points to a pygeos object too
         """
         return pygeos.within(pygeos.points((x, y)), shape)
@@ -242,7 +244,7 @@ try:
     @bbox.register
     def _(shape: pygeos.Geometry):
         """
-        If we know we're working with a pygeos polygon, 
+        If we know we're working with a pygeos polygon,
         then use pygeos.bounds
         """
         return pygeos.bounds(shape)
@@ -278,7 +280,7 @@ def build_best_tree(coordinates, metric):
         array of coordinates over which to build the tree.
     metric : string or callable
         either a metric supported by sklearn KDTrees or BallTrees, or a callabe function.
-        If sklearn is not installed, then this must be euclidean. 
+        If sklearn is not installed, then this must be euclidean.
 
     Returns
     -------
@@ -287,15 +289,15 @@ def build_best_tree(coordinates, metric):
 
     Notes
     -----
-        This will return a scikit-learn KDTree if the metric is supported and 
-        sklearn can be imported. 
+        This will return a scikit-learn KDTree if the metric is supported and
+        sklearn can be imported.
         If the metric is not supported by KDTree, a BallTree will be used if
-        sklearn can be imported. 
+        sklearn can be imported.
         If the metric is a user-defined callable function, a Ball Tree will be used
-        if sklearn can be imported. 
+        if sklearn can be imported.
         If sklearn can't be imported, then a scipy.spatial.KDTree will be used
-        if the metric is euclidean. 
-        Otherwise, an error will be raised. 
+        if the metric is euclidean.
+        Otherwise, an error will be raised.
     """
     coordinates = numpy.asarray(coordinates)
     tree = spatial.cKDTree
@@ -332,7 +334,7 @@ def build_best_tree(coordinates, metric):
 def k_neighbors(tree, coordinates, k, **kwargs):
     """
     Query a kdtree for k neighbors, handling the self-neighbor case
-    in the case of coincident points. 
+    in the case of coincident points.
 
     Arguments
     ----------
@@ -340,7 +342,7 @@ def k_neighbors(tree, coordinates, k, **kwargs):
         a distance tree, such as a scipy KDTree or sklearn KDTree or BallTree
         that supports a query argument.
     coordinates : numpy.ndarray of shape n,2
-        coordinates to query for their neighbors within the tree. 
+        coordinates to query for their neighbors within the tree.
     k : int
         number of neighbors to query in the tree
     **kwargs : mappable
@@ -349,7 +351,7 @@ def k_neighbors(tree, coordinates, k, **kwargs):
     Returns
     --------
     a tuple of (distances, indices) that is assured to not include the point itself
-    in its query result. 
+    in its query result.
     """
     distances, indices = tree.query(coordinates, k=k + 1, **kwargs)
     n, ks = distances.shape
@@ -373,7 +375,7 @@ def prepare_hull(coordinates, hull=None):
 
     Parameters
     ---------
-    coordinates : numpy.ndarray of shape (n,2) 
+    coordinates : numpy.ndarray of shape (n,2)
         Points to use to construct a hull
     hull : string or a pre-computed hull
         A string denoting what kind of hull to compute (if required) or a hull
@@ -386,7 +388,7 @@ def prepare_hull(coordinates, hull=None):
         lie within this hull. Supported values are:
         - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])
         - an (N,2) array of points for which the bounding box will be computed & used
-        - a shapely polygon/multipolygon 
+        - a shapely polygon/multipolygon
         - a pygeos geometry
         - a scipy.spatial.qhull.ConvexHull
     """

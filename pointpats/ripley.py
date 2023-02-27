@@ -5,6 +5,14 @@ from functools import singledispatch
 from collections import namedtuple
 from libpysal.cg import alpha_shape_auto
 from libpysal.cg.kdtree import Arc_KDTree
+from .geometry import (
+    area as _area,
+    bbox as _bbox,
+    contains as _contains,
+    k_neighbors as _k_neighbors,
+    build_best_tree as _build_best_tree,
+    prepare_hull as _prepare_hull,
+)
 
 __all__ = [
     "simulate",
@@ -20,267 +28,6 @@ __all__ = [
     "j_test",
     "l_test",
 ]
-
-# ------------------------------------------------------------#
-# Utilities and dispatching                                  #
-# ------------------------------------------------------------#
-
-TREE_TYPES = (spatial.KDTree, spatial.cKDTree, Arc_KDTree)
-try:
-    from sklearn.neighbors import KDTree, BallTree
-
-    TREE_TYPES = (*TREE_TYPES, KDTree, BallTree)
-except ModuleNotFoundError:
-    pass
-
-## Define default dispatches and special dispatches without GEOS
-@singledispatch
-def _area(shape):
-    """
-    If a shape has an area attribute, return it. 
-    Works for: 
-        shapely.geometry.Polygon
-    """
-    return shape.area
-
-
-@_area.register
-def _(shape: spatial.qhull.ConvexHull):
-    """
-    If a shape is a convex hull from scipy, 
-    assure it's 2-dimensional and then use its volume. 
-    """
-    assert shape.points.shape[1] == 2
-    return shape.volume
-
-
-@_area.register
-def _(shape: numpy.ndarray):
-    """
-    If a shape describes a bounding box, compute length times width
-    """
-    assert len(shape) == 4, "shape is not a bounding box!"
-    width, height = shape[2] - shape[0], shape[3] - shape[1]
-    return numpy.abs(width * height)
-
-
-@singledispatch
-def _bbox(shape):
-    """
-    If a shape has bounds, use those.
-    Works for:
-        shapely.geometry.Polygon
-    """
-    return _bbox(numpy.asarray(shape))
-
-
-@_bbox.register
-def _(shape: numpy.ndarray):
-    """
-    If a shape is an array of points, compute the minima/maxima 
-    or let it pass through if it's 1 dimensional & length 4
-    """
-    if (shape.ndim == 1) & (len(shape) == 4):
-        return shape
-    return numpy.array([*shape.min(axis=0), *shape.max(axis=0)])
-
-
-@_bbox.register
-def _(shape: spatial.qhull.ConvexHull):
-    """
-    For scipy.spatial.ConvexHulls, compute the bounding box from
-    their boundary points.
-    """
-    return _bbox(shape.points[shape.vertices])
-
-
-@singledispatch
-def _contains(shape, x, y):
-    """
-    Try to use the shape's contains method directly on XY.
-    Does not currently work on anything. 
-    """
-    raise NotImplementedError()
-    return shape.contains((x, y))
-
-
-@_contains.register
-def _(shape: numpy.ndarray, x: float, y: float):
-    """
-    If provided an ndarray, assume it's a bbox
-    and return whether the point falls inside
-    """
-    xmin, xmax = shape[0], shape[2]
-    ymin, ymax = shape[1], shape[3]
-    in_x = (xmin <= x) and (x <= xmax)
-    in_y = (ymin <= y) and (y <= ymax)
-    return in_x & in_y
-
-
-@_contains.register
-def _(shape: spatial.Delaunay, x: float, y: float):
-    """
-    For points and a delaunay triangulation, use the find_simplex
-    method to identify whether a point is inside the triangulation.
-
-    If the returned simplex index is -1, then the point is not
-    within a simplex of the triangulation. 
-    """
-    return shape.find_simplex((x, y)) > 0
-
-
-@_contains.register
-def _(shape: spatial.qhull.ConvexHull, x: float, y: float):
-    """
-    For convex hulls, convert their exterior first into a Delaunay triangulation
-    and then use the delaunay dispatcher.
-    """
-    exterior = shape.points[shape.vertices]
-    delaunay = spatial.Delaunay(exterior)
-    return _contains(delaunay, x, y)
-
-
-try:
-    from shapely.geometry.base import BaseGeometry as _BaseGeometry
-    from shapely.geometry import (
-        Polygon as _ShapelyPolygon,
-        MultiPolygon as _ShapelyMultiPolygon,
-    )
-    from shapely.geometry import Point as _ShapelyPoint
-
-    HAS_SHAPELY = True
-
-    @_contains.register
-    def _(shape: _BaseGeometry, x: float, y: float):
-        """
-        If we know we're working with a shapely polygon, 
-        then use the contains method & cast input coords to a shapely point
-        """
-        return shape.contains(_ShapelyPoint((x, y)))
-
-    @_bbox.register
-    def _(shape: _BaseGeometry):
-        """
-        If a shape is an array of points, compute the minima/maxima 
-        or let it pass through if it's 1 dimensional & length 4
-        """
-        return numpy.asarray(list(shape.bounds))
-
-
-except ModuleNotFoundError:
-    HAS_SHAPELY = False
-
-
-try:
-    import pygeos
-
-    HAS_PYGEOS = True
-
-    @_area.register
-    def _(shape: pygeos.Geometry):
-        """
-        If we know we're working with a pygeos polygon, 
-        then use pygeos.area
-        """
-        return pygeos.area(shape)
-
-    @_contains.register
-    def _(shape: pygeos.Geometry, x: float, y: float):
-        """
-        If we know we're working with a pygeos polygon, 
-        then use pygeos.within casting the points to a pygeos object too
-        """
-        return pygeos.within(pygeos.points((x, y)), shape)
-
-    @_bbox.register
-    def _(shape: pygeos.Geometry):
-        """
-        If we know we're working with a pygeos polygon, 
-        then use pygeos.bounds
-        """
-        return pygeos.bounds(shape)
-
-
-except ModuleNotFoundError:
-    HAS_PYGEOS = False
-
-# ------------------------------------------------------------#
-# Constructors for trees, prepared inputs, & neighbors        #
-# ------------------------------------------------------------#
-
-
-def _build_best_tree(coordinates, metric):
-    """
-    Build the best query tree that can support the application.
-    Chooses from:
-    1. sklearn.KDTree if available and metric is simple
-    2. sklearn.BallTree if available and metric is complicated
-    3. scipy.spatial.cKDTree if nothing else
-    """
-    coordinates = numpy.asarray(coordinates)
-    tree = spatial.cKDTree
-    try:
-        from sklearn.neighbors import KDTree, BallTree
-
-        if metric in KDTree.valid_metrics:
-            tree = lambda coordinates: KDTree(coordinates, metric=metric)
-        elif metric in BallTree.valid_metrics:
-            tree = lambda coordinates: BallTree(coordinates, metric=metric)
-        elif callable(metric):
-            warnings.warn(
-                "Distance metrics defined in pure Python may "
-                " have unacceptable performance!",
-                stacklevel=2,
-            )
-            tree = lambda coordinates: BallTree(coordinates, metric=metric)
-        else:
-            raise KeyError(
-                f"Metric {metric} not found in set of available types."
-                f"BallTree metrics: {BallTree.valid_metrics}, and"
-                f"scikit KDTree metrics: {KDTree.valid_metrics}."
-            )
-    except ModuleNotFoundError as e:
-        if metric not in ("l2", "euclidean"):
-            raise KeyError(
-                f"Metric {metric} requested, but this requires"
-                f" scikit-learn to use. Without scikit-learn, only"
-                f" euclidean distance metric is supported."
-            )
-    return tree(coordinates)
-
-
-def _prepare_hull(coordinates, hull):
-    """
-    Construct a hull from the coordinates given a hull type
-    Will either return:
-        - a bounding box array of [xmin, ymin, xmax, ymax]
-        - a scipy.spatial.ConvexHull object from the Qhull library
-        - a shapely shape using alpha_shape_auto
-    """
-    if isinstance(hull, numpy.ndarray):
-        assert len(hull) == 4, f"bounding box provided is not shaped correctly! {hull}"
-        assert hull.ndim == 1, f"bounding box provided is not shaped correctly! {hull}"
-        return hull
-    if (hull is None) or (hull == "bbox"):
-        return _bbox(coordinates)
-    if HAS_SHAPELY:  # protect the isinstance check if import has failed
-        if isinstance(hull, (_ShapelyPolygon, _ShapelyMultiPolygon)):
-            return hull
-    if HAS_PYGEOS:
-        if isinstance(hull, pygeos.Geometry):
-            return hull
-    if isinstance(hull, str):
-        if hull.startswith("convex"):
-            return spatial.ConvexHull(coordinates)
-        elif hull.startswith("alpha") or hull.startswith("α"):
-            return alpha_shape_auto(coordinates)
-    elif isinstance(hull, spatial.qhull.ConvexHull):
-        return hull
-    raise ValueError(
-        f"Hull type {hull} not in the set of valid options:"
-        f" (None, 'bbox', 'convex', 'alpha', 'α', "
-        f" shapely.geometry.Polygon, pygeos.Geometry)"
-    )
 
 
 def _prepare(coordinates, support, distances, metric, hull, edge_correction):
@@ -366,7 +113,7 @@ def _prepare(coordinates, support, distances, metric, hull, edge_correction):
 def _k_neighbors(tree, coordinates, k, **kwargs):
     """
     Query a kdtree for k neighbors, handling the self-neighbor case
-    in the case of coincident points. 
+    in the case of coincident points.
     """
     distances, indices = tree.query(coordinates, k=k + 1, **kwargs)
     n, ks = distances.shape
@@ -388,7 +135,7 @@ def _k_neighbors(tree, coordinates, k, **kwargs):
 def simulate(hull, intensity=None, size=None):
     """
     Simulate from the given hull with a specified intensity or size.
-    
+
     Hulls can be:
     - bounding boxes (numpy.ndarray with dim==1 and len == 4)
     - scipy.spatial.ConvexHull
@@ -396,9 +143,9 @@ def simulate(hull, intensity=None, size=None):
     - pygeos.Geometry
 
     If intensity is specified, size must be an integer reflecting
-    the number of realizations. 
-    If the size is specified as a tuple, then the intensity is 
-    determined by the area of the hull. 
+    the number of realizations.
+    If the size is specified as a tuple, then the intensity is
+    determined by the area of the hull.
     """
     if size is None:
         if intensity is not None:
@@ -469,19 +216,21 @@ def simulate(hull, intensity=None, size=None):
 def simulate_from(coordinates, hull=None, size=None):
     """
     Simulate a pattern from the coordinates provided using a given assumption
-    about the hull of the process. 
+    about the hull of the process.
 
-    Note: will always assume the implicit intensity of the process. 
+    Note: will always assume the implicit intensity of the process.
     """
     try:
         coordinates = numpy.asarray(coordinates)
         assert coordinates.ndim == 2
     except:
-        raise ValueError("This function requires a numpy array for input."
-                         " If `coordinates` is a shape, use simulate()."
-                         " Otherwise, use the `hull` argument to specify"
-                         " which hull you intend to compute for the input"
-                         " coordinates.")
+        raise ValueError(
+            "This function requires a numpy array for input."
+            " If `coordinates` is a shape, use simulate()."
+            " Otherwise, use the `hull` argument to specify"
+            " which hull you intend to compute for the input"
+            " coordinates."
+        )
     if isinstance(size, int):
         n_observations = coordinates.shape[0]
         n_simulations = size
@@ -579,7 +328,11 @@ def f_function(
 
 
 def g_function(
-    coordinates, support=None, distances=None, metric="euclidean", edge_correction=None,
+    coordinates,
+    support=None,
+    distances=None,
+    metric="euclidean",
+    edge_correction=None,
 ):
     """
     coordinates : numpy.ndarray, (n,2)
@@ -667,7 +420,7 @@ def j_function(
         int, encoding number of equally-spaced intervals
         numpy.ndarray, used directly within numpy.histogram
     distances: tuple of numpy.ndarray
-        precomputed distances to use to evaluate the j function. 
+        precomputed distances to use to evaluate the j function.
         The first must be of shape (n,n) or (n,) and is used in the g function.
         the second must be of shape (n,p) or (p,) (with p possibly equal to n)
         used in the f function.
@@ -680,7 +433,7 @@ def j_function(
     truncate: bool (default: True)
         whether or not to truncate the results when the F function reaches one. If the
         F function is one but the G function is less than one, this function will return
-        numpy.nan values. 
+        numpy.nan values.
     """
     if distances is not None:
         g_distances, f_distances = distances
@@ -735,7 +488,11 @@ def j_function(
 
 
 def k_function(
-    coordinates, support=None, distances=None, metric="euclidean", edge_correction=None,
+    coordinates,
+    support=None,
+    distances=None,
+    metric="euclidean",
+    edge_correction=None,
 ):
     """
     coordinates : numpy.ndarray, (n,2)
@@ -810,7 +567,7 @@ def l_function(
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
     linearized : bool
-        whether or not to subtract l from its expected value (support) at each 
+        whether or not to subtract l from its expected value (support) at each
         distance bin. This centers the l function on zero for all distances.
         Proposed by Besag (1977) #TODO: fix besag ref
     """
@@ -872,7 +629,11 @@ def _ripley_test(
     **kwargs,
 ):
     stat_function, result_container = _ripley_dispatch.get(calltype)
-    core_kwargs = dict(support=support, metric=metric, edge_correction=edge_correction,)
+    core_kwargs = dict(
+        support=support,
+        metric=metric,
+        edge_correction=edge_correction,
+    )
     tree = _build_best_tree(coordinates, metric=metric)
 
     if calltype in ("F", "J"):  # these require simulations
@@ -952,11 +713,11 @@ def f_test(
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
     keep_simulations: bool
-        whether or not to keep the simulation envelopes. If so, 
+        whether or not to keep the simulation envelopes. If so,
         will be returned as the result's simulations attribute
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
-        has complete spatial randomness. 
+        has complete spatial randomness.
     """
 
     return _ripley_test(
@@ -999,11 +760,11 @@ def g_test(
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
     keep_simulations: bool
-        whether or not to keep the simulation envelopes. If so, 
+        whether or not to keep the simulation envelopes. If so,
         will be returned as the result's simulations attribute
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
-        has complete spatial randomness. 
+        has complete spatial randomness.
     """
     return _ripley_test(
         "G",
@@ -1046,11 +807,11 @@ def j_test(
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
     keep_simulations: bool
-        whether or not to keep the simulation envelopes. If so, 
+        whether or not to keep the simulation envelopes. If so,
         will be returned as the result's simulations attribute
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
-        has complete spatial randomness. 
+        has complete spatial randomness.
     """
     return _ripley_test(
         "J",
@@ -1093,11 +854,11 @@ def k_test(
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
     keep_simulations: bool
-        whether or not to keep the simulation envelopes. If so, 
+        whether or not to keep the simulation envelopes. If so,
         will be returned as the result's simulations attribute
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
-        has complete spatial randomness. 
+        has complete spatial randomness.
     """
     return _ripley_test(
         "K",
@@ -1140,11 +901,11 @@ def l_test(
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
     keep_simulations: bool
-        whether or not to keep the simulation envelopes. If so, 
+        whether or not to keep the simulation envelopes. If so,
         will be returned as the result's simulations attribute
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
-        has complete spatial randomness. 
+        has complete spatial randomness.
     """
     return _ripley_test(
         "L",

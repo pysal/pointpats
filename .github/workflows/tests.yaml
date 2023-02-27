@@ -1,0 +1,61 @@
+name: Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches:
+      - "*"
+  schedule:
+    - cron: "0 0 * * 1,4"
+
+jobs:
+  Test:
+    name: ${{ matrix.os }}, ${{ matrix.environment-file }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        environment-file:
+          - ci/envs/38-minimal.yaml
+          - ci/envs/39-latest.yaml
+          - ci/envs/310-latest.yaml
+          - ci/envs/311-latest.yaml
+          - ci/envs/311-dev.yaml
+        include:
+          - environment-file: ci/envs/311-latest.yaml
+            os: macos-latest
+          - environment-file: ci/envs/311-latest.yaml
+            os: windows-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: setup micromamba
+        uses: mamba-org/provision-with-micromamba@main
+        with:
+          environment-file: ${{ matrix.environment-file }}
+          micromamba-version: "latest"
+
+      - name: Install pointpats
+        run: pip install .
+
+      - name: Test pointpats
+        run: |
+          pytest -v --color yes --cov pointpats --cov-append --cov-report term-missing --cov-report xml .
+
+      - uses: codecov/codecov-action@v3
+
+      - name: Generate and publish the report
+        if: |
+          failure()
+          && steps.status.outcome == 'failure'
+          && github.event_name == 'schedule'
+          && github.repository_owner == 'pysal'
+        uses: xarray-contrib/issue-from-pytest-log@v1
+        with:
+          log-path: pytest-log.jsonl
