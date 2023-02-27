@@ -1,6 +1,6 @@
 # pointpats: Point Pattern Analysis in PySAL
 
-[![unittests](https://github.com/pysal/pointpats/workflows/.github/workflows/unittests.yml/badge.svg)](https://github.com/pysal/pointpats/actions?query=workflow%3A.github%2Fworkflows%2Funittests.yml)
+[![Continuous Integration](https://github.com/pysal/pointpats/actions/workflows/tests.yml/badge.svg)](https://github.com/pysal/pointpats/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/pysal/pointpats/branch/master/graph/badge.svg)](https://codecov.io/gh/pysal/pointpats)
 [![Documentation Status](https://readthedocs.org/projects/pointpats/badge/?version=latest)](https://pointpats.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/pointpats.svg)](https://badge.fury.io/py/pointpats)
