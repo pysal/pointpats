@@ -10,16 +10,13 @@ dependencies:
   - libpysal=4.5
   - py-opencv=4.6
   # tests
-  - nose
-  - nose-exclude
-  - coverage
-  - coveralls
   - scikit-learn
   - shapely
   - pygeos
   - geopandas
   - pytest
+  - pytest-cov
+  - codecov
   - pip
   - pip:
-      - opencv-contrib-python==4.6.0
-      - nose-progressive
+      - opencv-contrib-python==4.6.0.66
