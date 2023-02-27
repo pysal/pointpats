@@ -34,7 +34,7 @@ Centrography
 
 .. autosummary::
    :toctree: generated/
-    minimum_area_rectangle
+
     minimum_bounding_rectangle
     hull
     mean_center
@@ -45,7 +45,6 @@ Centrography
     ellipse
     skyum
     dtot
-    _circle
 
 .. _quadrat_api:
 
@@ -56,8 +55,8 @@ Quadrat Based Statistics
    :toctree: generated/
 
     RectangleM
-    HexagonM 
-    QStatistic 
+    HexagonM
+    QStatistic
 
 
 .. _distance_api:
@@ -68,18 +67,16 @@ Distance Based Statistics
 .. autosummary::
    :toctree: generated/
 
-    DStatistic
-    G 
-    F 
-    J 
-    K
-    L 
-    Envelopes
-    Genv
-    Fenv
-    Jenv
-    Kenv
-    Lenv
+    f
+    g
+    k
+    j
+    l
+    f_test
+    g_test
+    k_test
+    j_test
+    l_test
 
 .. _window_api:
 
@@ -94,7 +91,16 @@ Window functions
    poly_from_bbox
    to_ccf
 
+Random distributions
+--------------------
 
+.. autosummary::
+   :toctree: generated/
+
+   random.poisson
+   random.normal
+   random.cluster_poisson
+   random.cluster_normal
 
 Space-Time Interaction Tests
 -----------------------------
