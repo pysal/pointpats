@@ -36,9 +36,9 @@ class TestCentrography(unittest.TestCase):
                 [107.913445, 73.47376251220703],
             ]
         )
-        i = 0
-        while i < 5:
-            success = np.allclose(mrr, np.roll(known, i), rtol=RTOL, atol=ATOL * 100)
+        success = False
+        for i in range(5):
+            success = np.allclose(mrr, np.roll(known, i, axis=0))
             if success:
                 break
         if not success:
@@ -47,7 +47,6 @@ class TestCentrography(unittest.TestCase):
                 f"aligned with correct answer:"
                 f"\ncomputed {mrr}\nknown: {known}"
             )
-        np.testing.assert_allclose(mrr, known, rtol=RTOL, atol=ATOL * 100)
 
     def test_centrography_mbr(self):
         min_x, min_y, max_x, max_y = minimum_bounding_rectangle(self.points)
