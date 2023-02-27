@@ -4,7 +4,7 @@ import numpy as np
 
 from ..centrography import *
 
-from libpysal.common import RTOL, ATOL
+from libpysal.common import RTOL
 
 
 class TestCentrography(unittest.TestCase):
@@ -36,7 +36,6 @@ class TestCentrography(unittest.TestCase):
                 [107.913445, 73.47376251220703],
             ]
         )
-        success = False
         for i in range(5):
             success = np.allclose(mrr, np.roll(known, i, axis=0))
             if success:
