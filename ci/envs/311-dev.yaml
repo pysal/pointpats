@@ -12,17 +12,16 @@ dependencies:
   # tests
   - nose
   - nose-exclude
-  - coverage
-  - coveralls
   - scikit-learn
   - shapely
   - pygeos
   - pyproj
   - fiona
   - pytest
+  - pytest-cov
+  - codecov
   - pip
   - pip:
       - opencv-contrib-python
       - git+https://github.com/geopandas/geopandas.git
       - git+https://github.com/pysal/libpysal.git
-

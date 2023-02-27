@@ -12,13 +12,13 @@ dependencies:
   # tests
   - nose
   - nose-exclude
-  - coverage
-  - coveralls
   - scikit-learn
   - shapely
   - pygeos
   - geopandas
   - pytest
+  - pytest-cov
+  - codecov
   - pip
   - pip:
       - opencv-contrib-python==4.6.0.66
