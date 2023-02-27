@@ -21,5 +21,4 @@ dependencies:
   - pytest
   - pip
   - pip:
-      - opencv-contrib-python==4.6.0
-      - nose-progressive
+      - opencv-contrib-python==4.6.0.66

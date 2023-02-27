@@ -23,7 +23,6 @@ dependencies:
   - pip
   - pip:
       - opencv-contrib-python
-      - nose-progressive
       - git+https://github.com/geopandas/geopandas.git
       - git+https://github.com/pysal/libpysal.git
 
