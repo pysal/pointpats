@@ -47,7 +47,7 @@ def setup_package():
         maintainer="Hu Shao",
         maintainer_email="shaohutiger@gmail.com",
         py_modules=["pointpats"],
-        python_requires=">3.5",
+        python_requires=">3.7",
         tests_require=["pytest"],
         keywords="spatial statistics",
         classifiers=[
@@ -59,8 +59,10 @@ def setup_package():
             "Topic :: Scientific/Engineering :: GIS",
             "License :: OSI Approved :: BSD License",
             "Programming Language :: Python",
-            "Programming Language :: Python :: 3.6",
-            "Programming Language :: Python :: 3.7",
+            "Programming Language :: Python :: 3.8",
+            "Programming Language :: Python :: 3.9",
+            "Programming Language :: Python :: 3.10",
+            "Programming Language :: Python :: 3.11"
         ],
         license="3-Clause BSD",
         packages=find_packages(),
