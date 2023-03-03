@@ -21,7 +21,7 @@ except ModuleNotFoundError:
 
 HULL_TYPES = (
     numpy.ndarray,
-    spatial.qhull.ConvexHull,
+    spatial.ConvexHull,
 )
 
 ## Define default dispatches and special dispatches without GEOS
