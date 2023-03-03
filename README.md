@@ -1,6 +1,6 @@
 # pointpats: Point Pattern Analysis in PySAL
 
-[![Continuous Integration](https://github.com/pysal/pointpats/actions/workflows/tests.yml/badge.svg)](https://github.com/pysal/pointpats/actions/workflows/tests.yml)
+[![Continuous Integration](https://github.com/pysal/pointpats/actions/workflows/tests.yaml/badge.svg)](https://github.com/pysal/pointpats/actions/workflows/tests.yaml)
 [![codecov](https://codecov.io/gh/pysal/pointpats/branch/master/graph/badge.svg)](https://codecov.io/gh/pysal/pointpats)
 [![Documentation Status](https://readthedocs.org/projects/pointpats/badge/?version=latest)](https://pointpats.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/pointpats.svg)](https://badge.fury.io/py/pointpats)
@@ -26,14 +26,14 @@ Online documentation is available
 
 ## Examples
 
--   [Basic point pattern
+- [Basic point pattern
     structure](https://github.com/pysal/pointpats/tree/master/notebooks/pointpattern.ipynb)
--   [Centrography and
+- [Centrography and
     visualization](https://github.com/pysal/pointpats/tree/master/notebooks/centrography.ipynb)
--   [Marks](https://github.com/pysal/pointpats/tree/master/notebooks/marks.ipynb)
--   [Simulation of point
+- [Marks](https://github.com/pysal/pointpats/tree/master/notebooks/marks.ipynb)
+- [Simulation of point
     processes](https://github.com/pysal/pointpats/tree/master/notebooks/process.ipynb)
--   [Distance based
+- [Distance based
     statistics](https://github.com/pysal/pointpats/tree/master/notebooks/distance_statistics-numpy-oriented.ipynb)
 
 ##  Installation
