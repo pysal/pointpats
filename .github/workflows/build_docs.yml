@@ -3,8 +3,8 @@
 # Notes:
 #   - After the first run of this workflow:
 #       - Within the project repo, navigate to Setting/Github Pages
-#       - set `the source pbranch to `gh-pages/(root))`.
-#   - Uncomment evertything below the following line to enable the workflow.
+#       - set `the source branch to `gh-pages/(root))`.
+#   - Uncomment everything below the following line to enable the workflow.
 #---------------------------------------------------------------------------
 
  name: Build Docs

@@ -27,14 +27,14 @@ Online documentation is available
 ## Examples
 
 - [Basic point pattern
-    structure](https://github.com/pysal/pointpats/tree/master/notebooks/pointpattern.ipynb)
+    structure](https://github.com/pysal/pointpats/tree/main/notebooks/pointpattern.ipynb)
 - [Centrography and
-    visualization](https://github.com/pysal/pointpats/tree/master/notebooks/centrography.ipynb)
-- [Marks](https://github.com/pysal/pointpats/tree/master/notebooks/marks.ipynb)
+    visualization](https://github.com/pysal/pointpats/tree/main/notebooks/centrography.ipynb)
+- [Marks](https://github.com/pysal/pointpats/tree/main/notebooks/marks.ipynb)
 - [Simulation of point
-    processes](https://github.com/pysal/pointpats/tree/master/notebooks/process.ipynb)
+    processes](https://github.com/pysal/pointpats/tree/main/notebooks/process.ipynb)
 - [Distance based
-    statistics](https://github.com/pysal/pointpats/tree/master/notebooks/distance_statistics-numpy-oriented.ipynb)
+    statistics](https://github.com/pysal/pointpats/tree/main/notebooks/distance_statistics-numpy-oriented.ipynb)
 
 ##  Installation
 
