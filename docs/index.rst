@@ -18,7 +18,7 @@ for the inclusion of many newly proposed analytics for point patterns.
         <div class="col-sm-1 col-xs-hidden">
         </div>
         <div class="col-md-3 col-xs-12">
-            <a href="https://nbviewer.jupyter.org/github/pysal/pointpats/blob/master/notebooks/process.ipynb" class="thumbnail">
+            <a href="https://nbviewer.org/github/pysal/pointpats/blob/main/notebooks/process.ipynb" class="thumbnail">
                 <img src="_static/images/point_process.png" class="img-responsive center-block">
                 <div class="caption text-center">
                 <h6>Simulating point processes</h6>
@@ -26,7 +26,7 @@ for the inclusion of many newly proposed analytics for point patterns.
             </a>
         </div>
         <div class="col-sm-3 col-xs-12">
-            <a href="https://nbviewer.jupyter.org/github/pysal/pointpats/blob/master/notebooks/Quadrat_statistics.ipynb" class="thumbnail">
+            <a href="https://nbviewer.org/github/pysal/pointpats/blob/main/notebooks/Quadrat_statistics.ipynb" class="thumbnail">
                 <img src="_static/images/quadrat.png" class="img-responsive center-block">
                 <div class="caption text-center">
                 <h6>Quadrat based statistics for point pattern analysis</h6>
@@ -34,7 +34,7 @@ for the inclusion of many newly proposed analytics for point patterns.
             </a>
         </div>
         <div class="col-sm-3 col-xs-12">
-            <a href="https://nbviewer.jupyter.org/github/pysal/pointpats/blob/master/notebooks/distance_statistics-numpy-oriented.ipynb" class="thumbnail">
+            <a href="https://github.com/pysal/pointpats/blob/main/notebooks/distance_statistics-numpy-oriented.ipynb" class="thumbnail">
                 <img src="_static/images/G_sim_envelope.png"
                 class="img-responsive center-block">
                 <div class="caption text-center">
