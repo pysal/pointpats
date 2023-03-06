@@ -28,7 +28,7 @@
      strategy:
        matrix:
          os: ['ubuntu-latest']
-         environment-file: [ci/311-BASE.yaml]
+         environment-file: [ci/envs/311-latest.yaml]
          experimental: [false]
      defaults:
        run:
