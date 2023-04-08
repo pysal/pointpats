@@ -18,8 +18,8 @@ def parse_size_and_intensity(hull, intensity=None, size=None):
     """
     Given a hull, an intensity, and a size int/tuple, correctly
     compute the resulting missing quantities. Defaults to 100 points in one
-    replication, meaning the intensity will be computed on the fly 
-    if nothing is provided. 
+    replication, meaning the intensity will be computed on the fly
+    if nothing is provided.
 
     Parameters
     ----------
@@ -28,20 +28,19 @@ def parse_size_and_intensity(hull, intensity=None, size=None):
         lie within this hull. Supported values are:
         - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])
         - an (N,2) array of points for which the bounding box will be computed & used
-        - a shapely polygon/multipolygon 
-        - a pygeos geometry
+        - a shapely polygon/multipolygon
         - a scipy convexh hull
     intensity : float
         the number of observations per unit area in the hull to use. If provided,
         then the number of observations is determined using the intensity * area(hull) and
-        the size is assumed to represent n_replications (if provided). 
+        the size is assumed to represent n_replications (if provided).
     size : tuple or int
         a tuple of (n_observations, n_replications), where the first number is the number
         of points to simulate in each replication and the second number is the number of
-        total replications. So, (10, 4) indicates 10 points, 4 times. 
+        total replications. So, (10, 4) indicates 10 points, 4 times.
         If an integer is provided and intensity is None, n_replications is assumed to be 1.
         If size is an integer and intensity is also provided, then size indicates n_replications,
-        and the number of observations is computed on the fly using intensity and area. 
+        and the number of observations is computed on the fly using intensity and area.
     """
     if size is None:
         if intensity is not None:
@@ -102,7 +101,7 @@ def parse_size_and_intensity(hull, intensity=None, size=None):
 
 def poisson(hull, intensity=None, size=None):
     """
-    Simulate a poisson random point process with a specified intensity. 
+    Simulate a poisson random point process with a specified intensity.
 
     Parameters
     ----------
@@ -111,25 +110,24 @@ def poisson(hull, intensity=None, size=None):
         lie within this hull. Supported values are:
         - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])
         - an (N,2) array of points for which the bounding box will be computed & used
-        - a shapely polygon/multipolygon 
-        - a pygeos geometry
+        - a shapely polygon/multipolygon
         - a scipy convexh hull
     intensity : float
-        the number of observations per unit area in the hull to use. If provided, then 
-        size must be an integer describing the number of replications to use. 
+        the number of observations per unit area in the hull to use. If provided, then
+        size must be an integer describing the number of replications to use.
     size : tuple or int
         a tuple of (n_observations, n_replications), where the first number is the number
         of points to simulate in each replication and the second number is the number of
-        total replications. So, (10, 4) indicates 10 points, 4 times. 
+        total replications. So, (10, 4) indicates 10 points, 4 times.
         If an integer is provided and intensity is None, n_replications is assumed to be 1.
         If size is an integer and intensity is also provided, then size indicates n_replications,
-        and the number of observations is computed from the intensity.  
+        and the number of observations is computed from the intensity.
 
     Returns
     --------
         :   numpy.ndarray
         either an (n_replications, n_observations, 2) or (n_observations,2) array containing
-        the simulated realizations. 
+        the simulated realizations.
     """
     if isinstance(hull, numpy.ndarray):
         if hull.shape == (4,):
@@ -169,27 +167,26 @@ def normal(hull, center=None, cov=None, size=None):
         lie within this hull. Supported values are:
         - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])
         - an (N,2) array of points for which the bounding box will be computed & used
-        - a shapely polygon/multipolygon 
-        - a pygeos geometry
+        - a shapely polygon/multipolygon
         - a scipy convexh hull
     center : iterable of shape (2, )
         A point where the simulations will be centered.
-    cov : float or a numpy array of shape (2,2) 
+    cov : float or a numpy array of shape (2,2)
         either the standard deviation of an independent and identically distributed
         normal distribution, or a 2 by 2 covariance matrix expressing the covariance
         of the x and y for the distribution. Default is half of the width or height
-        of the hull's bounding box, whichever is larger. 
+        of the hull's bounding box, whichever is larger.
     size : tuple or int
         a tuple of (n_observations, n_replications), where the first number is the number
         of points to simulate in each replication and the second number is the number of
-        total replications. So, (10, 4) indicates 10 points, 4 times. 
-        If an integer is provided, n_replications is assumed to be 1. 
+        total replications. So, (10, 4) indicates 10 points, 4 times.
+        If an integer is provided, n_replications is assumed to be 1.
 
     Returns
     --------
         :   numpy.ndarray
         either an (n_replications, n_observations, 2) or (n_observations,2) array containing
-        the simulated realizations. 
+        the simulated realizations.
     """
     if isinstance(hull, numpy.ndarray):
         if hull.shape == (4,):
@@ -263,32 +260,31 @@ def cluster_poisson(
         lie within this hull. Supported values are:
         - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])
         - an (N,2) array of points for which the bounding box will be computed & used
-        - a shapely polygon/multipolygon 
-        - a pygeos geometry
+        - a shapely polygon/multipolygon
         - a scipy convexh hull
     intensity : float
-        the number of observations per unit area in the hull to use. If provided, then 
-        size must be an integer describing the number of replications to use. 
+        the number of observations per unit area in the hull to use. If provided, then
+        size must be an integer describing the number of replications to use.
     size : tuple or int
         a tuple of (n_observations, n_replications), where the first number is the number
         of points to simulate in each replication and the second number is the number of
-        total replications. So, (10, 4) indicates 10 points, 4 times. 
+        total replications. So, (10, 4) indicates 10 points, 4 times.
         If an integer is provided and intensity is None, n_replications is assumed to be 1.
         If size is an integer and intensity is also provided, then size indicates n_replications,
-        and the number of observations is computed from the intensity.  
+        and the number of observations is computed from the intensity.
     n_seeds : int
         the number of sub-clusters to use.
     cluster_radius : float or iterable
-        the radius of each cluster. If a float, the same radius is used for all clusters. 
-        If an array, then there must be the same number of radii as clusters. 
-        If None, 50% of the minimum inter-point distance is used, which may fluctuate across 
-        replications. 
+        the radius of each cluster. If a float, the same radius is used for all clusters.
+        If an array, then there must be the same number of radii as clusters.
+        If None, 50% of the minimum inter-point distance is used, which may fluctuate across
+        replications.
 
     Returns
     --------
         :   numpy.ndarray
         either an (n_replications, n_observations, 2) or (n_observations,2) array containing
-        the simulated realizations. 
+        the simulated realizations.
     """
     if isinstance(hull, numpy.ndarray):
         if hull.shape == (4,):
@@ -352,19 +348,18 @@ def cluster_normal(hull, cov=None, size=None, n_seeds=2):
         lie within this hull. Supported values are:
         - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])
         - an (N,2) array of points for which the bounding box will be computed & used
-        - a shapely polygon/multipolygon 
-        - a pygeos geometry
+        - a shapely polygon/multipolygon
         - a scipy convexh hull
     cov : float, int, or numpy.ndarray of shape (2,2)
-        The covariance structure for clusters. By default, this is the squared 
+        The covariance structure for clusters. By default, this is the squared
         average distance between cluster seeds.
     size : tuple or int
         a tuple of (n_observations, n_replications), where the first number is the number
         of points to simulate in each replication and the second number is the number of
-        total replications. So, (10, 4) indicates 10 points, 4 times. 
+        total replications. So, (10, 4) indicates 10 points, 4 times.
         If an integer is provided and intensity is None, n_replications is assumed to be 1.
         If size is an integer and intensity is also provided, then size indicates n_replications,
-        and the number of observations is computed from the intensity.  
+        and the number of observations is computed from the intensity.
     n_seeds : int
         the number of sub-clusters to use.
 
@@ -372,7 +367,7 @@ def cluster_normal(hull, cov=None, size=None, n_seeds=2):
     --------
         :   numpy.ndarray
         either an (n_replications, n_observations, 2) or (n_observations,2) array containing
-        the simulated realizations. 
+        the simulated realizations.
     """
     if isinstance(hull, numpy.ndarray):
         if hull.shape == (4,):

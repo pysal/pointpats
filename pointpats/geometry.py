@@ -26,6 +26,7 @@ HULL_TYPES = (
 
 ## Define default dispatches and special dispatches without GEOS
 
+
 ### AREA
 @singledispatch
 def area(shape):
@@ -214,52 +215,56 @@ try:
         """
         return numpy.asarray(list(shape.centroid.coords)).squeeze()
 
-
 except ModuleNotFoundError:
     HAS_SHAPELY = False
 
 
 try:
-    import pygeos
+    import shapely
 
-    HAS_PYGEOS = True
-    HULL_TYPES = (*HULL_TYPES, pygeos.Geometry)
+    from packaging.version import Version
+
+    if Version(shapely.__version__) < Version("2"):
+        HAS_SHAPELY2 = False
+    else:
+        HAS_SHAPELY2 = True
+
+    HULL_TYPES = (*HULL_TYPES, shapely.Geometry)
 
     @area.register
-    def _(shape: pygeos.Geometry):
+    def _(shape: shapely.Geometry):
         """
-        If we know we're working with a pygeos polygon,
-        then use pygeos.area
+        If we know we're working with a shapely polygon,
+        then use shapely.area
         """
-        return pygeos.area(shape)
+        return shapely.area(shape)
 
     @contains.register
-    def _(shape: pygeos.Geometry, x: float, y: float):
+    def _(shape: shapely.Geometry, x: float, y: float):
         """
-        If we know we're working with a pygeos polygon,
-        then use pygeos.within casting the points to a pygeos object too
+        If we know we're working with a shapely polygon,
+        then use shapely.within casting the points to a shapely object too
         """
-        return pygeos.within(pygeos.points((x, y)), shape)
+        return shapely.within(shapely.points((x, y)), shape)
 
     @bbox.register
-    def _(shape: pygeos.Geometry):
+    def _(shape: shapely.Geometry):
         """
-        If we know we're working with a pygeos polygon,
-        then use pygeos.bounds
+        If we know we're working with a shapely polygon,
+        then use shapely.bounds
         """
-        return pygeos.bounds(shape)
+        return shapely.bounds(shape)
 
     @centroid.register
-    def _(shape: pygeos.Geometry):
+    def _(shape: shapely.Geometry):
         """
-        if we know we're working with a pygeos polygon,
-        then use pygeos.centroid
+        if we know we're working with a shapely polygon,
+        then use shapely.centroid
         """
-        return pygeos.coordinates.get_coordinates(pygeos.centroid(shape)).squeeze()
-
+        return shapely.coordinates.get_coordinates(shapely.centroid(shape)).squeeze()
 
 except ModuleNotFoundError:
-    HAS_PYGEOS = False
+    HAS_SHAPELY2 = False
 
 # ------------------------------------------------------------#
 # Constructors for trees, prepared inputs, & neighbors        #
@@ -389,7 +394,7 @@ def prepare_hull(coordinates, hull=None):
         - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])
         - an (N,2) array of points for which the bounding box will be computed & used
         - a shapely polygon/multipolygon
-        - a pygeos geometry
+        - a shapely geometry
         - a scipy.spatial.qhull.ConvexHull
     """
     if isinstance(hull, numpy.ndarray):
@@ -401,8 +406,8 @@ def prepare_hull(coordinates, hull=None):
     if HAS_SHAPELY:  # protect the isinstance check if import has failed
         if isinstance(hull, (_ShapelyPolygon, _ShapelyMultiPolygon)):
             return hull
-    if HAS_PYGEOS:
-        if isinstance(hull, pygeos.Geometry):
+    if HAS_SHAPELY2:
+        if isinstance(hull, shapely.Geometry):
             return hull
     if isinstance(hull, str):
         if hull.startswith("convex"):
@@ -414,5 +419,5 @@ def prepare_hull(coordinates, hull=None):
     raise ValueError(
         f"Hull type {hull} not in the set of valid options:"
         f" (None, 'bbox', 'convex', 'alpha', 'α', "
-        f" shapely.geometry.Polygon, pygeos.Geometry)"
+        f" shapely.geometry.Polygon, shapely.Geometry)"
     )

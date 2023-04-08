@@ -140,7 +140,7 @@ def f(
         to some point in `coordinates`
     metric: str or callable
         distance metric to use when building search tree
-    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
@@ -312,7 +312,7 @@ def j(
         used in the f function.
     metric: str or callable
         distance metric to use when building search tree
-    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon
         the hull used to construct a random sample pattern for the f function.
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
@@ -398,7 +398,7 @@ def k(
         to some point in `coordinates`
     metric: str or callable
         distance metric to use when building search tree
-    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
@@ -467,7 +467,7 @@ def l(
         to some point in `coordinates`
     metric: str or callable
         distance metric to use when building search tree
-    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
@@ -625,7 +625,7 @@ def f_test(
         to some point in `coordinates`
     metric: str or callable
         distance metric to use when building search tree
-    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
@@ -690,7 +690,7 @@ def g_test(
         to some point in `coordinates`
     metric: str or callable
         distance metric to use when building search tree
-    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
@@ -753,7 +753,7 @@ def j_test(
         to some point in `coordinates`
     metric: str or callable
         distance metric to use when building search tree
-    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
@@ -818,7 +818,7 @@ def k_test(
         to some point in `coordinates`
     metric: str or callable
         distance metric to use when building search tree
-    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
@@ -884,7 +884,7 @@ def l_test(
         to some point in `coordinates`
     metric: str or callable
         distance metric to use when building search tree
-    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or pygeos.Geometry
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
