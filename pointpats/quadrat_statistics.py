@@ -61,6 +61,10 @@ class RectangleM:
                         Number of rows.
     num               : integer
                         Number of rectangular quadrats.
+    rectangle_width   : float
+                        Width of a rectangular quadrat.
+    rectangle_height  : float
+                        Height of a rectangular quadrat.
 
     """
 
@@ -72,7 +76,7 @@ class RectangleM:
         self.points = np.asarray(pp.points)
         x_range = self.mbb[2] - self.mbb[0]
         y_range = self.mbb[3] - self.mbb[1]
-        if rectangle_width & rectangle_height:
+        if rectangle_width and rectangle_height:
             self.rectangle_width = rectangle_width
             self.rectangle_height = rectangle_height
 
@@ -378,6 +382,14 @@ class QStatistic:
                         Number of rectangles in the vertical direction.
                         Only when shape is specified as "rectangle"
                         will ny be considered.
+    rectangle_width   : float
+                        Rectangle width. Use in pair with
+                        rectangle_height to fully specify a rectangle.
+                        Incompatible with nx & ny.
+    rectangle_height  : float
+                        Rectangle height. Use in pair with
+                        rectangle_width to fully specify a rectangle.
+                        Incompatible with nx & ny.
     lh                : float
                         Hexagon length (hexagon). Only when shape is
                         specified as "hexagon" will lh be considered.
@@ -409,15 +421,18 @@ class QStatistic:
                         realizations is correctly specified.
     chi2_realizations : array
                         Chi-squared test statistics calculated for
-                        all of the simulated csr point patterns.
+                        all the simulated csr point patterns.
     """
 
-    def __init__(self, pp, shape="rectangle", nx=3, ny=3, lh=10, realizations=0):
+    def __init__(self, pp, shape="rectangle", nx=3, ny=3, rectangle_width=0,
+                 rectangle_height=0, lh=10, realizations=0):
         if isinstance(pp, np.ndarray):
             pp = PointPattern(pp)
         self.pp = pp
         if shape == "rectangle":
-            self.mr = RectangleM(pp, count_column=nx, count_row=ny)
+            self.mr = RectangleM(pp, count_column=nx, count_row=ny,
+                                 rectangle_width=rectangle_width,
+                                 rectangle_height = rectangle_height)
         elif shape == "hexagon":
             self.mr = HexagonM(pp, lh)
         else:
@@ -439,7 +454,8 @@ class QStatistic:
         if realizations:
             reals = realizations.realizations
             sim_n = realizations.samples
-            chi2_realizations = []  # store test statisitcs for all the
+            chi2_realizations = []  # store test statistics for all the
+            # similations
 
             for i in range(sim_n):
                 if shape == "rectangle":
