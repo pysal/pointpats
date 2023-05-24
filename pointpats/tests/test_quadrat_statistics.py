@@ -37,6 +37,13 @@ class TestQuadratStatistics(unittest.TestCase):
         np.testing.assert_allclose(q_r.chi2, 33.1071428571, RTOL)
         np.testing.assert_allclose(q_r.chi2_pvalue, 5.89097854516e-05, ATOL)
         assert q_r.df == 8
+
+        q_r = QStatistic(self.pp, shape="rectangle",
+                         rectangle_height = 29.7, rectangle_width = 30.7)
+        np.testing.assert_allclose(q_r.chi2, 33.1071428571, RTOL)
+        np.testing.assert_allclose(q_r.chi2_pvalue, 5.89097854516e-05, ATOL)
+        assert q_r.df == 8
+
         q_r = QStatistic(self.pp, shape="hexagon", lh=10)
         np.testing.assert_allclose(q_r.chi2, 195.0, RTOL)
         np.testing.assert_allclose(q_r.chi2_pvalue, 6.3759506952e-22, RTOL)
@@ -44,9 +51,11 @@ class TestQuadratStatistics(unittest.TestCase):
 
     def test_RectangleM1(self):
         rm = RectangleM(self.pp, count_column = 3, count_row = 3)
+        rm2 = RectangleM(self.pp, rectangle_height = 29.7, rectangle_width = 30.7)
         np.testing.assert_array_equal(list(rm.point_location_sta().values()),
                                       [12, 22, 4, 11, 26, 22, 22, 33, 16])
-
+        np.testing.assert_array_equal(list(rm2.point_location_sta().values()),
+                                      [12, 22, 4, 11, 26, 22, 22, 33, 16])
     def test_RectangleM2(self):
         hm = HexagonM(self.pp, lh = 10)
         np.testing.assert_array_equal(list(hm.point_location_sta().values()),
