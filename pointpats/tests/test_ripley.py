@@ -2,7 +2,7 @@ import numpy
 from scipy import spatial
 from pointpats import distance_statistics as ripley, geometry, random
 from libpysal.cg import alpha_shape_auto
-import pygeos
+import shapely
 import warnings
 import pytest
 
@@ -27,7 +27,6 @@ tree = spatial.cKDTree(points)
 
 chull = spatial.ConvexHull(points)
 ashape = alpha_shape_auto(points)
-pygeos_ashape = pygeos.from_shapely(ashape)
 
 bbox = numpy.asarray((*points.min(axis=0), *points.max(axis=0)))
 
@@ -52,23 +51,23 @@ def test_primitives():
     assert area_chull == geometry.area(chull)
     area_pgon = geometry.area(ashape)
     assert area_pgon == ashape.area
-    assert area_pgon == geometry.area(pygeos_ashape)
+    assert area_pgon == geometry.area(ashape)
     point_in = list(ashape.centroid.coords)[0]
     point_out = (100, 100)
 
     assert geometry.contains(chull, *point_in)
     assert geometry.contains(ashape, *point_in)
-    assert geometry.contains(pygeos_ashape, *point_in)
+    assert geometry.contains(ashape, *point_in)
     assert geometry.contains(bbox, *point_in)
 
     assert not (geometry.contains(chull, *point_out))
     assert not (geometry.contains(ashape, *point_out))
-    assert not (geometry.contains(pygeos_ashape, *point_out))
+    assert not (geometry.contains(ashape, *point_out))
     assert not (geometry.contains(bbox, *point_out))
 
     numpy.testing.assert_array_equal(bbox, geometry.bbox(bbox))
     numpy.testing.assert_array_equal(bbox, geometry.bbox(ashape))
-    numpy.testing.assert_array_equal(bbox, geometry.bbox(pygeos_ashape))
+    numpy.testing.assert_array_equal(bbox, geometry.bbox(ashape))
     numpy.testing.assert_array_equal(bbox, geometry.bbox(chull))
     numpy.testing.assert_array_equal(bbox, geometry.bbox(points))
 
@@ -115,8 +114,8 @@ def test_prepare():
     tmp_ashape = ripley._prepare_hull(points, ashape)
     assert tmp_ashape is ashape  # pass-through with no modification
 
-    tmp_ashape = ripley._prepare_hull(points, pygeos_ashape)
-    assert pygeos.equals(tmp_ashape, pygeos_ashape)
+    tmp_ashape = ripley._prepare_hull(points, ashape)
+    assert shapely.equals(tmp_ashape, ashape)
 
     tmp_chull = ripley._prepare_hull(points, chull)
     assert tmp_chull is chull  # pass-through with no modification
@@ -190,7 +189,6 @@ def test_prepare():
 
 
 def test_simulate():
-
     assert random.poisson(ashape).shape == (100, 2)
     assert random.poisson(chull).shape == (100, 2)
     assert random.poisson(bbox).shape == (100, 2)
@@ -211,7 +209,6 @@ def test_simulate():
 
 
 def test_f():
-
     # -------------------------------------------------------------------------#
     # Check f function has consistent performance
 

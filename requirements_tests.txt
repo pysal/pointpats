@@ -1,7 +1,6 @@
 scikit-learn
-# shapely these need to be gotten from conda because they're incompatible from pypi
-# pygeos
-# geopandas
+shapely
+geopandas
 pytest
 codecov
 pytest-cov
