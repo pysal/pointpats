@@ -10,9 +10,9 @@ class SpaceTimeEvents_Tester(unittest.TestCase):
 
     def test_SpaceTimeEvents(self):
         events = SpaceTimeEvents(self.path, "T")
-        self.assertEquals(events.n, 188)
-        self.assertEquals(list(events.space[0]), [300.0, 302.0])
-        self.assertEquals(list(events.t[0]), [413])
+        self.assertEqual(events.n, 188)
+        self.assertEqual(list(events.space[0]), [300.0, 302.0])
+        self.assertEqual(list(events.t[0]), [413])
 
 
 class Knox_Tester(unittest.TestCase):
@@ -22,7 +22,7 @@ class Knox_Tester(unittest.TestCase):
 
     def test_knox(self):
         result = knox(self.events.space, self.events.t, delta=20, tau=5, permutations=1)
-        self.assertEquals(result["stat"], 13.0)
+        self.assertEqual(result["stat"], 13.0)
 
 
 class Mantel_Tester(unittest.TestCase):
@@ -40,7 +40,7 @@ class Mantel_Tester(unittest.TestCase):
             tcon=0.0,
             tpow=1.0,
         )
-        self.assertAlmostEquals(result["stat"], 0.014154, 6)
+        self.assertAlmostEqual(result["stat"], 0.014154, 6)
 
 
 class Jacquez_Tester(unittest.TestCase):
@@ -49,9 +49,9 @@ class Jacquez_Tester(unittest.TestCase):
         self.events = SpaceTimeEvents(path, "T")
 
     def test_jacquez(self):
-        result = jacquez(self.events.space,
-                self.events.t, k=3, permutations=1)
-        self.assertEquals(result['stat'], 12)
+        result = jacquez(self.events.space, self.events.t, k=3, permutations=1)
+        self.assertEqual(result["stat"], 12)
+
 
 class ModifiedKnox_Tester(unittest.TestCase):
     def setUp(self):
@@ -62,7 +62,7 @@ class ModifiedKnox_Tester(unittest.TestCase):
         result = modified_knox(
             self.events.space, self.events.t, delta=20, tau=5, permutations=1
         )
-        self.assertAlmostEquals(result["stat"], 2.810160, 6)
+        self.assertAlmostEqual(result["stat"], 2.810160, 6)
 
 
 suite = unittest.TestSuite()
