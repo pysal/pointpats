@@ -42,7 +42,7 @@ def area(shape):
 
 
 @area.register
-def _(shape: spatial.qhull.ConvexHull):
+def _(shape: spatial.ConvexHull):
     """
     If a shape is a convex hull from scipy,
     assure it's 2-dimensional and then use its volume.
@@ -85,7 +85,7 @@ def _(shape: numpy.ndarray):
 
 
 @bbox.register
-def _(shape: spatial.qhull.ConvexHull):
+def _(shape: spatial.ConvexHull):
     """
     For scipy.spatial.ConvexHulls, compute the bounding box from
     their boundary points.
@@ -132,7 +132,7 @@ def _(shape: spatial.Delaunay, x: float, y: float):
 
 
 @contains.register
-def _(shape: spatial.qhull.ConvexHull, x: float, y: float):
+def _(shape: spatial.ConvexHull, x: float, y: float):
     """
     For convex hulls, convert their exterior first into a Delaunay triangulation
     and then use the delaunay dispatcher.
@@ -174,7 +174,7 @@ def _(shape: numpy.ndarray):
 
 
 @centroid.register
-def _(shape: spatial.qhull.ConvexHull):
+def _(shape: spatial.ConvexHull):
     """
     Treat convex hulls as arrays of points
     """
@@ -403,7 +403,7 @@ def prepare_hull(coordinates, hull=None):
         - an (N,2) array of points for which the bounding box will be computed & used
         - a shapely polygon/multipolygon
         - a shapely geometry
-        - a scipy.spatial.qhull.ConvexHull
+        - a scipy.spatial.ConvexHull
     """
     if isinstance(hull, numpy.ndarray):
         assert len(hull) == 4, f"bounding box provided is not shaped correctly! {hull}"
@@ -422,7 +422,7 @@ def prepare_hull(coordinates, hull=None):
             return spatial.ConvexHull(coordinates)
         elif hull.startswith("alpha") or hull.startswith("α"):
             return alpha_shape_auto(coordinates)
-    elif isinstance(hull, spatial.qhull.ConvexHull):
+    elif isinstance(hull, spatial.ConvexHull):
         return hull
     raise ValueError(
         f"Hull type {hull} not in the set of valid options:"
