@@ -11,7 +11,7 @@ __all__ = ["area", "bbox", "contains", "k_neighbors", "build_best_tree", "prepar
 # Utilities and dispatching                                   #
 # ------------------------------------------------------------#
 
-TREE_TYPES = (spatial.KDTree, spatial.cKDTree, Arc_KDTree)
+TREE_TYPES = (spatial.KDTree, Arc_KDTree)
 try:
     from sklearn.neighbors import KDTree, BallTree
 
@@ -277,7 +277,6 @@ def build_best_tree(coordinates, metric):
     Chooses from:
     1. sklearn.KDTree if available and metric is simple
     2. sklearn.BallTree if available and metric is complicated
-    3. scipy.spatial.cKDTree if nothing else
 
     Parameters
     ----------
@@ -305,7 +304,7 @@ def build_best_tree(coordinates, metric):
         Otherwise, an error will be raised.
     """
     coordinates = numpy.asarray(coordinates)
-    tree = spatial.cKDTree
+    tree = spatial.KDTree
     try:
         from sklearn.neighbors import KDTree, BallTree
 
