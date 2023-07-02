@@ -306,11 +306,20 @@ def build_best_tree(coordinates, metric):
     coordinates = numpy.asarray(coordinates)
     tree = spatial.KDTree
     try:
+        import sklearn
         from sklearn.neighbors import KDTree, BallTree
+        from packaging.version import Version
 
-        if metric in KDTree.valid_metrics:
+        if Version(sklearn.__version__) >= Version("1.3.0"):
+            kdtree_valid_metrics = KDTree.valid_metrics()
+            balltree_valid_metrics = BallTree.valid_metrics()
+        else:
+            kdtree_valid_metrics = KDTree.valid_metrics
+            balltree_valid_metrics = BallTree.valid_metrics
+
+        if metric in kdtree_valid_metrics:
             tree = lambda coordinates: KDTree(coordinates, metric=metric)
-        elif metric in BallTree.valid_metrics:
+        elif metric in balltree_valid_metrics:
             tree = lambda coordinates: BallTree(coordinates, metric=metric)
         elif callable(metric):
             warnings.warn(
@@ -322,8 +331,8 @@ def build_best_tree(coordinates, metric):
         else:
             raise KeyError(
                 f"Metric {metric} not found in set of available types."
-                f"BallTree metrics: {BallTree.valid_metrics}, and"
-                f"scikit KDTree metrics: {KDTree.valid_metrics}."
+                f"BallTree metrics: {balltree_valid_metrics}, and"
+                f"scikit KDTree metrics: {kdtree_valid_metrics}."
             )
     except ModuleNotFoundError as e:
         if metric not in ("l2", "euclidean"):

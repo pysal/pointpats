@@ -418,9 +418,9 @@ class PointPattern(object):
         if k < 1:
             raise ValueError('k must be at least 1')
         try:
-            nn = self.tree.query(other.points, k=k)
+            nn = self.tree.query(np.asarray(other.points), k=k)
         except:
-            nn = self.tree.query(other, k=k)
+            nn = self.tree.query(np.asarray(other), k=k)
         return nn[1], nn[0]
 
     def explode(self, mark):
