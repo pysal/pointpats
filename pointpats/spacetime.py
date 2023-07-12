@@ -13,6 +13,8 @@ import numpy as np
 import scipy.stats as stats
 from libpysal import cg
 from datetime import date
+from scipy.spatial import KDTree
+from scipy.stats import poisson
 
 class SpaceTimeEvents:
     """
@@ -629,3 +631,105 @@ def _shuffle_matrix(X, ids):
     """
     np.random.shuffle(ids)
     return X[ids, :][:, ids]
+
+
+def _knox(s_coords, t_coords, delta, tau, permutations=99, conditional=False):
+    """
+    Parameters
+    ==========
+
+    s_coords: array-like
+      spatial coordinates
+    t_coords: array-like
+      temporal coordinates
+    delta: float
+      distance threshold
+    tau: float
+      temporal threshold
+    permutations: int
+      number of permutations
+
+
+    Returns
+    =======
+
+    summary table observed
+    summary table h0
+
+    ns
+    nt
+    nst
+    n
+    p-value
+    """
+
+    n = s_coords.shape[0]
+
+    stree = KDTree(s_coords)
+    ttree = KDTree(t_coords)
+    sneighbors = stree.query_ball_tree(stree, r=delta)
+    sneighbors = [set(neighbors).difference([i]) for i,neighbors in enumerate(sneighbors)]
+    tneighbors = ttree.query_ball_tree(ttree, r=tau)
+    tneighbors = [set(neighbors).difference([i]) for i,neighbors in enumerate(tneighbors)]
+
+    # number of spatial neighbor pairs
+    ns = np.array([len(neighbors) for neighbors in sneighbors]) # by i
+
+    NS = ns.sum() / 2 # total
+
+    # number of temporal neigbor pairs
+    nt = np.array([len(neighbors) for neighbors in tneighbors])
+    NT = nt.sum() / 2
+
+
+    # s-t neighbors (list of lists)
+    stneighbors = [sneighbors_i.intersection(tneighbors_i) for sneighbors_i, tneighbors_i in zip(sneighbors, tneighbors)]
+
+
+
+    # number of spatio-temporal neigbor pairs
+    nst = np.array([len(neighbors) for neighbors in stneighbors])
+    NST = nst.sum()/2
+
+    # ENST: expected number of spatio-temporal neighbors under HO
+    pairs = n * (n-1) / 2
+    ENST = NS * NT / pairs
+
+
+    # observed table
+    observed = np.zeros((2,2))
+
+    # NST NS_
+    # NT_ N__
+
+    NS_ = NS - NST
+    NT_ = NT - NST
+
+    observed[0,0] = NST
+    observed[0,1] = NS_
+    observed[1,0] = NT_
+    observed[1,1] = pairs - NST - NS_ - NT_
+
+    # expected table
+
+    expected = np.zeros((2,2))
+    expected[0,0]  = NS * NT / pairs
+    expected[0,1] = NS - expected[0,0]
+    expected[1,0] = NT - expected[0,0]
+    expected[1,1] = pairs - expected.sum()
+
+    p_value_poisson = 1 - poisson.cdf(NST, expected[0,0])
+
+
+    results = {}
+    results['ns'] = ns.sum() / 2
+    results['nt'] = nt.sum() / 2
+    results['nst'] = nst.sum() / 2
+    results['pairs'] = pairs
+    results['expected'] = expected
+    results['observed'] = observed
+    results['p_value_poisson'] = p_value_poisson
+
+
+    return results
+
