@@ -3,14 +3,12 @@ channels:
   - conda-forge
 dependencies:
   - python=3.11
-  - scipy
   - numpy
   - pandas
   - matplotlib
   - libpysal
   - py-opencv
   # tests
-  - scikit-learn
   - shapely
   - pyproj
   - fiona
@@ -19,6 +17,9 @@ dependencies:
   - codecov
   - pip
   - pip:
+      - --pre --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple --extra-index-url https://pypi.org/simple
       - opencv-contrib-python
       - git+https://github.com/geopandas/geopandas.git
       - git+https://github.com/pysal/libpysal.git
+      - scipy
+      - scikit-learn
