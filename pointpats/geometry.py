@@ -310,7 +310,7 @@ def build_best_tree(coordinates, metric):
         from sklearn.neighbors import KDTree, BallTree
         from packaging.version import Version
 
-        if Version(sklearn.__version__) >= Version("1.3.0"):
+        if Version(sklearn.__version__) == Version("1.3.0"):
             kdtree_valid_metrics = KDTree.valid_metrics()
             balltree_valid_metrics = BallTree.valid_metrics()
         else:
