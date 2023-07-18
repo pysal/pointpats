@@ -633,7 +633,7 @@ def _shuffle_matrix(X, ids):
     return X[ids, :][:, ids]
 
 
-def _knox(s_coords, t_coords, delta, tau, permutations=99, conditional=False):
+def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
     """
     Parameters
     ==========
@@ -648,6 +648,8 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, conditional=False):
       temporal threshold
     permutations: int
       number of permutations
+    keep: bool
+      return values from permutations (default False)
 
 
     Returns
@@ -740,9 +742,11 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, conditional=False):
 
 
     if permutations > 0:
+        exceedence = 0
         n = len(sneighbors)
         ids = np.arange(n)
-        ST = np.zeros(permutations)
+        if keep:
+            ST = np.zeros(permutations)
 
         for perm in range(permutations):
             st = 0
@@ -754,9 +758,14 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, conditional=False):
                 sti = [j for j in rjs if j in tni]
                 st += len(sti)
             st /= 2
-            ST[perm] = st
-        results['p_value_sim'] = ((ST >= observed[0,0]).sum() + 1) / (permutations + 1)
-        results['st_perm'] = ST
+            if st >= results['nst']:
+                exceedence += 1
+            if keep:
+                ST[perm] = st
+        results['p_value_sim'] = (exceedence + 1) / (permutations + 1)
+        results['exeedence'] = exceedence
+        if keep:
+            results['st_perm'] = ST
 
     return results
 
@@ -804,6 +813,7 @@ def _local_knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
         if keep:
             res['sti_perm'] = STI
         res['exceedence_pvalue'] = (exceedence + 1) / (permutations + 1)
+        res['exceedences'] = exceedence
     return res
 
 
