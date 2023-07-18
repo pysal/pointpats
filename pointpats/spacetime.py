@@ -691,6 +691,15 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, conditional=False):
     nst = np.array([len(neighbors) for neighbors in stneighbors])
     NST = nst.sum()/2
 
+    all_pairs = []
+    pairs = {}
+    for i, neigh in enumerate(stneighbors):
+        if len(neigh) > 0:
+            all_pairs.extend([sorted((i,j)) for j in neigh])
+    st_pairs = set([tuple(l) for l in all_pairs])
+
+
+
     # ENST: expected number of spatio-temporal neighbors under HO
     pairs = n * (n-1) / 2
     ENST = NS * NT / pairs
@@ -699,11 +708,8 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, conditional=False):
     # observed table
     observed = np.zeros((2,2))
 
-    # NST NS_
-    # NT_ N__
-
-    NS_ = NS - NST
-    NT_ = NT - NST
+    NS_ = NS - NST   # spatial only
+    NT_ = NT - NST   # temporal only
 
     observed[0,0] = NST
     observed[0,1] = NS_
@@ -720,7 +726,6 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, conditional=False):
 
     p_value_poisson = 1 - poisson.cdf(NST, expected[0,0])
 
-
     results = {}
     results['ns'] = ns.sum() / 2
     results['nt'] = nt.sum() / 2
@@ -729,7 +734,76 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, conditional=False):
     results['expected'] = expected
     results['observed'] = observed
     results['p_value_poisson'] = p_value_poisson
+    results['st_pairs'] = st_pairs
+    results['sneighbors'] = sneighbors
+    results['tneighbors'] = tneighbors
 
+
+    if permutations > 0:
+        n = len(sneighbors)
+        ids = np.arange(n)
+        ST = np.zeros(permutations)
+
+        for perm in range(permutations):
+            st = 0
+            rids = np.random.permutation(ids)
+            for i in range(n):
+                ri = rids[i]
+                tni = tneighbors[ri]
+                rjs = [rids[j] for j in sneighbors[i]]
+                sti = [j for j in rjs if j in tni]
+                st += len(sti)
+            st /= 2
+            ST[perm] = st
+        results['p_value_sim'] = ((ST >= observed[0,0]).sum() + 1) / (permutations + 1)
+        results['st_perm'] = ST
 
     return results
+
+
+def _local_knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
+    res = _knox(s_coords, t_coords, delta, tau, permutations=99)
+    sneighbors = { i:tuple(ns) for i, ns in enumerate(res['sneighbors']) }
+    tneighbors = { i:tuple(nt) for i, nt in enumerate(res['tneighbors']) }
+
+    n= len(s_coords)
+    ids = np.arange(n)
+    res['sti'] = np.zeros(n)  # number of observed st_pairs for observation i
+    for pair in res['st_pairs']:
+        i, j = pair
+        res['sti'][i] += 1
+        res['sti'][j] += 1
+
+    if permutations > 0:
+        exceedence = np.zeros(n)
+        if keep:
+            STI = np.zeros((n,permutations))
+        for perm in range(permutations):
+            rids = np.random.permutation(ids)
+            for i in range(n):
+                # set observed value of focal unit i
+                # swap with value assigned to rids[i]
+                j = np.where(rids==i)
+                a = rids[i]
+                rids[j] = a
+                rids[i] = i
+
+                # calculate local stat
+                rjs = [rids[j] for j in sneighbors[i]]
+                tni = tneighbors[i]
+                sti = [j for j in rjs if j in tni]
+                count = len(sti)
+                if count >= res['sti'][i]:
+                    exceedence[i] += 1
+                if keep:
+                    STI[i, perm] = count
+
+                # reset value of focal unit i to random value
+                rids[j] = i
+                rids[i] = a
+        if keep:
+            res['sti_perm'] = STI
+        res['exceedence_pvalue'] = (exceedence + 1) / (permutations + 1)
+    return res
+
 
