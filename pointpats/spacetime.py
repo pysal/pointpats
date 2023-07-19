@@ -15,6 +15,7 @@ from libpysal import cg
 from datetime import date
 from scipy.spatial import KDTree
 from scipy.stats import poisson
+from scipy.stats import hypergeom
 
 class SpaceTimeEvents:
     """
@@ -667,6 +668,7 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
 
     n = s_coords.shape[0]
 
+
     stree = KDTree(s_coords)
     ttree = KDTree(t_coords)
     sneighbors = stree.query_ball_tree(stree, r=delta)
@@ -763,11 +765,112 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
             if keep:
                 ST[perm] = st
         results['p_value_sim'] = (exceedence + 1) / (permutations + 1)
-        results['exeedence'] = exceedence
+        results['exceedence'] = exceedence
         if keep:
             results['st_perm'] = ST
 
     return results
+
+
+class Knox:
+    """
+    Global Knox statistic for space-time interactions
+
+    Parameters
+    ----------
+
+    s_coords: array-like
+      spatial coordinates of point events
+
+    t_coords: array-like
+      temporal coordinates of point events (floats or ints, not dateTime)
+
+    delta: float
+      spatial threshold defining distance below which pairs are spatial
+      neighbors
+
+    tau: float
+      temporal threshold defining distance below which pairs are temporal
+      neighbors
+
+    permutations: int
+      number of random permutations for inference
+
+    keep: bool
+      whether to store realized values of the statistic under permutations
+
+
+
+    Attributes
+    ----------
+
+    s_coords: array-like
+      spatial coordinates of point events
+
+    t_coords: array-like
+      temporal coordinates of point events (floats or ints, not dateTime)
+
+    delta: float
+      spatial threshold defining distance below which pairs are spatial
+      neighbors
+
+    tau: float
+      temporal threshold defining distance below which pairs are temporal
+      neighbors
+
+    permutations: int
+      number of random permutations for inference
+
+    keep: bool
+      whether to store realized values of the statistic under permutations
+
+    nst: int
+      number of space-time pairs
+
+    p_poisson: float
+      Analytical p-value under Poisson assumption
+
+    p_sim: float
+      Pseudo p-value based on random permutations
+
+    expected: array
+      Two-by-two array with expected counts under the null of no space-time
+      interactions. [[NST, NS_], [NT_, N__]] where NST is the expected number
+      of space-time pairs, NS_ is the expected number of spatial (but not also
+      temporal) pairs, NT_ is the number of expected temporal (but not also
+      spatial pairs), N__ is the number of pairs that are neighor spatial or
+      temporal neighbors.
+
+    observed: array
+      Same structure as expected with the observed pair classifications
+
+    sim: array
+      Global statistics from permutations (if keep=True)
+
+
+    """
+    def __init__(self, s_coords, t_coords, delta, tau, permutations=99,
+                 keep=False):
+        self.s_coords = s_coords
+        self.t_coords = t_coords
+        self.delta = delta
+        self.tau = tau
+        self.permutations = permutations
+        self.keep = keep
+        results = _knox(s_coords, t_coords, delta, tau, permutations, keep)
+        self.nst = int(results['nst'])
+        if permutations>0:
+            self.p_sim = results['p_value_sim']
+            if keep:
+                self.sim = results['st_perm']
+
+        self.p_poisson = results['p_value_poisson']
+        self.observed = results['observed']
+        self.expected = results['expected']
+
+    @property
+    def _statistic(self):
+        return self.nst
 
 
 def _local_knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
@@ -777,12 +880,17 @@ def _local_knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
 
     n= len(s_coords)
     ids = np.arange(n)
-    res['sti'] = np.zeros(n)  # number of observed st_pairs for observation i
+    res['nsti'] = np.zeros(n)  # number of observed st_pairs for observation i
+    res['nsi'] = [len(r) for r in res['sneighbors']]
+    res['nti'] = [len(r) for r in res['sneighbors']]
     for pair in res['st_pairs']:
         i, j = pair
-        res['sti'][i] += 1
-        res['sti'][j] += 1
+        res['nsti'][i] += 1
+        res['nsti'][j] += 1
 
+    nsti = res['nsti']
+    nsi = res['nsi']
+    nti = res['nti']
     if permutations > 0:
         exceedence = np.zeros(n)
         if keep:
@@ -802,7 +910,7 @@ def _local_knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
                 tni = tneighbors[i]
                 sti = [j for j in rjs if j in tni]
                 count = len(sti)
-                if count >= res['sti'][i]:
+                if count >= res['nsti'][i]:
                     exceedence[i] += 1
                 if keep:
                     STI[i, perm] = count
@@ -814,6 +922,14 @@ def _local_knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
             res['sti_perm'] = STI
         res['exceedence_pvalue'] = (exceedence + 1) / (permutations + 1)
         res['exceedences'] = exceedence
+
+    # analytical inference
+    ntjis = [len(r) for r in res['tneighbors']]
+    n1 = n - 1
+    hg_pvalues = [ 1-hypergeom.cdf(nsti[i]-1, n1, ntjis, nsi[i]).mean() for i in
+                  range(n) ]
+    res['hg_pvalues'] = np.array(hg_pvalues)
+
     return res
 
 
