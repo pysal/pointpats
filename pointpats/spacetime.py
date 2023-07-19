@@ -873,7 +873,7 @@ class Knox:
         return self.nst
 
 
-def _local_knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
+def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
     res = _knox(s_coords, t_coords, delta, tau, permutations=99)
     sneighbors = { i:tuple(ns) for i, ns in enumerate(res['sneighbors']) }
     tneighbors = { i:tuple(nt) for i, nt in enumerate(res['tneighbors']) }
@@ -931,5 +931,127 @@ def _local_knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
     res['hg_pvalues'] = np.array(hg_pvalues)
 
     return res
+
+
+class Knox_Local:
+    """
+    Local Knox statistics for space-time interactions
+
+    Parameters
+    ----------
+
+    s_coords: array-like
+      spatial coordinates of point events
+
+    t_coords: array-like
+      temporal coordinates of point events (floats or ints, not dateTime)
+
+    delta: float
+      spatial threshold defining distance below which pairs are spatial
+      neighbors
+
+    tau: float
+      temporal threshold defining distance below which pairs are temporal
+      neighbors
+
+    permutations: int
+      number of random permutations for inference
+
+    keep: bool
+      whether to store realized values of the statistic under permutations
+
+    conditional: bool
+      whether to include conditional permutation inference
+
+
+
+    Attributes
+    ----------
+
+    s_coords: array-like
+      spatial coordinates of point events
+
+    t_coords: array-like
+      temporal coordinates of point events (floats or ints, not dateTime)
+
+    delta: float
+      spatial threshold defining distance below which pairs are spatial
+      neighbors
+
+    tau: float
+      temporal threshold defining distance below which pairs are temporal
+      neighbors
+
+    permutations: int
+      number of random permutations for inference
+
+    keep: bool
+      whether to store realized values of the statistic under permutations
+
+    nst: int
+      number of space-time pairs (global)
+
+    p_poisson: float
+      Analytical p-value under Poisson assumption (global)
+
+    p_sim: float
+      Pseudo p-value based on random permutations (global)
+
+    expected: array
+      Two-by-two array with expected counts under the null of no space-time
+      interactions. [[NST, NS_], [NT_, N__]] where NST is the expected number
+      of space-time pairs, NS_ is the expected number of spatial (but not also
+      temporal) pairs, NT_ is the number of expected temporal (but not also
+      spatial pairs), N__ is the number of pairs that are neighor spatial or
+      temporal neighbors. (global)
+
+    observed: array
+      Same structure as expected with the observed pair classifications (global)
+
+    sim: array
+      Global statistics from permutations (if keep=True and keep=True) (global)
+
+    p_sims: array
+      Local psuedo p-values from conditional permutations (if permutations>0)
+
+    sims: array
+      Local statistics from conditional permutations (if keep=True)
+
+    nsti: array
+      Local statistics
+
+    p_hypergeom: array
+      Analyitcal p-values based on hypergeometric distribution
+
+
+    """
+    def __init__(self, s_coords, t_coords, delta, tau, permutations=99,
+                 keep=False):
+        self.s_coords = s_coords
+        self.t_coords = t_coords
+        self.delta = delta
+        self.tau = tau
+        self.permutations = permutations
+        self.keep = keep
+        results = _knox_local(s_coords, t_coords, delta, tau, permutations, keep)
+        self.nst = int(results['nst'])
+        if permutations>0:
+            self.p_sim = results['p_value_sim']
+            if keep:
+                self.sim = results['st_perm']
+
+        self.p_poisson = results['p_value_poisson']
+        self.observed = results['observed']
+        self.expected = results['expected']
+        self.p_hypergeom = results['hg_pvalues']
+        if permutations > 0:
+            self.p_sims = results['exceedence_pvalue']
+            if keep:
+                self.sims = results['sti_perm']
+        self.nsti = results['nsti']
+
+    @property
+    def _statistic(self):
+        return self.nsti
 
 
