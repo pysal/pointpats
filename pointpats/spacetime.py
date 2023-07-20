@@ -906,12 +906,14 @@ class Knox:
         self.expected = results['expected']
 
     @property
-    def _statistic(self):
+    def statistic_(self):
         return self.nst
 
 
 def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
-    res = _knox(s_coords, t_coords, delta, tau, permutations=99)
+
+    # think about passing in the global object as an option to avoid recomputing the trees
+    res = _knox(s_coords, t_coords, delta, tau, permutations=permutations)
     sneighbors = { i:tuple(ns) for i, ns in enumerate(res['sneighbors']) }
     tneighbors = { i:tuple(nt) for i, nt in enumerate(res['tneighbors']) }
 
@@ -919,7 +921,7 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
     ids = np.arange(n)
     res['nsti'] = np.zeros(n)  # number of observed st_pairs for observation i
     res['nsi'] = [len(r) for r in res['sneighbors']]
-    res['nti'] = [len(r) for r in res['sneighbors']]
+    res['nti'] = [len(r) for r in res['tneighbors']]
     for pair in res['st_pairs']:
         i, j = pair
         res['nsti'][i] += 1
@@ -949,6 +951,10 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
                 rids[j] = a
                 rids[i] = i
 
+                # 0 1 2 (ids)
+                # 2 0 1 (rids)
+                # i=1:    0, 2, 1
+
                 # calculate local stat
                 rjs = [rids[j] for j in sneighbors[i]]
                 tni = tneighbors[i]
@@ -977,7 +983,7 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
     return res
 
 
-class Knox_Local:
+class KnoxLocal:
     """
     Local Knox statistics for space-time interactions
 
@@ -1134,7 +1140,7 @@ class Knox_Local:
         self.nsti = results['nsti']
 
     @property
-    def _statistic(self):
+    def statistic_(self):
         return self.nsti
 
 
