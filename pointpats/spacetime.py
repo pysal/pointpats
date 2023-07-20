@@ -17,6 +17,8 @@ from scipy.spatial import KDTree
 from scipy.stats import poisson
 from scipy.stats import hypergeom
 
+from warnings import warn
+
 class SpaceTimeEvents:
     """
     Method for reformatting event data stored in a shapefile for use in
@@ -226,6 +228,8 @@ def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):
     >>> print("%2.2f"%result['pvalue'])
     0.17
     """
+    warn('This function is deprecated. Use Knox', DeprecationWarning,
+         stacklevel=2)
 
     # Do a kdtree on space first as the number of ties (identical points) is
     # likely to be lower for space than time.
