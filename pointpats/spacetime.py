@@ -848,6 +848,39 @@ class Knox:
       Global statistics from permutations (if keep=True)
 
 
+    Notes
+    -----
+
+    Technical details can be found in :cite:`Rogerson:2001`
+
+
+    Examples
+    --------
+    >>> import libpysal
+    >>> path = libpysal.examples.get_path('burkitt.shp')
+    >>> import geopandas
+    >>> df = geopandas.read_file(path)
+    >>> from pointpats.spacetime import Knox
+    >>> global_knox = Knox(df[['X', 'Y']], df[["T"]], delta=20, tau=5)
+    >>> global_knox._statistic
+    13
+    >>> global_knox.p_poisson
+    0.14624558197140414
+    >>> global_knox.observed
+    array([[1.300e+01, 3.416e+03],
+           [3.900e+01, 1.411e+04]])
+    >>> global_knox.expected
+    array([[1.01438161e+01, 3.41885618e+03],
+           [4.18561839e+01, 1.41071438e+04]])
+    >>> hasattr(global_knox, 'sim')
+    False
+    >>> import numpy
+    >>> numpy.random.seed(12345)
+    >>> global_knox = Knox(df[['X', 'Y']], df[["T"]], delta=20, tau=5, keep=True)
+    >>> hasattr(global_knox, 'sim')
+    True
+    global_knox.p_sim
+    0.24
     """
     def __init__(self, s_coords, t_coords, delta, tau, permutations=99,
                  keep=False):
@@ -891,6 +924,13 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
     nsti = res['nsti']
     nsi = res['nsi']
     nti = res['nti']
+
+    # rather than do n*permutations, we reuse the permutations
+    # ensuring that each permutation is conditional on a focal unit i
+    # for each of the permutations we loop over i and swap labels between the
+    # label at index i in the current permutation and the label at the index
+    # assigned i in the permutation.
+
     if permutations > 0:
         exceedence = np.zeros(n)
         if keep:
@@ -1015,15 +1055,54 @@ class Knox_Local:
       Local psuedo p-values from conditional permutations (if permutations>0)
 
     sims: array
-      Local statistics from conditional permutations (if keep=True)
+      Local statistics from conditional permutations (if keep=True and
+      permutations>0)
 
     nsti: array
       Local statistics
 
     p_hypergeom: array
-      Analyitcal p-values based on hypergeometric distribution
+      Analytical p-values based on hypergeometric distribution
 
 
+
+    Notes
+    -----
+
+    Technical details can be found in :cite:`Rogerson:2001`. The conditional
+    permutation inference is unique to pysal.pointpats.
+
+
+    Examples
+    -------
+    >>> import libpysal
+    >>> path = libpysal.examples.get_path('burkitt.shp')
+    >>> import geopandas
+    >>> df = geopandas.read_file(path)
+    >>> from pointpats.spacetime import Knox
+    >>> import numpy
+    >>> numpy.random.seed(12345)
+    >>> local_knox = Knox_local(df[['X', 'Y']], df[["T"]], delta=20, tau=5, keep=True)
+    >>> local_knox._statistic.shape
+    (188,)
+    >>> gt0ids = numpy.where(lres.nsti>0)
+    >>> gt0ids
+    (array([ 25,  26,  30,  31,  35,  36,  41,  42,  46,  47,  51,  52, 102,
+            103, 116, 118, 122, 123, 137, 138, 139, 140, 158, 159, 162, 163]),)
+    >>> lres.nsti[gt0ids]
+    array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
+           1., 1., 1., 1., 1., 1., 1., 1., 1.])
+    >>> lres.p_hypergeom[gt0ids]
+    array([0.1348993 , 0.14220663, 0.07335085, 0.08400282, 0.1494317 ,
+           0.21524073, 0.0175806 , 0.04599869, 0.17523687, 0.18209188,
+           0.19111321, 0.16830444, 0.13734428, 0.14703242, 0.06796364,
+           0.03192559, 0.13734428, 0.17523687, 0.12998154, 0.1933476 ,
+           0.13244507, 0.13244507, 0.12502644, 0.14703242, 0.12502644,
+           0.12998154])
+    >>> lres.p_sims[gt0ids]
+    array([0.3 , 0.33, 0.11, 0.17, 0.3 , 0.42, 0.06, 0.06, 0.33, 0.34, 0.36,
+           0.38, 0.3 , 0.29, 0.41, 0.19, 0.31, 0.39, 0.18, 0.39, 0.48, 0.41,
+           0.22, 0.41, 0.39, 0.32])
     """
     def __init__(self, s_coords, t_coords, delta, tau, permutations=99,
                  keep=False):
