@@ -10,7 +10,7 @@ dependencies:
   - libpysal=4.5
   - py-opencv=4.6
   # tests
-  - scikit-learn
+  - scikit-learn==1.2
   - shapely
   - geopandas
   - pytest
