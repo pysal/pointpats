@@ -4,9 +4,17 @@ Window class for point patterns
 
 __author__ = "Serge Rey sjsrey@gmail.com"
 
+import warnings
+
 import libpysal as ps
 import numpy as np
+
 __all__ = ["as_window", "poly_from_bbox", "to_ccf", "Window"]
+
+
+warnings.filterwarnings(
+    "ignore", "Objects based on the `Geometry` class will", FutureWarning
+)
 
 
 def poly_from_bbox(bbox):
@@ -60,8 +68,8 @@ class Window(ps.cg.Polygon):
            point pattern.
 
     """
-    def __init__(self, parts, holes=[]):
 
+    def __init__(self, parts, holes=[]):
         if holes:
             super(Window, self).__init__(parts, holes)
         else:
