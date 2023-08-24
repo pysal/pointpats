@@ -6,7 +6,7 @@ __author__ = "Nicholas Malizia <nmalizia@asu.edu>", "Sergio J. Rey \
 <srey@asu.edu>", "Philip Stephens <philip.stephens@asu.edu"
 
 __all__ = ['SpaceTimeEvents', 'knox', 'mantel', 'jacquez', 'modified_knox',
-           'Knox', 'KnoxLocal]
+           'Knox', 'KnoxLocal']
 
 import os
 import libpysal as lps
