@@ -17,6 +17,10 @@ from numpy.random import poisson
 from .pointpattern import PointPattern as PP
 import warnings
 
+warnings.filterwarnings(
+    "ignore", "Objects based on the `Geometry` class will", FutureWarning
+)
+
 
 def runif_in_circle(n, radius=1.0, center=(0.0, 0.0), burn=2, verbose=False):
     """
@@ -97,7 +101,6 @@ class PointProcess(object):
     """
 
     def __init__(self, window, n, samples, asPP=False, **args):
-
         super(PointProcess, self).__init__()
         self.window = window
         self.n = n
@@ -292,12 +295,12 @@ class PoissonPointProcess(PointProcess):
 class PoissonClusterPointProcess(PointProcess):
     """
     Poisson cluster point process (Neyman Scott).
-    Two stages: 
-    1. parent CSR process: :math:`N`-conditioned or 
-    :math:`\lambda`-conditioned. If parent events follow a 
-    :math:`\lambda`-conditioned CSR process, 
+    Two stages:
+    1. parent CSR process: :math:`N`-conditioned or
+    :math:`\lambda`-conditioned. If parent events follow a
+    :math:`\lambda`-conditioned CSR process,
     the number of parent events varies across realizations.
-    2. child process: fixed number of points in circle centered 
+    2. child process: fixed number of points in circle centered
     on each parent.
 
     Parameters
@@ -373,7 +376,7 @@ class PoissonClusterPointProcess(PointProcess):
     1. Simulate a Poisson cluster process of size 200 with 10 parents
     and 20 children within 0.5 units of each parent
     (parent events:  :math:`N`-conditioned CSR)
-    
+
     >>> np.random.seed(10)
     >>> samples1 = PoissonClusterPointProcess(window, 200, 10, 0.5, 1, asPP=True, conditioning=False)
     >>> samples1.parameters # number of events for the realization
@@ -409,7 +412,6 @@ class PoissonClusterPointProcess(PointProcess):
         asPP=False,
         conditioning=False,
     ):
-
         self.conditioning = conditioning
         self.parents = parents
         self.children = int(np.ceil(n * 1.0 / parents))
