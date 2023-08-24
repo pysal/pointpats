@@ -156,8 +156,8 @@ class RectangleM:
                 count = dict_id_count[cell_id]
                 position_x = x_min + self.rectangle_width * (x + 0.5)
                 position_y = y_min + self.rectangle_height * (y + 0.5)
-                ax.text(position_x, position_y, str(count))
-        plt.show()
+                ax.text(position_x, position_y, str(count), ha="center", va="center")
+        return ax
 
 
 class HexagonM:
@@ -358,8 +358,8 @@ class HexagonM:
                 color=line_color_cell,
             )
 
-            ax.text(center_x, center_y, str(dict_id_count[id]))
-        plt.show()
+            ax.text(center_x, center_y, str(dict_id_count[id]), ha="center", va="center")
+        return ax
 
 
 class QStatistic:
@@ -485,4 +485,4 @@ class QStatistic:
 
         """
 
-        self.mr.plot(title=title)
+        return self.mr.plot(title=title)

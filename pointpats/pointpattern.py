@@ -203,14 +203,17 @@ class PointPattern(object):
             for part in self.window.parts:
                 p = Polygon(np.asarray(part))
                 patches.append(p)
-            ax.add_collection(PatchCollection(patches, facecolor='w',
-                              edgecolor='k', alpha=0.3))
+            ax.add_collection(
+                PatchCollection(patches, facecolor="none", edgecolor="k", alpha=0.3)
+            )
         if hull:
             patches = []
             p = Polygon(self.hull)
             patches.append(p)
-            ax.add_collection(PatchCollection(patches, facecolor='w',
-                              edgecolor='k', alpha=0.3))
+            ax.add_collection(
+                PatchCollection(patches, facecolor="none", edgecolor="k", alpha=0.3)
+            )
+        ax.set_aspect("equal")
 
         # plt.plot(x, y, '.')
         if get_ax:
