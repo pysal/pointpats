@@ -362,7 +362,7 @@ def j(
     with numpy.errstate(invalid="ignore", divide="ignore"):
         hazard_ratio = (1 - gstats) / (1 - fstats)
     both_zero = (gstats == 1) & (fstats == 1)
-    hazard_ratio[both_zero] = 1
+    hazard_ratio[both_zero] = numpy.nan
     if truncate:
         result = _truncate(gsupport, hazard_ratio)
         if len(result[1]) != len(hazard_ratio):
@@ -737,7 +737,7 @@ def j_test(
     metric="euclidean",
     hull=None,
     edge_correction=None,
-    truncate=False,
+    truncate=True,
     keep_simulations=False,
     n_simulations=9999,
 ):

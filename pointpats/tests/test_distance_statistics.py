@@ -263,7 +263,7 @@ def test_j():
     # Check j function works, matches manual, is truncated correctly
 
     numpy.random.seed(2478879)
-    j_test = ripley.j_test(points, support=support, n_simulations=99)
+    j_test = ripley.j_test(points, support=support, n_simulations=99, truncate=True)
     numpy.random.seed(2478879)
     j_test_fullno = ripley.j_test(
         points, support=support, n_simulations=0, truncate=False
