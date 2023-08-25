@@ -23,7 +23,7 @@ points = numpy.asarray(
     ]
 )
 
-tree = spatial.cKDTree(points)
+tree = spatial.KDTree(points)
 
 chull = spatial.ConvexHull(points)
 ashape = alpha_shape_auto(points)
