@@ -945,19 +945,24 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
         for perm in range(permutations):
             rids = np.random.permutation(ids)
             for i in range(n):
+                rids_i = rids.copy()
                 # set observed value of focal unit i
                 # swap with value assigned to rids[i]
-                j = np.where(rids==i)
-                a = rids[i]
-                rids[j] = a
-                rids[i] = i
-
+                # example
                 # 0 1 2 (ids)
                 # 2 0 1 (rids)
-                # i=1:    0, 2, 1
+                # i=0
+                # 0 2 1 (rids_i)
+                # i=1
+                # 2 1 0 (rids_i)
+                # i=2
+                # 1 0 2 (rids_i)
+
+                rids_i[rids==i] = rids[i]
+                rids_i[i] = i
 
                 # calculate local stat
-                rjs = [rids[j] for j in sneighbors[i]]
+                rjs = [rids_i[j] for j in sneighbors[i]]
                 tni = tneighbors[i]
                 sti = [j for j in rjs if j in tni]
                 count = len(sti)
@@ -966,9 +971,6 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
                 if keep:
                     STI[i, perm] = count
 
-                # reset value of focal unit i to random value
-                rids[j] = i
-                rids[i] = a
         if keep:
             res['sti_perm'] = STI
         res['exceedence_pvalue'] = (exceedence + 1) / (permutations + 1)
