@@ -12,8 +12,6 @@ from .geometry import (
 from .random import poisson
 
 
-from ._deprecated_distance_statistics import *
-
 __all__ = [
     "f",
     "g",
@@ -199,7 +197,11 @@ def f(
 
 
 def g(
-    coordinates, support=None, distances=None, metric="euclidean", edge_correction=None,
+    coordinates,
+    support=None,
+    distances=None,
+    metric="euclidean",
+    edge_correction=None,
 ):
     """
     Ripley's G function
@@ -359,27 +361,28 @@ def j(
 
     with numpy.errstate(invalid="ignore", divide="ignore"):
         hazard_ratio = (1 - gstats) / (1 - fstats)
+    both_zero = (gstats == 1) & (fstats == 1)
+    hazard_ratio[both_zero] = numpy.nan
     if truncate:
-        both_zero = (gstats == 1) & (fstats == 1)
-        hazard_ratio[both_zero] = 1
-        is_inf = numpy.isinf(hazard_ratio)
-        first_inf = is_inf.argmax()
-        if not is_inf.any():
-            first_inf = len(hazard_ratio)
-        if first_inf < len(hazard_ratio) and isinstance(support, int):
+        result = _truncate(gsupport, hazard_ratio)
+        if len(result[1]) != len(hazard_ratio):
             warnings.warn(
                 f"requested {support} bins to evaluate the J function, but"
-                f" it reaches infinity at d={gsupport[first_inf]:.4f}, meaning only"
-                f" {first_inf} bins will be used to characterize the J function.",
+                f" it reaches infinity at d={result[0][-1]:.4f}, meaning only"
+                f" {len(result[0])} bins will be used to characterize the J function.",
                 stacklevel=2,
             )
+        return result
     else:
-        first_inf = len(gsupport) + 1
-    return (gsupport[:first_inf], hazard_ratio[:first_inf])
+        return gsupport, hazard_ratio
 
 
 def k(
-    coordinates, support=None, distances=None, metric="euclidean", edge_correction=None,
+    coordinates,
+    support=None,
+    distances=None,
+    metric="euclidean",
+    edge_correction=None,
 ):
     """
     Ripley's K function
@@ -539,7 +542,11 @@ def _ripley_test(
     **kwargs,
 ):
     stat_function, result_container = _ripley_dispatch.get(calltype)
-    core_kwargs = dict(support=support, metric=metric, edge_correction=edge_correction,)
+    core_kwargs = dict(
+        support=support,
+        metric=metric,
+        edge_correction=edge_correction,
+    )
     tree = _build_best_tree(coordinates, metric=metric)
     hull = _prepare_hull(coordinates, hull)
     if calltype in ("F", "J"):  # these require simulations
@@ -773,7 +780,7 @@ def j_test(
     - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))
         or None if keep_simulations=False (which is the default)
     """
-    return _ripley_test(
+    result = _ripley_test(
         "J",
         coordinates,
         support=support,
@@ -783,8 +790,22 @@ def j_test(
         edge_correction=edge_correction,
         keep_simulations=keep_simulations,
         n_simulations=n_simulations,
-        truncate=truncate,
+        truncate=False,
     )
+    if truncate:
+        result_trunc = _truncate(*result)
+        result_trunc = JtestResult(*result_trunc)
+        if len(result_trunc.statistic) != len(result.statistic):
+            warnings.warn(
+                f"requested {support} bins to evaluate the J function, but"
+                f" it reaches infinity at d={result[0][-1]:.4f}, meaning only"
+                f" {len(result[0])} bins will be used to characterize the J function.",
+                stacklevel=2,
+            )
+            return result_trunc
+
+    else:
+        return result
 
 
 def k_test(
@@ -916,3 +937,16 @@ def l_test(
         keep_simulations=keep_simulations,
         n_simulations=n_simulations,
     )
+
+
+def _truncate(support, realizations, *rest):
+    is_invalid = numpy.isinf(realizations) | numpy.isnan(realizations)
+    first_inv = is_invalid.argmax()
+    if not is_invalid.any():
+        return support, realizations, *rest
+    elif first_inv < len(realizations):
+        return (
+            support[:first_inv],
+            realizations[:first_inv],
+            *[r[:first_inv] if r is not None else None for r in rest],
+        )
