@@ -5,6 +5,7 @@ import geopandas as gpd
 from pointpats import (SpaceTimeEvents, knox, mantel,
                        jacquez, modified_knox, Knox, KnoxLocal)
 import scipy
+from pytest import approx
 
 
 class TestKnox:
@@ -75,4 +76,55 @@ class TestKnoxLocal:
                                           0.3 , 0.29, 0.41, 0.19, 0.31, 0.39,
                                           0.18, 0.39, 0.48, 0.41, 0.22, 0.41,
                                           0.39, 0.32])
+
+
+
+# old tests refactored to pytest
+
+class TestSpaceTimeEvents:
+    def setup_method(self):
+        path = lps.examples.get_path("burkitt.shp")
+        self.events = SpaceTimeEvents(path, "T")
+
+
+    def test_space_time_events(self):
+        assert self.events.n == 188
+
+
+    def test_knox(self):
+        result = knox(self.events.space, self.events.t,
+                      delta=20, tau=5, permutations=1)
+        assert result['stat'] == 13.0
+
+
+    def test_mantel(self):
+        result = mantel(self.events.space,
+                         self.events.time,
+                         1,
+                         scon=0.0,
+                         spow=1.0,
+                         tcon=0.0,
+                         tpow=1.0,
+                        )
+
+        assert result['stat'] == approx(0.014154, rel=1e-4)
+
+
+    def test_jacquez(self):
+        result = jacquez(self.events.space,
+                         self.events.t,
+                         k=3,
+                         permutations=1)
+
+        assert result['stat'] == 12
+
+
+    def test_modified_knox(self):
+        result = modified_knox(self.events.space,
+                               self.events.t,
+                               delta=20,
+                               tau=5,
+                               permutations=1)
+
+        assert result['stat'] == approx(2.810160, rel=1e-4)
 
