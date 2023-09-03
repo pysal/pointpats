@@ -885,7 +885,7 @@ class Knox:
     >>> hasattr(global_knox, 'sim')
     True
     global_knox.p_sim
-    0.24
+    0.21
     """
     def __init__(self, s_coords, t_coords, delta, tau, permutations=99,
                  keep=False):
@@ -1130,7 +1130,7 @@ class KnoxLocal:
         if permutations>0:
             self.p_sim = results['p_value_sim']
             if keep:
-                self.sim = results['st_perm']
+                self.sim = results['sti_perm']
 
         self.p_poisson = results['p_value_poisson']
         self.observed = results['observed']
