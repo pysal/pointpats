@@ -417,14 +417,14 @@ def jacquez(s_coords, t_coords, k, permutations=99):
     The Jacquez test counts the number of events that are k nearest
     neighbors in both time and space. The following runs the Jacquez test
     on the example data and reports the resulting statistic. In this case,
-    there are 13 instances where events are nearest neighbors in both space
+    there are 12 instances where events are nearest neighbors in both space
     and time.
     # turning off as kdtree changes from scipy < 0.12 return 13
 
     >>> np.random.seed(100)
     >>> result = jacquez(events.space, events.t ,k=3,permutations=99)
     >>> print(result['stat'])
-    13
+    12
 
     The significance of this can be assessed by calling the p-
     value from the results dictionary, as shown below. Again, no
@@ -867,7 +867,7 @@ class Knox:
     >>> df = geopandas.read_file(path)
     >>> from pointpats.spacetime import Knox
     >>> global_knox = Knox(df[['X', 'Y']], df[["T"]], delta=20, tau=5)
-    >>> global_knox._statistic
+    >>> global_knox.statistic_
     13
     >>> global_knox.p_poisson
     0.14624558197140414
@@ -884,7 +884,7 @@ class Knox:
     >>> global_knox = Knox(df[['X', 'Y']], df[["T"]], delta=20, tau=5, keep=True)
     >>> hasattr(global_knox, 'sim')
     True
-    global_knox.p_sim
+    >>> global_knox.p_sim
     0.21
     """
     def __init__(self, s_coords, t_coords, delta, tau, permutations=99,
@@ -1095,13 +1095,14 @@ class KnoxLocal:
     >>> from pointpats.spacetime import Knox
     >>> import numpy
     >>> numpy.random.seed(12345)
-    >>> local_knox = Knox_local(df[['X', 'Y']], df[["T"]], delta=20, tau=5, keep=True)
-    >>> local_knox._statistic.shape
+    >>> local_knox = KnoxLocal(df[['X', 'Y']], df[["T"]], delta=20, tau=5, keep=True)
+    >>> local_knox.statistic_.shape
     (188,)
+    >>> lres = local_knox
     >>> gt0ids = numpy.where(lres.nsti>0)
-    >>> gt0ids
+    >>> gt0ids # doctest: +NORMALIZE_WHITESPACE
     (array([ 25,  26,  30,  31,  35,  36,  41,  42,  46,  47,  51,  52, 102,
-            103, 116, 118, 122, 123, 137, 138, 139, 140, 158, 159, 162, 163]),)
+              103, 116, 118, 122, 123, 137, 138, 139, 140, 158, 159, 162, 163]),)
     >>> lres.nsti[gt0ids]
     array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
            1., 1., 1., 1., 1., 1., 1., 1., 1.])
