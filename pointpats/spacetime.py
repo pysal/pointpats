@@ -2,11 +2,22 @@
 Methods for identifying space-time interaction in spatio-temporal event
 data.
 """
-__author__ = "Nicholas Malizia <nmalizia@asu.edu>", "Sergio J. Rey \
-<srey@asu.edu>", "Philip Stephens <philip.stephens@asu.edu"
+__author__ = (
+    "Nicholas Malizia <nmalizia@asu.edu>",
+    "Sergio J. Rey \
+<srey@asu.edu>",
+    "Philip Stephens <philip.stephens@asu.edu",
+)
 
-__all__ = ['SpaceTimeEvents', 'knox', 'mantel', 'jacquez', 'modified_knox',
-           'Knox', 'KnoxLocal']
+__all__ = [
+    "SpaceTimeEvents",
+    "knox",
+    "mantel",
+    "jacquez",
+    "modified_knox",
+    "Knox",
+    "KnoxLocal",
+]
 
 import os
 import libpysal as lps
@@ -19,6 +30,7 @@ from scipy.stats import poisson
 from scipy.stats import hypergeom
 
 from warnings import warn
+
 
 class SpaceTimeEvents:
     """
@@ -119,10 +131,11 @@ class SpaceTimeEvents:
     >>> (events.t[1][0] - events.t[0][0]).days
     59
     """
+
     def __init__(self, path, time_col, infer_timestamp=False):
         shp = lps.io.open(path)
         head, tail = os.path.split(path)
-        dbf_tail = tail.split(".")[0]+".dbf"
+        dbf_tail = tail.split(".")[0] + ".dbf"
         dbf = lps.io.open(lps.examples.get_path(dbf_tail))
 
         # extract the spatial coordinates from the shapefile
@@ -144,8 +157,10 @@ class SpaceTimeEvents:
                 col = [(d - day1).days for d in col]
                 t = np.array(col)
             else:
-                print("Unable to parse your time column as Python datetime \
-                      objects, proceeding as integers.")
+                print(
+                    "Unable to parse your time column as Python datetime \
+                      objects, proceeding as integers."
+                )
                 t = np.array(col)
         else:
             t = np.array(dbf.by_col(time_col))
@@ -229,8 +244,7 @@ def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):
     >>> print("%2.2f"%result['pvalue'])
     0.17
     """
-    warn('This function is deprecated. Use Knox', DeprecationWarning,
-         stacklevel=2)
+    warn("This function is deprecated. Use Knox", DeprecationWarning, stacklevel=2)
 
     # Do a kdtree on space first as the number of ties (identical points) is
     # likely to be lower for space than time.
@@ -246,7 +260,7 @@ def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):
     d_t = (t_coords[ids[:, 0]] - t_coords[ids[:, 1]]) ** 2
     n_st = sum(d_t <= tau2)
 
-    knox_result = {'stat': n_st[0]}
+    knox_result = {"stat": n_st[0]}
 
     if permutations:
         joint = np.zeros((permutations, 1), int)
@@ -258,12 +272,14 @@ def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):
         larger = sum(joint >= n_st[0])
         if (permutations - larger) < larger:
             larger = permutations - larger
-        p_sim = (larger + 1.) / (permutations + 1.)
-        knox_result['pvalue'] = p_sim
+        p_sim = (larger + 1.0) / (permutations + 1.0)
+        knox_result["pvalue"] = p_sim
     return knox_result
 
 
-def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, tpow=-1.0):
+def mantel(
+    s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, tpow=-1.0
+):
     """
     Standardized Mantel test for spatio-temporal interaction. :cite:`Mantel:1967`
 
@@ -347,8 +363,8 @@ def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, t
     timemat = cg.distance_matrix(t)
 
     # calculate the transformed standardized statistic
-    timevec = (timemat[np.tril_indices(timemat.shape[0], k = -1)] + tcon) ** tpow
-    distvec = (distmat[np.tril_indices(distmat.shape[0], k = -1)] + scon) ** spow
+    timevec = (timemat[np.tril_indices(timemat.shape[0], k=-1)] + tcon) ** tpow
+    distvec = (distmat[np.tril_indices(distmat.shape[0], k=-1)] + scon) ** spow
     stat = stats.pearsonr(timevec, distvec)[0].sum()
 
     # return the results (if no inference)
@@ -359,7 +375,7 @@ def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, t
     dist = []
     for i in range(permutations):
         trand = _shuffle_matrix(timemat, np.arange(n))
-        timevec = (trand[np.tril_indices(trand.shape[0], k = -1)] + tcon) ** tpow
+        timevec = (trand[np.tril_indices(trand.shape[0], k=-1)] + tcon) ** tpow
         m = stats.pearsonr(timevec, distvec)[0].sum()
         dist.append(m)
 
@@ -370,7 +386,7 @@ def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, t
     pvalue = (count + 1.0) / (permutations + 1.0)
 
     # report the results
-    mantel_result = {'stat': stat, 'pvalue': pvalue}
+    mantel_result = {"stat": stat, "pvalue": pvalue}
     return mantel_result
 
 
@@ -485,7 +501,7 @@ def jacquez(s_coords, t_coords, k, permutations=99):
     pvalue = (count + 1.0) / (permutations + 1.0)
 
     # report the results
-    jacquez_result = {'stat': stat, 'pvalue': pvalue}
+    jacquez_result = {"stat": stat, "pvalue": pvalue}
     return jacquez_result
 
 
@@ -574,7 +590,7 @@ def modified_knox(s_coords, t_coords, delta, tau, permutations=99):
 
     # calculate the observed (original) statistic
     knoxmat = timemat * spacmat
-    obsstat = (knoxmat.sum() - n)
+    obsstat = knoxmat.sum() - n
 
     # calculate the expectated value
     ssumvec = np.reshape((spacbin.sum(axis=0) - 1), (n, 1))
@@ -598,7 +614,7 @@ def modified_knox(s_coords, t_coords, delta, tau, permutations=99):
 
         # calculate the observed knox again
         knoxmat = timemat * spacmat
-        obsstat = (knoxmat.sum() - n)
+        obsstat = knoxmat.sum() - n
 
         # calculate the expectated value again
         ssumvec = np.reshape((spacbin.sum(axis=0) - 1), (n, 1))
@@ -616,8 +632,9 @@ def modified_knox(s_coords, t_coords, delta, tau, permutations=99):
     pvalue = (count + 1.0) / (permutations + 1.0)
 
     # return results
-    modknox_result = {'stat': stat, 'pvalue': pvalue}
+    modknox_result = {"stat": stat, "pvalue": pvalue}
     return modknox_result
+
 
 def _shuffle_matrix(X, ids):
     """
@@ -673,80 +690,79 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
 
     n = s_coords.shape[0]
 
-
     stree = KDTree(s_coords)
     ttree = KDTree(t_coords)
     sneighbors = stree.query_ball_tree(stree, r=delta)
-    sneighbors = [set(neighbors).difference([i]) for i,neighbors in enumerate(sneighbors)]
+    sneighbors = [
+        set(neighbors).difference([i]) for i, neighbors in enumerate(sneighbors)
+    ]
     tneighbors = ttree.query_ball_tree(ttree, r=tau)
-    tneighbors = [set(neighbors).difference([i]) for i,neighbors in enumerate(tneighbors)]
+    tneighbors = [
+        set(neighbors).difference([i]) for i, neighbors in enumerate(tneighbors)
+    ]
 
     # number of spatial neighbor pairs
-    ns = np.array([len(neighbors) for neighbors in sneighbors]) # by i
+    ns = np.array([len(neighbors) for neighbors in sneighbors])  # by i
 
-    NS = ns.sum() / 2 # total
+    NS = ns.sum() / 2  # total
 
     # number of temporal neigbor pairs
     nt = np.array([len(neighbors) for neighbors in tneighbors])
     NT = nt.sum() / 2
 
-
     # s-t neighbors (list of lists)
-    stneighbors = [sneighbors_i.intersection(tneighbors_i) for sneighbors_i, tneighbors_i in zip(sneighbors, tneighbors)]
-
-
+    stneighbors = [
+        sneighbors_i.intersection(tneighbors_i)
+        for sneighbors_i, tneighbors_i in zip(sneighbors, tneighbors)
+    ]
 
     # number of spatio-temporal neigbor pairs
     nst = np.array([len(neighbors) for neighbors in stneighbors])
-    NST = nst.sum()/2
+    NST = nst.sum() / 2
 
     all_pairs = []
     pairs = {}
     for i, neigh in enumerate(stneighbors):
         if len(neigh) > 0:
-            all_pairs.extend([sorted((i,j)) for j in neigh])
+            all_pairs.extend([sorted((i, j)) for j in neigh])
     st_pairs = set([tuple(l) for l in all_pairs])
 
-
-
     # ENST: expected number of spatio-temporal neighbors under HO
-    pairs = n * (n-1) / 2
+    pairs = n * (n - 1) / 2
     ENST = NS * NT / pairs
 
-
     # observed table
-    observed = np.zeros((2,2))
+    observed = np.zeros((2, 2))
 
-    NS_ = NS - NST   # spatial only
-    NT_ = NT - NST   # temporal only
+    NS_ = NS - NST  # spatial only
+    NT_ = NT - NST  # temporal only
 
-    observed[0,0] = NST
-    observed[0,1] = NS_
-    observed[1,0] = NT_
-    observed[1,1] = pairs - NST - NS_ - NT_
+    observed[0, 0] = NST
+    observed[0, 1] = NS_
+    observed[1, 0] = NT_
+    observed[1, 1] = pairs - NST - NS_ - NT_
 
     # expected table
 
-    expected = np.zeros((2,2))
-    expected[0,0]  = NS * NT / pairs
-    expected[0,1] = NS - expected[0,0]
-    expected[1,0] = NT - expected[0,0]
-    expected[1,1] = pairs - expected.sum()
+    expected = np.zeros((2, 2))
+    expected[0, 0] = NS * NT / pairs
+    expected[0, 1] = NS - expected[0, 0]
+    expected[1, 0] = NT - expected[0, 0]
+    expected[1, 1] = pairs - expected.sum()
 
-    p_value_poisson = 1 - poisson.cdf(NST, expected[0,0])
+    p_value_poisson = 1 - poisson.cdf(NST, expected[0, 0])
 
     results = {}
-    results['ns'] = ns.sum() / 2
-    results['nt'] = nt.sum() / 2
-    results['nst'] = nst.sum() / 2
-    results['pairs'] = pairs
-    results['expected'] = expected
-    results['observed'] = observed
-    results['p_value_poisson'] = p_value_poisson
-    results['st_pairs'] = st_pairs
-    results['sneighbors'] = sneighbors
-    results['tneighbors'] = tneighbors
-
+    results["ns"] = ns.sum() / 2
+    results["nt"] = nt.sum() / 2
+    results["nst"] = nst.sum() / 2
+    results["pairs"] = pairs
+    results["expected"] = expected
+    results["observed"] = observed
+    results["p_value_poisson"] = p_value_poisson
+    results["st_pairs"] = st_pairs
+    results["sneighbors"] = sneighbors
+    results["tneighbors"] = tneighbors
 
     if permutations > 0:
         exceedence = 0
@@ -765,14 +781,14 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
                 sti = [j for j in rjs if j in tni]
                 st += len(sti)
             st /= 2
-            if st >= results['nst']:
+            if st >= results["nst"]:
                 exceedence += 1
             if keep:
                 ST[perm] = st
-        results['p_value_sim'] = (exceedence + 1) / (permutations + 1)
-        results['exceedence'] = exceedence
+        results["p_value_sim"] = (exceedence + 1) / (permutations + 1)
+        results["exceedence"] = exceedence
         if keep:
-            results['st_perm'] = ST
+            results["st_perm"] = ST
 
     return results
 
@@ -887,8 +903,8 @@ class Knox:
     >>> global_knox.p_sim
     0.21
     """
-    def __init__(self, s_coords, t_coords, delta, tau, permutations=99,
-                 keep=False):
+
+    def __init__(self, s_coords, t_coords, delta, tau, permutations=99, keep=False):
         self.s_coords = s_coords
         self.t_coords = t_coords
         self.delta = delta
@@ -896,41 +912,79 @@ class Knox:
         self.permutations = permutations
         self.keep = keep
         results = _knox(s_coords, t_coords, delta, tau, permutations, keep)
-        self.nst = int(results['nst'])
-        if permutations>0:
-            self.p_sim = results['p_value_sim']
+        self.nst = int(results["nst"])
+        if permutations > 0:
+            self.p_sim = results["p_value_sim"]
             if keep:
-                self.sim = results['st_perm']
+                self.sim = results["st_perm"]
 
-        self.p_poisson = results['p_value_poisson']
-        self.observed = results['observed']
-        self.expected = results['expected']
+        self.p_poisson = results["p_value_poisson"]
+        self.observed = results["observed"]
+        self.expected = results["expected"]
 
     @property
     def statistic_(self):
         return self.nst
+
+    @classmethod
+    def from_dataframe(cls, dataframe, time_col, delta, tau, permutations=99):
+        """Compute a Knox statistic from a dataframe of Point observations
+
+        Parameters
+        ----------
+        dataframe : geopandas.GeoDataFrame
+            dataframe holding observations. Should be in a projected coordinate system
+            with geometries stored as Points
+        time_col : str
+            column in the dataframe storing the timestamp for each observation
+        delta : int
+            delta parameter defining the spatial neighbor threshold
+        tau : int
+            tau parameter defining the temporal neihgbor threshold
+        permutations : int, optional
+            permutations to use for computation inference, by default 99
+
+        Returns
+        -------
+        pointpats.spacetime.Knox
+            a fitted Knox class
+        """
+        assert dataframe.geom_type.unique().tolist() == [
+            "Point"
+        ], "The Knox statistic is only defined for Point geometries"
+        assert (
+            dataframe.crs.is_projected
+        ), "The input dataframe must be in a projected coordinate system, but it is"
+        f"currently set to {dataframe.crs}"
+
+        s_coords = np.vstack(
+            (dataframe.geometry.x.values, dataframe.geometry.y.values)
+        ).T
+        t_coords = np.vstack(dataframe[time_col].values)
+
+        return cls(s_coords, t_coords, delta, tau, permutations)
 
 
 def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
 
     # think about passing in the global object as an option to avoid recomputing the trees
     res = _knox(s_coords, t_coords, delta, tau, permutations=permutations)
-    sneighbors = { i:tuple(ns) for i, ns in enumerate(res['sneighbors']) }
-    tneighbors = { i:tuple(nt) for i, nt in enumerate(res['tneighbors']) }
+    sneighbors = {i: tuple(ns) for i, ns in enumerate(res["sneighbors"])}
+    tneighbors = {i: tuple(nt) for i, nt in enumerate(res["tneighbors"])}
 
-    n= len(s_coords)
+    n = len(s_coords)
     ids = np.arange(n)
-    res['nsti'] = np.zeros(n)  # number of observed st_pairs for observation i
-    res['nsi'] = [len(r) for r in res['sneighbors']]
-    res['nti'] = [len(r) for r in res['tneighbors']]
-    for pair in res['st_pairs']:
+    res["nsti"] = np.zeros(n)  # number of observed st_pairs for observation i
+    res["nsi"] = [len(r) for r in res["sneighbors"]]
+    res["nti"] = [len(r) for r in res["tneighbors"]]
+    for pair in res["st_pairs"]:
         i, j = pair
-        res['nsti'][i] += 1
-        res['nsti'][j] += 1
+        res["nsti"][i] += 1
+        res["nsti"][j] += 1
 
-    nsti = res['nsti']
-    nsi = res['nsi']
-    nti = res['nti']
+    nsti = res["nsti"]
+    nsi = res["nsi"]
+    nti = res["nti"]
 
     # rather than do n*permutations, we reuse the permutations
     # ensuring that each permutation is conditional on a focal unit i
@@ -941,7 +995,7 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
     if permutations > 0:
         exceedence = np.zeros(n)
         if keep:
-            STI = np.zeros((n,permutations))
+            STI = np.zeros((n, permutations))
         for perm in range(permutations):
             rids = np.random.permutation(ids)
             for i in range(n):
@@ -958,7 +1012,7 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
                 # i=2
                 # 1 0 2 (rids_i)
 
-                rids_i[rids==i] = rids[i]
+                rids_i[rids == i] = rids[i]
                 rids_i[i] = i
 
                 # calculate local stat
@@ -966,22 +1020,23 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
                 tni = tneighbors[i]
                 sti = [j for j in rjs if j in tni]
                 count = len(sti)
-                if count >= res['nsti'][i]:
+                if count >= res["nsti"][i]:
                     exceedence[i] += 1
                 if keep:
                     STI[i, perm] = count
 
         if keep:
-            res['sti_perm'] = STI
-        res['exceedence_pvalue'] = (exceedence + 1) / (permutations + 1)
-        res['exceedences'] = exceedence
+            res["sti_perm"] = STI
+        res["exceedence_pvalue"] = (exceedence + 1) / (permutations + 1)
+        res["exceedences"] = exceedence
 
     # analytical inference
-    ntjis = [len(r) for r in res['tneighbors']]
+    ntjis = [len(r) for r in res["tneighbors"]]
     n1 = n - 1
-    hg_pvalues = [ 1-hypergeom.cdf(nsti[i]-1, n1, ntjis, nsi[i]).mean() for i in
-                  range(n) ]
-    res['hg_pvalues'] = np.array(hg_pvalues)
+    hg_pvalues = [
+        1 - hypergeom.cdf(nsti[i] - 1, n1, ntjis, nsi[i]).mean() for i in range(n)
+    ]
+    res["hg_pvalues"] = np.array(hg_pvalues)
 
     return res
 
@@ -1118,8 +1173,8 @@ class KnoxLocal:
            0.38, 0.3 , 0.29, 0.41, 0.19, 0.31, 0.39, 0.18, 0.39, 0.48, 0.41,
            0.22, 0.41, 0.39, 0.32])
     """
-    def __init__(self, s_coords, t_coords, delta, tau, permutations=99,
-                 keep=False):
+
+    def __init__(self, s_coords, t_coords, delta, tau, permutations=99, keep=False):
         self.s_coords = s_coords
         self.t_coords = t_coords
         self.delta = delta
@@ -1127,24 +1182,22 @@ class KnoxLocal:
         self.permutations = permutations
         self.keep = keep
         results = _knox_local(s_coords, t_coords, delta, tau, permutations, keep)
-        self.nst = int(results['nst'])
-        if permutations>0:
-            self.p_sim = results['p_value_sim']
-            if keep:
-                self.sim = results['sti_perm']
-
-        self.p_poisson = results['p_value_poisson']
-        self.observed = results['observed']
-        self.expected = results['expected']
-        self.p_hypergeom = results['hg_pvalues']
+        self.nst = int(results["nst"])
         if permutations > 0:
-            self.p_sims = results['exceedence_pvalue']
+            self.p_sim = results["p_value_sim"]
             if keep:
-                self.sims = results['sti_perm']
-        self.nsti = results['nsti']
+                self.sim = results["sti_perm"]
+
+        self.p_poisson = results["p_value_poisson"]
+        self.observed = results["observed"]
+        self.expected = results["expected"]
+        self.p_hypergeom = results["hg_pvalues"]
+        if permutations > 0:
+            self.p_sims = results["exceedence_pvalue"]
+            if keep:
+                self.sims = results["sti_perm"]
+        self.nsti = results["nsti"]
 
     @property
     def statistic_(self):
         return self.nsti
-
-
