@@ -957,6 +957,7 @@ class Knox:
         permutations : int, optional
             permutations to use for computation inference, by default 99
         keep : bool
+            whether to store realized values of the statistic under permutations
 
         Returns
         -------
@@ -1236,6 +1237,7 @@ class KnoxLocal:
         permutations : int, optional
             permutations to use for computation inference, by default 99
         keep : bool
+            whether to store realized values of the statistic under permutations
 
         Returns
         -------
