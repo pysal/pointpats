@@ -745,7 +745,7 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
     # expected table
 
     expected = np.zeros((2, 2))
-    expected[0, 0] = NS * NT / pairs
+    expected[0, 0] = ENST
     expected[0, 1] = NS - expected[0, 0]
     expected[1, 0] = NT - expected[0, 0]
     expected[1, 1] = pairs - expected.sum()
