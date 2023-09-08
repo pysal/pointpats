@@ -1273,8 +1273,8 @@ def _spacetime_points_to_arrays(dataframe, time_col):
     else:
         assert (
             dataframe.crs.is_projected
-        ), "The input dataframe must be in a projected coordinate system, but it is"
-    f"currently set to {dataframe.crs}"
+        ), ("The input dataframe must be in a projected coordinate system, but it is"
+    f"currently set to {dataframe.crs}")
 
     assert dataframe.geom_type.unique().tolist() == [
         "Point"
@@ -1283,9 +1283,9 @@ def _spacetime_points_to_arrays(dataframe, time_col):
     # kdtree wont operate on datetime
     assert is_numeric_dtype(
         dataframe[time_col].dtype
-    ), "The time values must be stored as"
+    ), ("The time values must be stored as"
     f"a numeric dtype but the column {time_col} is stored as"
-    f"{dataframe[time_col].dtype}"
+    f"{dataframe[time_col].dtype}")
 
     s_coords = np.vstack((dataframe.geometry.x.values, dataframe.geometry.y.values)).T
     t_coords = np.vstack(dataframe[time_col].values)
