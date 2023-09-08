@@ -28,6 +28,7 @@ from datetime import date
 from scipy.spatial import KDTree
 from scipy.stats import poisson
 from scipy.stats import hypergeom
+from pandas.api.types import is_numeric_dtype
 
 from warnings import warn
 
@@ -928,28 +929,41 @@ class Knox:
 
     @classmethod
     def from_dataframe(
-        cls, dataframe, time_col, delta, tau, permutations=99, keep=False
+        cls,
+        dataframe,
+        time_col: int,
+        delta: int,
+        tau: int,
+        permutations: int = 99,
+        keep: bool = False,
     ):
         """Compute a Knox statistic from a dataframe of Point observations
 
         Parameters
         ----------
         dataframe : geopandas.GeoDataFrame
-            dataframe holding observations. Should be in a projected coordinate system
-            with geometries stored as Points
+            geodataframe holding observations. Should be in a projected coordinate
+            system with geometries stored as Point
         time_col : str
-            column in the dataframe storing the timestamp for each observation
+            column in the dataframe storing the time values (integer coordinate)
+            for each observation. For example if the observations are stored with
+            a timestamp, the time_col should be converted to a series of integers
+            representing, e.g. hours, days, seconds, etc.
         delta : int
-            delta parameter defining the spatial neighbor threshold
+            delta parameter defining the spatial neighbor threshold measured in the
+            same units as the dataframe CRS
         tau : int
-            tau parameter defining the temporal neihgbor threshold
+            tau parameter defining the temporal neihgbor threshold (in the units
+            measured by `time_col`)
         permutations : int, optional
             permutations to use for computation inference, by default 99
+        keep : bool
 
         Returns
         -------
         pointpats.spacetime.Knox
             a fitted Knox class
+
         """
         s_coords, t_coords = _spacetime_points_to_arrays(dataframe, time_col)
 
@@ -975,7 +989,6 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
 
     nsti = res["nsti"]
     nsi = res["nsi"]
-    nti = res["nti"]
 
     # rather than do n*permutations, we reuse the permutations
     # ensuring that each permutation is conditional on a focal unit i
@@ -1195,9 +1208,15 @@ class KnoxLocal:
 
     @classmethod
     def from_dataframe(
-        cls, dataframe, time_col, delta, tau, permutations=99, keep=False
+        cls,
+        dataframe,
+        time_col: str,
+        delta: int,
+        tau: int,
+        permutations: int = 99,
+        keep: bool = False,
     ):
-        """Compute a local Knox statistic from a dataframe of Point observations
+        """Compute a set of local Knox statistics from a dataframe of Point observations
 
         Parameters
         ----------
@@ -1205,18 +1224,25 @@ class KnoxLocal:
             dataframe holding observations. Should be in a projected coordinate system
             with geometries stored as Points
         time_col : str
-            column in the dataframe storing the timestamp for each observation
+            column in the dataframe storing the time values (integer coordinate)
+            for each observation. For example if the observations are stored with
+            a timestamp, the time_col should be converted to a series of integers
+            representing, e.g. hours, days, seconds, etc.
         delta : int
-            delta parameter defining the spatial neighbor threshold
+            delta parameter defining the spatial neighbor threshold measured in the
+            same units as the dataframe CRS
         tau : int
-            tau parameter defining the temporal neihgbor threshold
+            tau parameter defining the temporal neihgbor threshold (in the units
+            measured by `time_col`)
         permutations : int, optional
             permutations to use for computation inference, by default 99
+        keep : bool
 
         Returns
         -------
-        pointpats.spacetime.Knox
-            a fitted Knox class
+        pointpats.spacetime.LocalKnox
+            a fitted KnoxLocal class
+
         """
         s_coords, t_coords = _spacetime_points_to_arrays(dataframe, time_col)
 
@@ -1224,13 +1250,43 @@ class KnoxLocal:
 
 
 def _spacetime_points_to_arrays(dataframe, time_col):
-    assert dataframe.geom_type.unique().tolist() == [
-        "Point"
-    ], "The Knox statistic is only defined for Point geometries"
-    assert (
+    """convert long-form geodataframe into arrays for kdtree
+
+    Parameters
+    ----------
+    dataframe : geopandas.GeoDataFrame
+        geodataframe with point geometries
+    time_col : str
+        name of the column on dataframe that stores time values
+
+    Returns
+    -------
+    tuple
+        two numpy arrays holding spatial coodinates s_coords (n,2)
+        and temporal coordinates t_coords (n,1)
+
+    """
+    if dataframe.crs is None:
+      warn('There is no CRS set on the dataframe. The KDTree will assume coordinates'
+           'are stored in Euclidean distances')
+    else:
+        assert (
         dataframe.crs.is_projected
     ), "The input dataframe must be in a projected coordinate system, but it is"
     f"currently set to {dataframe.crs}"
+
+    assert dataframe.geom_type.unique().tolist() == [
+        "Point"
+    ], "The Knox statistic is only defined for Point geometries"
+
+
+
+    # kdtree wont operate on datetime
+    assert is_numeric_dtype(
+        dataframe[time_col].dtype
+    ), "The time values must be stored as"
+    f"a numeric dtype but the column {time_col} is stored as"
+    f"{dataframe[time_col].dtype}"
 
     s_coords = np.vstack((dataframe.geometry.x.values, dataframe.geometry.y.values)).T
     t_coords = np.vstack(dataframe[time_col].values)
