@@ -927,7 +927,9 @@ class Knox:
         return self.nst
 
     @classmethod
-    def from_dataframe(cls, dataframe, time_col, delta, tau, permutations=99):
+    def from_dataframe(
+        cls, dataframe, time_col, delta, tau, permutations=99, keep=False
+    ):
         """Compute a Knox statistic from a dataframe of Point observations
 
         Parameters
@@ -949,20 +951,9 @@ class Knox:
         pointpats.spacetime.Knox
             a fitted Knox class
         """
-        assert dataframe.geom_type.unique().tolist() == [
-            "Point"
-        ], "The Knox statistic is only defined for Point geometries"
-        assert (
-            dataframe.crs.is_projected
-        ), "The input dataframe must be in a projected coordinate system, but it is"
-        f"currently set to {dataframe.crs}"
+        s_coords, t_coords = _spacetime_points_to_arrays(dataframe, time_col)
 
-        s_coords = np.vstack(
-            (dataframe.geometry.x.values, dataframe.geometry.y.values)
-        ).T
-        t_coords = np.vstack(dataframe[time_col].values)
-
-        return cls(s_coords, t_coords, delta, tau, permutations)
+        return cls(s_coords, t_coords, delta, tau, permutations, keep)
 
 
 def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
@@ -1201,3 +1192,47 @@ class KnoxLocal:
     @property
     def statistic_(self):
         return self.nsti
+
+    @classmethod
+    def from_dataframe(
+        cls, dataframe, time_col, delta, tau, permutations=99, keep=False
+    ):
+        """Compute a local Knox statistic from a dataframe of Point observations
+
+        Parameters
+        ----------
+        dataframe : geopandas.GeoDataFrame
+            dataframe holding observations. Should be in a projected coordinate system
+            with geometries stored as Points
+        time_col : str
+            column in the dataframe storing the timestamp for each observation
+        delta : int
+            delta parameter defining the spatial neighbor threshold
+        tau : int
+            tau parameter defining the temporal neihgbor threshold
+        permutations : int, optional
+            permutations to use for computation inference, by default 99
+
+        Returns
+        -------
+        pointpats.spacetime.Knox
+            a fitted Knox class
+        """
+        s_coords, t_coords = _spacetime_points_to_arrays(dataframe, time_col)
+
+        return cls(s_coords, t_coords, delta, tau, permutations, keep)
+
+
+def _spacetime_points_to_arrays(dataframe, time_col):
+    assert dataframe.geom_type.unique().tolist() == [
+        "Point"
+    ], "The Knox statistic is only defined for Point geometries"
+    assert (
+        dataframe.crs.is_projected
+    ), "The input dataframe must be in a projected coordinate system, but it is"
+    f"currently set to {dataframe.crs}"
+
+    s_coords = np.vstack((dataframe.geometry.x.values, dataframe.geometry.y.values)).T
+    t_coords = np.vstack(dataframe[time_col].values)
+
+    return s_coords, t_coords
