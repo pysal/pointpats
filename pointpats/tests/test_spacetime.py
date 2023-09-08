@@ -75,7 +75,7 @@ class TestKnox:
         try:
             gdf.crs = 4326
             global_knox = Knox.from_dataframe(gdf, time_col="T", delta=20, tau=5)
-        except AssertionError:
+        except ValueError:
             warn("successfully caught crs error")
             pass
 
@@ -83,7 +83,7 @@ class TestKnox:
         try:
             gdf["T"] = gdf["T"].astype("O")
             global_knox = Knox.from_dataframe(gdf, time_col="T", delta=20, tau=5)
-        except AssertionError:
+        except ValueError:
             warn("successfully caught dtype error")
             pass
 

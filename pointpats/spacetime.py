@@ -1235,7 +1235,7 @@ class KnoxLocal:
             tau parameter defining the temporal neihgbor threshold (in the units
             measured by `time_col`)
         permutations : int, optional
-            permutations to use for computation inference, by default 99
+            permutations to use for computational inference, by default 99
         keep : bool
             whether to store realized values of the statistic under permutations
 
@@ -1283,11 +1283,12 @@ def _spacetime_points_to_arrays(dataframe, time_col):
     ], "The Knox statistic is only defined for Point geometries"
 
     # kdtree wont operate on datetime
-    assert is_numeric_dtype(
-        dataframe[time_col].dtype
-    ), ("The time values must be stored as "
-    f"a numeric dtype but the column {time_col} is stored as "
-    f"{dataframe[time_col].dtype}")
+    if is_numeric_dtype(dataframe[time_col].dtype) is False:
+        raise ValueError(
+            "The time values must be stored as "
+            f"a numeric dtype but the column {time_col} is stored as "
+            f"{dataframe[time_col].dtype}"
+        )
 
     s_coords = np.vstack((dataframe.geometry.x.values, dataframe.geometry.y.values)).T
     t_coords = np.vstack(dataframe[time_col].values)
