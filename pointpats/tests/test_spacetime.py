@@ -1,17 +1,19 @@
-import numpy
-import libpysal as lps
+from warnings import warn
+
 import geopandas as gpd
+import libpysal as lps
+import numpy
+from pytest import approx
+
 from pointpats import (
-    SpaceTimeEvents,
-    knox,
-    mantel,
-    jacquez,
-    modified_knox,
     Knox,
     KnoxLocal,
+    SpaceTimeEvents,
+    jacquez,
+    knox,
+    mantel,
+    modified_knox,
 )
-from warnings import warn
-from pytest import approx
 
 
 class TestKnox:
@@ -71,7 +73,7 @@ class TestKnox:
 
         # unprojected coords
         try:
-            gdf.crs=4326
+            gdf.crs = 4326
             global_knox = Knox.from_dataframe(gdf, time_col="T", delta=20, tau=5)
         except AssertionError:
             warn("successfully caught crs error")
@@ -79,7 +81,7 @@ class TestKnox:
 
         # non-numeric type for time
         try:
-            gdf['T'] = gdf['T'].astype('O')
+            gdf["T"] = gdf["T"].astype("O")
             global_knox = Knox.from_dataframe(gdf, time_col="T", delta=20, tau=5)
         except AssertionError:
             warn("successfully caught dtype error")

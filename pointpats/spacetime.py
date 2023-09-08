@@ -20,17 +20,16 @@ __all__ = [
 ]
 
 import os
+from datetime import date
+from warnings import warn
+
 import libpysal as lps
 import numpy as np
 import scipy.stats as stats
 from libpysal import cg
-from datetime import date
-from scipy.spatial import KDTree
-from scipy.stats import poisson
-from scipy.stats import hypergeom
 from pandas.api.types import is_numeric_dtype
-
-from warnings import warn
+from scipy.spatial import KDTree
+from scipy.stats import hypergeom, poisson
 
 
 class SpaceTimeEvents:
@@ -1267,19 +1266,19 @@ def _spacetime_points_to_arrays(dataframe, time_col):
 
     """
     if dataframe.crs is None:
-      warn('There is no CRS set on the dataframe. The KDTree will assume coordinates'
-           'are stored in Euclidean distances')
+        warn(
+            "There is no CRS set on the dataframe. The KDTree will assume coordinates"
+            "are stored in Euclidean distances"
+        )
     else:
         assert (
-        dataframe.crs.is_projected
-    ), "The input dataframe must be in a projected coordinate system, but it is"
+            dataframe.crs.is_projected
+        ), "The input dataframe must be in a projected coordinate system, but it is"
     f"currently set to {dataframe.crs}"
 
     assert dataframe.geom_type.unique().tolist() == [
         "Point"
     ], "The Knox statistic is only defined for Point geometries"
-
-
 
     # kdtree wont operate on datetime
     assert is_numeric_dtype(
