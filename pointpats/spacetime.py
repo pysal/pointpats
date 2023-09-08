@@ -1273,10 +1273,10 @@ def _spacetime_points_to_arrays(dataframe, time_col):
             "are stored in Euclidean distances"
         )
     else:
-        assert (
-            dataframe.crs.is_projected
-        ), ("The input dataframe must be in a projected coordinate system, but it is "
-    f"currently set to {dataframe.crs}")
+        if dataframe.crs.is_geographic:
+            raise ValueError(
+                "The input dataframe must be in a projected coordinate system."
+            )
 
     assert dataframe.geom_type.unique().tolist() == [
         "Point"
