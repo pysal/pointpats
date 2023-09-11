@@ -1,6 +1,0 @@
-scikit-learn
-shapely
-geopandas
-pytest
-codecov
-pytest-cov
