@@ -45,7 +45,9 @@
            micromamba-version: 'latest'
 
        - name: make docs
-         run: cd docs; make html
+         run: |
+           pip install -e . --no-deps --force-reinstall
+           cd docs; make html
 
        - name: commit docs
          run: |
