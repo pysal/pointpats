@@ -6,8 +6,8 @@ def plot_density(
 ):
     """Plot kernel density of a given point pattern
 
-    This uses s``tatsmodels.nonparametric.KDEMultivariate`` class to create
-    KDE and matplotlib's ``contour`` or ``contourf` function to plot the
+    This uses ``statsmodels.nonparametric.KDEMultivariate`` class to create
+    KDE and matplotlib's ``contour`` or ``contourf`` function to plot the
     density.
 
     If MultiPoints are given, each point is treated as a separate
