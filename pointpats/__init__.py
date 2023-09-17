@@ -8,3 +8,4 @@ from .process import *
 from .quadrat_statistics import *
 from .distance_statistics import *
 from .spacetime import *
+from .kde import *

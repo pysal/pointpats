@@ -46,6 +46,17 @@ Centrography
     skyum
     dtot
 
+
+.. _density_api:
+
+Density
+-------
+
+.. autosummary::
+   :toctree: generated/
+
+    plot_density
+
 .. _quadrat_api:
 
 Quadrat Based Statistics
