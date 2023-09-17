@@ -13,16 +13,16 @@ def plot_density(
 ):
     """Plot kernel density of a given point pattern
 
-    The KDE can be done either using ``statsmodels.nonparametric.KDEMultivariate``,
-    which is used when ``kernel=None``, or using ``KDEpy.FFTKDE`` when kernel
-    is set. ``FFTKDE`` tends to be generally faster in most cases but may need
+    The KDE can be done either using :class:`statsmodels.nonparametric.KDEMultivariate`,
+    which is used when ``kernel=None``, or using :class:`KDEpy.FFTKDE` when kernel is
+    set. :class:`~KDEpy.FFTKDE` tends to be generally faster in most cases but may need
     different than ``"gaussian"`` kernel to resolve in some cases. For small data of up
     to 10 000 points, the difference is not noticeable. For larger data, specify
-    ``bandwidth`` to enforce the use of ``FFTKDE``. Note that while being faster,
-    ``FFTKDE`` may in some case result in erroneous KDE.
+    ``bandwidth`` to enforce the use of :class:`~KDEpy.FFTKDE`. Note that while being
+    faster, :class:`~KDEpy.FFTKDE` may in some case result in erroneous KDE.
 
-    KDE is plotted using matplotlib's ``contour`` or ``contourf`` function to plot the
-    density.
+    KDE is plotted using matplotlib's :meth:`~matplotlib.pyplot.contour` or
+    :meth:`~matplotlib.pyplot.contourf` function to plot the density.
 
     If MultiPoints are given, each point is treated as separate observation.
 
@@ -38,20 +38,27 @@ def plot_density(
     kernel : str | None, optional
         The kernel function. If None, defaults to the Gaussian kernel and statsmodels
         implementation. If set, uses KDEpy implementation. See
-        ``KDEpy.FFTKDE._available_kernels.keys()`` for choices.
+        :meth:`KDEpy.FFTKDE._available_kernels.keys()` for choices.
     resolution : int | tuple(int, int), optional
         resolution of the grid used to evaluate the probability density
         function. If tuple, each dimension of the grid is specified separately.
         By default 100
     levels : int or array-like, optional
         Determines the number and positions of the contour lines / regions.
-        See the documentation of ``matplotlib.pyplot.contour`` for details., by default 10
+        See the documentation of :meth:`~matplotlib.pyplot.contour` for details.
+        By default 10
     fill : bool, optional
         Fill the area between contour lines, by default False
     margin : float, optional
         The factor of the margin by which the extent of the data will be expanded when
         creating the grid. 0.1 means 10% on each side, by default 0.1. Only used
         with the ``statsmodels`` implementation.
+    **kwargs
+        Keyword arguments passed to :meth:`~matplotlib.pyplot.contour` or
+        :meth:`~matplotlib.pyplot.contourf` used for further
+        styling of the plot, for example ``cmap``, ``linewidths``, ``linestyles``,
+        or `alpha`. See the documentation of :meth:`~matplotlib.pyplot.contour` for
+        details.
 
     Returns
     -------
