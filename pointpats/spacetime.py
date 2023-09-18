@@ -30,6 +30,7 @@ from libpysal import cg
 from pandas.api.types import is_numeric_dtype
 from scipy.spatial import KDTree
 from scipy.stats import hypergeom, poisson
+import pandas
 
 
 class SpaceTimeEvents:
@@ -763,6 +764,7 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
     results["st_pairs"] = st_pairs
     results["sneighbors"] = sneighbors
     results["tneighbors"] = tneighbors
+    results["stneighbors"] = stneighbors
 
     if permutations > 0:
         exceedence = 0
@@ -970,8 +972,7 @@ class Knox:
         return cls(s_coords, t_coords, delta, tau, permutations, keep)
 
 
-def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
-
+def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False, crit=0.05):
     # think about passing in the global object as an option to avoid recomputing the trees
     res = _knox(s_coords, t_coords, delta, tau, permutations=permutations)
     sneighbors = {i: tuple(ns) for i, ns in enumerate(res["sneighbors"])}
@@ -989,6 +990,7 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
 
     nsti = res["nsti"]
     nsi = res["nsi"]
+    nti = res["nti"]
 
     # rather than do n*permutations, we reuse the permutations
     # ensuring that each permutation is conditional on a focal unit i
@@ -1042,6 +1044,35 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
     ]
     res["hg_pvalues"] = np.array(hg_pvalues)
 
+    # identification of hot spots
+    adjlist = []
+    for i, j in res["st_pairs"]:
+        adjlist.append([i, j])
+    adjlist = pandas.DataFrame(data=adjlist, columns=["focal", "neighbor"])
+    adjlist = adjlist.sort_values(by=["focal", "neighbor"])
+    adjlist.reset_index(drop=True, inplace=True)
+
+    adjlist["orientation"] = 0
+    for index, row in adjlist.iterrows():
+        focal = row["focal"]
+        neighbor = row["neighbor"]
+        if t_coords[focal] < t_coords[neighbor]:
+            adjlist.iloc[index, 2] = "lead"
+        elif t_coords[focal] < t_coords[neighbor]:
+            adjlist.iloc[index, 2] = "lag"
+        else:
+            adjlist.iloc[index, 2] = "coincident"
+
+    res["stadjlist"] = adjlist
+
+    # determine hot spots
+    pdf = pandas.DataFrame(data=res["hg_pvalues"], columns=["pvalue"])
+    pdf_sig = pdf[pdf.pvalue <= crit]
+    hot_spots = pandas.merge(
+        adjlist, pdf_sig, how="inner", left_on="focal", right_index=True
+    ).reset_index(drop=True)
+
+    res["hot_spots"] = hot_spots
     return res
 
 
@@ -1074,6 +1105,9 @@ class KnoxLocal:
 
     conditional: bool
       whether to include conditional permutation inference
+
+    crit: float
+      signifcance level for local statistics
 
 
 
@@ -1178,13 +1212,17 @@ class KnoxLocal:
            0.22, 0.41, 0.39, 0.32])
     """
 
-    def __init__(self, s_coords, t_coords, delta, tau, permutations=99, keep=False):
+    def __init__(
+        self, s_coords, t_coords, delta, tau, permutations=99, keep=False, crit=0.05
+    ):
         self.s_coords = s_coords
         self.t_coords = t_coords
         self.delta = delta
         self.tau = tau
         self.permutations = permutations
         self.keep = keep
+        self.crit = crit
+        self.conditional = conditional
         results = _knox_local(s_coords, t_coords, delta, tau, permutations, keep)
         self.nst = int(results["nst"])
         if permutations > 0:
@@ -1294,3 +1332,11 @@ def _spacetime_points_to_arrays(dataframe, time_col):
     t_coords = np.vstack(dataframe[time_col].values)
 
     return s_coords, t_coords
+
+
+def _time_to_int(df, column, fmt="%Y%m%d"):
+    """Create and integer valued column for time"""
+    time_series = pandas.to_datetime(df[column], format=fmt)
+    min_time = time_series.min()
+    time_int = time_series.appy(lambda x: x - min_time)
+    return time_int.dt.days
