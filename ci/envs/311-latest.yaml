@@ -13,12 +13,14 @@ dependencies:
   - scikit-learn
   - shapely
   - geopandas
+  - statsmodels
   - pytest
   - pytest-cov
   - codecov
   - pip
   - pip:
       - opencv-contrib-python
+      - KDEpy
   # for docs build action (this env only)
   - nbsphinx
   - numpydoc
