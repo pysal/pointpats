@@ -1222,7 +1222,6 @@ class KnoxLocal:
         self.permutations = permutations
         self.keep = keep
         self.crit = crit
-        self.conditional = conditional
         results = _knox_local(s_coords, t_coords, delta, tau, permutations, keep)
         self.nst = int(results["nst"])
         if permutations > 0:
