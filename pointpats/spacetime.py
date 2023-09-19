@@ -969,6 +969,7 @@ class Knox:
         """
         s_coords, t_coords = _spacetime_points_to_arrays(dataframe, time_col)
 
+        return cls(s_coords, dataframe[[time_col]], delta, tau, permutations, keep)
         return cls(s_coords, t_coords, delta, tau, permutations, keep)
 
 
@@ -1045,6 +1046,7 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False, cri
     res["hg_pvalues"] = np.array(hg_pvalues)
 
     # identification of hot spots
+
     adjlist = []
     for i, j in res["st_pairs"]:
         adjlist.append([i, j])
@@ -1056,9 +1058,11 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False, cri
     for index, row in adjlist.iterrows():
         focal = row["focal"]
         neighbor = row["neighbor"]
-        if t_coords[focal] < t_coords[neighbor]:
+        ft = t_coords.iloc[focal].values
+        nt = t_coords.iloc[neighbor].values
+        if ft < nt:
             adjlist.iloc[index, 2] = "lead"
-        elif t_coords[focal] < t_coords[neighbor]:
+        elif ft > nt:
             adjlist.iloc[index, 2] = "lag"
         else:
             adjlist.iloc[index, 2] = "coincident"
@@ -1073,6 +1077,7 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False, cri
     ).reset_index(drop=True)
 
     res["hot_spots"] = hot_spots
+    res['crit'] = crit
     return res
 
 
@@ -1222,7 +1227,8 @@ class KnoxLocal:
         self.permutations = permutations
         self.keep = keep
         self.crit = crit
-        results = _knox_local(s_coords, t_coords, delta, tau, permutations, keep)
+        results = _knox_local(s_coords, t_coords, delta, tau, permutations,
+                              keep, crit)
         self.nst = int(results["nst"])
         if permutations > 0:
             self.p_sim = results["p_value_sim"]
@@ -1238,6 +1244,7 @@ class KnoxLocal:
             if keep:
                 self.sims = results["sti_perm"]
         self.nsti = results["nsti"]
+        self.hot_spots = results['hot_spots']
 
     @property
     def statistic_(self):
@@ -1284,7 +1291,8 @@ class KnoxLocal:
         """
         s_coords, t_coords = _spacetime_points_to_arrays(dataframe, time_col)
 
-        return cls(s_coords, t_coords, delta, tau, permutations, keep)
+        return cls(s_coords, dataframe[[time_col]], delta, tau, permutations, keep)
+        #return cls(s_coords, t_coords, delta, tau, permutations, keep)
 
 
 def _spacetime_points_to_arrays(dataframe, time_col):
