@@ -974,6 +974,33 @@ class Knox:
 
 
 def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False, crit=0.05):
+    """
+
+    Parameters
+    ----------
+
+    s_coords: array (nx2)
+        spatial coordinates
+
+    t_coords: array (nx1)
+        temporal coordinates
+
+    delta: numeric
+        spatial threshold distance for neighbor relation
+
+    tau: numeric
+        temporal threshold distance for neighbor relation
+
+    permutations: int
+        number of permutations for conditional randomization inference
+
+    keep: bool
+        whether to store local statistics from the permtuations
+
+    crit: float
+        signficance level for determination of hot spots
+
+    """
     # think about passing in the global object as an option to avoid recomputing the trees
     res = _knox(s_coords, t_coords, delta, tau, permutations=permutations)
     sneighbors = {i: tuple(ns) for i, ns in enumerate(res["sneighbors"])}
@@ -1058,8 +1085,8 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False, cri
     for index, row in adjlist.iterrows():
         focal = row["focal"]
         neighbor = row["neighbor"]
-        ft = t_coords.iloc[focal].values
-        nt = t_coords.iloc[neighbor].values
+        ft = t_coords[focal]
+        nt = t_coords[neighbor]
         if ft < nt:
             adjlist.iloc[index, 2] = "lead"
         elif ft > nt:
@@ -1077,7 +1104,7 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False, cri
     ).reset_index(drop=True)
 
     res["hot_spots"] = hot_spots
-    res['crit'] = crit
+    res["crit"] = crit
     return res
 
 
@@ -1220,6 +1247,12 @@ class KnoxLocal:
     def __init__(
         self, s_coords, t_coords, delta, tau, permutations=99, keep=False, crit=0.05
     ):
+
+        if isinstance(s_coords, pandas.DataFrame):
+            s_coords = s_coords.to_numpy()
+        if isinstance(t_coords, pandas.DataFrame):
+            t_coords = t_coords.to_numpy()
+
         self.s_coords = s_coords
         self.t_coords = t_coords
         self.delta = delta
@@ -1227,8 +1260,7 @@ class KnoxLocal:
         self.permutations = permutations
         self.keep = keep
         self.crit = crit
-        results = _knox_local(s_coords, t_coords, delta, tau, permutations,
-                              keep, crit)
+        results = _knox_local(s_coords, t_coords, delta, tau, permutations, keep, crit)
         self.nst = int(results["nst"])
         if permutations > 0:
             self.p_sim = results["p_value_sim"]
@@ -1244,7 +1276,7 @@ class KnoxLocal:
             if keep:
                 self.sims = results["sti_perm"]
         self.nsti = results["nsti"]
-        self.hot_spots = results['hot_spots']
+        self.hot_spots = results["hot_spots"]
 
     @property
     def statistic_(self):
@@ -1259,6 +1291,7 @@ class KnoxLocal:
         tau: int,
         permutations: int = 99,
         keep: bool = False,
+        crit: float = 0.05,
     ):
         """Compute a set of local Knox statistics from a dataframe of Point observations
 
@@ -1282,6 +1315,8 @@ class KnoxLocal:
             permutations to use for computational inference, by default 99
         keep : bool
             whether to store realized values of the statistic under permutations
+        crit: float
+            signficance level for determination of hot spots
 
         Returns
         -------
@@ -1291,8 +1326,7 @@ class KnoxLocal:
         """
         s_coords, t_coords = _spacetime_points_to_arrays(dataframe, time_col)
 
-        return cls(s_coords, dataframe[[time_col]], delta, tau, permutations, keep)
-        #return cls(s_coords, t_coords, delta, tau, permutations, keep)
+        return cls(s_coords, t_coords, delta, tau, permutations, keep)
 
 
 def _spacetime_points_to_arrays(dataframe, time_col):
