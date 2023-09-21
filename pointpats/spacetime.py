@@ -1360,16 +1360,22 @@ class KnoxLocal:
         if kind.lower() == 'all':
             self._gdf['color'] = 'grey'
             self._gdf['pvalue'] = self.p_hypergeom
-            neighbors = self.adjlist.neighbor.unique()
-            print(neighbors)
+            #neighbors = self.adjlist.neighbor.unique()
+            #print(neighbors)
+
+            mask = self._gdf[self._gdf.pvalue<=crit].index.values
+            print(mask, type(mask))
+            neighbors  = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
             self._gdf.loc[neighbors,'color']='blue'
             self._gdf.loc[self._gdf.pvalue<=crit,'color']='red'
 
             g = self._gdf
-            base = g[g.color=='grey'].plot(color="grey")
-            g[g.color=='blue'].plot(ax=base,color="blue")
-            g[g.color=='red'].plot(ax=base, color="red")
-            return base
+            m = g[g.color=='grey'].plot(color="grey")
+            g[g.color=='blue'].plot(ax=m,color="blue")
+            g[g.color=='red'].plot(ax=m, color="red")
+
+
+            return m
 
            
 
