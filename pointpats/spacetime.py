@@ -1253,7 +1253,6 @@ class KnoxLocal:
         return hot_spots
 
 
-    @property
     def __init__(
         self, s_coords, t_coords, delta, tau, permutations=99, keep=False, crit=0.05,
         crs=None
