@@ -32,6 +32,8 @@ from pandas.api.types import is_numeric_dtype
 from scipy.spatial import KDTree
 from scipy.stats import hypergeom, poisson
 import pandas
+from functools import cached_property
+import geopandas as gpd
 
 
 class SpaceTimeEvents:
@@ -1095,17 +1097,9 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False, cri
             adjlist.iloc[index, 2] = "coincident"
 
     res["stadjlist"] = adjlist
-
-    # determine hot spots
-    pdf = pandas.DataFrame(data=res["hg_pvalues"], columns=["pvalue"])
-    pdf_sig = pdf[pdf.pvalue <= crit]
-    hot_spots = pandas.merge(
-        adjlist, pdf_sig, how="inner", left_on="focal", right_index=True
-    ).reset_index(drop=True)
-
-    res["hot_spots"] = hot_spots
-    res["crit"] = crit
     return res
+
+
 
 
 class KnoxLocal:
@@ -1140,6 +1134,9 @@ class KnoxLocal:
 
     crit: float
       signifcance level for local statistics
+
+    crs: str (optional)
+      coordinate reference system string for s_coords
 
 
 
@@ -1244,8 +1241,22 @@ class KnoxLocal:
            0.22, 0.41, 0.39, 0.32])
     """
 
+    def hot_spots(self, crit=0.05):
+        # determine hot spots
+        pdf = pandas.DataFrame(data=self.p_hypergeom, columns=["pvalue"])
+        pdf_sig = pdf[pdf.pvalue <= crit]
+        adjlist = self.adjlist
+        hot_spots = pandas.merge(
+            adjlist, pdf_sig, how="inner", left_on="focal", right_index=True
+        ).reset_index(drop=True)
+
+        return hot_spots
+
+
+    @property
     def __init__(
-        self, s_coords, t_coords, delta, tau, permutations=99, keep=False, crit=0.05
+        self, s_coords, t_coords, delta, tau, permutations=99, keep=False, crit=0.05,
+        crs=None
     ):
 
         if not isinstance(t_coords, np.ndarray):
@@ -1267,6 +1278,7 @@ class KnoxLocal:
         self.keep = keep
         self.crit = crit
         results = _knox_local(s_coords, t_coords, delta, tau, permutations, keep, crit)
+        self.adjlist = results['stadjlist']
         self.nst = int(results["nst"])
         if permutations > 0:
             self.p_sim = results["p_value_sim"]
@@ -1282,9 +1294,9 @@ class KnoxLocal:
             if keep:
                 self.sims = results["sti_perm"]
         self.nsti = results["nsti"]
-        self.hot_spots = results["hot_spots"]
+        #self.hot_spots = results["hot_spots"]
+        self._crs = crs
 
-    @property
     def statistic_(self):
         return self.nsti
 
@@ -1332,7 +1344,88 @@ class KnoxLocal:
         """
         s_coords, t_coords = _spacetime_points_to_arrays(dataframe, time_col)
 
-        return cls(s_coords, t_coords, delta, tau, permutations, keep)
+        return cls(s_coords, t_coords, delta, tau, permutations, keep, crs=dataframe.crs)
+
+
+    def plot(self, kind='all',
+             colors={'focal': 'red', 'neighbor': 'blue', 'nonsig': 'grey'},
+             crit=0.05
+             ):
+
+        # logic for conditional formatting (focal as different color than lead/lag neighbors,
+
+        # arrows, close clique as a hull or not
+
+        
+        if kind.lower() == 'all':
+            self._gdf['color'] = 'grey'
+            self._gdf['pvalue'] = self.p_hypergeom
+            neighbors = self.adjlist.neighbor.unique()
+            print(neighbors)
+            self._gdf.loc[neighbors,'color']='blue'
+            self._gdf.loc[self._gdf.pvalue<=crit,'color']='red'
+
+            g = self._gdf
+            base = g[g.color=='grey'].plot(color="grey")
+            g[g.color=='blue'].plot(ax=base,color="blue")
+            g[g.color=='red'].plot(ax=base, color="red")
+            return base
+
+           
+
+            #return self._gdf.plot(color=self._gdf.color.values)
+
+        elif kind.lower() == 'hotspots':
+            hot_spots = self.hot_spots(crit)
+            return self._gdfhs.plot()
+        
+
+    def explore(self, crit=0.05):
+
+        # logic for conditional formatting (focal as different color than lead/lag neighbors,
+        # arrows, close clique as a hull or not
+
+        # interactivity: on-click, mouse-over functions sending to folium
+
+        # how to populate tool-tip columns
+
+        # markerclustering?
+
+        self._gdf['color'] = 'grey'
+        self._gdf['pvalue'] = self.p_hypergeom
+        #neighbors = self.adjlist.neighbor.unique()
+        #print(neighbors)
+        
+        mask = self._gdf[self._gdf.pvalue<=crit].index.values
+        print(mask, type(mask))
+        neighbors  = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
+        self._gdf.loc[neighbors,'color']='blue'
+        self._gdf.loc[self._gdf.pvalue<=crit,'color']='red'
+
+        g = self._gdf
+        m = g[g.color=='grey'].explore(color="grey")
+        g[g.color=='blue'].explore(m=m,color="blue")
+        g[g.color=='red'].explore(m=m, color="red")
+
+        return m
+        #return self._gdf.explore()
+        
+
+
+
+    @cached_property
+    def _gdf(self):
+        # reconstruct df
+        geom = gpd.points_from_xy(self.s_coords[:,0], self.s_coords[:, 1])
+        _gdf = gpd.GeoDataFrame(geometry=geom, crs=self._crs)
+        _gdf['t_coords'] = self.t_coords
+
+        return _gdf.reset_index()
+
+    @cached_property
+    def _gdfhs(self):
+        # merge df with self.hotspots
+        return self._gdf.merge(self.hot_spots, left_index=True, right_on='focal')
 
 
 def _spacetime_points_to_arrays(dataframe, time_col):
