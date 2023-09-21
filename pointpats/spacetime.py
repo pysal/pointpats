@@ -3,9 +3,10 @@ Methods for identifying space-time interaction in spatio-temporal event
 data.
 """
 __author__ = (
+    "Eli Knaap <eknaap@sdsu.edu>",
     "Nicholas Malizia <nmalizia@asu.edu>",
     "Sergio J. Rey \
-<srey@asu.edu>",
+<srey@sdsu.edu>",
     "Philip Stephens <philip.stephens@asu.edu",
 )
 
@@ -970,7 +971,6 @@ class Knox:
         s_coords, t_coords = _spacetime_points_to_arrays(dataframe, time_col)
 
         return cls(s_coords, dataframe[[time_col]], delta, tau, permutations, keep)
-        return cls(s_coords, t_coords, delta, tau, permutations, keep)
 
 
 def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False, crit=0.05):
@@ -1115,10 +1115,10 @@ class KnoxLocal:
     Parameters
     ----------
 
-    s_coords: array-like
+    s_coords: array (nx2)
       spatial coordinates of point events
 
-    t_coords: array-like
+    t_coords: array (nx1)
       temporal coordinates of point events (floats or ints, not dateTime)
 
     delta: float
@@ -1146,10 +1146,10 @@ class KnoxLocal:
     Attributes
     ----------
 
-    s_coords: array-like
+    s_coords: array (nx2)
       spatial coordinates of point events
 
-    t_coords: array-like
+    t_coords: array (nx1)
       temporal coordinates of point events (floats or ints, not dateTime)
 
     delta: float
@@ -1248,10 +1248,16 @@ class KnoxLocal:
         self, s_coords, t_coords, delta, tau, permutations=99, keep=False, crit=0.05
     ):
 
-        if isinstance(s_coords, pandas.DataFrame):
-            s_coords = s_coords.to_numpy()
-        if isinstance(t_coords, pandas.DataFrame):
-            t_coords = t_coords.to_numpy()
+        if not isinstance(t_coords, np.ndarray):
+            raise ValueError('t_coords  should be numpy.ndarray type')
+        if not isinstance(s_coords, np.ndarray):
+            raise ValueError('s_coords  should be numpy.ndarray type')
+        n_s, k = s_coords.shape
+        if k < 2:
+            raise ValueError('s_coords shape required to be nx2')
+        n_t, k = t_coords.shape
+        if n_s != n_t:
+            raise ValueError('t_coords and s_coords need to be same length')
 
         self.s_coords = s_coords
         self.t_coords = t_coords
@@ -1376,7 +1382,7 @@ def _spacetime_points_to_arrays(dataframe, time_col):
 
 
 def _time_to_int(df, column, fmt="%Y%m%d"):
-    """Create and integer valued column for time"""
+    """Create an integer valued column for time"""
     time_series = pandas.to_datetime(df[column], format=fmt)
     min_time = time_series.min()
     time_int = time_series.appy(lambda x: x - min_time)
