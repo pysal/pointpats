@@ -1082,7 +1082,7 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False, cri
     adjlist = adjlist.sort_values(by=["focal", "neighbor"])
     adjlist.reset_index(drop=True, inplace=True)
 
-    adjlist["orientation"] = ''
+    adjlist["orientation"] = ""
     for index, row in adjlist.iterrows():
         focal = row["focal"]
         neighbor = row["neighbor"]
@@ -1386,7 +1386,7 @@ class KnoxLocal:
             hot_spots = self.hot_spots(crit)
             return self._gdfhs.plot()
 
-    def explore(self, crit=0.05, style_kwds=None, tiles='CartoDB Positron'):
+    def explore(self, crit=0.05, style_kwds=None, tiles="CartoDB Positron"):
 
         # logic for conditional formatting (focal as different color than lead/lag neighbors,
         # arrows, close clique as a hull or not
@@ -1397,7 +1397,7 @@ class KnoxLocal:
 
         # markerclustering?
         if style_kwds is None:
-          style_kwds = {}
+            style_kwds = {}
 
         self._gdf["color"] = "grey"
         self._gdf["pvalue"] = self.p_hypergeom
@@ -1406,9 +1406,13 @@ class KnoxLocal:
         neighbors = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
         self._gdf.loc[neighbors, "color"] = "blue"
         self._gdf.loc[self._gdf.pvalue <= crit, "color"] = "red"
+        nbs = self.adjlist.groupby("focal").agg(list)["neighbor"]
+        self._gdf = self._gdf.merge(nbs, left_on="index", right_index=True)
 
         g = self._gdf
-        m = g[g.color == "grey"].explore(color="grey", style_kwds=style_kwds, tiles=tiles)
+        m = g[g.color == "grey"].explore(
+            color="grey", style_kwds=style_kwds, tiles=tiles
+        )
         g[g.color == "blue"].explore(m=m, color="blue", style_kwds=style_kwds)
         g[g.color == "red"].explore(m=m, color="red", style_kwds=style_kwds)
 
