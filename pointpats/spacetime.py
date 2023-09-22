@@ -1381,30 +1381,39 @@ class KnoxLocal:
         # logic for conditional formatting (focal as different color than lead/lag neighbors,
 
         # arrows, close clique as a hull or not
+        g = self._gdf.copy()
 
         if kind.lower() == "all":
-            self._gdf["color"] = "grey"
-            self._gdf["pvalue"] = self.p_hypergeom
-            # neighbors = self.adjlist.neighbor.unique()
-            # print(neighbors)
 
-            mask = self._gdf[self._gdf.pvalue <= crit].index.values
+            g["color"] = colors["nonsig"]
+            g["pvalue"] = self.p_hypergeom
+            if inference == "permutation":
+                if not hasattr(self, "p_sims"):
+                    warn(
+                        "Pseudo-p values not availalable. Permutation-based p-values require "
+                        "fitting the KnoxLocal class using `permutations` set to a large "
+                        "number. Using analytic p-values instead"
+                    )
+                    g["pvalue"] = self.p_hypergeom
+                else:
+                    g["pvalue"] = self.p_sims
+            elif inference == "analytic":
+                g["pvalue"] = self.p_hypergeom
+            else:
+                raise ValueError("inference must be either `permutation` or `analytic`")
+
+            mask = g[g.pvalue <= crit].index.values
             neighbors = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
-            self._gdf.loc[neighbors, "color"] = "blue"
-            self._gdf.loc[self._gdf.pvalue <= crit, "color"] = "red"
-
-            g = self._gdf
-            m = g[g.color == "grey"].plot(color="grey")
-            g[g.color == "blue"].plot(ax=m, color="blue")
-            g[g.color == "red"].plot(ax=m, color="red")
+            g.loc[neighbors, "color"] = colors["neighbor"]
+            g.loc[g.pvalue <= crit, "color"] = colors["focal"]
+            m = g[g.color == colors["nonsig"]].plot(color=colors["nonsig"])
+            g[g.color == colors["neighbor"]].plot(ax=m, color=colors["neighbor"])
+            g[g.color == colors["focal"]].plot(ax=m, color=colors["focal"])
 
             return m
 
-            # return self._gdf.plot(color=self._gdf.color.values)
-
         elif kind.lower() == "hotspots":
-            hot_spots = self.hot_spots(crit, inference=inference)
-            return self._gdfhs.plot()
+            return self._gdfhs(crit=crit, inference=inference).plot()
 
     def explore(
         self,
@@ -1412,6 +1421,9 @@ class KnoxLocal:
         inference="permutation",
         style_kwds=None,
         tiles="CartoDB Positron",
+        plot_edges=True,
+        edge_weight=2,
+        edge_color="black",
     ):
 
         # logic for conditional formatting (focal as different color than lead/lag neighbors,
@@ -1468,13 +1480,18 @@ class KnoxLocal:
         ods = zip(origins, destinations)
         lines = gpd.GeoSeries([LineString(od) for od in ods])
         lines.crs = g.crs
-        lines.explore(m=m, color="green")
+        if plot_edges:
+            lines.explore(m=m, color=edge_color, style_kwds={"weight": edge_weight})
 
         return m
 
-    def _gdfhs(self):
+    def _gdfhs(self, crit=0.05, inference="permutation"):
         # merge df with self.hotspots
-        return self._gdf.merge(self.hot_spots, left_index=True, right_on="focal")
+        return gpd.GeoDataFrame(self._gdf.merge(
+            self.hot_spots(crit=crit, inference=inference),
+            left_index=True,
+            right_on="focal",
+        ))
 
 
 def _spacetime_points_to_arrays(dataframe, time_col):
