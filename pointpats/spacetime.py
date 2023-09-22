@@ -1076,6 +1076,7 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False, cri
     adjlist = []
     for i, j in res["st_pairs"]:
         adjlist.append([i, j])
+        adjlist.append([j, i])
     adjlist = pandas.DataFrame(data=adjlist, columns=["focal", "neighbor"])
     adjlist = adjlist.sort_values(by=["focal", "neighbor"])
     adjlist.reset_index(drop=True, inplace=True)
@@ -1457,9 +1458,7 @@ class KnoxLocal:
 
         # edges between hotspot and st-neighbors
         ghs = self.hot_spots(crit=crit)
-        print(ghs)
         ghs = ghs.dropna()
-        print(ghs)
         origins = g.iloc[ghs.focal].geometry
         destinations = g.iloc[ghs.neighbor].geometry
         ods = zip(origins, destinations)
