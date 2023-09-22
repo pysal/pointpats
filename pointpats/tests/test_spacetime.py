@@ -104,7 +104,7 @@ class TestKnoxLocal:
     def test_knox_local(self):
         numpy.random.seed(12345)
         local_knox = KnoxLocal(
-            self.gdf[["X", "Y"]], self.gdf[["T"]], delta=20, tau=5, keep=True
+            self.gdf[["X", "Y"]].values, self.gdf[["T"]].values, delta=20, tau=5, keep=True
         )
         assert local_knox.statistic_.shape == (188,)
         lres = local_knox
