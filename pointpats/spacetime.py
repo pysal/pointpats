@@ -33,6 +33,7 @@ from libpysal import cg
 from pandas.api.types import is_numeric_dtype
 from scipy.spatial import KDTree
 from scipy.stats import hypergeom, poisson
+from shapely.geometry import LineString
 
 
 class SpaceTimeEvents:
@@ -1454,9 +1455,18 @@ class KnoxLocal:
             m = blues.explore(m=m, color="blue", style_kwds=style_kwds)
         m = g[g.color == "red"].explore(m=m, color="red", style_kwds=style_kwds)
 
+        # edges between hotspot and st-neighbors
+        ghs = self.hot_spots(crit=crit)
+        print(ghs)
+        origins = g.iloc[ghs.focal].geometry
+        destinations = g.iloc[ghs.neighbor].geometry
+        ods = zip(origins, destinations)
+        lines = gpd.GeoSeries([LineString(od) for od in ods])
+        lines.crs = g.crs
+        lines.explore(m=m, color="green")
+
         return m
 
-    @cached_property
     def _gdfhs(self):
         # merge df with self.hotspots
         return self._gdf.merge(self.hot_spots, left_index=True, right_on="focal")
