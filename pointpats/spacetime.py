@@ -1339,13 +1339,27 @@ class KnoxLocal:
             s_coords, t_coords, delta, tau, permutations, keep, crs=dataframe.crs
         )
 
-    def hot_spots(self, crit=0.05):
+    def hot_spots(self, crit=0.05, inference="permutation"):
+        if inference == "permutation":
+            if not hasattr(self, "p_sims"):
+                warn(
+                    "Pseudo-p values not availalable. Permutation-based p-values require "
+                    "fitting the KnoxLocal class using `permutations` set to a large "
+                    "number. Using analytic p-values instead"
+                )
+                ps = self.p_hypergeom
+            else:
+                ps = self.p_sims
+        elif inference == "analytic":
+            ps = self.p_hypergeom
+        else:
+            raise ValueError("inference must be either `permutation` or `analytic`")
         # determine hot spots
-        pdf = pandas.DataFrame(data=self.p_hypergeom, columns=["pvalue"])
+        pdf = pandas.DataFrame(data=ps, columns=["pvalue"])
         pdf_sig = pdf[pdf.pvalue <= crit]
         adjlist = self.adjlist
         hot_spots = pandas.merge(
-            adjlist, pdf_sig, how="inner", left_on="focal", right_index=True
+            adjlist, pdf_sig, how="right", left_on="focal", right_index=True
         ).reset_index(drop=True)
 
         return hot_spots
@@ -1355,6 +1369,7 @@ class KnoxLocal:
         kind="all",
         colors={"focal": "red", "neighbor": "blue", "nonsig": "grey"},
         crit=0.05,
+        inference="permutation",
     ):
 
         # logic for conditional formatting (focal as different color than lead/lag neighbors,
@@ -1382,10 +1397,16 @@ class KnoxLocal:
             # return self._gdf.plot(color=self._gdf.color.values)
 
         elif kind.lower() == "hotspots":
-            hot_spots = self.hot_spots(crit)
+            hot_spots = self.hot_spots(crit, inference=inference)
             return self._gdfhs.plot()
 
-    def explore(self, crit=0.05, style_kwds=None, tiles="CartoDB Positron"):
+    def explore(
+        self,
+        crit=0.05,
+        inference="permutation",
+        style_kwds=None,
+        tiles="CartoDB Positron",
+    ):
 
         # logic for conditional formatting (focal as different color than lead/lag neighbors,
         # arrows, close clique as a hull or not
@@ -1400,7 +1421,21 @@ class KnoxLocal:
         g = self._gdf.copy()
 
         g["color"] = "grey"
-        g["pvalue"] = self.p_hypergeom
+
+        if inference == "permutation":
+            if not hasattr(self, "p_sims"):
+                warn(
+                    "Pseudo-p values not availalable. Permutation-based p-values require "
+                    "fitting the KnoxLocal class using `permutations` set to a large "
+                    "number. Using analytic p-values instead"
+                )
+                g["pvalue"] = self.p_hypergeom
+            else:
+                g["pvalue"] = self.p_sims
+        elif inference == "analytic":
+            g["pvalue"] = self.p_hypergeom
+        else:
+            raise ValueError("inference must be either `permutation` or `analytic`")
 
         mask = g[g.pvalue <= crit].index.values
         neighbors = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
@@ -1412,8 +1447,12 @@ class KnoxLocal:
         m = g[g.color == "grey"].explore(
             color="grey", style_kwds=style_kwds, tiles=tiles
         )
-        g[g.color == "blue"].explore(m=m, color="blue", style_kwds=style_kwds)
-        g[g.color == "red"].explore(m=m, color="red", style_kwds=style_kwds)
+        blues = g[g.color == "blue"]
+        if blues.shape[0] == 0:
+            warn("empty neighbor set.")
+        else:
+            m = blues.explore(m=m, color="blue", style_kwds=style_kwds)
+        m = g[g.color == "red"].explore(m=m, color="red", style_kwds=style_kwds)
 
         return m
 
