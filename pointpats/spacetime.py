@@ -1298,9 +1298,8 @@ class KnoxLocal:
         self.nsti = results["nsti"]
         # self.hot_spots = results["hot_spots"]
         self._crs = crs
+        self.statistic_ = self.nsti
 
-    def statistic_(self):
-        return self.nsti
 
     @classmethod
     def from_dataframe(
