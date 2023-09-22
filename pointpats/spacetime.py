@@ -2,39 +2,17 @@
 Methods for identifying space-time interaction in spatio-temporal event
 data.
 """
-__author__ = (
-    "Eli Knaap <eknaap@sdsu.edu>",
-    "Nicholas Malizia <nmalizia@asu.edu>",
-    "Sergio J. Rey <srey@sdsu.edu>",
-    "Philip Stephens <philip.stephens@asu.edu",
-)
+__author__ = "Nicholas Malizia <nmalizia@asu.edu>", "Sergio J. Rey \
+<srey@asu.edu>", "Philip Stephens <philip.stephens@asu.edu"
 
-__all__ = [
-    "SpaceTimeEvents",
-    "knox",
-    "mantel",
-    "jacquez",
-    "modified_knox",
-    "Knox",
-    "KnoxLocal",
-]
+__all__ = ['SpaceTimeEvents', 'knox', 'mantel', 'jacquez', 'modified_knox']
 
 import os
-from datetime import date
-from functools import cached_property
-from warnings import warn
-
-import geopandas as gpd
 import libpysal as lps
 import numpy as np
-import pandas
 import scipy.stats as stats
 from libpysal import cg
-from pandas.api.types import is_numeric_dtype
-from scipy.spatial import KDTree
-from scipy.stats import hypergeom, poisson
-from shapely.geometry import LineString
-
+from datetime import date
 
 class SpaceTimeEvents:
     """
@@ -135,11 +113,10 @@ class SpaceTimeEvents:
     >>> (events.t[1][0] - events.t[0][0]).days
     59
     """
-
     def __init__(self, path, time_col, infer_timestamp=False):
         shp = lps.io.open(path)
         head, tail = os.path.split(path)
-        dbf_tail = tail.split(".")[0] + ".dbf"
+        dbf_tail = tail.split(".")[0]+".dbf"
         dbf = lps.io.open(lps.examples.get_path(dbf_tail))
 
         # extract the spatial coordinates from the shapefile
@@ -161,10 +138,8 @@ class SpaceTimeEvents:
                 col = [(d - day1).days for d in col]
                 t = np.array(col)
             else:
-                print(
-                    "Unable to parse your time column as Python datetime \
-                      objects, proceeding as integers."
-                )
+                print("Unable to parse your time column as Python datetime \
+                      objects, proceeding as integers.")
                 t = np.array(col)
         else:
             t = np.array(dbf.by_col(time_col))
@@ -248,7 +223,6 @@ def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):
     >>> print("%2.2f"%result['pvalue'])
     0.17
     """
-    warn("This function is deprecated. Use Knox", DeprecationWarning, stacklevel=2)
 
     # Do a kdtree on space first as the number of ties (identical points) is
     # likely to be lower for space than time.
@@ -264,7 +238,7 @@ def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):
     d_t = (t_coords[ids[:, 0]] - t_coords[ids[:, 1]]) ** 2
     n_st = sum(d_t <= tau2)
 
-    knox_result = {"stat": n_st[0]}
+    knox_result = {'stat': n_st[0]}
 
     if permutations:
         joint = np.zeros((permutations, 1), int)
@@ -276,14 +250,12 @@ def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):
         larger = sum(joint >= n_st[0])
         if (permutations - larger) < larger:
             larger = permutations - larger
-        p_sim = (larger + 1.0) / (permutations + 1.0)
-        knox_result["pvalue"] = p_sim
+        p_sim = (larger + 1.) / (permutations + 1.)
+        knox_result['pvalue'] = p_sim
     return knox_result
 
 
-def mantel(
-    s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, tpow=-1.0
-):
+def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, tpow=-1.0):
     """
     Standardized Mantel test for spatio-temporal interaction. :cite:`Mantel:1967`
 
@@ -367,8 +339,8 @@ def mantel(
     timemat = cg.distance_matrix(t)
 
     # calculate the transformed standardized statistic
-    timevec = (timemat[np.tril_indices(timemat.shape[0], k=-1)] + tcon) ** tpow
-    distvec = (distmat[np.tril_indices(distmat.shape[0], k=-1)] + scon) ** spow
+    timevec = (timemat[np.tril_indices(timemat.shape[0], k = -1)] + tcon) ** tpow
+    distvec = (distmat[np.tril_indices(distmat.shape[0], k = -1)] + scon) ** spow
     stat = stats.pearsonr(timevec, distvec)[0].sum()
 
     # return the results (if no inference)
@@ -379,7 +351,7 @@ def mantel(
     dist = []
     for i in range(permutations):
         trand = _shuffle_matrix(timemat, np.arange(n))
-        timevec = (trand[np.tril_indices(trand.shape[0], k=-1)] + tcon) ** tpow
+        timevec = (trand[np.tril_indices(trand.shape[0], k = -1)] + tcon) ** tpow
         m = stats.pearsonr(timevec, distvec)[0].sum()
         dist.append(m)
 
@@ -390,7 +362,7 @@ def mantel(
     pvalue = (count + 1.0) / (permutations + 1.0)
 
     # report the results
-    mantel_result = {"stat": stat, "pvalue": pvalue}
+    mantel_result = {'stat': stat, 'pvalue': pvalue}
     return mantel_result
 
 
@@ -437,14 +409,14 @@ def jacquez(s_coords, t_coords, k, permutations=99):
     The Jacquez test counts the number of events that are k nearest
     neighbors in both time and space. The following runs the Jacquez test
     on the example data and reports the resulting statistic. In this case,
-    there are 12 instances where events are nearest neighbors in both space
+    there are 13 instances where events are nearest neighbors in both space
     and time.
     # turning off as kdtree changes from scipy < 0.12 return 13
 
     >>> np.random.seed(100)
     >>> result = jacquez(events.space, events.t ,k=3,permutations=99)
     >>> print(result['stat'])
-    12
+    13
 
     The significance of this can be assessed by calling the p-
     value from the results dictionary, as shown below. Again, no
@@ -505,7 +477,7 @@ def jacquez(s_coords, t_coords, k, permutations=99):
     pvalue = (count + 1.0) / (permutations + 1.0)
 
     # report the results
-    jacquez_result = {"stat": stat, "pvalue": pvalue}
+    jacquez_result = {'stat': stat, 'pvalue': pvalue}
     return jacquez_result
 
 
@@ -594,7 +566,7 @@ def modified_knox(s_coords, t_coords, delta, tau, permutations=99):
 
     # calculate the observed (original) statistic
     knoxmat = timemat * spacmat
-    obsstat = knoxmat.sum() - n
+    obsstat = (knoxmat.sum() - n)
 
     # calculate the expectated value
     ssumvec = np.reshape((spacbin.sum(axis=0) - 1), (n, 1))
@@ -618,7 +590,7 @@ def modified_knox(s_coords, t_coords, delta, tau, permutations=99):
 
         # calculate the observed knox again
         knoxmat = timemat * spacmat
-        obsstat = knoxmat.sum() - n
+        obsstat = (knoxmat.sum() - n)
 
         # calculate the expectated value again
         ssumvec = np.reshape((spacbin.sum(axis=0) - 1), (n, 1))
@@ -636,9 +608,8 @@ def modified_knox(s_coords, t_coords, delta, tau, permutations=99):
     pvalue = (count + 1.0) / (permutations + 1.0)
 
     # return results
-    modknox_result = {"stat": stat, "pvalue": pvalue}
+    modknox_result = {'stat': stat, 'pvalue': pvalue}
     return modknox_result
-
 
 def _shuffle_matrix(X, ids):
     """
@@ -658,871 +629,3 @@ def _shuffle_matrix(X, ids):
     """
     np.random.shuffle(ids)
     return X[ids, :][:, ids]
-
-
-def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
-    """
-    Parameters
-    ==========
-
-    s_coords: array-like
-      spatial coordinates
-    t_coords: array-like
-      temporal coordinates
-    delta: float
-      distance threshold
-    tau: float
-      temporal threshold
-    permutations: int
-      number of permutations
-    keep: bool
-      return values from permutations (default False)
-
-
-    Returns
-    =======
-
-    summary table observed
-    summary table h0
-
-    ns
-    nt
-    nst
-    n
-    p-value
-    """
-
-    n = s_coords.shape[0]
-
-    stree = KDTree(s_coords)
-    ttree = KDTree(t_coords)
-    sneighbors = stree.query_ball_tree(stree, r=delta)
-    sneighbors = [
-        set(neighbors).difference([i]) for i, neighbors in enumerate(sneighbors)
-    ]
-    tneighbors = ttree.query_ball_tree(ttree, r=tau)
-    tneighbors = [
-        set(neighbors).difference([i]) for i, neighbors in enumerate(tneighbors)
-    ]
-
-    # number of spatial neighbor pairs
-    ns = np.array([len(neighbors) for neighbors in sneighbors])  # by i
-
-    NS = ns.sum() / 2  # total
-
-    # number of temporal neigbor pairs
-    nt = np.array([len(neighbors) for neighbors in tneighbors])
-    NT = nt.sum() / 2
-
-    # s-t neighbors (list of lists)
-    stneighbors = [
-        sneighbors_i.intersection(tneighbors_i)
-        for sneighbors_i, tneighbors_i in zip(sneighbors, tneighbors)
-    ]
-
-    # number of spatio-temporal neigbor pairs
-    nst = np.array([len(neighbors) for neighbors in stneighbors])
-    NST = nst.sum() / 2
-
-    all_pairs = []
-    pairs = {}
-    for i, neigh in enumerate(stneighbors):
-        if len(neigh) > 0:
-            all_pairs.extend([sorted((i, j)) for j in neigh])
-    st_pairs = set([tuple(l) for l in all_pairs])
-
-    # ENST: expected number of spatio-temporal neighbors under HO
-    pairs = n * (n - 1) / 2
-    ENST = NS * NT / pairs
-
-    # observed table
-    observed = np.zeros((2, 2))
-
-    NS_ = NS - NST  # spatial only
-    NT_ = NT - NST  # temporal only
-
-    observed[0, 0] = NST
-    observed[0, 1] = NS_
-    observed[1, 0] = NT_
-    observed[1, 1] = pairs - NST - NS_ - NT_
-
-    # expected table
-
-    expected = np.zeros((2, 2))
-    expected[0, 0] = ENST
-    expected[0, 1] = NS - expected[0, 0]
-    expected[1, 0] = NT - expected[0, 0]
-    expected[1, 1] = pairs - expected.sum()
-
-    p_value_poisson = 1 - poisson.cdf(NST, expected[0, 0])
-
-    results = {}
-    results["ns"] = ns.sum() / 2
-    results["nt"] = nt.sum() / 2
-    results["nst"] = nst.sum() / 2
-    results["pairs"] = pairs
-    results["expected"] = expected
-    results["observed"] = observed
-    results["p_value_poisson"] = p_value_poisson
-    results["st_pairs"] = st_pairs
-    results["sneighbors"] = sneighbors
-    results["tneighbors"] = tneighbors
-    results["stneighbors"] = stneighbors
-
-    if permutations > 0:
-        exceedence = 0
-        n = len(sneighbors)
-        ids = np.arange(n)
-        if keep:
-            ST = np.zeros(permutations)
-
-        for perm in range(permutations):
-            st = 0
-            rids = np.random.permutation(ids)
-            for i in range(n):
-                ri = rids[i]
-                tni = tneighbors[ri]
-                rjs = [rids[j] for j in sneighbors[i]]
-                sti = [j for j in rjs if j in tni]
-                st += len(sti)
-            st /= 2
-            if st >= results["nst"]:
-                exceedence += 1
-            if keep:
-                ST[perm] = st
-        results["p_value_sim"] = (exceedence + 1) / (permutations + 1)
-        results["exceedence"] = exceedence
-        if keep:
-            results["st_perm"] = ST
-
-    return results
-
-
-class Knox:
-    """
-    Global Knox statistic for space-time interactions
-
-    Parameters
-    ----------
-
-    s_coords: array-like
-      spatial coordinates of point events
-
-    t_coords: array-like
-      temporal coordinates of point events (floats or ints, not dateTime)
-
-    delta: float
-      spatial threshold defining distance below which pairs are spatial
-      neighbors
-
-    tau: float
-      temporal threshold defining distance below which pairs are temporal
-      neighbors
-
-    permutations: int
-      number of random permutations for inference
-
-    keep: bool
-      whether to store realized values of the statistic under permutations
-
-
-
-    Attributes
-    ----------
-
-    s_coords: array-like
-      spatial coordinates of point events
-
-    t_coords: array-like
-      temporal coordinates of point events (floats or ints, not dateTime)
-
-    delta: float
-      spatial threshold defining distance below which pairs are spatial
-      neighbors
-
-    tau: float
-      temporal threshold defining distance below which pairs are temporal
-      neighbors
-
-    permutations: int
-      number of random permutations for inference
-
-    keep: bool
-      whether to store realized values of the statistic under permutations
-
-    nst: int
-      number of space-time pairs
-
-    p_poisson: float
-      Analytical p-value under Poisson assumption
-
-    p_sim: float
-      Pseudo p-value based on random permutations
-
-    expected: array
-      Two-by-two array with expected counts under the null of no space-time
-      interactions. [[NST, NS_], [NT_, N__]] where NST is the expected number
-      of space-time pairs, NS_ is the expected number of spatial (but not also
-      temporal) pairs, NT_ is the number of expected temporal (but not also
-      spatial pairs), N__ is the number of pairs that are neighor spatial or
-      temporal neighbors.
-
-    observed: array
-      Same structure as expected with the observed pair classifications
-
-    sim: array
-      Global statistics from permutations (if keep=True)
-
-
-    Notes
-    -----
-
-    Technical details can be found in :cite:`Rogerson:2001`
-
-
-    Examples
-    --------
-    >>> import libpysal
-    >>> path = libpysal.examples.get_path('burkitt.shp')
-    >>> import geopandas
-    >>> df = geopandas.read_file(path)
-    >>> from pointpats.spacetime import Knox
-    >>> global_knox = Knox(df[['X', 'Y']], df[["T"]], delta=20, tau=5)
-    >>> global_knox.statistic_
-    13
-    >>> global_knox.p_poisson
-    0.14624558197140414
-    >>> global_knox.observed
-    array([[1.300e+01, 3.416e+03],
-           [3.900e+01, 1.411e+04]])
-    >>> global_knox.expected
-    array([[1.01438161e+01, 3.41885618e+03],
-           [4.18561839e+01, 1.41071438e+04]])
-    >>> hasattr(global_knox, 'sim')
-    False
-    >>> import numpy
-    >>> numpy.random.seed(12345)
-    >>> global_knox = Knox(df[['X', 'Y']], df[["T"]], delta=20, tau=5, keep=True)
-    >>> hasattr(global_knox, 'sim')
-    True
-    >>> global_knox.p_sim
-    0.21
-    """
-
-    def __init__(self, s_coords, t_coords, delta, tau, permutations=99, keep=False):
-        self.s_coords = s_coords
-        self.t_coords = t_coords
-        self.delta = delta
-        self.tau = tau
-        self.permutations = permutations
-        self.keep = keep
-        results = _knox(s_coords, t_coords, delta, tau, permutations, keep)
-        self.nst = int(results["nst"])
-        if permutations > 0:
-            self.p_sim = results["p_value_sim"]
-            if keep:
-                self.sim = results["st_perm"]
-
-        self.p_poisson = results["p_value_poisson"]
-        self.observed = results["observed"]
-        self.expected = results["expected"]
-        self.statistic_ = self.nst
-
-    @classmethod
-    def from_dataframe(
-        cls,
-        dataframe,
-        time_col: int,
-        delta: int,
-        tau: int,
-        permutations: int = 99,
-        keep: bool = False,
-    ):
-        """Compute a Knox statistic from a dataframe of Point observations
-
-        Parameters
-        ----------
-        dataframe : geopandas.GeoDataFrame
-            geodataframe holding observations. Should be in a projected coordinate
-            system with geometries stored as Point
-        time_col : str
-            column in the dataframe storing the time values (integer coordinate)
-            for each observation. For example if the observations are stored with
-            a timestamp, the time_col should be converted to a series of integers
-            representing, e.g. hours, days, seconds, etc.
-        delta : int
-            delta parameter defining the spatial neighbor threshold measured in the
-            same units as the dataframe CRS
-        tau : int
-            tau parameter defining the temporal neihgbor threshold (in the units
-            measured by `time_col`)
-        permutations : int, optional
-            permutations to use for computation inference, by default 99
-        keep : bool
-            whether to store realized values of the statistic under permutations
-
-        Returns
-        -------
-        pointpats.spacetime.Knox
-            a fitted Knox class
-
-        """
-        s_coords, t_coords = _spacetime_points_to_arrays(dataframe, time_col)
-
-        return cls(s_coords, dataframe[[time_col]], delta, tau, permutations, keep)
-
-
-def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False, crit=0.05):
-    """
-
-    Parameters
-    ----------
-
-    s_coords: array (nx2)
-        spatial coordinates
-
-    t_coords: array (nx1)
-        temporal coordinates
-
-    delta: numeric
-        spatial threshold distance for neighbor relation
-
-    tau: numeric
-        temporal threshold distance for neighbor relation
-
-    permutations: int
-        number of permutations for conditional randomization inference
-
-    keep: bool
-        whether to store local statistics from the permtuations
-
-    crit: float
-        signficance level for determination of hot spots
-
-    """
-    # think about passing in the global object as an option to avoid recomputing the trees
-    res = _knox(s_coords, t_coords, delta, tau, permutations=permutations)
-    sneighbors = {i: tuple(ns) for i, ns in enumerate(res["sneighbors"])}
-    tneighbors = {i: tuple(nt) for i, nt in enumerate(res["tneighbors"])}
-
-    n = len(s_coords)
-    ids = np.arange(n)
-    res["nsti"] = np.zeros(n)  # number of observed st_pairs for observation i
-    res["nsi"] = [len(r) for r in res["sneighbors"]]
-    res["nti"] = [len(r) for r in res["tneighbors"]]
-    for pair in res["st_pairs"]:
-        i, j = pair
-        res["nsti"][i] += 1
-        res["nsti"][j] += 1
-
-    nsti = res["nsti"]
-    nsi = res["nsi"]
-    nti = res["nti"]
-
-    # rather than do n*permutations, we reuse the permutations
-    # ensuring that each permutation is conditional on a focal unit i
-    # for each of the permutations we loop over i and swap labels between the
-    # label at index i in the current permutation and the label at the index
-    # assigned i in the permutation.
-
-    if permutations > 0:
-        exceedence = np.zeros(n)
-        if keep:
-            STI = np.zeros((n, permutations))
-        for perm in range(permutations):
-            rids = np.random.permutation(ids)
-            for i in range(n):
-                rids_i = rids.copy()
-                # set observed value of focal unit i
-                # swap with value assigned to rids[i]
-                # example
-                # 0 1 2 (ids)
-                # 2 0 1 (rids)
-                # i=0
-                # 0 2 1 (rids_i)
-                # i=1
-                # 2 1 0 (rids_i)
-                # i=2
-                # 1 0 2 (rids_i)
-
-                rids_i[rids == i] = rids[i]
-                rids_i[i] = i
-
-                # calculate local stat
-                rjs = [rids_i[j] for j in sneighbors[i]]
-                tni = tneighbors[i]
-                sti = [j for j in rjs if j in tni]
-                count = len(sti)
-                if count >= res["nsti"][i]:
-                    exceedence[i] += 1
-                if keep:
-                    STI[i, perm] = count
-
-        if keep:
-            res["sti_perm"] = STI
-        res["exceedence_pvalue"] = (exceedence + 1) / (permutations + 1)
-        res["exceedences"] = exceedence
-
-    # analytical inference
-    ntjis = [len(r) for r in res["tneighbors"]]
-    n1 = n - 1
-    hg_pvalues = [
-        1 - hypergeom.cdf(nsti[i] - 1, n1, ntjis, nsi[i]).mean() for i in range(n)
-    ]
-    res["hg_pvalues"] = np.array(hg_pvalues)
-
-    # identification of hot spots
-
-    adjlist = []
-    for i, j in res["st_pairs"]:
-        adjlist.append([i, j])
-    adjlist = pandas.DataFrame(data=adjlist, columns=["focal", "neighbor"])
-    adjlist = adjlist.sort_values(by=["focal", "neighbor"])
-    adjlist.reset_index(drop=True, inplace=True)
-
-    adjlist["orientation"] = ""
-    for index, row in adjlist.iterrows():
-        focal = row["focal"]
-        neighbor = row["neighbor"]
-        ft = t_coords[focal]
-        nt = t_coords[neighbor]
-        if ft < nt:
-            adjlist.iloc[index, 2] = "lead"
-        elif ft > nt:
-            adjlist.iloc[index, 2] = "lag"
-        else:
-            adjlist.iloc[index, 2] = "coincident"
-
-    res["stadjlist"] = adjlist
-    return res
-
-
-class KnoxLocal:
-    """
-    Local Knox statistics for space-time interactions
-
-    Parameters
-    ----------
-
-    s_coords: array (nx2)
-      spatial coordinates of point events
-
-    t_coords: array (nx1)
-      temporal coordinates of point events (floats or ints, not dateTime)
-
-    delta: float
-      spatial threshold defining distance below which pairs are spatial
-      neighbors
-
-    tau: float
-      temporal threshold defining distance below which pairs are temporal
-      neighbors
-
-    permutations: int
-      number of random permutations for inference
-
-    keep: bool
-      whether to store realized values of the statistic under permutations
-
-    conditional: bool
-      whether to include conditional permutation inference
-
-    crit: float
-      signifcance level for local statistics
-
-    crs: str (optional)
-      coordinate reference system string for s_coords
-
-
-
-    Attributes
-    ----------
-
-    s_coords: array (nx2)
-      spatial coordinates of point events
-
-    t_coords: array (nx1)
-      temporal coordinates of point events (floats or ints, not dateTime)
-
-    delta: float
-      spatial threshold defining distance below which pairs are spatial
-      neighbors
-
-    tau: float
-      temporal threshold defining distance below which pairs are temporal
-      neighbors
-
-    permutations: int
-      number of random permutations for inference
-
-    keep: bool
-      whether to store realized values of the statistic under permutations
-
-    nst: int
-      number of space-time pairs (global)
-
-    p_poisson: float
-      Analytical p-value under Poisson assumption (global)
-
-    p_sim: float
-      Pseudo p-value based on random permutations (global)
-
-    expected: array
-      Two-by-two array with expected counts under the null of no space-time
-      interactions. [[NST, NS_], [NT_, N__]] where NST is the expected number
-      of space-time pairs, NS_ is the expected number of spatial (but not also
-      temporal) pairs, NT_ is the number of expected temporal (but not also
-      spatial pairs), N__ is the number of pairs that are neighor spatial or
-      temporal neighbors. (global)
-
-    observed: array
-      Same structure as expected with the observed pair classifications (global)
-
-    sim: array
-      Global statistics from permutations (if keep=True and keep=True) (global)
-
-    p_sims: array
-      Local psuedo p-values from conditional permutations (if permutations>0)
-
-    sims: array
-      Local statistics from conditional permutations (if keep=True and
-      permutations>0)
-
-    nsti: array
-      Local statistics
-
-    p_hypergeom: array
-      Analytical p-values based on hypergeometric distribution
-
-
-
-    Notes
-    -----
-
-    Technical details can be found in :cite:`Rogerson:2001`. The conditional
-    permutation inference is unique to pysal.pointpats.
-
-
-    Examples
-    -------
-    >>> import libpysal
-    >>> path = libpysal.examples.get_path('burkitt.shp')
-    >>> import geopandas
-    >>> df = geopandas.read_file(path)
-    >>> from pointpats.spacetime import Knox
-    >>> import numpy
-    >>> numpy.random.seed(12345)
-    >>> local_knox = KnoxLocal(df[['X', 'Y']], df[["T"]], delta=20, tau=5, keep=True)
-    >>> local_knox.statistic_.shape
-    (188,)
-    >>> lres = local_knox
-    >>> gt0ids = numpy.where(lres.nsti>0)
-    >>> gt0ids # doctest: +NORMALIZE_WHITESPACE
-    (array([ 25,  26,  30,  31,  35,  36,  41,  42,  46,  47,  51,  52, 102,
-              103, 116, 118, 122, 123, 137, 138, 139, 140, 158, 159, 162, 163]),)
-    >>> lres.nsti[gt0ids]
-    array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,
-           1., 1., 1., 1., 1., 1., 1., 1., 1.])
-    >>> lres.p_hypergeom[gt0ids]
-    array([0.1348993 , 0.14220663, 0.07335085, 0.08400282, 0.1494317 ,
-           0.21524073, 0.0175806 , 0.04599869, 0.17523687, 0.18209188,
-           0.19111321, 0.16830444, 0.13734428, 0.14703242, 0.06796364,
-           0.03192559, 0.13734428, 0.17523687, 0.12998154, 0.1933476 ,
-           0.13244507, 0.13244507, 0.12502644, 0.14703242, 0.12502644,
-           0.12998154])
-    >>> lres.p_sims[gt0ids]
-    array([0.3 , 0.33, 0.11, 0.17, 0.3 , 0.42, 0.06, 0.06, 0.33, 0.34, 0.36,
-           0.38, 0.3 , 0.29, 0.41, 0.19, 0.31, 0.39, 0.18, 0.39, 0.48, 0.41,
-           0.22, 0.41, 0.39, 0.32])
-    """
-
-    def __init__(
-        self,
-        s_coords,
-        t_coords,
-        delta,
-        tau,
-        permutations=99,
-        keep=False,
-        crit=0.05,
-        crs=None,
-    ):
-
-        if not isinstance(t_coords, np.ndarray):
-            raise ValueError("t_coords  should be numpy.ndarray type")
-        if not isinstance(s_coords, np.ndarray):
-            raise ValueError("s_coords  should be numpy.ndarray type")
-        n_s, k = s_coords.shape
-        if k < 2:
-            raise ValueError("s_coords shape required to be nx2")
-        n_t, k = t_coords.shape
-        if n_s != n_t:
-            raise ValueError("t_coords and s_coords need to be same length")
-
-        self.s_coords = s_coords
-        self.t_coords = t_coords
-        self.delta = delta
-        self.tau = tau
-        self.permutations = permutations
-        self.keep = keep
-        self.crit = crit
-        results = _knox_local(s_coords, t_coords, delta, tau, permutations, keep, crit)
-        self.adjlist = results["stadjlist"]
-        self.nst = int(results["nst"])
-        if permutations > 0:
-            self.p_sim = results["p_value_sim"]
-            if keep:
-                self.sim = results["sti_perm"]
-
-        self.p_poisson = results["p_value_poisson"]
-        self.observed = results["observed"]
-        self.expected = results["expected"]
-        self.p_hypergeom = results["hg_pvalues"]
-        if permutations > 0:
-            self.p_sims = results["exceedence_pvalue"]
-            if keep:
-                self.sims = results["sti_perm"]
-        self.nsti = results["nsti"]
-        # self.hot_spots = results["hot_spots"]
-        self._crs = crs
-        self.statistic_ = self.nsti
-        # reconstruct df
-        geom = gpd.points_from_xy(self.s_coords[:, 0], self.s_coords[:, 1])
-        _gdf = gpd.GeoDataFrame(geometry=geom, crs=self._crs)
-        _gdf["t_coords"] = self.t_coords
-        self._gdf = _gdf.reset_index()
-
-    @classmethod
-    def from_dataframe(
-        cls,
-        dataframe,
-        time_col: str,
-        delta: int,
-        tau: int,
-        permutations: int = 99,
-        keep: bool = False,
-        crit: float = 0.05,
-    ):
-        """Compute a set of local Knox statistics from a dataframe of Point observations
-
-        Parameters
-        ----------
-        dataframe : geopandas.GeoDataFrame
-            dataframe holding observations. Should be in a projected coordinate system
-            with geometries stored as Points
-        time_col : str
-            column in the dataframe storing the time values (integer coordinate)
-            for each observation. For example if the observations are stored with
-            a timestamp, the time_col should be converted to a series of integers
-            representing, e.g. hours, days, seconds, etc.
-        delta : int
-            delta parameter defining the spatial neighbor threshold measured in the
-            same units as the dataframe CRS
-        tau : int
-            tau parameter defining the temporal neihgbor threshold (in the units
-            measured by `time_col`)
-        permutations : int, optional
-            permutations to use for computational inference, by default 99
-        keep : bool
-            whether to store realized values of the statistic under permutations
-        crit: float
-            signficance level for determination of hot spots
-
-        Returns
-        -------
-        pointpats.spacetime.LocalKnox
-            a fitted KnoxLocal class
-
-        """
-        s_coords, t_coords = _spacetime_points_to_arrays(dataframe, time_col)
-
-        return cls(
-            s_coords, t_coords, delta, tau, permutations, keep, crs=dataframe.crs
-        )
-
-    def hot_spots(self, crit=0.05, inference="permutation"):
-        if inference == "permutation":
-            if not hasattr(self, "p_sims"):
-                warn(
-                    "Pseudo-p values not availalable. Permutation-based p-values require "
-                    "fitting the KnoxLocal class using `permutations` set to a large "
-                    "number. Using analytic p-values instead"
-                )
-                ps = self.p_hypergeom
-            else:
-                ps = self.p_sims
-        elif inference == "analytic":
-            ps = self.p_hypergeom
-        else:
-            raise ValueError("inference must be either `permutation` or `analytic`")
-        # determine hot spots
-        pdf = pandas.DataFrame(data=ps, columns=["pvalue"])
-        pdf_sig = pdf[pdf.pvalue <= crit]
-        adjlist = self.adjlist
-        hot_spots = pandas.merge(
-            adjlist, pdf_sig, how="right", left_on="focal", right_index=True
-        ).reset_index(drop=True)
-
-        return hot_spots
-
-    def plot(
-        self,
-        kind="all",
-        colors={"focal": "red", "neighbor": "blue", "nonsig": "grey"},
-        crit=0.05,
-        inference="permutation",
-    ):
-
-        # logic for conditional formatting (focal as different color than lead/lag neighbors,
-
-        # arrows, close clique as a hull or not
-
-        if kind.lower() == "all":
-            self._gdf["color"] = "grey"
-            self._gdf["pvalue"] = self.p_hypergeom
-            # neighbors = self.adjlist.neighbor.unique()
-            # print(neighbors)
-
-            mask = self._gdf[self._gdf.pvalue <= crit].index.values
-            neighbors = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
-            self._gdf.loc[neighbors, "color"] = "blue"
-            self._gdf.loc[self._gdf.pvalue <= crit, "color"] = "red"
-
-            g = self._gdf
-            m = g[g.color == "grey"].plot(color="grey")
-            g[g.color == "blue"].plot(ax=m, color="blue")
-            g[g.color == "red"].plot(ax=m, color="red")
-
-            return m
-
-            # return self._gdf.plot(color=self._gdf.color.values)
-
-        elif kind.lower() == "hotspots":
-            hot_spots = self.hot_spots(crit, inference=inference)
-            return self._gdfhs.plot()
-
-    def explore(
-        self,
-        crit=0.05,
-        inference="permutation",
-        style_kwds=None,
-        tiles="CartoDB Positron",
-    ):
-
-        # logic for conditional formatting (focal as different color than lead/lag neighbors,
-        # arrows, close clique as a hull or not
-
-        # interactivity: on-click, mouse-over functions sending to folium
-
-        # how to populate tool-tip columns
-
-        # markerclustering?
-        if style_kwds is None:
-            style_kwds = {}
-        g = self._gdf.copy()
-
-        g["color"] = "grey"
-
-        if inference == "permutation":
-            if not hasattr(self, "p_sims"):
-                warn(
-                    "Pseudo-p values not availalable. Permutation-based p-values require "
-                    "fitting the KnoxLocal class using `permutations` set to a large "
-                    "number. Using analytic p-values instead"
-                )
-                g["pvalue"] = self.p_hypergeom
-            else:
-                g["pvalue"] = self.p_sims
-        elif inference == "analytic":
-            g["pvalue"] = self.p_hypergeom
-        else:
-            raise ValueError("inference must be either `permutation` or `analytic`")
-
-        mask = g[g.pvalue <= crit].index.values
-        neighbors = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
-        g.loc[neighbors, "color"] = "blue"
-        g.loc[g.pvalue <= crit, "color"] = "red"
-        nbs = self.adjlist.groupby("focal").agg(list)["neighbor"]
-        g = g.merge(nbs, left_on="index", right_index=True, how="left")
-
-        m = g[g.color == "grey"].explore(
-            color="grey", style_kwds=style_kwds, tiles=tiles
-        )
-        blues = g[g.color == "blue"]
-        if blues.shape[0] == 0:
-            warn("empty neighbor set.")
-        else:
-            m = blues.explore(m=m, color="blue", style_kwds=style_kwds)
-        m = g[g.color == "red"].explore(m=m, color="red", style_kwds=style_kwds)
-
-        # edges between hotspot and st-neighbors
-        ghs = self.hot_spots(crit=crit)
-        print(ghs)
-        ghs = ghs.dropna()
-        print(ghs)
-        origins = g.iloc[ghs.focal].geometry
-        destinations = g.iloc[ghs.neighbor].geometry
-        ods = zip(origins, destinations)
-        lines = gpd.GeoSeries([LineString(od) for od in ods])
-        lines.crs = g.crs
-        lines.explore(m=m, color="green")
-
-        return m
-
-    def _gdfhs(self):
-        # merge df with self.hotspots
-        return self._gdf.merge(self.hot_spots, left_index=True, right_on="focal")
-
-
-def _spacetime_points_to_arrays(dataframe, time_col):
-    """convert long-form geodataframe into arrays for kdtree
-
-    Parameters
-    ----------
-    dataframe : geopandas.GeoDataFrame
-        geodataframe with point geometries
-    time_col : str
-        name of the column on dataframe that stores time values
-
-    Returns
-    -------
-    tuple
-        two numpy arrays holding spatial coodinates s_coords (n,2)
-        and temporal coordinates t_coords (n,1)
-
-    """
-    if dataframe.crs is None:
-        warn(
-            "There is no CRS set on the dataframe. The KDTree will assume coordinates "
-            "are stored in Euclidean distances"
-        )
-    else:
-        if dataframe.crs.is_geographic:
-            raise ValueError(
-                "The input dataframe must be in a projected coordinate system."
-            )
-
-    assert dataframe.geom_type.unique().tolist() == [
-        "Point"
-    ], "The Knox statistic is only defined for Point geometries"
-
-    # kdtree wont operate on datetime
-    if is_numeric_dtype(dataframe[time_col].dtype) is False:
-        raise ValueError(
-            "The time values must be stored as "
-            f"a numeric dtype but the column {time_col} is stored as "
-            f"{dataframe[time_col].dtype}"
-        )
-
-    s_coords = np.vstack((dataframe.geometry.x.values, dataframe.geometry.y.values)).T
-    t_coords = np.vstack(dataframe[time_col].values)
-
-    return s_coords, t_coords
-
-
-def _time_to_int(df, column, fmt="%Y%m%d"):
-    """Create an integer valued column for time"""
-    time_series = pandas.to_datetime(df[column], format=fmt)
-    min_time = time_series.min()
-    time_int = time_series.appy(lambda x: x - min_time)
-    return time_int.dt.days
