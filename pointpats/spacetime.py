@@ -5,8 +5,7 @@ data.
 __author__ = (
     "Eli Knaap <eknaap@sdsu.edu>",
     "Nicholas Malizia <nmalizia@asu.edu>",
-    "Sergio J. Rey \
-<srey@sdsu.edu>",
+    "Sergio J. Rey <srey@sdsu.edu>",
     "Philip Stephens <philip.stephens@asu.edu",
 )
 
@@ -22,18 +21,18 @@ __all__ = [
 
 import os
 from datetime import date
+from functools import cached_property
 from warnings import warn
 
+import geopandas as gpd
 import libpysal as lps
 import numpy as np
+import pandas
 import scipy.stats as stats
 from libpysal import cg
 from pandas.api.types import is_numeric_dtype
 from scipy.spatial import KDTree
 from scipy.stats import hypergeom, poisson
-import pandas
-from functools import cached_property
-import geopandas as gpd
 
 
 class SpaceTimeEvents:
@@ -1083,7 +1082,7 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False, cri
     adjlist = adjlist.sort_values(by=["focal", "neighbor"])
     adjlist.reset_index(drop=True, inplace=True)
 
-    adjlist["orientation"] = 0
+    adjlist["orientation"] = ""
     for index, row in adjlist.iterrows():
         focal = row["focal"]
         neighbor = row["neighbor"]
@@ -1098,8 +1097,6 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False, cri
 
     res["stadjlist"] = adjlist
     return res
-
-
 
 
 class KnoxLocal:
@@ -1252,23 +1249,28 @@ class KnoxLocal:
 
         return hot_spots
 
-
-    @property
     def __init__(
-        self, s_coords, t_coords, delta, tau, permutations=99, keep=False, crit=0.05,
-        crs=None
+        self,
+        s_coords,
+        t_coords,
+        delta,
+        tau,
+        permutations=99,
+        keep=False,
+        crit=0.05,
+        crs=None,
     ):
 
         if not isinstance(t_coords, np.ndarray):
-            raise ValueError('t_coords  should be numpy.ndarray type')
+            raise ValueError("t_coords  should be numpy.ndarray type")
         if not isinstance(s_coords, np.ndarray):
-            raise ValueError('s_coords  should be numpy.ndarray type')
+            raise ValueError("s_coords  should be numpy.ndarray type")
         n_s, k = s_coords.shape
         if k < 2:
-            raise ValueError('s_coords shape required to be nx2')
+            raise ValueError("s_coords shape required to be nx2")
         n_t, k = t_coords.shape
         if n_s != n_t:
-            raise ValueError('t_coords and s_coords need to be same length')
+            raise ValueError("t_coords and s_coords need to be same length")
 
         self.s_coords = s_coords
         self.t_coords = t_coords
@@ -1278,7 +1280,7 @@ class KnoxLocal:
         self.keep = keep
         self.crit = crit
         results = _knox_local(s_coords, t_coords, delta, tau, permutations, keep, crit)
-        self.adjlist = results['stadjlist']
+        self.adjlist = results["stadjlist"]
         self.nst = int(results["nst"])
         if permutations > 0:
             self.p_sim = results["p_value_sim"]
@@ -1294,7 +1296,7 @@ class KnoxLocal:
             if keep:
                 self.sims = results["sti_perm"]
         self.nsti = results["nsti"]
-        #self.hot_spots = results["hot_spots"]
+        # self.hot_spots = results["hot_spots"]
         self._crs = crs
 
     def statistic_(self):
@@ -1344,49 +1346,47 @@ class KnoxLocal:
         """
         s_coords, t_coords = _spacetime_points_to_arrays(dataframe, time_col)
 
-        return cls(s_coords, t_coords, delta, tau, permutations, keep, crs=dataframe.crs)
+        return cls(
+            s_coords, t_coords, delta, tau, permutations, keep, crs=dataframe.crs
+        )
 
-
-    def plot(self, kind='all',
-             colors={'focal': 'red', 'neighbor': 'blue', 'nonsig': 'grey'},
-             crit=0.05
-             ):
+    def plot(
+        self,
+        kind="all",
+        colors={"focal": "red", "neighbor": "blue", "nonsig": "grey"},
+        crit=0.05,
+    ):
 
         # logic for conditional formatting (focal as different color than lead/lag neighbors,
 
         # arrows, close clique as a hull or not
 
-        
-        if kind.lower() == 'all':
-            self._gdf['color'] = 'grey'
-            self._gdf['pvalue'] = self.p_hypergeom
-            #neighbors = self.adjlist.neighbor.unique()
-            #print(neighbors)
+        if kind.lower() == "all":
+            self._gdf["color"] = "grey"
+            self._gdf["pvalue"] = self.p_hypergeom
+            # neighbors = self.adjlist.neighbor.unique()
+            # print(neighbors)
 
-            mask = self._gdf[self._gdf.pvalue<=crit].index.values
+            mask = self._gdf[self._gdf.pvalue <= crit].index.values
             print(mask, type(mask))
-            neighbors  = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
-            self._gdf.loc[neighbors,'color']='blue'
-            self._gdf.loc[self._gdf.pvalue<=crit,'color']='red'
+            neighbors = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
+            self._gdf.loc[neighbors, "color"] = "blue"
+            self._gdf.loc[self._gdf.pvalue <= crit, "color"] = "red"
 
             g = self._gdf
-            m = g[g.color=='grey'].plot(color="grey")
-            g[g.color=='blue'].plot(ax=m,color="blue")
-            g[g.color=='red'].plot(ax=m, color="red")
-
+            m = g[g.color == "grey"].plot(color="grey")
+            g[g.color == "blue"].plot(ax=m, color="blue")
+            g[g.color == "red"].plot(ax=m, color="red")
 
             return m
 
-           
+            # return self._gdf.plot(color=self._gdf.color.values)
 
-            #return self._gdf.plot(color=self._gdf.color.values)
-
-        elif kind.lower() == 'hotspots':
+        elif kind.lower() == "hotspots":
             hot_spots = self.hot_spots(crit)
             return self._gdfhs.plot()
-        
 
-    def explore(self, crit=0.05):
+    def explore(self, crit=0.05, style_kwds=None, tiles="CartoDB Positron"):
 
         # logic for conditional formatting (focal as different color than lead/lag neighbors,
         # arrows, close clique as a hull or not
@@ -1396,42 +1396,41 @@ class KnoxLocal:
         # how to populate tool-tip columns
 
         # markerclustering?
+        if style_kwds is None:
+            style_kwds = {}
 
-        self._gdf['color'] = 'grey'
-        self._gdf['pvalue'] = self.p_hypergeom
-        #neighbors = self.adjlist.neighbor.unique()
-        #print(neighbors)
-        
-        mask = self._gdf[self._gdf.pvalue<=crit].index.values
-        print(mask, type(mask))
-        neighbors  = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
-        self._gdf.loc[neighbors,'color']='blue'
-        self._gdf.loc[self._gdf.pvalue<=crit,'color']='red'
+        self._gdf["color"] = "grey"
+        self._gdf["pvalue"] = self.p_hypergeom
+
+        mask = self._gdf[self._gdf.pvalue <= crit].index.values
+        neighbors = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
+        self._gdf.loc[neighbors, "color"] = "blue"
+        self._gdf.loc[self._gdf.pvalue <= crit, "color"] = "red"
+        nbs = self.adjlist.groupby("focal").agg(list)["neighbor"]
+        self._gdf = self._gdf.merge(nbs, left_on="index", right_index=True)
 
         g = self._gdf
-        m = g[g.color=='grey'].explore(color="grey")
-        g[g.color=='blue'].explore(m=m,color="blue")
-        g[g.color=='red'].explore(m=m, color="red")
+        m = g[g.color == "grey"].explore(
+            color="grey", style_kwds=style_kwds, tiles=tiles
+        )
+        g[g.color == "blue"].explore(m=m, color="blue", style_kwds=style_kwds)
+        g[g.color == "red"].explore(m=m, color="red", style_kwds=style_kwds)
 
         return m
-        #return self._gdf.explore()
-        
-
-
 
     @cached_property
     def _gdf(self):
         # reconstruct df
-        geom = gpd.points_from_xy(self.s_coords[:,0], self.s_coords[:, 1])
+        geom = gpd.points_from_xy(self.s_coords[:, 0], self.s_coords[:, 1])
         _gdf = gpd.GeoDataFrame(geometry=geom, crs=self._crs)
-        _gdf['t_coords'] = self.t_coords
+        _gdf["t_coords"] = self.t_coords
 
         return _gdf.reset_index()
 
     @cached_property
     def _gdfhs(self):
         # merge df with self.hotspots
-        return self._gdf.merge(self.hot_spots, left_index=True, right_on='focal')
+        return self._gdf.merge(self.hot_spots, left_index=True, right_on="focal")
 
 
 def _spacetime_points_to_arrays(dataframe, time_col):
