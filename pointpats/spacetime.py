@@ -1398,18 +1398,19 @@ class KnoxLocal:
         # markerclustering?
         if style_kwds is None:
             style_kwds = {}
+  
+        g = self._gdf.copy()
 
-        self._gdf["color"] = "grey"
-        self._gdf["pvalue"] = self.p_hypergeom
+        g["color"] = "grey"
+        g["pvalue"] = self.p_hypergeom
 
-        mask = self._gdf[self._gdf.pvalue <= crit].index.values
+        mask = g[g.pvalue <= crit].index.values
         neighbors = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
-        self._gdf.loc[neighbors, "color"] = "blue"
-        self._gdf.loc[self._gdf.pvalue <= crit, "color"] = "red"
+        g.loc[neighbors, "color"] = "blue"
+        g.loc[g.pvalue <= crit, "color"] = "red"
         nbs = self.adjlist.groupby("focal").agg(list)["neighbor"]
-        self._gdf = self._gdf.merge(nbs, left_on="index", right_index=True)
+        g = g.merge(nbs, left_on="index", right_index=True)
 
-        g = self._gdf
         m = g[g.color == "grey"].explore(
             color="grey", style_kwds=style_kwds, tiles=tiles
         )
