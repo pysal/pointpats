@@ -925,10 +925,7 @@ class Knox:
         self.p_poisson = results["p_value_poisson"]
         self.observed = results["observed"]
         self.expected = results["expected"]
-
-    @property
-    def statistic_(self):
-        return self.nst
+        self.statistic_ = self.nst
 
     @classmethod
     def from_dataframe(
@@ -1238,17 +1235,6 @@ class KnoxLocal:
            0.22, 0.41, 0.39, 0.32])
     """
 
-    def hot_spots(self, crit=0.05):
-        # determine hot spots
-        pdf = pandas.DataFrame(data=self.p_hypergeom, columns=["pvalue"])
-        pdf_sig = pdf[pdf.pvalue <= crit]
-        adjlist = self.adjlist
-        hot_spots = pandas.merge(
-            adjlist, pdf_sig, how="inner", left_on="focal", right_index=True
-        ).reset_index(drop=True)
-
-        return hot_spots
-
     def __init__(
         self,
         s_coords,
@@ -1298,9 +1284,12 @@ class KnoxLocal:
         self.nsti = results["nsti"]
         # self.hot_spots = results["hot_spots"]
         self._crs = crs
-
-    def statistic_(self):
-        return self.nsti
+        self.statistic_ = self.nsti
+        # reconstruct df
+        geom = gpd.points_from_xy(self.s_coords[:, 0], self.s_coords[:, 1])
+        _gdf = gpd.GeoDataFrame(geometry=geom, crs=self._crs)
+        _gdf["t_coords"] = self.t_coords
+        self._gdf = _gdf.reset_index()
 
     @classmethod
     def from_dataframe(
@@ -1350,6 +1339,17 @@ class KnoxLocal:
             s_coords, t_coords, delta, tau, permutations, keep, crs=dataframe.crs
         )
 
+    def hot_spots(self, crit=0.05):
+        # determine hot spots
+        pdf = pandas.DataFrame(data=self.p_hypergeom, columns=["pvalue"])
+        pdf_sig = pdf[pdf.pvalue <= crit]
+        adjlist = self.adjlist
+        hot_spots = pandas.merge(
+            adjlist, pdf_sig, how="inner", left_on="focal", right_index=True
+        ).reset_index(drop=True)
+
+        return hot_spots
+
     def plot(
         self,
         kind="all",
@@ -1368,7 +1368,6 @@ class KnoxLocal:
             # print(neighbors)
 
             mask = self._gdf[self._gdf.pvalue <= crit].index.values
-            print(mask, type(mask))
             neighbors = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
             self._gdf.loc[neighbors, "color"] = "blue"
             self._gdf.loc[self._gdf.pvalue <= crit, "color"] = "red"
@@ -1398,7 +1397,6 @@ class KnoxLocal:
         # markerclustering?
         if style_kwds is None:
             style_kwds = {}
-  
         g = self._gdf.copy()
 
         g["color"] = "grey"
@@ -1409,7 +1407,7 @@ class KnoxLocal:
         g.loc[neighbors, "color"] = "blue"
         g.loc[g.pvalue <= crit, "color"] = "red"
         nbs = self.adjlist.groupby("focal").agg(list)["neighbor"]
-        g = g.merge(nbs, left_on="index", right_index=True)
+        g = g.merge(nbs, left_on="index", right_index=True, how="left")
 
         m = g[g.color == "grey"].explore(
             color="grey", style_kwds=style_kwds, tiles=tiles
@@ -1418,15 +1416,6 @@ class KnoxLocal:
         g[g.color == "red"].explore(m=m, color="red", style_kwds=style_kwds)
 
         return m
-
-    @cached_property
-    def _gdf(self):
-        # reconstruct df
-        geom = gpd.points_from_xy(self.s_coords[:, 0], self.s_coords[:, 1])
-        _gdf = gpd.GeoDataFrame(geometry=geom, crs=self._crs)
-        _gdf["t_coords"] = self.t_coords
-
-        return _gdf.reset_index()
 
     @cached_property
     def _gdfhs(self):
