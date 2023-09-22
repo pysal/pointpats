@@ -1291,7 +1291,13 @@ class KnoxLocal:
         geom = gpd.points_from_xy(self.s_coords[:, 0], self.s_coords[:, 1])
         _gdf = gpd.GeoDataFrame(geometry=geom, crs=self._crs)
         _gdf["t_coords"] = self.t_coords
-        self._gdf = _gdf.reset_index()
+        _gdf["p_sims"] = self.p_sims
+        _gdf["p_hypergeom"] = self.p_hypergeom
+        self._gdf_static = _gdf.reset_index()
+
+    @property
+    def _gdf(self):
+        return self._gdf_static.copy()
 
     @classmethod
     def from_dataframe(
@@ -1349,22 +1355,20 @@ class KnoxLocal:
                     "fitting the KnoxLocal class using `permutations` set to a large "
                     "number. Using analytic p-values instead"
                 )
-                ps = self.p_hypergeom
+                col = "p_hypergeom"
             else:
-                ps = self.p_sims
+                col = "p_sims"
         elif inference == "analytic":
-            ps = self.p_hypergeom
+            col = "p_hypergeom"
         else:
             raise ValueError("inference must be either `permutation` or `analytic`")
         # determine hot spots
-        pdf = pandas.DataFrame(data=ps, columns=["pvalue"])
-        pdf_sig = pdf[pdf.pvalue <= crit]
-        adjlist = self.adjlist
-        hot_spots = pandas.merge(
-            adjlist, pdf_sig, how="right", left_on="focal", right_index=True
+        pdf_sig = self._gdf[self._gdf[col] <= crit][col].rename("pvalue").to_frame()
+        pdf_sig = pdf_sig.merge(
+            self.adjlist, how="inner", left_index=True, right_on="focal"
         ).reset_index(drop=True)
 
-        return hot_spots
+        return pdf_sig
 
     def plot(
         self,
@@ -1457,7 +1461,7 @@ class KnoxLocal:
         m = g[g.color == "red"].explore(m=m, color="red", style_kwds=style_kwds)
 
         # edges between hotspot and st-neighbors
-        ghs = self.hot_spots(crit=crit)
+        ghs = self.hot_spots(crit=crit, inference=inference)
         ghs = ghs.dropna()
         origins = g.iloc[ghs.focal].geometry
         destinations = g.iloc[ghs.neighbor].geometry
