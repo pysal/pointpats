@@ -2,17 +2,39 @@
 Methods for identifying space-time interaction in spatio-temporal event
 data.
 """
-__author__ = "Nicholas Malizia <nmalizia@asu.edu>", "Sergio J. Rey \
-<srey@asu.edu>", "Philip Stephens <philip.stephens@asu.edu"
+__author__ = (
+    "Eli Knaap <eknaap@sdsu.edu>",
+    "Nicholas Malizia <nmalizia@asu.edu>",
+    "Sergio J. Rey <srey@sdsu.edu>",
+    "Philip Stephens <philip.stephens@asu.edu",
+)
 
-__all__ = ['SpaceTimeEvents', 'knox', 'mantel', 'jacquez', 'modified_knox']
+__all__ = [
+    "SpaceTimeEvents",
+    "knox",
+    "mantel",
+    "jacquez",
+    "modified_knox",
+    "Knox",
+    "KnoxLocal",
+]
 
 import os
+from datetime import date
+from functools import cached_property
+from warnings import warn
+
+import geopandas as gpd
 import libpysal as lps
 import numpy as np
+import pandas
 import scipy.stats as stats
 from libpysal import cg
-from datetime import date
+from pandas.api.types import is_numeric_dtype
+from scipy.spatial import KDTree
+from scipy.stats import hypergeom, poisson
+from shapely.geometry import LineString
+
 
 class SpaceTimeEvents:
     """
@@ -113,10 +135,11 @@ class SpaceTimeEvents:
     >>> (events.t[1][0] - events.t[0][0]).days
     59
     """
+
     def __init__(self, path, time_col, infer_timestamp=False):
         shp = lps.io.open(path)
         head, tail = os.path.split(path)
-        dbf_tail = tail.split(".")[0]+".dbf"
+        dbf_tail = tail.split(".")[0] + ".dbf"
         dbf = lps.io.open(lps.examples.get_path(dbf_tail))
 
         # extract the spatial coordinates from the shapefile
@@ -138,8 +161,10 @@ class SpaceTimeEvents:
                 col = [(d - day1).days for d in col]
                 t = np.array(col)
             else:
-                print("Unable to parse your time column as Python datetime \
-                      objects, proceeding as integers.")
+                print(
+                    "Unable to parse your time column as Python datetime \
+                      objects, proceeding as integers."
+                )
                 t = np.array(col)
         else:
             t = np.array(dbf.by_col(time_col))
@@ -223,6 +248,7 @@ def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):
     >>> print("%2.2f"%result['pvalue'])
     0.17
     """
+    warn("This function is deprecated. Use Knox", DeprecationWarning, stacklevel=2)
 
     # Do a kdtree on space first as the number of ties (identical points) is
     # likely to be lower for space than time.
@@ -238,7 +264,7 @@ def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):
     d_t = (t_coords[ids[:, 0]] - t_coords[ids[:, 1]]) ** 2
     n_st = sum(d_t <= tau2)
 
-    knox_result = {'stat': n_st[0]}
+    knox_result = {"stat": n_st[0]}
 
     if permutations:
         joint = np.zeros((permutations, 1), int)
@@ -250,12 +276,14 @@ def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):
         larger = sum(joint >= n_st[0])
         if (permutations - larger) < larger:
             larger = permutations - larger
-        p_sim = (larger + 1.) / (permutations + 1.)
-        knox_result['pvalue'] = p_sim
+        p_sim = (larger + 1.0) / (permutations + 1.0)
+        knox_result["pvalue"] = p_sim
     return knox_result
 
 
-def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, tpow=-1.0):
+def mantel(
+    s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, tpow=-1.0
+):
     """
     Standardized Mantel test for spatio-temporal interaction. :cite:`Mantel:1967`
 
@@ -339,8 +367,8 @@ def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, t
     timemat = cg.distance_matrix(t)
 
     # calculate the transformed standardized statistic
-    timevec = (timemat[np.tril_indices(timemat.shape[0], k = -1)] + tcon) ** tpow
-    distvec = (distmat[np.tril_indices(distmat.shape[0], k = -1)] + scon) ** spow
+    timevec = (timemat[np.tril_indices(timemat.shape[0], k=-1)] + tcon) ** tpow
+    distvec = (distmat[np.tril_indices(distmat.shape[0], k=-1)] + scon) ** spow
     stat = stats.pearsonr(timevec, distvec)[0].sum()
 
     # return the results (if no inference)
@@ -351,7 +379,7 @@ def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, t
     dist = []
     for i in range(permutations):
         trand = _shuffle_matrix(timemat, np.arange(n))
-        timevec = (trand[np.tril_indices(trand.shape[0], k = -1)] + tcon) ** tpow
+        timevec = (trand[np.tril_indices(trand.shape[0], k=-1)] + tcon) ** tpow
         m = stats.pearsonr(timevec, distvec)[0].sum()
         dist.append(m)
 
@@ -362,7 +390,7 @@ def mantel(s_coords, t_coords, permutations=99, scon=1.0, spow=-1.0, tcon=1.0, t
     pvalue = (count + 1.0) / (permutations + 1.0)
 
     # report the results
-    mantel_result = {'stat': stat, 'pvalue': pvalue}
+    mantel_result = {"stat": stat, "pvalue": pvalue}
     return mantel_result
 
 
@@ -409,14 +437,14 @@ def jacquez(s_coords, t_coords, k, permutations=99):
     The Jacquez test counts the number of events that are k nearest
     neighbors in both time and space. The following runs the Jacquez test
     on the example data and reports the resulting statistic. In this case,
-    there are 13 instances where events are nearest neighbors in both space
+    there are 12 instances where events are nearest neighbors in both space
     and time.
     # turning off as kdtree changes from scipy < 0.12 return 13
 
     >>> np.random.seed(100)
     >>> result = jacquez(events.space, events.t ,k=3,permutations=99)
     >>> print(result['stat'])
-    13
+    12
 
     The significance of this can be assessed by calling the p-
     value from the results dictionary, as shown below. Again, no
@@ -477,7 +505,7 @@ def jacquez(s_coords, t_coords, k, permutations=99):
     pvalue = (count + 1.0) / (permutations + 1.0)
 
     # report the results
-    jacquez_result = {'stat': stat, 'pvalue': pvalue}
+    jacquez_result = {"stat": stat, "pvalue": pvalue}
     return jacquez_result
 
 
@@ -566,7 +594,7 @@ def modified_knox(s_coords, t_coords, delta, tau, permutations=99):
 
     # calculate the observed (original) statistic
     knoxmat = timemat * spacmat
-    obsstat = (knoxmat.sum() - n)
+    obsstat = knoxmat.sum() - n
 
     # calculate the expectated value
     ssumvec = np.reshape((spacbin.sum(axis=0) - 1), (n, 1))
@@ -590,7 +618,7 @@ def modified_knox(s_coords, t_coords, delta, tau, permutations=99):
 
         # calculate the observed knox again
         knoxmat = timemat * spacmat
-        obsstat = (knoxmat.sum() - n)
+        obsstat = knoxmat.sum() - n
 
         # calculate the expectated value again
         ssumvec = np.reshape((spacbin.sum(axis=0) - 1), (n, 1))
@@ -608,8 +636,9 @@ def modified_knox(s_coords, t_coords, delta, tau, permutations=99):
     pvalue = (count + 1.0) / (permutations + 1.0)
 
     # return results
-    modknox_result = {'stat': stat, 'pvalue': pvalue}
+    modknox_result = {"stat": stat, "pvalue": pvalue}
     return modknox_result
+
 
 def _shuffle_matrix(X, ids):
     """
