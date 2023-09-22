@@ -1458,6 +1458,8 @@ class KnoxLocal:
         # edges between hotspot and st-neighbors
         ghs = self.hot_spots(crit=crit)
         print(ghs)
+        ghs = ghs.dropna()
+        print(ghs)
         origins = g.iloc[ghs.focal].geometry
         destinations = g.iloc[ghs.neighbor].geometry
         ods = zip(origins, destinations)
