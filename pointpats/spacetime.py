@@ -1291,7 +1291,8 @@ class KnoxLocal:
         geom = gpd.points_from_xy(self.s_coords[:, 0], self.s_coords[:, 1])
         _gdf = gpd.GeoDataFrame(geometry=geom, crs=self._crs)
         _gdf["t_coords"] = self.t_coords
-        _gdf["p_sims"] = self.p_sims
+        if permutations > 0:
+            _gdf["p_sims"] = self.p_sims
         _gdf["p_hypergeom"] = self.p_hypergeom
         self._gdf_static = _gdf.reset_index()
 
