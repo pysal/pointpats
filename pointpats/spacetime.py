@@ -1425,6 +1425,7 @@ class KnoxLocal:
         plot_edges=True,
         edge_weight=2,
         edge_color="black",
+        colors={"focal": "red", "neighbor": "blue", "nonsig": "grey"},
     ):
 
         # logic for conditional formatting (focal as different color than lead/lag neighbors,
@@ -1439,7 +1440,7 @@ class KnoxLocal:
             style_kwds = {}
         g = self._gdf.copy()
 
-        g["color"] = "grey"
+        g["color"] = colors['nonsig']
 
         if inference == "permutation":
             if not hasattr(self, "p_sims"):
@@ -1458,20 +1459,20 @@ class KnoxLocal:
 
         mask = g[g.pvalue <= crit].index.values
         neighbors = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
-        g.loc[neighbors, "color"] = "blue"
-        g.loc[g.pvalue <= crit, "color"] = "red"
+        g.loc[neighbors, "color"] = colors['neighbor']
+        g.loc[g.pvalue <= crit, "color"] = colors['focal']
         nbs = self.adjlist.groupby("focal").agg(list)["neighbor"]
         g = g.merge(nbs, left_on="index", right_index=True, how="left")
 
-        m = g[g.color == "grey"].explore(
+        m = g[g.color == colors['nonsig']].explore(
             color="grey", style_kwds=style_kwds, tiles=tiles
         )
-        blues = g[g.color == "blue"]
+        blues = g[g.color == colors['neighbor']]
         if blues.shape[0] == 0:
             warn("empty neighbor set.")
         else:
-            m = blues.explore(m=m, color="blue", style_kwds=style_kwds)
-        m = g[g.color == "red"].explore(m=m, color="red", style_kwds=style_kwds)
+            m = blues.explore(m=m, color=colors['neighbor'], style_kwds=style_kwds)
+        m = g[g.color == colors['focal']].explore(m=m, color=colors['focal'], style_kwds=style_kwds)
 
         # edges between hotspot and st-neighbors
         ghs = self.hot_spots(crit=crit, inference=inference)
