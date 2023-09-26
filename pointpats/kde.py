@@ -9,6 +9,8 @@ def plot_density(
     levels=10,
     fill=False,
     margin=0.1,
+    ax=None,
+    figsize=None,
     **kwargs,
 ):
     """Plot kernel density of a given point pattern
@@ -53,6 +55,11 @@ def plot_density(
         The factor of the margin by which the extent of the data will be expanded when
         creating the grid. 0.1 means 10% on each side, by default 0.1. Only used
         with the ``statsmodels`` implementation.
+    ax : matplotlib.axes.Axes (default None)
+        axes on which to draw the plot
+    figsize : tuple of integers (default None)
+        Size of the resulting ``matplotlib.figure.Figure``. If the argument
+        ``ax`` is given explicitly, ``figsize`` is ignored.
     **kwargs
         Keyword arguments passed to :meth:`~matplotlib.pyplot.contour` or
         :meth:`~matplotlib.pyplot.contourf` used for further
@@ -62,8 +69,8 @@ def plot_density(
 
     Returns
     -------
-    matplotlib.pyplot.QuadContourSet
-        plot
+    matplotlib.axes.Axes
+        matplotlib axes instance with the contour plot
     """
     if kernel is None:
         try:
@@ -89,6 +96,11 @@ def plot_density(
         import matplotlib.pyplot as plt
     except ImportError as err:
         raise ImportError("matplotlib is required for `plot_density`") from err
+
+    if ax is None:
+        _, ax = plt.subplots(figsize=figsize)
+
+    ax.set_aspect("equal") # bandwidth is fixed, hence aspect shall be equal
 
     if isinstance(data, np.ndarray):
         pass
@@ -144,6 +156,8 @@ def plot_density(
         z = points.reshape(resolution, resolution).T
 
     if fill:
-        return plt.contourf(x_mesh, y_mesh, z, levels=levels, **kwargs)
+        ax.contourf(x_mesh, y_mesh, z, levels=levels, **kwargs)
     else:
-        return plt.contour(x_mesh, y_mesh, z, levels=levels, **kwargs)
+        ax.contour(x_mesh, y_mesh, z, levels=levels, **kwargs)
+
+    return ax
