@@ -1406,6 +1406,7 @@ class KnoxLocal:
         colors={"focal": "red", "neighbor": "blue", "nonsig": "grey"},
         crit=0.05,
         inference="permutation",
+        ax=None,
     ):
 
         # logic for conditional formatting (focal as different color than lead/lag neighbors,
@@ -1436,7 +1437,7 @@ class KnoxLocal:
             neighbors = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
             g.loc[neighbors, "color"] = colors["neighbor"]
             g.loc[g.pvalue <= crit, "color"] = colors["focal"]
-            m = g[g.color == colors["nonsig"]].plot(color=colors["nonsig"])
+            m = g[g.color == colors["nonsig"]].plot(color=colors["nonsig"],ax=ax)
             g[g.color == colors["neighbor"]].plot(ax=m, color=colors["neighbor"])
             g[g.color == colors["focal"]].plot(ax=m, color=colors["focal"])
 

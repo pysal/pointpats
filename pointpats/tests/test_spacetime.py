@@ -4,6 +4,8 @@ import geopandas as gpd
 import libpysal as lps
 import numpy
 from pytest import approx
+import pytest
+import matplotlib.pyplot as plt
 
 from pointpats import (
     Knox,
@@ -334,6 +336,17 @@ class TestKnoxLocal:
             ],
         )
         assert len(m.to_dict()["children"]) == 5
+
+    @pytest.mark.mpl_image_compare
+    def test_plot(self):
+        gdf = self.gdf
+        gdf.crs = 21096
+        fig, ax2 = plt.subplots(figsize=(30,18))
+        lk = KnoxLocal.from_dataframe(
+            gdf, time_col="T", delta=20, tau=5, keep=True)
+        lk.plot(inference='analytic', ax=ax2)
+        return fig
+
 
 
 # old tests refactored to pytest
