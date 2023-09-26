@@ -377,7 +377,7 @@ def mantel(
 
     # loop for generating a random distribution to assess significance
     dist = []
-    for i in range(permutations):
+    for _i in range(permutations):
         trand = _shuffle_matrix(timemat, np.arange(n))
         timevec = (trand[np.tril_indices(trand.shape[0], k=-1)] + tcon) ** tpow
         m = stats.pearsonr(timevec, distvec)[0].sum()
@@ -483,7 +483,7 @@ def jacquez(s_coords, t_coords, k, permutations=99):
 
     # loop for generating a random distribution to assess significance
     dist = []
-    for p in range(permutations):
+    for _p in range(permutations):
         j = 0
         trand = np.random.permutation(time)
         knnt = lps.weights.KNN.from_array(trand, k)
@@ -610,7 +610,7 @@ def modified_knox(s_coords, t_coords, delta, tau, permutations=99):
     distribution = []
 
     # loop for generating a random distribution to assess significance
-    for p in range(permutations):
+    for _p in range(permutations):
         rtdistmat = _shuffle_matrix(tdistmat, list(range(n)))
         timemat = np.ones((n, n))
         timebin = rtdistmat <= tau
@@ -729,7 +729,7 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
     for i, neigh in enumerate(stneighbors):
         if len(neigh) > 0:
             all_pairs.extend([sorted((i, j)) for j in neigh])
-    st_pairs = set([tuple(l) for l in all_pairs])
+    st_pairs = {tuple(l) for l in all_pairs}
 
     # ENST: expected number of spatio-temporal neighbors under HO
     pairs = n * (n - 1) / 2
@@ -1017,7 +1017,7 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False, cri
 
     nsti = res["nsti"]
     nsi = res["nsi"]
-    nti = res["nti"]
+    res["nti"]
 
     # rather than do n*permutations, we reuse the permutations
     # ensuring that each permutation is conditional on a focal unit i
@@ -1247,19 +1247,26 @@ class KnoxLocal:
         keep=False,
         crit=0.05,
         crs=None,
+        ids=None
     ):
-
         if not isinstance(t_coords, np.ndarray):
             raise ValueError("t_coords  should be numpy.ndarray type")
         if not isinstance(s_coords, np.ndarray):
             raise ValueError("s_coords  should be numpy.ndarray type")
         n_s, k = s_coords.shape
+        rangeids = list(range(n_s))
         if k < 2:
             raise ValueError("s_coords shape required to be nx2")
         n_t, k = t_coords.shape
         if n_s != n_t:
             raise ValueError("t_coords and s_coords need to be same length")
+        if ids is not None:
+            if len(ids) != n_s:
+                raise ValueError('`ids` must have the same length as the inputs')
+        else:
+            ids = rangeids
 
+        self._ids = ids
         self.s_coords = s_coords
         self.t_coords = t_coords
         self.delta = delta
@@ -1284,17 +1291,20 @@ class KnoxLocal:
             if keep:
                 self.sims = results["sti_perm"]
         self.nsti = results["nsti"]
-        # self.hot_spots = results["hot_spots"]
+        # self.hotspots = results["hotspots"]
         self._crs = crs
         self.statistic_ = self.nsti
+        self._id_map = dict(zip(rangeids, self._ids))
+        self.adjlist['focal'] = self.adjlist['focal'].replace(self._id_map)
+        self.adjlist['neighbor'] = self.adjlist['neighbor'].replace(self._id_map)
         # reconstruct df
         geom = gpd.points_from_xy(self.s_coords[:, 0], self.s_coords[:, 1])
-        _gdf = gpd.GeoDataFrame(geometry=geom, crs=self._crs)
-        _gdf["t_coords"] = self.t_coords
+        _gdf = gpd.GeoDataFrame(geometry=geom, crs=self._crs, index=self._ids)
+        _gdf["time"] = self.t_coords
         if permutations > 0:
-            _gdf["p_sims"] = self.p_sims
+            _gdf["p_sim"] = self.p_sims
         _gdf["p_hypergeom"] = self.p_hypergeom
-        self._gdf_static = _gdf.reset_index()
+        self._gdf_static = _gdf
 
     @property
     def _gdf(self):
@@ -1309,7 +1319,6 @@ class KnoxLocal:
         tau: int,
         permutations: int = 99,
         keep: bool = False,
-        crit: float = 0.05,
     ):
         """Compute a set of local Knox statistics from a dataframe of Point observations
 
@@ -1333,8 +1342,6 @@ class KnoxLocal:
             permutations to use for computational inference, by default 99
         keep : bool
             whether to store realized values of the statistic under permutations
-        crit: float
-            signficance level for determination of hot spots
 
         Returns
         -------
@@ -1345,12 +1352,32 @@ class KnoxLocal:
         s_coords, t_coords = _spacetime_points_to_arrays(dataframe, time_col)
 
         return cls(
-            s_coords, t_coords, delta, tau, permutations, keep, crs=dataframe.crs
+            s_coords, t_coords, delta, tau, permutations, keep, crs=dataframe.crs, ids=dataframe.index.values
         )
 
-    def hot_spots(self, crit=0.05, inference="permutation"):
+    def hotspots(self, crit=0.05, inference="permutation"):
+        """Table of significant space-time clusters that define local hotspots.
+
+        Parameters
+        ----------
+        crit : float, optional
+            critical value for statistical inference, by default 0.05
+        inference : str, optional
+            whether p-values should use permutation or analutical inference, by default
+            "permutation"
+
+        Returns
+        -------
+        pandas.DataFrame
+            dataframe of significant hotspots
+
+        Raises
+        ------
+        ValueError
+            if `inference` is not in {'permutation', 'analytic'}
+        """
         if inference == "permutation":
-            if not hasattr(self, "p_sims"):
+            if not hasattr(self, "p_sim"):
                 warn(
                     "Pseudo-p values not availalable. Permutation-based p-values require "
                     "fitting the KnoxLocal class using `permutations` set to a large "
@@ -1358,18 +1385,20 @@ class KnoxLocal:
                 )
                 col = "p_hypergeom"
             else:
-                col = "p_sims"
+                col = "p_sim"
         elif inference == "analytic":
             col = "p_hypergeom"
         else:
             raise ValueError("inference must be either `permutation` or `analytic`")
         # determine hot spots
-        pdf_sig = self._gdf[self._gdf[col] <= crit][col].rename("pvalue").to_frame()
+        pdf_sig = self._gdf[self._gdf[col] <= crit][[col, "time"]].rename(
+            columns={col: "pvalue", "time": "focal_time"}
+        )
         pdf_sig = pdf_sig.merge(
             self.adjlist, how="inner", left_index=True, right_on="focal"
         ).reset_index(drop=True)
 
-        return pdf_sig
+        return pdf_sig.copy()
 
     def plot(
         self,
@@ -1420,6 +1449,7 @@ class KnoxLocal:
         self,
         crit=0.05,
         inference="permutation",
+        radius=5,
         style_kwds=None,
         tiles="CartoDB Positron",
         plot_edges=True,
@@ -1428,19 +1458,50 @@ class KnoxLocal:
         colors={"focal": "red", "neighbor": "blue", "nonsig": "grey"},
     ):
 
-        # logic for conditional formatting (focal as different color than lead/lag neighbors,
-        # arrows, close clique as a hull or not
+        """Interactive plotting for space-time hotspots.
 
-        # interactivity: on-click, mouse-over functions sending to folium
+        Parameters
+        ----------
+        crit : float, optional
+            critical value for statistical inference, by default 0.05
+        inference : str, optional
+            which p-value to use for determining hotspots. Either "permutation" or
+            "analytic", by default "permutation"
+        radius : int, optional
+            radius of the circlemarker plotted by folium, passed to
+            geopandas.GeoDataFrame.explore style_kwds as a convenience. Ignored if
+            `style_kwds` is passed directly, by default 5
+        style_kwds : dict, optional
+            additional style kewords passed to GeoDataFrame.explore, by default None
+        tiles : str, optional
+            tileset passed to GeoDataFrame.explore `tiles` argument, by default
+            "CartoDB Positron"
+        plot_edges : bool, optional
+            Whether to include lines drawn between members of a singnificant hotspot, by
+            default True
+        edge_weight : int, optional
+            line thickness when `plot_edges=True`, by default 2
+        edge_color : str, optional
+            color of line when `plot_edges=True`, by default "black"
+        colors : dict, optional
+            mapping of observation type to color,
+            by default {"focal": "red", "neighbor": "blue", "nonsig": "grey"}
 
-        # how to populate tool-tip columns
+        Returns
+        -------
+        folium.Map
+            an interactive map showing locally-significant spacetime hotspots
 
-        # markerclustering?
+        Raises
+        ------
+        ValueError
+            _description_
+        """
         if style_kwds is None:
-            style_kwds = {}
+            style_kwds = {"radius": radius}
         g = self._gdf.copy()
 
-        g["color"] = colors['nonsig']
+        g["color"] = colors["nonsig"]
 
         if inference == "permutation":
             if not hasattr(self, "p_sims"):
@@ -1459,41 +1520,49 @@ class KnoxLocal:
 
         mask = g[g.pvalue <= crit].index.values
         neighbors = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
-        g.loc[neighbors, "color"] = colors['neighbor']
-        g.loc[g.pvalue <= crit, "color"] = colors['focal']
-        nbs = self.adjlist.groupby("focal").agg(list)["neighbor"]
-        g = g.merge(nbs, left_on="index", right_index=True, how="left")
 
-        m = g[g.color == colors['nonsig']].explore(
+        # this is clunky, but enforces plotting order so significance is prioritized
+        g.loc[neighbors, "color"] = colors["neighbor"]
+        g.loc[g.pvalue <= crit, "color"] = colors["focal"]
+        nbs = self.adjlist.groupby("focal").agg(list)["neighbor"]
+        g = g.reset_index().merge(nbs, left_on="index", right_index=True, how="left")
+
+        m = g[g.color == colors["nonsig"]].explore(
             color="grey", style_kwds=style_kwds, tiles=tiles
         )
-        blues = g[g.color == colors['neighbor']]
+        blues = g[g.color == colors["neighbor"]]
         if blues.shape[0] == 0:
             warn("empty neighbor set.")
         else:
-            m = blues.explore(m=m, color=colors['neighbor'], style_kwds=style_kwds)
-        m = g[g.color == colors['focal']].explore(m=m, color=colors['focal'], style_kwds=style_kwds)
+            m = blues.explore(m=m, color=colors["neighbor"], style_kwds=style_kwds)
+        m = g[g.color == colors["focal"]].explore(
+            m=m, color=colors["focal"], style_kwds=style_kwds
+        )
 
-        # edges between hotspot and st-neighbors
-        ghs = self.hot_spots(crit=crit, inference=inference)
-        ghs = ghs.dropna()
-        origins = g.iloc[ghs.focal].geometry
-        destinations = g.iloc[ghs.neighbor].geometry
-        ods = zip(origins, destinations)
-        lines = gpd.GeoSeries([LineString(od) for od in ods])
-        lines.crs = g.crs
         if plot_edges:
+
+            # edges between hotspot and st-neighbors
+            g = g.set_index('index')
+            ghs = self.hotspots(crit=crit, inference=inference)
+            ghs = ghs.dropna()
+            origins = g.loc[ghs.focal].geometry
+            destinations = g.loc[ghs.neighbor].geometry
+            ods = zip(origins, destinations)
+            lines = gpd.GeoSeries([LineString(od) for od in ods])
+            lines.crs = g.crs
             lines.explore(m=m, color=edge_color, style_kwds={"weight": edge_weight})
 
         return m
 
     def _gdfhs(self, crit=0.05, inference="permutation"):
         # merge df with self.hotspots
-        return gpd.GeoDataFrame(self._gdf.merge(
-            self.hot_spots(crit=crit, inference=inference),
-            left_index=True,
-            right_on="focal",
-        ))
+        return gpd.GeoDataFrame(
+            self._gdf.merge(
+                self.hotspots(crit=crit, inference=inference),
+                left_index=True,
+                right_on="focal",
+            )
+        )
 
 
 def _spacetime_points_to_arrays(dataframe, time_col):

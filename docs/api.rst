@@ -120,7 +120,8 @@ Space-Time Interaction Tests
    :toctree: generated/
 
    SpaceTimeEvents
-   knox
+   Knox
+   KnoxLocal
    mantel
    jacquez
    modified_knox
