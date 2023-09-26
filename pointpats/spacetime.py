@@ -1247,19 +1247,26 @@ class KnoxLocal:
         keep=False,
         crit=0.05,
         crs=None,
+        ids=None
     ):
-
         if not isinstance(t_coords, np.ndarray):
             raise ValueError("t_coords  should be numpy.ndarray type")
         if not isinstance(s_coords, np.ndarray):
             raise ValueError("s_coords  should be numpy.ndarray type")
         n_s, k = s_coords.shape
+        rangeids = list(range(n_s))
         if k < 2:
             raise ValueError("s_coords shape required to be nx2")
         n_t, k = t_coords.shape
         if n_s != n_t:
             raise ValueError("t_coords and s_coords need to be same length")
+        if ids is not None:
+            if len(ids) != n_s:
+                raise ValueError('`ids` must have the same length as the inputs')
+        else:
+            ids = rangeids
 
+        self._ids = ids
         self.s_coords = s_coords
         self.t_coords = t_coords
         self.delta = delta
@@ -1287,14 +1294,17 @@ class KnoxLocal:
         # self.hotspots = results["hotspots"]
         self._crs = crs
         self.statistic_ = self.nsti
+        self._id_map = dict(zip(rangeids, self._ids))
+        self.adjlist['focal'] = self.adjlist['focal'].replace(self._id_map)
+        self.adjlist['neighbor'] = self.adjlist['neighbor'].replace(self._id_map)
         # reconstruct df
         geom = gpd.points_from_xy(self.s_coords[:, 0], self.s_coords[:, 1])
-        _gdf = gpd.GeoDataFrame(geometry=geom, crs=self._crs)
+        _gdf = gpd.GeoDataFrame(geometry=geom, crs=self._crs, index=self._ids)
         _gdf["time"] = self.t_coords
         if permutations > 0:
             _gdf["p_sim"] = self.p_sims
         _gdf["p_hypergeom"] = self.p_hypergeom
-        self._gdf_static = _gdf.reset_index()
+        self._gdf_static = _gdf
 
     @property
     def _gdf(self):
@@ -1342,7 +1352,7 @@ class KnoxLocal:
         s_coords, t_coords = _spacetime_points_to_arrays(dataframe, time_col)
 
         return cls(
-            s_coords, t_coords, delta, tau, permutations, keep, crs=dataframe.crs
+            s_coords, t_coords, delta, tau, permutations, keep, crs=dataframe.crs, ids=dataframe.index.values
         )
 
     def hotspots(self, crit=0.05, inference="permutation"):
@@ -1381,12 +1391,14 @@ class KnoxLocal:
         else:
             raise ValueError("inference must be either `permutation` or `analytic`")
         # determine hot spots
-        pdf_sig = self._gdf[self._gdf[col] <= crit][col].rename("pvalue").to_frame()
+        pdf_sig = self._gdf[self._gdf[col] <= crit][[col, "time"]].rename(
+            columns={col: "pvalue", "time": "focal_time"}
+        )
         pdf_sig = pdf_sig.merge(
             self.adjlist, how="inner", left_index=True, right_on="focal"
         ).reset_index(drop=True)
 
-        return pdf_sig
+        return pdf_sig.copy()
 
     def plot(
         self,
@@ -1513,7 +1525,7 @@ class KnoxLocal:
         g.loc[neighbors, "color"] = colors["neighbor"]
         g.loc[g.pvalue <= crit, "color"] = colors["focal"]
         nbs = self.adjlist.groupby("focal").agg(list)["neighbor"]
-        g = g.merge(nbs, left_on="index", right_index=True, how="left")
+        g = g.reset_index().merge(nbs, left_on="index", right_index=True, how="left")
 
         m = g[g.color == colors["nonsig"]].explore(
             color="grey", style_kwds=style_kwds, tiles=tiles
@@ -1527,15 +1539,17 @@ class KnoxLocal:
             m=m, color=colors["focal"], style_kwds=style_kwds
         )
 
-        # edges between hotspot and st-neighbors
-        ghs = self.hotspots(crit=crit, inference=inference)
-        ghs = ghs.dropna()
-        origins = g.iloc[ghs.focal].geometry
-        destinations = g.iloc[ghs.neighbor].geometry
-        ods = zip(origins, destinations)
-        lines = gpd.GeoSeries([LineString(od) for od in ods])
-        lines.crs = g.crs
         if plot_edges:
+
+            # edges between hotspot and st-neighbors
+            g = g.set_index('index')
+            ghs = self.hotspots(crit=crit, inference=inference)
+            ghs = ghs.dropna()
+            origins = g.loc[ghs.focal].geometry
+            destinations = g.loc[ghs.neighbor].geometry
+            ods = zip(origins, destinations)
+            lines = gpd.GeoSeries([LineString(od) for od in ods])
+            lines.crs = g.crs
             lines.explore(m=m, color=edge_color, style_kwds={"weight": edge_weight})
 
         return m
