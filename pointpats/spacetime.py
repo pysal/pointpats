@@ -1490,8 +1490,7 @@ class KnoxLocal:
             origins = g.loc[ghs.focal].geometry
             destinations = g.loc[ghs.neighbor].geometry
             ods = zip(origins, destinations)
-            lines = gpd.GeoSeries([LineString(od) for od in ods])
-            lines.crs = g.crs
+            lines = gpd.GeoSeries([LineString(od) for od in ods], crs=g.crs)
             lines.plot(ax=m, color=edge_color, **edge_kwargs)
 
         return m
