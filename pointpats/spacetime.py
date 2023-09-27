@@ -1247,7 +1247,7 @@ class KnoxLocal:
         keep=False,
         crit=0.05,
         crs=None,
-        ids=None
+        ids=None,
     ):
         if not isinstance(t_coords, np.ndarray):
             raise ValueError("t_coords  should be numpy.ndarray type")
@@ -1262,7 +1262,7 @@ class KnoxLocal:
             raise ValueError("t_coords and s_coords need to be same length")
         if ids is not None:
             if len(ids) != n_s:
-                raise ValueError('`ids` must have the same length as the inputs')
+                raise ValueError("`ids` must have the same length as the inputs")
         else:
             ids = rangeids
 
@@ -1295,8 +1295,8 @@ class KnoxLocal:
         self._crs = crs
         self.statistic_ = self.nsti
         self._id_map = dict(zip(rangeids, self._ids))
-        self.adjlist['focal'] = self.adjlist['focal'].replace(self._id_map)
-        self.adjlist['neighbor'] = self.adjlist['neighbor'].replace(self._id_map)
+        self.adjlist["focal"] = self.adjlist["focal"].replace(self._id_map)
+        self.adjlist["neighbor"] = self.adjlist["neighbor"].replace(self._id_map)
         # reconstruct df
         geom = gpd.points_from_xy(self.s_coords[:, 0], self.s_coords[:, 1])
         _gdf = gpd.GeoDataFrame(geometry=geom, crs=self._crs, index=self._ids)
@@ -1352,7 +1352,14 @@ class KnoxLocal:
         s_coords, t_coords = _spacetime_points_to_arrays(dataframe, time_col)
 
         return cls(
-            s_coords, t_coords, delta, tau, permutations, keep, crs=dataframe.crs, ids=dataframe.index.values
+            s_coords,
+            t_coords,
+            delta,
+            tau,
+            permutations,
+            keep,
+            crs=dataframe.crs,
+            ids=dataframe.index.values,
         )
 
     def hotspots(self, crit=0.05, inference="permutation"):
@@ -1402,61 +1409,104 @@ class KnoxLocal:
 
     def plot(
         self,
-        kind="all",
-        colors={"focal": "red", "neighbor": "blue", "nonsig": "grey"},
-        crit=0.05,
-        inference="permutation",
+        colors: dict = {"focal": "red", "neighbor": "blue", "nonsig": "grey"},
+        crit: float = 0.05,
+        inference: str = "permutation",
+        point_kwargs: dict = None,
+        plot_edges: bool = True,
+        edge_color: str = "black",
+        edge_kwargs: dict = None,
         ax=None,
     ):
+        """plot hotspots
 
-        # logic for conditional formatting (focal as different color than lead/lag neighbors,
+        Parameters
+        ----------
+        colors : dict, optional
+            mapping of colors to hotspot values, by default
+            {"focal": "red", "neighbor": "blue", "nonsig": "grey"}
+        crit : float, optional
+            critical value for assessing statistical sgifnicance, by default 0.05
+        inference : str, optional
+            whether to use permutation or analytic inference, by default "permutation"
+        point_kwargs : dict, optional
+            additional keyword arguments passsed to point plot, by default None
+        plot_edges : bool, optional
+            whether to plot edges connecting members of the same hotspot subgraph,
+            by default True
+        edge_color : str, optional
+            color of edges when plot_edges is True, by default 'black'
+        edge_kwargs : dict, optional
+            additional keyword arguments passsed to edge plot, by default None
+        ax : matplotlib.axes.Axes, optional
+            axes object on which to create the plot, by default None
 
-        # arrows, close clique as a hull or not
+        Returns
+        -------
+        matplotlib.axes.Axes
+            plot of local space-time hotspots
+        """
+
+        if point_kwargs is None:
+            point_kwargs = dict()
+        if edge_kwargs is None:
+            edge_kwargs = dict()
         g = self._gdf.copy()
 
-        if kind.lower() == "all":
-
-            g["color"] = colors["nonsig"]
-            g["pvalue"] = self.p_hypergeom
-            if inference == "permutation":
-                if not hasattr(self, "p_sims"):
-                    warn(
-                        "Pseudo-p values not availalable. Permutation-based p-values require "
-                        "fitting the KnoxLocal class using `permutations` set to a large "
-                        "number. Using analytic p-values instead"
-                    )
-                    g["pvalue"] = self.p_hypergeom
-                else:
-                    g["pvalue"] = self.p_sims
-            elif inference == "analytic":
+        g["color"] = colors["nonsig"]
+        g["pvalue"] = self.p_hypergeom
+        if inference == "permutation":
+            if not hasattr(self, "p_sims"):
+                warn(
+                    "Pseudo-p values not availalable. Permutation-based p-values require "
+                    "fitting the KnoxLocal class using `permutations` set to a large "
+                    "number. Using analytic p-values instead"
+                )
                 g["pvalue"] = self.p_hypergeom
             else:
-                raise ValueError("inference must be either `permutation` or `analytic`")
+                g["pvalue"] = self.p_sims
+        elif inference == "analytic":
+            g["pvalue"] = self.p_hypergeom
+        else:
+            raise ValueError("inference must be either `permutation` or `analytic`")
 
-            mask = g[g.pvalue <= crit].index.values
-            neighbors = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
-            g.loc[neighbors, "color"] = colors["neighbor"]
-            g.loc[g.pvalue <= crit, "color"] = colors["focal"]
-            m = g[g.color == colors["nonsig"]].plot(color=colors["nonsig"],ax=ax)
-            g[g.color == colors["neighbor"]].plot(ax=m, color=colors["neighbor"])
-            g[g.color == colors["focal"]].plot(ax=m, color=colors["focal"])
+        mask = g[g.pvalue <= crit].index.values
+        neighbors = self.adjlist[self.adjlist.focal.isin(mask)].neighbor.unique()
+        g.loc[neighbors, "color"] = colors["neighbor"]
+        g.loc[g.pvalue <= crit, "color"] = colors["focal"]
+        m = g[g.color == colors["nonsig"]].plot(
+            color=colors["nonsig"], ax=ax, **point_kwargs
+        )
+        g[g.color == colors["neighbor"]].plot(
+            ax=m, color=colors["neighbor"], **point_kwargs
+        )
+        g[g.color == colors["focal"]].plot(ax=m, color=colors["focal"], **point_kwargs)
 
-            return m
+        if plot_edges:
 
-        elif kind.lower() == "hotspots":
-            return self._gdfhs(crit=crit, inference=inference).plot()
+            # edges between hotspot and st-neighbors
+            ghs = self.hotspots(crit=crit, inference=inference)
+            ghs = ghs.dropna()
+            origins = g.loc[ghs.focal].geometry
+            destinations = g.loc[ghs.neighbor].geometry
+            ods = zip(origins, destinations)
+            lines = gpd.GeoSeries([LineString(od) for od in ods])
+            lines.crs = g.crs
+            lines.plot(ax=m, color=edge_color, **edge_kwargs)
+
+        return m
 
     def explore(
         self,
-        crit=0.05,
-        inference="permutation",
-        radius=5,
-        style_kwds=None,
-        tiles="CartoDB Positron",
-        plot_edges=True,
-        edge_weight=2,
-        edge_color="black",
-        colors={"focal": "red", "neighbor": "blue", "nonsig": "grey"},
+        crit: float = 0.05,
+        inference: str = "permutation",
+        radius: int = 5,
+        style_kwds: dict = None,
+        tiles: str = "CartoDB Positron",
+        plot_edges: bool = True,
+        edge_weight: int = 2,
+        edge_color: str = "black",
+        colors: dict = {"focal": "red", "neighbor": "blue", "nonsig": "grey"},
     ):
 
         """Interactive plotting for space-time hotspots.
@@ -1492,11 +1542,6 @@ class KnoxLocal:
         -------
         folium.Map
             an interactive map showing locally-significant spacetime hotspots
-
-        Raises
-        ------
-        ValueError
-            _description_
         """
         if style_kwds is None:
             style_kwds = {"radius": radius}
@@ -1543,7 +1588,7 @@ class KnoxLocal:
         if plot_edges:
 
             # edges between hotspot and st-neighbors
-            g = g.set_index('index')
+            g = g.set_index("index")
             ghs = self.hotspots(crit=crit, inference=inference)
             ghs = ghs.dropna()
             origins = g.loc[ghs.focal].geometry
