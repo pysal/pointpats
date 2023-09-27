@@ -1593,8 +1593,7 @@ class KnoxLocal:
             origins = g.loc[ghs.focal].geometry
             destinations = g.loc[ghs.neighbor].geometry
             ods = zip(origins, destinations)
-            lines = gpd.GeoSeries([LineString(od) for od in ods])
-            lines.crs = g.crs
+            lines = gpd.GeoSeries([LineString(od) for od in ods], crs=g.crs)
             lines.explore(m=m, color=edge_color, style_kwds={"weight": edge_weight})
 
         return m
