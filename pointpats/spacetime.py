@@ -21,7 +21,6 @@ __all__ = [
 
 import os
 from datetime import date
-from functools import cached_property
 from warnings import warn
 
 import geopandas as gpd
@@ -383,7 +382,7 @@ def mantel(
         m = stats.pearsonr(timevec, distvec)[0].sum()
         dist.append(m)
 
-    ## establish the pseudo significance of the observed statistic
+    # establish the pseudo significance of the observed statistic
     distribution = np.array(dist)
     greater = np.ma.masked_greater_equal(distribution, stat)
     count = np.ma.count_masked(greater)
@@ -666,17 +665,17 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
     ==========
 
     s_coords: array-like
-      spatial coordinates
+        spatial coordinates
     t_coords: array-like
-      temporal coordinates
+        temporal coordinates
     delta: float
-      distance threshold
+        distance threshold
     tau: float
-      temporal threshold
+        temporal threshold
     permutations: int
-      number of permutations
+        number of permutations
     keep: bool
-      return values from permutations (default False)
+        return values from permutations (default False)
 
 
     Returns
@@ -799,86 +798,63 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
 
 
 class Knox:
-    """
-    Global Knox statistic for space-time interactions
+    """Global Knox statistic for space-time interactions
 
     Parameters
     ----------
-
     s_coords: array-like
-      spatial coordinates of point events
-
+        spatial coordinates of point events
     t_coords: array-like
-      temporal coordinates of point events (floats or ints, not dateTime)
-
+        temporal coordinates of point events (floats or ints, not dateTime)
     delta: float
-      spatial threshold defining distance below which pairs are spatial
-      neighbors
-
+        spatial threshold defining distance below which pairs are spatial
+        neighbors
     tau: float
-      temporal threshold defining distance below which pairs are temporal
-      neighbors
-
+        temporal threshold defining distance below which pairs are temporal
+        neighbors
     permutations: int
-      number of random permutations for inference
-
+        number of random permutations for inference
     keep: bool
-      whether to store realized values of the statistic under permutations
-
+        whether to store realized values of the statistic under permutations
 
 
     Attributes
     ----------
-
     s_coords: array-like
-      spatial coordinates of point events
-
+        spatial coordinates of point events
     t_coords: array-like
-      temporal coordinates of point events (floats or ints, not dateTime)
-
+        temporal coordinates of point events (floats or ints, not dateTime)
     delta: float
-      spatial threshold defining distance below which pairs are spatial
-      neighbors
-
+        spatial threshold defining distance below which pairs are spatial
+        neighbors
     tau: float
-      temporal threshold defining distance below which pairs are temporal
-      neighbors
-
+        temporal threshold defining distance below which pairs are temporal
+        neighbors
     permutations: int
-      number of random permutations for inference
-
+        number of random permutations for inference
     keep: bool
-      whether to store realized values of the statistic under permutations
-
+        whether to store realized values of the statistic under permutations
     nst: int
-      number of space-time pairs
-
+        number of space-time pairs
     p_poisson: float
-      Analytical p-value under Poisson assumption
-
+        Analytical p-value under Poisson assumption
     p_sim: float
-      Pseudo p-value based on random permutations
-
+        Pseudo p-value based on random permutations
     expected: array
-      Two-by-two array with expected counts under the null of no space-time
-      interactions. [[NST, NS_], [NT_, N__]] where NST is the expected number
-      of space-time pairs, NS_ is the expected number of spatial (but not also
-      temporal) pairs, NT_ is the number of expected temporal (but not also
-      spatial pairs), N__ is the number of pairs that are neighor spatial or
-      temporal neighbors.
-
+        Two-by-two array with expected counts under the null of no space-time
+        interactions. [[NST, NS_], [NT_, N__]] where NST is the expected number
+        of space-time pairs, NS_ is the expected number of spatial (but not also
+        temporal) pairs, NT_ is the number of expected temporal (but not also
+        spatial pairs), N__ is the number of pairs that are neighor spatial or
+        temporal neighbors.
     observed: array
-      Same structure as expected with the observed pair classifications
-
+        Same structure as expected with the observed pair classifications
     sim: array
-      Global statistics from permutations (if keep=True)
-
+        Global statistics from permutations (if keep=True)
 
     Notes
     -----
-
     Technical details can be found in :cite:`Rogerson:2001`
-
 
     Examples
     --------
@@ -972,32 +948,23 @@ class Knox:
         return cls(s_coords, dataframe[[time_col]], delta, tau, permutations, keep)
 
 
-def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False, crit=0.05):
+def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
     """
 
     Parameters
     ----------
-
-    s_coords: array (nx2)
+    s_coords: array (n,2)
         spatial coordinates
-
-    t_coords: array (nx1)
+    t_coords: array (n,1)
         temporal coordinates
-
     delta: numeric
         spatial threshold distance for neighbor relation
-
     tau: numeric
         temporal threshold distance for neighbor relation
-
     permutations: int
         number of permutations for conditional randomization inference
-
     keep: bool
         whether to store local statistics from the permtuations
-
-    crit: float
-        signficance level for determination of hot spots
 
     """
     # think about passing in the global object as an option to avoid recomputing the trees
@@ -1099,110 +1066,78 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False, cri
 
 
 class KnoxLocal:
-    """
-    Local Knox statistics for space-time interactions
+    """Local Knox statistics for space-time interactions
 
     Parameters
     ----------
-
     s_coords: array (nx2)
-      spatial coordinates of point events
-
+        spatial coordinates of point events
     t_coords: array (nx1)
-      temporal coordinates of point events (floats or ints, not dateTime)
-
+        temporal coordinates of point events (floats or ints, not dateTime)
     delta: float
-      spatial threshold defining distance below which pairs are spatial
-      neighbors
-
+        spatial threshold defining distance below which pairs are spatial
+        neighbors
     tau: float
-      temporal threshold defining distance below which pairs are temporal
-      neighbors
-
+        temporal threshold defining distance below which pairs are temporal
+        neighbors
     permutations: int
-      number of random permutations for inference
-
+        number of random permutations for inference
     keep: bool
-      whether to store realized values of the statistic under permutations
-
+        whether to store realized values of the statistic under permutations
     conditional: bool
-      whether to include conditional permutation inference
-
+        whether to include conditional permutation inference
     crit: float
       signifcance level for local statistics
-
     crs: str (optional)
-      coordinate reference system string for s_coords
-
-
+        coordinate reference system string for s_coords
 
     Attributes
     ----------
-
     s_coords: array (nx2)
-      spatial coordinates of point events
-
+        spatial coordinates of point events
     t_coords: array (nx1)
-      temporal coordinates of point events (floats or ints, not dateTime)
-
+        temporal coordinates of point events (floats or ints, not dateTime)
     delta: float
-      spatial threshold defining distance below which pairs are spatial
-      neighbors
-
+        spatial threshold defining distance below which pairs are spatial
+        neighbors
     tau: float
-      temporal threshold defining distance below which pairs are temporal
-      neighbors
-
+        temporal threshold defining distance below which pairs are temporal
+        neighbors
     permutations: int
-      number of random permutations for inference
-
+        number of random permutations for inference
     keep: bool
-      whether to store realized values of the statistic under permutations
-
+        whether to store realized values of the statistic under permutations
     nst: int
-      number of space-time pairs (global)
-
+        number of space-time pairs (global)
     p_poisson: float
-      Analytical p-value under Poisson assumption (global)
-
+        Analytical p-value under Poisson assumption (global)
     p_sim: float
-      Pseudo p-value based on random permutations (global)
-
+        Pseudo p-value based on random permutations (global)
     expected: array
-      Two-by-two array with expected counts under the null of no space-time
-      interactions. [[NST, NS_], [NT_, N__]] where NST is the expected number
-      of space-time pairs, NS_ is the expected number of spatial (but not also
-      temporal) pairs, NT_ is the number of expected temporal (but not also
-      spatial pairs), N__ is the number of pairs that are neighor spatial or
-      temporal neighbors. (global)
-
+        Two-by-two array with expected counts under the null of no space-time
+        interactions. [[NST, NS_], [NT_, N__]] where NST is the expected number
+        of space-time pairs, NS_ is the expected number of spatial (but not also
+        temporal) pairs, NT_ is the number of expected temporal (but not also
+        spatial pairs), N__ is the number of pairs that are neighor spatial or
+        temporal neighbors. (global)
     observed: array
-      Same structure as expected with the observed pair classifications (global)
-
+        Same structure as expected with the observed pair classifications (global)
     sim: array
-      Global statistics from permutations (if keep=True and keep=True) (global)
-
+        Global statistics from permutations (if keep=True and keep=True) (global)
     p_sims: array
-      Local psuedo p-values from conditional permutations (if permutations>0)
-
+        Local psuedo p-values from conditional permutations (if permutations>0)
     sims: array
-      Local statistics from conditional permutations (if keep=True and
-      permutations>0)
-
+        Local statistics from conditional permutations (if keep=True and
+        permutations>0)
     nsti: array
-      Local statistics
-
+        Local statistics
     p_hypergeom: array
-      Analytical p-values based on hypergeometric distribution
-
-
+        Analytical p-values based on hypergeometric distribution
 
     Notes
     -----
-
     Technical details can be found in :cite:`Rogerson:2001`. The conditional
     permutation inference is unique to pysal.pointpats.
-
 
     Examples
     -------
@@ -1274,7 +1209,7 @@ class KnoxLocal:
         self.permutations = permutations
         self.keep = keep
         self.crit = crit
-        results = _knox_local(s_coords, t_coords, delta, tau, permutations, keep, crit)
+        results = _knox_local(s_coords, t_coords, delta, tau, permutations, keep)
         self.adjlist = results["stadjlist"]
         self.nst = int(results["nst"])
         if permutations > 0:
@@ -1409,7 +1344,7 @@ class KnoxLocal:
 
     def plot(
         self,
-        colors: dict = {"focal": "red", "neighbor": "blue", "nonsig": "grey"},
+        colors: dict = {"focal": "red", "neighbor": "yellow", "nonsig": "grey"},
         crit: float = 0.05,
         inference: str = "permutation",
         point_kwargs: dict = None,
@@ -1424,7 +1359,7 @@ class KnoxLocal:
         ----------
         colors : dict, optional
             mapping of colors to hotspot values, by default
-            {"focal": "red", "neighbor": "blue", "nonsig": "grey"}
+            {"focal": "red", "neighbor": "yellow", "nonsig": "grey"}
         crit : float, optional
             critical value for assessing statistical sgifnicance, by default 0.05
         inference : str, optional
@@ -1505,9 +1440,8 @@ class KnoxLocal:
         plot_edges: bool = True,
         edge_weight: int = 2,
         edge_color: str = "black",
-        colors: dict = {"focal": "red", "neighbor": "blue", "nonsig": "grey"},
+        colors: dict = {"focal": "red", "neighbor": "yellow", "nonsig": "grey"},
     ):
-
         """Interactive plotting for space-time hotspots.
 
         Parameters
@@ -1535,7 +1469,7 @@ class KnoxLocal:
             color of line when `plot_edges=True`, by default "black"
         colors : dict, optional
             mapping of observation type to color,
-            by default {"focal": "red", "neighbor": "blue", "nonsig": "grey"}
+            by default {"focal": "red", "neighbor": "yellow", "nonsig": "grey"}
 
         Returns
         -------
@@ -1653,11 +1587,3 @@ def _spacetime_points_to_arrays(dataframe, time_col):
     t_coords = np.vstack(dataframe[time_col].values)
 
     return s_coords, t_coords
-
-
-def _time_to_int(df, column, fmt="%Y%m%d"):
-    """Create an integer valued column for time"""
-    time_series = pandas.to_datetime(df[column], format=fmt)
-    min_time = time_series.min()
-    time_int = time_series.appy(lambda x: x - min_time)
-    return time_int.dt.days
