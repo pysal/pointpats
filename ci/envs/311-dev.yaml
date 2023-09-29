@@ -7,6 +7,8 @@ dependencies:
   - pandas
   - matplotlib
   - libpysal
+  - mapclassify
+  - folium
   - py-opencv
   # tests
   - shapely
