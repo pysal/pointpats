@@ -17,10 +17,7 @@ description = "Methods and Functions for planar point pattern analysis"
 keywords = [
     "spatial statistics, point patterns"
 ]
-readme = { text = """\
-"Methods and Functions for planar point pattern analysis"
-
-""", content-type = "text/x-rst" }
+readme = "README.md"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: BSD License",
