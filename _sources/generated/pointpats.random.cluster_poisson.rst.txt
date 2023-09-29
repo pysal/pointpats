@@ -1,0 +1,6 @@
+﻿pointpats.random.cluster\_poisson
+=================================
+
+.. currentmodule:: pointpats.random
+
+.. autofunction:: cluster_poisson
