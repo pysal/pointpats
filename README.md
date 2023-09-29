@@ -1,7 +1,7 @@
 # pointpats: Point Pattern Analysis in PySAL
 
 [![Continuous Integration](https://github.com/pysal/pointpats/actions/workflows/tests.yaml/badge.svg)](https://github.com/pysal/pointpats/actions/workflows/tests.yaml)
-[![codecov](https://codecov.io/gh/pysal/pointpats/branch/master/graph/badge.svg)](https://codecov.io/gh/pysal/pointpats)
+[![codecov](https://codecov.io/gh/pysal/pointpats/branch/main/graph/badge.svg)](https://codecov.io/gh/pysal/pointpats)
 [![Documentation](https://img.shields.io/static/v1.svg?label=docs&message=current&color=9cf)](http://pysal.org/pointpats/)
 [![PyPI version](https://badge.fury.io/py/pointpats.svg)](https://badge.fury.io/py/pointpats)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7706219.svg)](https://doi.org/10.5281/zenodo.7706219)
