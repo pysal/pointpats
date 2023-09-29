@@ -125,3 +125,11 @@ Space-Time Interaction Tests
    mantel
    jacquez
    modified_knox
+
+Visualization
+---------------
+
+.. autosummary::
+   :toctree: generated/
+
+   plot_density
