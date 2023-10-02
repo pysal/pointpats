@@ -31,7 +31,9 @@ dependencies = [
     "pandas",
     "scipy >=1.8",
     "libpysal >=4",
-    "matplotlib"
+    "matplotlib",
+    "geopandas",
+    "shapely >=2"
 ]
 
 [project.urls]
