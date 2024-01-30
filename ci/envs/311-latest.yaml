@@ -8,7 +8,6 @@ dependencies:
   - pandas
   - matplotlib
   - libpysal
-  - py-opencv
   # tests
   - scikit-learn
   - shapely
@@ -19,7 +18,6 @@ dependencies:
   - codecov
   - pip
   - pip:
-      - opencv-contrib-python
       - KDEpy
   # for docs build action (this env only)
   - nbsphinx
