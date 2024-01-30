@@ -31,12 +31,14 @@ import sys
 import numpy as np
 import warnings
 import copy
+import math
 
 from math import pi as PI
 from scipy.spatial import ConvexHull
 from libpysal.cg import get_angle_between, Ray, is_clockwise
 from scipy.spatial import distance as dist
 from scipy.optimize import minimize
+import shapely
 
 not_clockwise = lambda x: not is_clockwise(x)
 
@@ -102,15 +104,21 @@ def minimum_rotated_rectangle(points, return_angle=False):
 
     """
     points = np.asarray(points)
-    try:
-        from cv2 import minAreaRect, boxPoints
-    except (ImportError, ModuleNotFoundError):
-        raise ModuleNotFoundError("OpenCV2 is required to use this function. Please install it with `pip install opencv-contrib-python`")
-    ((x, y), (w, h), angle) = rot_rect = minAreaRect(points.astype(np.float32))
-    out_points = boxPoints(rot_rect)
+    out_points = shapely.get_coordinates(
+        shapely.minimum_rotated_rectangle(shapely.multipoints(points))
+    )[:-1]
     if return_angle:
-        return (out_points, angle)
-    return out_points
+        angle = (
+            math.degrees(
+                math.atan2(
+                    out_points[1][1] - out_points[0][1],
+                    out_points[1][0] - out_points[0][0],
+                )
+            )
+            % 90
+        )
+        return (out_points[::-1], angle)
+    return out_points[::-1]
 
 
 def mbr(points):
