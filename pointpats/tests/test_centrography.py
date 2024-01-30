@@ -1,6 +1,8 @@
 # TODO: skyum, dtot, weighted_mean_center, manhattan_median
 import unittest
 import numpy as np
+import shapely
+import pytest
 
 from ..centrography import *
 
@@ -26,6 +28,10 @@ class TestCentrography(unittest.TestCase):
             ]
         )
 
+    @pytest.mark.skipif(
+            shapely.geos_version < (3, 12, 0),
+            reason="Requires GEOS 3.12.0 to use correct algorithm"
+    )
     def test_centrography_mar(self):
         mrr = minimum_rotated_rectangle(self.points)
         known = np.array(
