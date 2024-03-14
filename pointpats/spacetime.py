@@ -1313,7 +1313,8 @@ class KnoxLocal:
             whether to included nonsignificant members of hotspots. While these
             observations are not themselves significant, these still define the spatial
             extent of the cluster, and the the focal observation cannot become
-            significant without their presence.
+            significant without their presence. If True, return all members of a
+            significant hotspot, else return only the significant locations
 
         Returns
         -------
@@ -1347,21 +1348,20 @@ class KnoxLocal:
 
         # if keep_neighbors, we want to include a 'cluster' column denoting which
         # cluster nonsig observations belong to. Need to use a graph for that
-        how = "outer" if keep_neighbors else "inner"
-
         temp_neighbors = self.adjlist[
             (self.adjlist.focal.isin(pdf_sig.index.values))
             | self.adjlist.neighbor.isin(pdf_sig.index.values)
         ]
 
         pdf_sig = pdf_sig.merge(
-            temp_neighbors, how=how, left_index=True, right_on="focal"
+            temp_neighbors, how='outer', left_index=True, right_on="focal"
         ).reset_index(drop=True)
-        if how == "outer":
-            # significant focals can be neighbors of others (dupes)
-            pdf_sig = pdf_sig.groupby("focal").first().reset_index()
-            graph = Graph.from_adjacency(pdf_sig.assign(weight=1))
-            pdf_sig["cluster"] = graph.component_labels.values
+        # significant focals can be neighbors of others (dupes)
+        pdf_sig = pdf_sig.groupby("focal").first().reset_index()
+        graph = Graph.from_adjacency(pdf_sig.assign(weight=1))
+        pdf_sig["cluster"] = graph.component_labels.values
+        if not keep_neighbors :
+            pdf_sig = pdf_sig.dropna(subset=['pvalue'])
 
         return self._gdf[["geometry"]].merge(
             pdf_sig.copy(), left_index=True, right_on="focal"
