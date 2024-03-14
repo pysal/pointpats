@@ -322,7 +322,7 @@ class TestKnoxLocal:
         )
 
     def test_explore(self):
-        gdf = self.gdf
+        gdf = self.gdf.copy()
         gdf.crs = 21096
         numpy.random.seed(12345)
         m = KnoxLocal.from_dataframe(
@@ -339,31 +339,31 @@ class TestKnoxLocal:
 
 
     def test_hotspots_without_neighbors(self):
-        gdf = self.gdf
-        gdf =gdf.set_crs(21096)
+        gdf = self.gdf.copy()
+        gdf = gdf.set_crs(21096)
         numpy.random.seed(1)
         knox = KnoxLocal.from_dataframe(
-            gdf, time_col="T", delta=20, tau=5, keep=True
-        ).hotspots(keep_neighbors=True)
-        assert knox.shape == (2,7)
+            gdf, time_col="T", delta=20, tau=5, 
+        ).hotspots(keep_neighbors=False, inference='analytic')
+        assert knox.shape == (3,7)
 
     def test_hotspots_with_neighbors(self):
-        gdf = self.gdf
+        gdf = self.gdf.copy()
         gdf = gdf.set_crs(21096)
         knox = KnoxLocal.from_dataframe(
-            gdf, time_col="T", delta=20, tau=5, keep=True, 
+            gdf, time_col="T", delta=20, tau=5, 
         ).hotspots(keep_neighbors=True, inference='analytic')
         assert knox.shape == (4,7)
 
     @pytest.mark.mpl_image_compare
     def test_plot(self):
-        gdf = self.gdf
+        gdf = self.gdf.copy()
         gdf.crs = 21096
         fig, ax2 = plt.subplots(figsize=(30,18))
         lk = KnoxLocal.from_dataframe(
             gdf, time_col="T", delta=20, tau=5, keep=True)
         lk.plot(inference='analytic', ax=ax2)
-        return fig
+        assert fig
 
 
 
