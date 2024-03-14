@@ -337,6 +337,24 @@ class TestKnoxLocal:
         )
         assert len(m.to_dict()["children"]) == 5
 
+
+    def test_hotspots_without_neighbors(self):
+        gdf = self.gdf
+        gdf =gdf.set_crs(21096)
+        numpy.random.seed(1)
+        knox = KnoxLocal.from_dataframe(
+            gdf, time_col="T", delta=20, tau=5, keep=True
+        ).hotspots(keep_neighbors=True)
+        assert knox.shape == (2,7)
+
+    def test_hotspots_with_neighbors(self):
+        gdf = self.gdf
+        gdf = gdf.set_crs(21096)
+        knox = KnoxLocal.from_dataframe(
+            gdf, time_col="T", delta=20, tau=5, keep=True, 
+        ).hotspots(keep_neighbors=True, inference='analytic')
+        assert knox.shape == (4,7)
+
     @pytest.mark.mpl_image_compare
     def test_plot(self):
         gdf = self.gdf
