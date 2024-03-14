@@ -2,6 +2,7 @@
 Methods for identifying space-time interaction in spatio-temporal event
 data.
 """
+
 __author__ = (
     "Eli Knaap <eknaap@sdsu.edu>",
     "Nicholas Malizia <nmalizia@asu.edu>",
@@ -1329,7 +1330,8 @@ class KnoxLocal:
                 warn(
                     "Pseudo-p values not availalable. Permutation-based p-values require "
                     "fitting the KnoxLocal class using `permutations` set to a large "
-                    "number. Using analytic p-values instead", stacklevel=1
+                    "number. Using analytic p-values instead",
+                    stacklevel=1,
                 )
                 col = "p_hypergeom"
             else:
@@ -1347,16 +1349,23 @@ class KnoxLocal:
         # cluster nonsig observations belong to. Need to use a graph for that
         how = "outer" if keep_neighbors else "inner"
 
-        pdf_sig = pdf_sig.merge(
-            self.adjlist, how=how, left_index=True, right_on="focal"
-        ).reset_index(drop=True)
-        if how=='outer':
-            # significant focals can be neighbors of others (dupes)
-            pdf_sig = pdf_sig.groupby('focal').first().reset_index()
-            graph = Graph.from_adjacency(pdf_sig.assign(weight=1))
-            pdf_sig['cluster'] = graph.component_labels.values
+        temp_neighbors = self.adjlist[
+            (self.adjlist.focal.isin(pdf_sig.index.values))
+            | self.adjlist.neighbor.isin(pdf_sig.index.values)
+        ]
 
-        return self._gdf[['geometry']].merge(pdf_sig.copy(), left_index=True, right_on='focal')
+        pdf_sig = pdf_sig.merge(
+            temp_neighbors, how=how, left_index=True, right_on="focal"
+        ).reset_index(drop=True)
+        if how == "outer":
+            # significant focals can be neighbors of others (dupes)
+            pdf_sig = pdf_sig.groupby("focal").first().reset_index()
+            graph = Graph.from_adjacency(pdf_sig.assign(weight=1))
+            pdf_sig["cluster"] = graph.component_labels.values
+
+        return self._gdf[["geometry"]].merge(
+            pdf_sig.copy(), left_index=True, right_on="focal"
+        )
 
     def plot(
         self,
@@ -1434,7 +1443,6 @@ class KnoxLocal:
         g[g.color == colors["focal"]].plot(ax=m, color=colors["focal"], **point_kwargs)
 
         if plot_edges:
-
             # edges between hotspot and st-neighbors
             ghs = self.hotspots(crit=crit, inference=inference)
             ghs = ghs.dropna()
@@ -1535,7 +1543,6 @@ class KnoxLocal:
         )
 
         if plot_edges:
-
             # edges between hotspot and st-neighbors
             g = g.set_index("index")
             ghs = self.hotspots(crit=crit, inference=inference)
