@@ -31,12 +31,14 @@ import sys
 import numpy as np
 import warnings
 import copy
+import math
 
 from math import pi as PI
 from scipy.spatial import ConvexHull
 from libpysal.cg import get_angle_between, Ray, is_clockwise
 from scipy.spatial import distance as dist
 from scipy.optimize import minimize
+import shapely
 
 not_clockwise = lambda x: not is_clockwise(x)
 
@@ -81,8 +83,7 @@ def minimum_rotated_rectangle(points, return_angle=False):
     Compute the minimum rotated rectangle for an input point set.
 
     This is the smallest enclosing rectangle (possibly rotated)
-    for the input point set. It is computed using OpenCV2, so
-    if that is not available, then this function will fail.
+    for the input point set. It is computed using Shapely.
 
     Parameters
     ----------
@@ -92,7 +93,6 @@ def minimum_rotated_rectangle(points, return_angle=False):
     return_angle : bool
         whether to return the angle (in degrees) of the angle between
         the horizontal axis of the rectanle and the first side (i.e. length).
-        Computed directly from cv2.minAreaRect.
 
     Returns
     -------
@@ -102,15 +102,21 @@ def minimum_rotated_rectangle(points, return_angle=False):
 
     """
     points = np.asarray(points)
-    try:
-        from cv2 import minAreaRect, boxPoints
-    except (ImportError, ModuleNotFoundError):
-        raise ModuleNotFoundError("OpenCV2 is required to use this function. Please install it with `pip install opencv-contrib-python`")
-    ((x, y), (w, h), angle) = rot_rect = minAreaRect(points.astype(np.float32))
-    out_points = boxPoints(rot_rect)
+    out_points = shapely.get_coordinates(
+        shapely.minimum_rotated_rectangle(shapely.multipoints(points))
+    )[:-1]
     if return_angle:
-        return (out_points, angle)
-    return out_points
+        angle = (
+            math.degrees(
+                math.atan2(
+                    out_points[1][1] - out_points[0][1],
+                    out_points[1][0] - out_points[0][0],
+                )
+            )
+            % 90
+        )
+        return (out_points[::-1], angle)
+    return out_points[::-1]
 
 
 def mbr(points):
@@ -378,8 +384,22 @@ def _skyum_lists(points):
     removed = []
     i = 0
     while True:
-        angles = [_angle(_prec(p, points), p, _succ(p, points),) for p in points]
-        circles = [_circle(_prec(p, points), p, _succ(p, points),) for p in points]
+        angles = [
+            _angle(
+                _prec(p, points),
+                p,
+                _succ(p, points),
+            )
+            for p in points
+        ]
+        circles = [
+            _circle(
+                _prec(p, points),
+                p,
+                _succ(p, points),
+            )
+            for p in points
+        ]
         radii = [c[0] for c in circles]
         lexord = np.lexsort((radii, angles))  # confusing as hell defaults...
         lexmax = lexord[-1]
@@ -506,14 +526,14 @@ def _circle(p, q, r, dmetric=_euclidean_distance):
     else:
         D = 2 * (px * (qy - ry) + qx * (ry - py) + rx * (py - qy))
         center_x = (
-            (px ** 2 + py ** 2) * (qy - ry)
-            + (qx ** 2 + qy ** 2) * (ry - py)
-            + (rx ** 2 + ry ** 2) * (py - qy)
+            (px**2 + py**2) * (qy - ry)
+            + (qx**2 + qy**2) * (ry - py)
+            + (rx**2 + ry**2) * (py - qy)
         ) / float(D)
         center_y = (
-            (px ** 2 + py ** 2) * (rx - qx)
-            + (qx ** 2 + qy ** 2) * (px - rx)
-            + (rx ** 2 + ry ** 2) * (qx - px)
+            (px**2 + py**2) * (rx - qx)
+            + (qx**2 + qy**2) * (px - rx)
+            + (rx**2 + ry**2) * (qx - px)
         ) / float(D)
         radius = _euclidean_distance(center_x, center_y, px, py)
     return radius, center_x, center_y
