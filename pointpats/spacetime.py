@@ -2,6 +2,7 @@
 Methods for identifying space-time interaction in spatio-temporal event
 data.
 """
+
 __author__ = (
     "Eli Knaap <eknaap@sdsu.edu>",
     "Nicholas Malizia <nmalizia@asu.edu>",
@@ -29,6 +30,7 @@ import numpy as np
 import pandas
 import scipy.stats as stats
 from libpysal import cg
+from libpysal.graph import Graph
 from pandas.api.types import is_numeric_dtype
 from scipy.spatial import KDTree
 from scipy.stats import hypergeom, poisson
@@ -1297,7 +1299,7 @@ class KnoxLocal:
             ids=dataframe.index.values,
         )
 
-    def hotspots(self, crit=0.05, inference="permutation"):
+    def hotspots(self, crit=0.05, inference="permutation", keep_neighbors=True):
         """Table of significant space-time clusters that define local hotspots.
 
         Parameters
@@ -1307,6 +1309,12 @@ class KnoxLocal:
         inference : str, optional
             whether p-values should use permutation or analutical inference, by default
             "permutation"
+        keep_neighbors: bool
+            whether to included nonsignificant members of hotspots. While these
+            observations are not themselves significant, these still define the spatial
+            extent of the cluster, and the the focal observation cannot become
+            significant without their presence. If True, return all members of a
+            significant hotspot, else return only the significant locations
 
         Returns
         -------
@@ -1323,7 +1331,8 @@ class KnoxLocal:
                 warn(
                     "Pseudo-p values not availalable. Permutation-based p-values require "
                     "fitting the KnoxLocal class using `permutations` set to a large "
-                    "number. Using analytic p-values instead"
+                    "number. Using analytic p-values instead",
+                    stacklevel=1,
                 )
                 col = "p_hypergeom"
             else:
@@ -1336,11 +1345,27 @@ class KnoxLocal:
         pdf_sig = self._gdf[self._gdf[col] <= crit][[col, "time"]].rename(
             columns={col: "pvalue", "time": "focal_time"}
         )
-        pdf_sig = pdf_sig.merge(
-            self.adjlist, how="inner", left_index=True, right_on="focal"
-        ).reset_index(drop=True)
 
-        return pdf_sig.copy()
+        # if keep_neighbors, we want to include a 'cluster' column denoting which
+        # cluster nonsig observations belong to. Need to use a graph for that
+        temp_neighbors = self.adjlist[
+            (self.adjlist.focal.isin(pdf_sig.index.values))
+            | self.adjlist.neighbor.isin(pdf_sig.index.values)
+        ]
+
+        pdf_sig = pdf_sig.merge(
+            temp_neighbors, how='outer', left_index=True, right_on="focal"
+        ).reset_index(drop=True)
+        # significant focals can be neighbors of others (dupes)
+        pdf_sig = pdf_sig.groupby("focal").first().reset_index()
+        graph = Graph.from_adjacency(pdf_sig.assign(weight=1))
+        pdf_sig["cluster"] = graph.component_labels.values
+        if not keep_neighbors :
+            pdf_sig = pdf_sig.dropna(subset=['pvalue'])
+
+        return self._gdf[["geometry"]].merge(
+            pdf_sig.copy(), left_index=True, right_on="focal"
+        )
 
     def plot(
         self,
@@ -1418,7 +1443,6 @@ class KnoxLocal:
         g[g.color == colors["focal"]].plot(ax=m, color=colors["focal"], **point_kwargs)
 
         if plot_edges:
-
             # edges between hotspot and st-neighbors
             ghs = self.hotspots(crit=crit, inference=inference)
             ghs = ghs.dropna()
@@ -1519,7 +1543,6 @@ class KnoxLocal:
         )
 
         if plot_edges:
-
             # edges between hotspot and st-neighbors
             g = g.set_index("index")
             ghs = self.hotspots(crit=crit, inference=inference)
