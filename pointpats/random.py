@@ -207,7 +207,7 @@ def normal(hull, center=None, cov=None, size=None):
     if isinstance(cov, (int, float)):
         sd = cov
         cov = numpy.eye(2) * sd
-    elif isnstance(cov, numpy.ndarray):
+    elif isinstance(cov, numpy.ndarray):
         if cov.ndim == 2:
             assert cov.shape == (2, 2), "Bivariate covariance matrices must be 2 by 2"
         elif cov.ndim == 3:
