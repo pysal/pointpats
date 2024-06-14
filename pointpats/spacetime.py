@@ -28,6 +28,7 @@ import geopandas as gpd
 import libpysal as lps
 import numpy as np
 import pandas
+import pandas as pd
 import scipy.stats as stats
 from libpysal import cg
 from libpysal.graph import Graph
@@ -1352,6 +1353,13 @@ class KnoxLocal:
             (self.adjlist.focal.isin(pdf_sig.index.values))
             | self.adjlist.neighbor.isin(pdf_sig.index.values)
         ]
+        pdf_sig = pd.concat([pdf_sig,
+            self._gdf[self._gdf.index.isin(temp_neighbors.neighbor.values)
+
+                ][[col, "time"]].rename(
+                columns={col: "pvalue", "time": "focal_time"}
+            )
+        ])
 
         pdf_sig = pdf_sig.merge(
             temp_neighbors, how='outer', left_index=True, right_on="focal"
@@ -1361,7 +1369,7 @@ class KnoxLocal:
         graph = Graph.from_adjacency(pdf_sig.assign(weight=1))
         pdf_sig["cluster"] = graph.component_labels.values
         if not keep_neighbors :
-            pdf_sig = pdf_sig.dropna(subset=['pvalue'])
+            pdf_sig = pdf_sig[pdf_sig.pvalue<=crit]
 
         return self._gdf[["geometry"]].merge(
             pdf_sig.copy(), left_index=True, right_on="focal"
