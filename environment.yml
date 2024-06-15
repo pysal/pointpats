@@ -3,8 +3,11 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - pandas
+  - python
+  - geopandas
   - libpysal
   - matplotlib
+  - numpy
   - pandas
-  - scipy>=0.11
+  - scipy
+  - shapley

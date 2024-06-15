@@ -2,26 +2,26 @@ name: test
 channels:
   - conda-forge
 dependencies:
-  - python=3.11
-  - numpy
-  - pandas
-  - matplotlib
+  - python=3.12
+  - folium
   - libpysal
   - mapclassify
-  - folium
-  # tests
+  - matplotlib
+  - numpy
+  - pandas
   - shapely
-  - pyproj
+  # tests
+  - codecov
   - fiona
   - pytest
   - pytest-cov
-  - codecov
+  - pyproj
   - pip
   - pip:
       - --pre --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple --extra-index-url https://pypi.org/simple
-      - git+https://github.com/geopandas/geopandas.git
-      - git+https://github.com/pysal/libpysal.git
+      - KDEpy
       - scipy
       - scikit-learn
       - statsmodels
-      - KDEpy
+      - git+https://github.com/pysal/libpysal.git
+      - git+https://github.com/geopandas/geopandas.git
