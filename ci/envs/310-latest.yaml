@@ -3,15 +3,15 @@ channels:
   - conda-forge
 dependencies:
   - python=3.10
-  - scipy
+  - geopandas
+  - libpysal
+  - matplotlib
   - numpy
   - pandas
-  - matplotlib
-  - libpysal
+  - scipy
+  - shapely
   # tests
   - scikit-learn
-  - shapely
-  - geopandas
   - statsmodels
   - pytest
   - pytest-cov
