@@ -1,0 +1,6 @@
+﻿pointpats.j
+===========
+
+.. currentmodule:: pointpats
+
+.. autofunction:: j

@@ -1,0 +1,6 @@
+﻿pointpats.j\_test
+=================
+
+.. currentmodule:: pointpats
+
+.. autofunction:: j_test
