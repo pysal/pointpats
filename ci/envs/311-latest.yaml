@@ -16,6 +16,15 @@ dependencies:
   - pytest
   - pytest-cov
   - codecov
+  # docs
+  - nbsphinx
+  - numpydoc
+  - pandoc
+  - sphinx
+  - sphinxcontrib-bibtex
+  - sphinx_bootstrap_theme
+  - mkdocs-jupyter
+  - myst-parser
   - pip
   - pip:
       - KDEpy
