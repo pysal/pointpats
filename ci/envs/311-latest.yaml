@@ -3,15 +3,15 @@ channels:
   - conda-forge
 dependencies:
   - python=3.11
-  - scipy
+  - geopandas
+  - libpysal
+  - matplotlib
   - numpy
   - pandas
-  - matplotlib
-  - libpysal
+  - scipy
+  - shapely
   # tests
   - scikit-learn
-  - shapely
-  - geopandas
   - statsmodels
   - pytest
   - pytest-cov
@@ -19,9 +19,3 @@ dependencies:
   - pip
   - pip:
       - KDEpy
-  # for docs build action (this env only)
-  - nbsphinx
-  - numpydoc
-  - sphinx
-  - sphinxcontrib-bibtex
-  - sphinx_bootstrap_theme

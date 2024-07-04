@@ -335,7 +335,8 @@ class TestKnoxLocal:
                 [0.0008675512091255166, 28.514975377735905],
             ],
         )
-        assert len(m.to_dict()["children"]) == 5
+        # old folium returns 5, new folium returns 3
+        assert len(m.to_dict()["children"]) >= 3
 
 
     def test_hotspots_without_neighbors(self):
