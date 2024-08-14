@@ -1,16 +1,27 @@
-import numpy
 import warnings
-from scipy import spatial, interpolate
 from collections import namedtuple
+
+import geopandas
+import numpy
+import shapely
+from scipy import interpolate, spatial
+
 from .geometry import (
-    area as _area,
-    k_neighbors as _k_neighbors,
-    build_best_tree as _build_best_tree,
-    prepare_hull as _prepare_hull,
     TREE_TYPES,
 )
+from .geometry import (
+    area as _area,
+)
+from .geometry import (
+    build_best_tree as _build_best_tree,
+)
+from .geometry import (
+    k_neighbors as _k_neighbors,
+)
+from .geometry import (
+    prepare_hull as _prepare_hull,
+)
 from .random import poisson
-
 
 __all__ = [
     "f",
@@ -48,6 +59,9 @@ def _prepare(coordinates, support, distances, metric, hull, edge_correction):
     # Throw early if edge correction is requested
     if edge_correction is not None:
         raise NotImplementedError("Edge correction is not currently implemented.")
+
+    if isinstance(coordinates, geopandas.GeoDataFrame | geopandas.GeoSeries):
+        coordinates = shapely.get_coordinates(coordinates.geometry)
 
     # cast to coordinate array
     if isinstance(coordinates, TREE_TYPES):
@@ -127,7 +141,7 @@ def f(
 
     Parameters
     ----------
-    coordinates : numpy.ndarray of shape (n,2)
+    coordinates : geopandas object | numpy.ndarray of shape (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
@@ -211,7 +225,7 @@ def g(
 
     Parameters
     -----------
-    coordinates : numpy.ndarray of shape (n,2)
+    coordinates : geopandas object | numpy.ndarray of shape (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
@@ -301,7 +315,7 @@ def j(
 
     Parameters
     -----------
-    coordinates : numpy.ndarray, (n,2)
+    coordinates : geopandas object | numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
@@ -390,7 +404,7 @@ def k(
     This function counts the number of pairs of points that are closer than a given distance.
     As d increases, K approaches the number of point pairs.
 
-    coordinates : numpy.ndarray, (n,2)
+    coordinates : geopandas object | numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
@@ -459,7 +473,7 @@ def l(
 
     Parameters
     ----------
-    coordinates : numpy.ndarray, (n,2)
+    coordinates : geopandas object | numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
@@ -541,6 +555,9 @@ def _ripley_test(
     n_simulations=9999,
     **kwargs,
 ):
+    if isinstance(coordinates, geopandas.GeoDataFrame | geopandas.GeoSeries):
+        coordinates = shapely.get_coordinates(coordinates.geometry)
+
     stat_function, result_container = _ripley_dispatch.get(calltype)
     core_kwargs = dict(
         support=support,
@@ -621,7 +638,7 @@ def f_test(
 
     Parameters
     -----------
-    coordinates : numpy.ndarray, (n,2)
+    coordinates : geopandas object | numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
@@ -686,7 +703,7 @@ def g_test(
 
     Parameters
     ----------
-    coordinates : numpy.ndarray, (n,2)
+    coordinates : geopandas object | numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
@@ -749,7 +766,7 @@ def j_test(
     When the J function is consistently below 1, then it indicates clustering.
     When consistently above 1, it suggests dispersion.
 
-    coordinates : numpy.ndarray, (n,2)
+    coordinates : geopandas object | numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
@@ -828,7 +845,7 @@ def k_test(
 
     Parameters
     ----------
-    coordinates : numpy.ndarray, (n,2)
+    coordinates : geopandas object | numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
@@ -894,7 +911,7 @@ def l_test(
 
     Parameters
     ----------
-    coordinates : numpy.ndarray, (n,2)
+    coordinates : geopandas object | numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
