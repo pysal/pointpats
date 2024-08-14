@@ -3,6 +3,7 @@ from collections import namedtuple
 
 import geopandas
 import numpy
+import shapely
 from scipy import interpolate, spatial
 
 from .geometry import (
@@ -60,7 +61,7 @@ def _prepare(coordinates, support, distances, metric, hull, edge_correction):
         raise NotImplementedError("Edge correction is not currently implemented.")
 
     if isinstance(coordinates, geopandas.GeoDataFrame | geopandas.GeoSeries):
-        coordinates = coordinates.get_coordinates().values
+        coordinates = shapely.get_coordinates(coordinates.geometry)
 
     # cast to coordinate array
     if isinstance(coordinates, TREE_TYPES):
@@ -555,7 +556,7 @@ def _ripley_test(
     **kwargs,
 ):
     if isinstance(coordinates, geopandas.GeoDataFrame | geopandas.GeoSeries):
-        coordinates = coordinates.get_coordinates().values
+        coordinates = shapely.get_coordinates(coordinates.geometry)
 
     stat_function, result_container = _ripley_dispatch.get(calltype)
     core_kwargs = dict(
