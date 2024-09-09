@@ -2,11 +2,12 @@
 Planar Point Pattern Class
 
 """
+
 import numpy as np
 import sys
 from libpysal.cg import KDTree
 from .centrography import hull
-from .window import as_window,  poly_from_bbox
+from .window import as_window, poly_from_bbox
 from .util import cached_property
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -14,7 +15,7 @@ from matplotlib.collections import PatchCollection
 from matplotlib.patches import Polygon
 
 __author__ = "Serge Rey sjsrey@gmail.com"
-__all__ = ['PointPattern']
+__all__ = ["PointPattern"]
 
 if sys.version_info[0] > 2:
     xrange = range
@@ -63,8 +64,8 @@ class PointPattern(object):
     7638.200000000001
 
     """
-    def __init__(self, points, window=None, names=None, coord_names=None):
 
+    def __init__(self, points, window=None, names=None, coord_names=None):
         # first two series in df are x, y unless coor_names and names are
         # specified
 
@@ -75,12 +76,12 @@ class PointPattern(object):
             if names is not None:
                 coord_names = names[:2]
             else:
-                coord_names = ['x', 'y']
+                coord_names = ["x", "y"]
         if names is None:
             col_names = coord_names
             if p > 2:
                 for m in range(2, p):
-                    col_names.append("mark_{}".format(m-2))
+                    col_names.append("mark_{}".format(m - 2))
             coord_names = coord_names[:2]
         else:
             col_names = names
@@ -143,7 +144,7 @@ class PointPattern(object):
 
         :class:`.window.Window`
         """
-        if not hasattr(self, '_window') or self._window is None:
+        if not hasattr(self, "_window") or self._window is None:
             # use bbox as window
             self.set_window(as_window(poly_from_bbox(self.mbb)))
         return self._window
@@ -151,11 +152,11 @@ class PointPattern(object):
     window = property(get_window, set_window)
 
     def summary(self):
-        '''
+        """
         Description of the point pattern.
-        '''
+        """
 
-        print('Point Pattern')
+        print("Point Pattern")
         print("{} points".format(self.n))
         print("Bounding rectangle [({},{}), ({},{})]".format(*self.mbb))
         print("Area of window: {}".format(self.window.area))
@@ -165,13 +166,12 @@ class PointPattern(object):
     def add_marks(self, marks, mark_names=None):
         if mark_names is None:
             nm = range(len(marks))
-            mark_names = ["mark_{}".format(self._n_marks+1+j) for j in nm]
+            mark_names = ["mark_{}".format(self._n_marks + 1 + j) for j in nm]
         for name, mark in zip(mark_names, marks):
             self.df[name] = mark
             self._n_marks += 1
 
-    def plot(self, window=False, title="Point Pattern", hull=False,
-             get_ax=False):
+    def plot(self, window=False, title="Point Pattern", hull=False, get_ax=False):
         """
         Plot function for a point pattern.
 
@@ -187,7 +187,7 @@ class PointPattern(object):
                   pattern. If not, don't plot convex hull.
         get_ax  : boolean
                   If get_ax is True, return the current plot ax.
-                  
+
         Returns
         -------
         ax      : matplotlib.axes._subplots.AxesSubplot
@@ -195,7 +195,7 @@ class PointPattern(object):
 
         """
         fig, ax = plt.subplots()
-        plt.plot(self.df[self._x], self.df[self._y], '.')
+        plt.plot(self.df[self._x], self.df[self._y], ".")
         # plt.scatter(self.df[self._x], self.df[self._y])
         plt.title(title)
         if window:
@@ -234,7 +234,7 @@ class PointPattern(object):
         Area of minimum bounding box
         """
 
-        return np.product(self.mbb[[2, 3]]-self.mbb[[0, 1]])
+        return np.prod(self.mbb[[2, 3]] - self.mbb[[0, 1]])
 
     mbb_area = cached_property(_mbb_area)
 
@@ -253,7 +253,7 @@ class PointPattern(object):
         One-quarter the smallest side of the mbb.
         """
         w, s, e, n = self.mbb
-        return 0.25 * min(e-w, n-s)
+        return 0.25 * min(e - w, n - s)
 
     rot = cached_property(_rot)
 
@@ -261,7 +261,7 @@ class PointPattern(object):
         """
         Intensity based on minimum bounding box
         """
-        return self.n * 1. / self.mbb_area
+        return self.n * 1.0 / self.mbb_area
 
     lambda_mbb = cached_property(_lambda_mbb)
 
@@ -304,11 +304,11 @@ class PointPattern(object):
         Area of convex hull
         """
         h = self.hull
-        if not np.alltrue(h[0] == h[-1]):
+        if not np.all(h[0] == h[-1]):
             # not in closed cartographic form
             h = np.vstack((h, h[0]))
         s = h[:-1, 0] * h[1:, 1] - h[1:, 0] * h[:-1, 1]
-        return s.sum() / 2.
+        return s.sum() / 2.0
 
     hull_area = cached_property(_hull_area)
 
@@ -316,12 +316,13 @@ class PointPattern(object):
         """
         Intensity based on convex hull
         """
-        return self.n * 1. / self.hull_area
+        return self.n * 1.0 / self.hull_area
 
     lambda_hull = cached_property(_lambda_hull)
 
     def _build_tree(self):
         return KDTree(self.points)
+
     tree = cached_property(_build_tree)
 
     def knn(self, k=1):
@@ -343,8 +344,8 @@ class PointPattern(object):
                nearest neighbor
         """
         if k < 1:
-            raise ValueError('k must be at least 1')
-        nn = self.tree.query(self.tree.data, k=k+1)
+            raise ValueError("k must be at least 1")
+        nn = self.tree.query(self.tree.data, k=k + 1)
         return nn[1][:, 1:], nn[0][:, 1:]
 
     def _nn_sum(self):
@@ -419,7 +420,7 @@ class PointPattern(object):
                nearest neighbor
         """
         if k < 1:
-            raise ValueError('k must be at least 1')
+            raise ValueError("k must be at least 1")
         try:
             nn = self.tree.query(np.asarray(other.points), k=k)
         except:
@@ -447,10 +448,10 @@ class PointPattern(object):
         pps = [self.df[self.df[mark] == v] for v in uv]
         names = self.df.columns.values.tolist()
         cnames = self.coord_names
-        return[PointPattern(pp, names=names, coord_names=cnames) for pp in pps]
+        return [PointPattern(pp, names=names, coord_names=cnames) for pp in pps]
 
     def unique(self):
-        """ Remove duplicate points in the point pattern.
+        """Remove duplicate points in the point pattern.
 
         Two points in a point pattern are deemed to be identical if their
         coordinates are the same, and their marks are the same (if any)
@@ -475,8 +476,9 @@ class PointPattern(object):
         coord_names = self.coord_names
         window = self.set_window
         unique_df = self.df.drop_duplicates()
-        return PointPattern(unique_df, names=names, coord_names=coord_names,
-                            window=window)
+        return PointPattern(
+            unique_df, names=names, coord_names=coord_names, window=window
+        )
 
     def superimpose(self, point_pattern):
         """Returns a superimposed point pattern.
@@ -511,14 +513,16 @@ class PointPattern(object):
         names_pp2 = point_pattern.df.columns.values.tolist()
         cnames_pp2 = point_pattern.coord_names
         if names_pp1 != names_pp2 or cnames_pp1 != cnames_pp2:
-            raise TypeError('Both point patterns should have similar\
-                            attributes and spatial coordinates ')
+            raise TypeError(
+                "Both point patterns should have similar\
+                            attributes and spatial coordinates "
+            )
         pp = pd.concat((self.df, point_pattern.df))
         pp = pp.drop_duplicates()
         return PointPattern(pp, names=names_pp1, coord_names=cnames_pp1)
 
     def flip_coordinates(self):
-        """ Flips the coordinates of a point pattern.
+        """Flips the coordinates of a point pattern.
 
         Doesn't change the structure of data frame. This function swaps
         `_x` and `_y` variables, which are used to represent coordinates.
@@ -527,5 +531,5 @@ class PointPattern(object):
 
     # Pandas facade
     def _facade(self):
-            self.head = self.df.head
-            self.tail = self.df.tail
+        self.head = self.df.head
+        self.tail = self.df.tail
