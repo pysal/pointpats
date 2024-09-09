@@ -4,7 +4,9 @@ from pointpats import distance_statistics as ripley, geometry, random
 from libpysal.cg import alpha_shape_auto
 import shapely
 import warnings
+import geopandas
 import pytest
+
 
 points = numpy.asarray(
     [
@@ -22,6 +24,8 @@ points = numpy.asarray(
         [54.46, 8.48],
     ]
 )
+
+points_gs = geopandas.GeoSeries.from_xy(*points.T)
 
 tree = spatial.KDTree(points)
 
@@ -207,8 +211,8 @@ def test_simulate():
     # cluster poisson
     # cluster normal
 
-
-def test_f():
+@pytest.mark.parametrize("points", [points, points_gs], ids=["numpy.ndarray", "GeoSeries"])
+def test_f(points):
     # -------------------------------------------------------------------------#
     # Check f function has consistent performance
 
@@ -234,8 +238,8 @@ def test_f():
     )
     assert f_test.simulations.shape == (99, 15)
 
-
-def test_g():
+@pytest.mark.parametrize("points", [points, points_gs], ids=["numpy.ndarray", "GeoSeries"])
+def test_g(points):
     # -------------------------------------------------------------------------#
     # Check f function works, has statistical results that are consistent
 
@@ -257,8 +261,8 @@ def test_g():
     )
     assert g_test.simulations.shape == (99, 15)
 
-
-def test_j():
+@pytest.mark.parametrize("points", [points, points_gs], ids=["numpy.ndarray", "GeoSeries"])
+def test_j(points):
     # -------------------------------------------------------------------------#
     # Check j function works, matches manual, is truncated correctly
 
@@ -282,8 +286,8 @@ def test_j():
 
     numpy.testing.assert_allclose(j_test.statistic, manual_j[:4], atol=0.1, rtol=0.05)
 
-
-def test_k():
+@pytest.mark.parametrize("points", [points, points_gs], ids=["numpy.ndarray", "GeoSeries"])
+def test_k(points):
     # -------------------------------------------------------------------------#
     # Check K function works, matches a manual, slower explicit computation
 
@@ -297,8 +301,8 @@ def test_k():
         k_test.statistic, manual_unscaled_k * 2 / n / intensity
     )
 
-
-def test_l():
+@pytest.mark.parametrize("points", [points, points_gs], ids=["numpy.array", "GeoSeries"])
+def test_l(points):
     # -------------------------------------------------------------------------#
     # Check L Function works, can be linearized, and has the right value
     _, k = ripley.k(points, support=support)
