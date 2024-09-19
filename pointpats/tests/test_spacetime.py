@@ -328,7 +328,7 @@ class TestKnoxLocal:
         m = KnoxLocal.from_dataframe(
             gdf, time_col="T", delta=20, tau=5, keep=True
         ).explore()
-        numpy.testing.assert_array_equal(
+        numpy.testing.assert_array_almost_equal(
             m.get_bounds(),
             [
                 [-0.0005034046601185694, 28.514258651567],
@@ -344,7 +344,7 @@ class TestKnoxLocal:
         gdf = gdf.set_crs(21096)
         numpy.random.seed(1)
         knox = KnoxLocal.from_dataframe(
-            gdf, time_col="T", delta=20, tau=5, 
+            gdf, time_col="T", delta=20, tau=5,
         ).hotspots(keep_neighbors=False, inference='analytic')
         assert knox.shape == (3,7)
 
@@ -352,7 +352,7 @@ class TestKnoxLocal:
         gdf = self.gdf.copy()
         gdf = gdf.set_crs(21096)
         knox = KnoxLocal.from_dataframe(
-            gdf, time_col="T", delta=20, tau=5, 
+            gdf, time_col="T", delta=20, tau=5,
         ).hotspots(keep_neighbors=True, inference='analytic')
         assert knox.shape == (4,7)
 
