@@ -1,0 +1,6 @@
+﻿pointpats.plot\_density
+=======================
+
+.. currentmodule:: pointpats
+
+.. autofunction:: plot_density
