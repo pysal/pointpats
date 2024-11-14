@@ -11,7 +11,6 @@ TODO
 __author__ = "Serge Rey sjsrey@gmail.com"
 
 __all__ = [
-    "mbr",
     "hull",
     "mean_center",
     "weighted_mean_center",
@@ -27,18 +26,18 @@ __all__ = [
 ]
 
 
-import sys
-import numpy as np
-import warnings
 import copy
 import math
+import sys
+import warnings
+from functools import singledispatch
 
-from math import pi as PI
-from scipy.spatial import ConvexHull
-from libpysal.cg import get_angle_between, Ray, is_clockwise
-from scipy.spatial import distance as dist
-from scipy.optimize import minimize
+import geopandas as gpd
+import numpy as np
 import shapely
+from libpysal.cg import is_clockwise
+from scipy.optimize import minimize
+from scipy.spatial import ConvexHull
 
 not_clockwise = lambda x: not is_clockwise(x)
 
@@ -46,6 +45,7 @@ MAXD = sys.float_info.max
 MIND = sys.float_info.min
 
 
+@singledispatch
 def minimum_bounding_rectangle(points):
     """
     Find minimum bounding rectangle of a point array.
@@ -67,10 +67,15 @@ def minimum_bounding_rectangle(points):
              upmost value of the vertices of minimum bounding rectangle.
 
     """
+    raise NotImplementedError
+
+
+@minimum_bounding_rectangle.register
+def _(points: np.ndarray):
     points = np.asarray(points)
     min_x = min_y = MAXD
     max_x = max_y = MIND
-    x, y = zip(*points)
+    x, y = zip(*points, strict=True)
     min_x = min(x)
     min_y = min(y)
     max_x = max(x)
@@ -78,6 +83,12 @@ def minimum_bounding_rectangle(points):
     return min_x, min_y, max_x, max_y
 
 
+@minimum_bounding_rectangle.register
+def _(points: gpd.GeoSeries | gpd.GeoDataFrame):
+    return shapely.envelope(shapely.geometrycollections(points.geometry.values))
+
+
+@singledispatch
 def minimum_rotated_rectangle(points, return_angle=False):
     """
     Compute the minimum rotated rectangle for an input point set.
@@ -101,36 +112,43 @@ def minimum_rotated_rectangle(points, return_angle=False):
     also return the angle (in degrees) of the rotated rectangle.
 
     """
-    points = np.asarray(points)
+    return NotImplementedError
+
+
+def _get_mrr_angle(out_points):
+    angle = (
+        math.degrees(
+            math.atan2(
+                out_points[1][1] - out_points[0][1],
+                out_points[1][0] - out_points[0][0],
+            )
+        )
+        % 90
+    )
+    return angle
+
+
+@minimum_rotated_rectangle.register
+def _(points: np.ndarray, return_angle: bool = False):
     out_points = shapely.get_coordinates(
         shapely.minimum_rotated_rectangle(shapely.multipoints(points))
     )[:-1]
     if return_angle:
-        angle = (
-            math.degrees(
-                math.atan2(
-                    out_points[1][1] - out_points[0][1],
-                    out_points[1][0] - out_points[0][0],
-                )
-            )
-            % 90
-        )
-        return (out_points[::-1], angle)
+        return (out_points[::-1], _get_mrr_angle(out_points))
     return out_points[::-1]
 
 
-def mbr(points):
-    warnings.warn(
-        "This function will be deprecated in the next release of pointpats.",
-        FutureWarning,
-        stacklevel=2,
-    )
-    return minimum_bounding_rectangle(points)
+@minimum_rotated_rectangle.register
+def _(points: gpd.GeoSeries | gpd.GeoDataFrame, return_angle: bool = False):
+    rectangle = shapely.minimum_rotated_rectangle(shapely.multipoints(points.geometry))
+
+    if return_angle:
+        out_points = shapely.get_coordinates(rectangle)[:-1]
+        return (rectangle, _get_mrr_angle(out_points))
+    return rectangle
 
 
-mbr.__doc__ = minimum_bounding_rectangle.__doc__
-
-
+@singledispatch
 def hull(points):
     """
     Find convex hull of a point array.
@@ -145,12 +163,25 @@ def hull(points):
     _     : array
             (h,2), points defining the hull in counterclockwise order.
     """
+    try:
+        points = np.asarray(points)
+        return hull(points)
+    except AttributeError:
+        raise NotImplementedError
 
-    points = np.asarray(points)
+
+@hull.register
+def _(points: np.ndarray):
     h = ConvexHull(points)
     return points[h.vertices]
 
 
+@hull.register
+def _(points: gpd.GeoSeries | gpd.GeoDataFrame):
+    return shapely.convex_hull(shapely.multipoints(points.geometry))
+
+
+@singledispatch
 def mean_center(points):
     """
     Find mean center of a point array.
@@ -165,11 +196,19 @@ def mean_center(points):
     _     : array
             (2,), (x,y) coordinates of the mean center.
     """
+    raise NotImplementedError
 
+
+@mean_center.register
+def _(points: np.ndarray):
     points = np.asarray(points)
     return points.mean(axis=0)
 
 
+@mean_center.register
+def _(points: gpd.GeoSeries | gpd.GeoDataFrame):
+    coords = shapely.get_coordinates(points.geometry)
+    return shapely.Point(coords.mean(axis=0))
 
 
 def weighted_mean_center(points, weights):
