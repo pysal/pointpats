@@ -20,7 +20,6 @@ __all__ = [
     "ellipse",
     "minimum_rotated_rectangle",
     "minimum_bounding_rectangle",
-    "skyum",
     "dtot",
     "_circle",
 ]
@@ -31,6 +30,7 @@ import math
 import sys
 import warnings
 from functools import singledispatch
+from typing import Union
 
 import geopandas as gpd
 import numpy as np
@@ -67,7 +67,11 @@ def minimum_bounding_rectangle(points):
              upmost value of the vertices of minimum bounding rectangle.
 
     """
-    raise NotImplementedError
+    try:
+        points = np.asarray(points)
+        return minimum_bounding_rectangle(points)
+    except AttributeError as e:
+        raise NotImplementedError from e
 
 
 @minimum_bounding_rectangle.register
@@ -84,7 +88,7 @@ def _(points: np.ndarray):
 
 
 @minimum_bounding_rectangle.register
-def _(points: gpd.GeoSeries | gpd.GeoDataFrame):
+def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
     return shapely.envelope(shapely.geometrycollections(points.geometry.values))
 
 
@@ -112,7 +116,11 @@ def minimum_rotated_rectangle(points, return_angle=False):
     also return the angle (in degrees) of the rotated rectangle.
 
     """
-    return NotImplementedError
+    try:
+        points = np.asarray(points)
+        return minimum_rotated_rectangle(points, return_angle=return_angle)
+    except AttributeError as e:
+        raise NotImplementedError from e
 
 
 def _get_mrr_angle(out_points):
@@ -139,7 +147,7 @@ def _(points: np.ndarray, return_angle: bool = False):
 
 
 @minimum_rotated_rectangle.register
-def _(points: gpd.GeoSeries | gpd.GeoDataFrame, return_angle: bool = False):
+def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame], return_angle: bool = False):
     rectangle = shapely.minimum_rotated_rectangle(shapely.multipoints(points.geometry))
 
     if return_angle:
@@ -166,8 +174,8 @@ def hull(points):
     try:
         points = np.asarray(points)
         return hull(points)
-    except AttributeError:
-        raise NotImplementedError
+    except AttributeError as e:
+        raise NotImplementedError from e
 
 
 @hull.register
@@ -177,7 +185,7 @@ def _(points: np.ndarray):
 
 
 @hull.register
-def _(points: gpd.GeoSeries | gpd.GeoDataFrame):
+def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
     return shapely.convex_hull(shapely.multipoints(points.geometry))
 
 
@@ -196,21 +204,25 @@ def mean_center(points):
     _     : array
             (2,), (x,y) coordinates of the mean center.
     """
-    raise NotImplementedError
+    try:
+        points = np.asarray(points)
+        return mean_center(points)
+    except AttributeError as e:
+        raise NotImplementedError from e
 
 
 @mean_center.register
 def _(points: np.ndarray):
-    points = np.asarray(points)
     return points.mean(axis=0)
 
 
 @mean_center.register
-def _(points: gpd.GeoSeries | gpd.GeoDataFrame):
+def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
     coords = shapely.get_coordinates(points.geometry)
-    return shapely.Point(coords.mean(axis=0))
+    return shapely.Point(mean_center(coords))
 
 
+@singledispatch
 def weighted_mean_center(points, weights):
     """
     Find weighted mean center of a marked point pattern.
@@ -227,13 +239,28 @@ def weighted_mean_center(points, weights):
     _      : array
              (2,), (x,y) coordinates of the weighted mean center.
     """
+    try:
+        points = np.asarray(points)
+        return weighted_mean_center(points, weights)
+    except AttributeError as e:
+        raise NotImplementedError from e
 
+
+@weighted_mean_center.register
+def _(points: np.ndarray, weights):
     points, weights = np.asarray(points), np.asarray(weights)
     w = weights * 1.0 / weights.sum()
     w.shape = (1, len(points))
     return np.dot(w, points)[0]
 
 
+@weighted_mean_center.register
+def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame], weights):
+    coords = shapely.get_coordinates(points.geometry)
+    return shapely.Point(weighted_mean_center(coords, weights))
+
+
+@singledispatch
 def manhattan_median(points):
     """
     Find manhattan median of a point array.
@@ -248,14 +275,29 @@ def manhattan_median(points):
     _      : array
              (2,), (x,y) coordinates of the manhattan median.
     """
+    try:
+        points = np.asarray(points)
+        return manhattan_median(points)
+    except AttributeError as e:
+        raise NotImplementedError from e
 
-    points = np.asarray(points)
+
+@manhattan_median.register
+def _(points: np.ndarray):
     if not len(points) % 2:
-        s = "Manhattan Median is not unique for even point patterns."
-        warnings.warn(s)
+        warnings.warn(
+            "Manhattan Median is not unique for even point patterns.", stacklevel=3
+        )
     return np.median(points, axis=0)
 
 
+@manhattan_median.register
+def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
+    coords = shapely.get_coordinates(points.geometry)
+    return shapely.Point(manhattan_median(coords))
+
+
+@singledispatch
 def std_distance(points):
     """
     Calculate standard distance of a point array.
@@ -270,13 +312,27 @@ def std_distance(points):
     _      : float
              standard distance.
     """
+    try:
+        points = np.asarray(points)
+        return std_distance(points)
+    except AttributeError as e:
+        raise NotImplementedError from e
 
-    points = np.asarray(points)
-    n, p = points.shape
+
+@std_distance.register
+def _(points: np.ndarray):
+    n, _ = points.shape
     m = points.mean(axis=0)
     return np.sqrt(((points * points).sum(axis=0) / n - m * m).sum())
 
 
+@std_distance.register
+def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
+    coords = shapely.get_coordinates(points.geometry)
+    return std_distance(coords)
+
+
+@singledispatch
 def ellipse(points):
     """
     Calculate parameters of standard deviational ellipse for a point pattern.
@@ -301,9 +357,16 @@ def ellipse(points):
 
     https://www.icpsr.umich.edu/CrimeStat/files/CrimeStatChapter.4.pdf
     """
+    try:
+        points = np.asarray(points)
+        return ellipse(points)
+    except AttributeError as e:
+        raise NotImplementedError from e
 
-    points = np.asarray(points)
-    n, k = points.shape
+
+@ellipse.register
+def _(points: np.ndarray):
+    n, _ = points.shape
     x = points[:, 0]
     y = points[:, 1]
     xd = x - x.mean()
@@ -322,6 +385,13 @@ def ellipse(points):
     return np.sqrt(sd_x), np.sqrt(sd_y), theta
 
 
+@ellipse.register
+def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
+    coords = shapely.get_coordinates(points.geometry)
+    return ellipse(coords)
+
+
+@singledispatch
 def dtot(coord, points):
     """
     Sum of Euclidean distances between event points and a selected point.
@@ -339,13 +409,30 @@ def dtot(coord, points):
               sum of Euclidean distances.
 
     """
-    points = np.asarray(points)
+    try:
+        coord = np.asarray(coord)
+        points = np.asarray(points)
+        return dtot(coord, points)
+    except AttributeError as e:
+        raise NotImplementedError from e
+
+
+@dtot.register
+def _(coord: np.ndarray, points: np.ndarray):
     xd = points[:, 0] - coord[0]
     yd = points[:, 1] - coord[1]
     d = np.sqrt(xd * xd + yd * yd).sum()
     return d
 
 
+@dtot.register
+def _(coord: shapely.Point, points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
+    coord = shapely.get_coordinates(coord).flatten()
+    points = shapely.get_coordinates(points.geometry)
+    return dtot(coord, points)
+
+
+@singledispatch
 def euclidean_median(points):
     """
     Calculate the Euclidean median for a point pattern.
@@ -361,12 +448,27 @@ def euclidean_median(points):
             (2,), (x,y) coordinates of the Euclidean median.
 
     """
-    points = np.asarray(points)
+    try:
+        points = np.asarray(points)
+        return euclidean_median(points)
+    except AttributeError as e:
+        raise NotImplementedError from e
+
+
+@euclidean_median.register
+def _(points: np.ndarray):
     start = mean_center(points)
     res = minimize(dtot, start, args=(points,))
     return res["x"]
 
 
+@euclidean_median.register
+def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
+    coords = shapely.get_coordinates(points.geometry)
+    return euclidean_median(coords)
+
+
+@singledispatch
 def minimum_bounding_circle(points):
     """
     Implements Skyum (1990)'s algorithm for the minimum bounding circle in R^2.
@@ -390,34 +492,39 @@ def minimum_bounding_circle(points):
     -------
     (x,y),center for the minimum bounding circle.
     """
+    try:
+        points = np.asarray(points)
+        return minimum_bounding_circle(points)
+    except AttributeError as e:
+        raise NotImplementedError from e
+
+
+@minimum_bounding_circle.register
+def _(points: np.ndarray):
+    try:
+        from numba import njit
+
+        HAS_NUMBA = True
+    except ImportError:
+        HAS_NUMBA = False
     points = hull(points)
     if not_clockwise(points):
         points = points[::-1]
         if not_clockwise(points):
             raise Exception("Points are neither clockwise nor counterclockwise")
     POINTS = copy.deepcopy(points)
-    removed = []
-    i = 0
-    if HAS_NUMBA:
+    if HAS_NUMBA:  # noqa: SIM108
         circ = _skyum_numba(POINTS)[0]
     else:
         circ = _skyum_lists(POINTS)[0]
     return (circ[1], circ[2]), circ[0]
 
 
-def skyum(points):
-    warnings.warn(
-        "This function will be deprecated in the next release of pointpats.",
-        FutureWarning,
-        stacklevel=2,
-    )
-    return minimum_bounding_circle(points)
-
-
-skyum.__doc__ = (
-    "WARNING: This function is deprecated in favor of minimum_bounding_circle\n"
-    + minimum_bounding_circle.__doc__
-)
+@minimum_bounding_circle.register
+def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
+    coords = shapely.get_coordinates(points.geometry)
+    (x, y), r = minimum_bounding_circle(coords)
+    return shapely.Point(x, y).buffer(r)
 
 
 def _skyum_lists(points):
@@ -493,7 +600,6 @@ try:
         # the maximum radius for the largest angle
         lexmax = (radii * (angles == angle_max)).argmax()
 
-        candidate = (lexmax - 1) % n, lexmax, (lexmax + 1) % n
         if angles[lexmax] <= (np.pi / 2.0):
             return True, points, lexmax, circles[lexmax]
         else:
@@ -511,6 +617,9 @@ except ModuleNotFoundError:
 
 @njit
 def _angle(p, q, r):
+    p = np.asarray(p)
+    q = np.asarray(q)
+    r = np.asarray(r)
     pq = p - q
     rq = r - q
     magnitudes = np.linalg.norm(pq) * np.linalg.norm(rq)
