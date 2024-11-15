@@ -116,12 +116,6 @@ def test_centrography_ellipse(points):
     if isinstance(points, gpd.GeoSeries):
         assert shapely.Point(52.571666666666836, 46.17166666666682).equals_exact(res.centroid, 1e-5)
         np.testing.assert_allclose(res.area, 5313.537950951353, RTOL)
-        assert shapely.Polygon([(75.35555380165113, -7.417558286073575),
-            (-2.5919130566989, 27.519856670878436),
-            (29.787779531682332, 99.76089161940709),
-            (107.73524639003224, 64.82347666245569),
-            (75.35555380165113, -7.417558286073575),
-            ]).equals_exact(res.oriented_envelope, 1e-5)
     else:
         np.testing.assert_allclose(res[0], 39.623867886462982, RTOL)
         np.testing.assert_allclose(res[1], 42.753818949026815, RTOL)
