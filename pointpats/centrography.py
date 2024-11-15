@@ -30,11 +30,11 @@ import math
 import sys
 import warnings
 from functools import singledispatch
-from typing import Union
 
 import geopandas as gpd
 import numpy as np
 import shapely
+from geopandas.base import GeoPandasBase
 from libpysal.cg import is_clockwise
 from scipy.optimize import minimize
 from scipy.spatial import ConvexHull
@@ -88,7 +88,7 @@ def _(points: np.ndarray):
 
 
 @minimum_bounding_rectangle.register
-def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
+def _(points: GeoPandasBase):
     return shapely.envelope(shapely.geometrycollections(points.geometry.values))
 
 
@@ -147,7 +147,7 @@ def _(points: np.ndarray, return_angle: bool = False):
 
 
 @minimum_rotated_rectangle.register
-def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame], return_angle: bool = False):
+def _(points: GeoPandasBase, return_angle: bool = False):
     rectangle = shapely.minimum_rotated_rectangle(shapely.multipoints(points.geometry))
 
     if return_angle:
@@ -185,7 +185,7 @@ def _(points: np.ndarray):
 
 
 @hull.register
-def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
+def _(points: GeoPandasBase):
     return shapely.convex_hull(shapely.multipoints(points.geometry))
 
 
@@ -217,7 +217,7 @@ def _(points: np.ndarray):
 
 
 @mean_center.register
-def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
+def _(points: GeoPandasBase):
     coords = shapely.get_coordinates(points.geometry)
     return shapely.Point(mean_center(coords))
 
@@ -255,7 +255,7 @@ def _(points: np.ndarray, weights):
 
 
 @weighted_mean_center.register
-def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame], weights):
+def _(points: GeoPandasBase, weights):
     coords = shapely.get_coordinates(points.geometry)
     return shapely.Point(weighted_mean_center(coords, weights))
 
@@ -292,7 +292,7 @@ def _(points: np.ndarray):
 
 
 @manhattan_median.register
-def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
+def _(points: GeoPandasBase):
     coords = shapely.get_coordinates(points.geometry)
     return shapely.Point(manhattan_median(coords))
 
@@ -327,7 +327,7 @@ def _(points: np.ndarray):
 
 
 @std_distance.register
-def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
+def _(points: GeoPandasBase):
     coords = shapely.get_coordinates(points.geometry)
     return std_distance(coords)
 
@@ -386,7 +386,7 @@ def _(points: np.ndarray):
 
 
 @ellipse.register
-def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
+def _(points: GeoPandasBase):
     coords = shapely.get_coordinates(points.geometry)
     return ellipse(coords)
 
@@ -426,7 +426,7 @@ def _(coord: np.ndarray, points: np.ndarray):
 
 
 @dtot.register
-def _(coord: shapely.Point, points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
+def _(coord: shapely.Point, points: GeoPandasBase):
     coord = shapely.get_coordinates(coord).flatten()
     points = shapely.get_coordinates(points.geometry)
     return dtot(coord, points)
@@ -463,7 +463,7 @@ def _(points: np.ndarray):
 
 
 @euclidean_median.register
-def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
+def _(points: GeoPandasBase):
     coords = shapely.get_coordinates(points.geometry)
     return euclidean_median(coords)
 
@@ -521,7 +521,7 @@ def _(points: np.ndarray):
 
 
 @minimum_bounding_circle.register
-def _(points: Union[gpd.GeoSeries, gpd.GeoDataFrame]):
+def _(points: GeoPandasBase):
     coords = shapely.get_coordinates(points.geometry)
     (x, y), r = minimum_bounding_circle(coords)
     return shapely.Point(x, y).buffer(r)
