@@ -388,7 +388,11 @@ def _(points: np.ndarray):
 @ellipse.register
 def _(points: GeoPandasBase):
     coords = shapely.get_coordinates(points.geometry)
-    return ellipse(coords)
+    major, minor, rotation = ellipse(coords)
+    centre = mean_center(points).buffer(1)
+    scaled = shapely.affinity.scale(centre, major, minor)
+    rotated = shapely.affinity.rotate(scaled, rotation, use_radians=True)
+    return rotated
 
 
 @singledispatch
