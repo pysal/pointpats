@@ -135,6 +135,9 @@ def test_ellipse(points):
 def test_euclidean_median(points):
     euclidean = centrography.euclidean_median(points)
     res = np.array([54.16770671, 44.4242589])
+    if isinstance(points, gpd.GeoSeries):
+        assert isinstance(euclidean, shapely.Point)
+        euclidean = shapely.get_coordinates(euclidean).flatten()
     np.testing.assert_array_almost_equal(euclidean, res, decimal=3)
 
 @dispatch_types
