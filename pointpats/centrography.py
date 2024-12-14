@@ -17,6 +17,7 @@ __all__ = [
     "ellipse",
     "minimum_rotated_rectangle",
     "minimum_bounding_rectangle",
+    "minimum_bounding_circle",
     "dtot",
     "_circle",
 ]
