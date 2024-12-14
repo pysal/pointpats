@@ -1,9 +1,6 @@
 """
 Centrographic measures for point patterns
 
-TODO
-
-- testing
 - documentation
 
 """
@@ -494,7 +491,7 @@ def minimum_bounding_circle(points):
 
     Returns
     -------
-    (x,y),center for the minimum bounding circle.
+    (x,y),radius for the minimum bounding circle.
     """
     try:
         points = np.asarray(points)
