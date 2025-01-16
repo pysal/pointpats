@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+from packaging.version import Version
 
 from pointpats import plot_density
 
@@ -7,7 +8,10 @@ matplotlib = pytest.importorskip("matplotlib")
 statsmodels = pytest.importorskip("statsmodels")
 KDEpy = pytest.importorskip("KDEpy")
 
+MPL_310 = Version(matplotlib.__version__) >= Version("3.10.0")
 
+
+@pytest.mark.skipif(not MPL_310, reason="ContourSet is composed differently in < 3.10")
 class TestDensity:
     def setup_method(self):
         self.points = np.array(
@@ -30,7 +34,7 @@ class TestDensity:
     def test_default(self):
         ax = plot_density(self.points, 10)
         contourset = ax.collections[0]
-        assert len(contourset.collections) == 12
+        assert len(ax.collections[0].get_paths()) == 12
         assert not contourset.filled
         np.testing.assert_array_equal(contourset.get_linewidths(), np.array([1.5] * 12))
         np.testing.assert_array_equal(
@@ -40,33 +44,28 @@ class TestDensity:
 
     def test_bandwidth(self):
         ax = plot_density(self.points, 1)
-        contourset = ax.collections[0]
-        assert len(contourset.collections) == 10
+        assert len(ax.collections[0].get_paths()) == 10
 
     def test_resolution(self):
         ax = plot_density(self.points, 10, resolution=200)
         contourset = ax.collections[0]
-        collections = contourset.collections
-        assert len(collections) == 12
+        assert len(contourset.get_paths()) == 12
 
     def test_margin(self):
         ax = plot_density(self.points, 10, margin=0.3)
         contourset = ax.collections[0]
-        collections = contourset.collections
-        assert len(collections) == 12
+        assert len(contourset.get_paths()) == 12
 
     def test_kdepy(self):
         ax = plot_density(self.points, 10, kernel="gaussian")
         contourset = ax.collections[0]
-        collections = contourset.collections
-        assert len(collections) == 12
+        assert len(contourset.get_paths()) == 12
         np.testing.assert_array_equal(contourset.get_linewidths(), np.array([1.5] * 12))
 
     def test_levels(self):
         ax = plot_density(self.points, 10, levels=5)
         contourset = ax.collections[0]
-        collections = contourset.collections
-        assert len(collections) == 7
+        assert len(contourset.get_paths()) == 7
 
     def test_fill(self):
         ax = plot_density(self.points, 10, fill=True)
@@ -84,8 +83,7 @@ class TestDensity:
         gs = geopandas.GeoSeries.from_xy(*self.points.T)
         ax = plot_density(gs, 10)
         contourset = ax.collections[0]
-        collections = contourset.collections
-        assert len(collections) == 12
+        assert len(contourset.get_paths()) == 12
         np.testing.assert_array_equal(contourset.get_linewidths(), np.array([1.5] * 12))
 
     def test_kwargs(self):
@@ -93,8 +91,7 @@ class TestDensity:
             self.points, 10, cmap="magma", linewidths=0.5, linestyles="-."
         )
         contourset = ax.collections[0]
-        collections = contourset.collections
-        assert len(collections) == 12
+        assert len(contourset.get_paths()) == 12
         np.testing.assert_array_equal(contourset.get_linewidths(), np.array([0.5] * 12))
 
         np.testing.assert_array_equal(
