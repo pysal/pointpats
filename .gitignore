@@ -27,3 +27,6 @@ __pycache__
 
 doc/_build
 doc/generated
+
+docs/_build
+docs/generated
