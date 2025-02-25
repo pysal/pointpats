@@ -36,6 +36,8 @@ Centrography
    :toctree: generated/
 
     minimum_bounding_rectangle
+    minimum_bounding_circle
+    minimum_rotated_rectangle
     hull
     mean_center
     weighted_mean_center
@@ -43,7 +45,6 @@ Centrography
     std_distance
     euclidean_median
     ellipse
-    skyum
     dtot
 
 

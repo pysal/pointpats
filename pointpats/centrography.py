@@ -1,9 +1,6 @@
 """
 Centrographic measures for point patterns
 
-TODO
-
-- testing
 - documentation
 
 """
@@ -11,7 +8,6 @@ TODO
 __author__ = "Serge Rey sjsrey@gmail.com"
 
 __all__ = [
-    "mbr",
     "hull",
     "mean_center",
     "weighted_mean_center",
@@ -21,24 +17,26 @@ __all__ = [
     "ellipse",
     "minimum_rotated_rectangle",
     "minimum_bounding_rectangle",
-    "skyum",
+    "minimum_bounding_circle",
     "dtot",
     "_circle",
 ]
 
 
-import sys
-import numpy as np
-import warnings
 import copy
 import math
+import sys
+import warnings
+from collections.abc import Sequence
+from functools import singledispatch
 
-from math import pi as PI
-from scipy.spatial import ConvexHull
-from libpysal.cg import get_angle_between, Ray, is_clockwise
-from scipy.spatial import distance as dist
-from scipy.optimize import minimize
+import numpy as np
 import shapely
+from geopandas.base import GeoPandasBase
+from libpysal.cg import is_clockwise
+from numpy.typing import NDArray
+from scipy.optimize import minimize
+from scipy.spatial import ConvexHull
 
 not_clockwise = lambda x: not is_clockwise(x)
 
@@ -46,6 +44,7 @@ MAXD = sys.float_info.max
 MIND = sys.float_info.min
 
 
+@singledispatch
 def minimum_bounding_rectangle(points):
     """
     Find minimum bounding rectangle of a point array.
@@ -53,24 +52,62 @@ def minimum_bounding_rectangle(points):
     Parameters
     ----------
     points : arraylike
-             (n,2), (x,y) coordinates of a series of event points.
+             array representing a point pattern
 
     Returns
     -------
-    min_x  : float
-             leftmost value of the vertices of minimum bounding rectangle.
-    min_y  : float
-             downmost value of the vertices of minimum bounding rectangle.
-    max_x  : float
-             rightmost value of the vertices of minimum bounding rectangle.
-    max_y  : float
-             upmost value of the vertices of minimum bounding rectangle.
+    rectangle
+        minimum bounding rectangle of a given point pattern
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import geopandas as gpd
+
+    Create an array of point coordinates.
+
+    >>> coords = np.array(
+    ...     [
+    ...         [66.22, 32.54],
+    ...         [22.52, 22.39],
+    ...         [31.01, 81.21],
+    ...         [9.47, 31.02],
+    ...         [30.78, 60.10],
+    ...         [75.21, 58.93],
+    ...         [79.26, 7.68],
+    ...         [8.23, 39.93],
+    ...         [98.73, 77.17],
+    ...         [89.78, 42.53],
+    ...         [65.19, 92.08],
+    ...         [54.46, 8.48],
+    ...     ]
+    ... )
+
+    Passing an array of coordinates returns a tuple capturing the bounds.
+
+    >>> minimum_bounding_rectangle(coords)
+    (np.float64(8.23), np.float64(7.68), np.float64(98.73), np.float64(92.08))
+
+    Passing a GeoPandas object returns a shapely geometry.
+
+    >>> geoms = gpd.GeoSeries.from_xy(*coords.T)
+    >>> minimum_bounding_rectangle(geoms)
+    <POLYGON ((8.23 7.68, 98.73 7.68, 98.73 92.08, 8.23 92.08, 8.23 7.68))>
 
     """
+    try:
+        points = np.asarray(points)
+        return minimum_bounding_rectangle(points)
+    except AttributeError as e:
+        raise NotImplementedError from e
+
+
+@minimum_bounding_rectangle.register
+def _(points: np.ndarray) -> tuple[float, float, float, float]:
     points = np.asarray(points)
     min_x = min_y = MAXD
     max_x = max_y = MIND
-    x, y = zip(*points)
+    x, y = zip(*points, strict=True)
     min_x = min(x)
     min_y = min(y)
     max_x = max(x)
@@ -78,123 +115,342 @@ def minimum_bounding_rectangle(points):
     return min_x, min_y, max_x, max_y
 
 
+@minimum_bounding_rectangle.register
+def _(points: GeoPandasBase) -> shapely.Polygon:
+    return shapely.envelope(shapely.geometrycollections(points.geometry.values))
+
+
+@singledispatch
 def minimum_rotated_rectangle(points, return_angle=False):
     """
-    Compute the minimum rotated rectangle for an input point set.
+    Compute the minimum rotated rectangle for a point array.
 
     This is the smallest enclosing rectangle (possibly rotated)
     for the input point set. It is computed using Shapely.
 
     Parameters
     ----------
-    points : numpy.ndarray
-        A numpy array of shape (n_observations, 2) containing the point
-        locations to compute the rotated rectangle
+    points : arraylike
+             array representing a point pattern
     return_angle : bool
         whether to return the angle (in degrees) of the angle between
         the horizontal axis of the rectanle and the first side (i.e. length).
 
     Returns
     -------
-    an numpy.ndarray of shape (4, 2) containing the coordinates
-    of the minimum rotated rectangle. If return_angle is True,
-    also return the angle (in degrees) of the rotated rectangle.
+    rectangle | tuple(rectangle, angle)
 
-    """
-    points = np.asarray(points)
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import geopandas as gpd
+
+    Create an array of point coordinates.
+
+    >>> coords = np.array(
+    ...     [
+    ...         [66.22, 32.54],
+    ...         [22.52, 22.39],
+    ...         [31.01, 81.21],
+    ...         [9.47, 31.02],
+    ...         [30.78, 60.10],
+    ...         [75.21, 58.93],
+    ...         [79.26, 7.68],
+    ...         [8.23, 39.93],
+    ...         [98.73, 77.17],
+    ...         [89.78, 42.53],
+    ...         [65.19, 92.08],
+    ...         [54.46, 8.48],
+    ...     ]
+    ... )
+
+
+    Passing an array of coordinates returns an array capturing the corners.
+
+    >>> minimum_rotated_rectangle(coords)
+    array([[107.91345156,  73.47376296],
+       [ 36.40164577, 104.61744544],
+       [  4.08727852,  30.41752523],
+       [ 75.5990843 ,  -0.72615725]])
+
+    >>> minimum_rotated_rectangle(coords, return_angle=True)
+    (array([[107.91345156,  73.47376296],
+            [ 36.40164577, 104.61744544],
+            [  4.08727852,  30.41752523],
+            [ 75.5990843 ,  -0.72615725]]), 66.46667861350298)
+
+    Passing a GeoPandas object returns a shapely geometry.
+
+    >>> geoms = gpd.GeoSeries.from_xy(*coords.T)
+    >>> minimum_rotated_rectangle(geoms)
+    <POLYGON ((75.599 -0.7, 4.087 30.418, 36.402 104.617, 107.913 73.474, 75.599...>
+
+    >>> minimum_rotated_rectangle(geoms, return_angle=True)
+    (<POLYGON ((75.599 -0.7, 4.087 30.418, 36.402 104.617, 107.913 73.474, 75.599...>, 66.46667861350298)
+    """  # noqa: E501
+    try:
+        points = np.asarray(points)
+        return minimum_rotated_rectangle(points, return_angle=return_angle)
+    except AttributeError as e:
+        raise NotImplementedError from e
+
+
+def _get_mrr_angle(out_points):
+    angle = (
+        math.degrees(
+            math.atan2(
+                out_points[1][1] - out_points[0][1],
+                out_points[1][0] - out_points[0][0],
+            )
+        )
+        % 90
+    )
+    return angle
+
+
+@minimum_rotated_rectangle.register
+def _(
+    points: np.ndarray, return_angle: bool = False
+) -> NDArray[np.float64] | tuple[NDArray[np.float64], float]:
     out_points = shapely.get_coordinates(
         shapely.minimum_rotated_rectangle(shapely.multipoints(points))
     )[:-1]
     if return_angle:
-        angle = (
-            math.degrees(
-                math.atan2(
-                    out_points[1][1] - out_points[0][1],
-                    out_points[1][0] - out_points[0][0],
-                )
-            )
-            % 90
-        )
-        return (out_points[::-1], angle)
+        return (out_points[::-1], _get_mrr_angle(out_points))
     return out_points[::-1]
 
 
-def mbr(points):
-    warnings.warn(
-        "This function will be deprecated in the next release of pointpats.",
-        FutureWarning,
-        stacklevel=2,
-    )
-    return minimum_bounding_rectangle(points)
+@minimum_rotated_rectangle.register
+def _(
+    points: GeoPandasBase, return_angle: bool = False
+) -> shapely.Polygon | tuple[shapely.Polygon, float]:
+    rectangle = shapely.minimum_rotated_rectangle(shapely.multipoints(points.geometry))
+
+    if return_angle:
+        out_points = shapely.get_coordinates(rectangle)[:-1]
+        return (rectangle, _get_mrr_angle(out_points))
+    return rectangle
 
 
-mbr.__doc__ = minimum_bounding_rectangle.__doc__
-
-
+@singledispatch
 def hull(points):
     """
     Find convex hull of a point array.
 
     Parameters
     ----------
-    points: arraylike
-            (n,2), (x,y) coordinates of a series of event points.
+    points : arraylike
+             array representing a point pattern
 
     Returns
     -------
-    _     : array
-            (h,2), points defining the hull in counterclockwise order.
-    """
+    rectangle
+        convex hull of a given point pattern
 
-    points = np.asarray(points)
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import geopandas as gpd
+
+    Create an array of point coordinates.
+
+    >>> coords = np.array(
+    ...     [
+    ...         [66.22, 32.54],
+    ...         [22.52, 22.39],
+    ...         [31.01, 81.21],
+    ...         [9.47, 31.02],
+    ...         [30.78, 60.10],
+    ...         [75.21, 58.93],
+    ...         [79.26, 7.68],
+    ...         [8.23, 39.93],
+    ...         [98.73, 77.17],
+    ...         [89.78, 42.53],
+    ...         [65.19, 92.08],
+    ...         [54.46, 8.48],
+    ...     ]
+    ... )
+
+    Passing an array of coordinates returns an array capturing the vertices.
+
+    >>> hull(coords)
+    array([[31.01, 81.21],
+           [ 8.23, 39.93],
+           [ 9.47, 31.02],
+           [22.52, 22.39],
+           [54.46,  8.48],
+           [79.26,  7.68],
+           [89.78, 42.53],
+           [98.73, 77.17],
+           [65.19, 92.08]])
+
+    Passing a GeoPandas object returns a shapely geometry.
+
+    >>> geoms = gpd.GeoSeries.from_xy(*coords.T)
+    >>> hull(geoms)
+    <POLYGON ((79.26 7.68, 54.46 8.48, 22.52 22.39, 9.47 31.02, 8.23 39.93, 31.0...>
+    """
+    try:
+        points = np.asarray(points)
+        return hull(points)
+    except AttributeError as e:
+        raise NotImplementedError from e
+
+
+@hull.register
+def _(points: np.ndarray) -> NDArray[np.float64]:
     h = ConvexHull(points)
     return points[h.vertices]
 
 
+@hull.register
+def _(points: GeoPandasBase) -> shapely.Polygon:
+    return shapely.convex_hull(shapely.multipoints(points.geometry))
+
+
+@singledispatch
 def mean_center(points):
     """
     Find mean center of a point array.
 
     Parameters
     ----------
-    points: arraylike
-            (n,2), (x,y) coordinates of a series of event points.
+    points : arraylike
+             array representing a point pattern
 
     Returns
     -------
-    _     : array
-            (2,), (x,y) coordinates of the mean center.
-    """
+    center
+        center of a given point pattern
 
-    points = np.asarray(points)
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import geopandas as gpd
+
+    Create an array of point coordinates.
+
+    >>> coords = np.array(
+    ...     [
+    ...         [66.22, 32.54],
+    ...         [22.52, 22.39],
+    ...         [31.01, 81.21],
+    ...         [9.47, 31.02],
+    ...         [30.78, 60.10],
+    ...         [75.21, 58.93],
+    ...         [79.26, 7.68],
+    ...         [8.23, 39.93],
+    ...         [98.73, 77.17],
+    ...         [89.78, 42.53],
+    ...         [65.19, 92.08],
+    ...         [54.46, 8.48],
+    ...     ]
+    ... )
+
+    Passing an array of coordinates returns an array capturing the center.
+
+    >>> mean_center(coords)
+    array([52.57166667, 46.17166667])
+
+    Passing a GeoPandas object returns a shapely geometry.
+
+    >>> geoms = gpd.GeoSeries.from_xy(*coords.T)
+    >>> mean_center(geoms)
+    <POINT (52.572 46.172)>
+    """
+    try:
+        points = np.asarray(points)
+        return mean_center(points)
+    except AttributeError as e:
+        raise NotImplementedError from e
+
+
+@mean_center.register
+def _(points: np.ndarray) -> NDArray[np.float64]:
     return points.mean(axis=0)
 
 
+@mean_center.register
+def _(points: GeoPandasBase) -> shapely.Point:
+    coords = shapely.get_coordinates(points.geometry)
+    return shapely.Point(mean_center(coords))
 
 
+@singledispatch
 def weighted_mean_center(points, weights):
     """
     Find weighted mean center of a marked point pattern.
 
     Parameters
     ----------
-    points  : arraylike
-              (n,2), (x,y) coordinates of a series of event points.
+    points : arraylike
+        array representing a point pattern
     weights : arraylike
-              a series of attribute values of length n.
+        a series of attribute values of length n.
 
     Returns
     -------
-    _      : array
-             (2,), (x,y) coordinates of the weighted mean center.
-    """
+    center
+        center of a given point pattern
 
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import geopandas as gpd
+
+    Create an array of point coordinates.
+
+    >>> coords = np.array(
+    ...     [
+    ...         [66.22, 32.54],
+    ...         [22.52, 22.39],
+    ...         [31.01, 81.21],
+    ...         [9.47, 31.02],
+    ...         [30.78, 60.10],
+    ...         [75.21, 58.93],
+    ...         [79.26, 7.68],
+    ...         [8.23, 39.93],
+    ...         [98.73, 77.17],
+    ...         [89.78, 42.53],
+    ...         [65.19, 92.08],
+    ...         [54.46, 8.48],
+    ...     ]
+    ... )
+    >>> weight = np.arange(1, 13, 1)
+
+    Passing an array of coordinates returns an array capturing the center.
+
+    >>> weighted_mean_center(coords, weight)
+    array([59.29448718, 47.52282051])
+
+    Passing a GeoPandas object returns a shapely geometry.
+
+    >>> geoms = gpd.GeoSeries.from_xy(*coords.T)
+    >>> weighted_mean_center(geoms, weight)
+    <POINT (59.294 47.523)>
+    """
+    try:
+        points = np.asarray(points)
+        return weighted_mean_center(points, weights)
+    except AttributeError as e:
+        raise NotImplementedError from e
+
+
+@weighted_mean_center.register
+def _(points: np.ndarray, weights: Sequence) -> NDArray[np.float64]:
     points, weights = np.asarray(points), np.asarray(weights)
     w = weights * 1.0 / weights.sum()
     w.shape = (1, len(points))
     return np.dot(w, points)[0]
 
 
+@weighted_mean_center.register
+def _(points: GeoPandasBase, weights) -> shapely.Point:
+    coords = shapely.get_coordinates(points.geometry)
+    return shapely.Point(weighted_mean_center(coords, weights))
+
+
+@singledispatch
 def manhattan_median(points):
     """
     Find manhattan median of a point array.
@@ -202,42 +458,139 @@ def manhattan_median(points):
     Parameters
     ----------
     points  : arraylike
-              (n,2), (x,y) coordinates of a series of event points.
+              array representing a point pattern
 
     Returns
     -------
-    _      : array
-             (2,), (x,y) coordinates of the manhattan median.
-    """
+    median
+        manhattan median of a given point pattern
 
-    points = np.asarray(points)
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import geopandas as gpd
+
+    Create an array of point coordinates.
+
+    >>> coords = np.array(
+    ...     [
+    ...         [66.22, 32.54],
+    ...         [22.52, 22.39],
+    ...         [31.01, 81.21],
+    ...         [9.47, 31.02],
+    ...         [30.78, 60.10],
+    ...         [75.21, 58.93],
+    ...         [79.26, 7.68],
+    ...         [8.23, 39.93],
+    ...         [98.73, 77.17],
+    ...         [89.78, 42.53],
+    ...         [65.19, 92.08],
+    ...     ]
+    ... )
+
+    Passing an array of coordinates returns an array capturing the median.
+
+    >>> manhattan_median(coords)
+    array([65.19, 42.53])
+
+    Passing a GeoPandas object returns a shapely geometry.
+
+    >>> geoms = gpd.GeoSeries.from_xy(*coords.T)
+    >>> manhattan_median(geoms)
+    <POINT (65.19 42.53)>
+    """
+    try:
+        points = np.asarray(points)
+        return manhattan_median(points)
+    except AttributeError as e:
+        raise NotImplementedError from e
+
+
+@manhattan_median.register
+def _(points: np.ndarray) -> NDArray[np.float64]:
     if not len(points) % 2:
-        s = "Manhattan Median is not unique for even point patterns."
-        warnings.warn(s)
+        warnings.warn(
+            "Manhattan Median is not unique for even point patterns.", stacklevel=3
+        )
     return np.median(points, axis=0)
 
 
-def std_distance(points):
+@manhattan_median.register
+def _(points: GeoPandasBase) -> shapely.Point:
+    coords = shapely.get_coordinates(points.geometry)
+    return shapely.Point(manhattan_median(coords))
+
+
+@singledispatch
+def std_distance(points) -> np.float64:
     """
     Calculate standard distance of a point array.
 
     Parameters
     ----------
     points  : arraylike
-              (n,2), (x,y) coordinates of a series of event points.
+              array representing a point pattern
 
     Returns
     -------
-    _      : float
-             standard distance.
-    """
+    distance
+       standard distance of a given point pattern
 
-    points = np.asarray(points)
-    n, p = points.shape
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import geopandas as gpd
+
+    Create an array of point coordinates.
+
+    >>> coords = np.array(
+    ...     [
+    ...         [66.22, 32.54],
+    ...         [22.52, 22.39],
+    ...         [31.01, 81.21],
+    ...         [9.47, 31.02],
+    ...         [30.78, 60.10],
+    ...         [75.21, 58.93],
+    ...         [79.26, 7.68],
+    ...         [8.23, 39.93],
+    ...         [98.73, 77.17],
+    ...         [89.78, 42.53],
+    ...         [65.19, 92.08],
+    ...     ]
+    ... )
+
+    Passing an array of coordinates returns a tuple capturing the bounds.
+
+    >>> std_distance(coords)
+    np.float64(40.21575987282547)
+
+    The same applies to a GeoPandas object.
+
+    >>> geoms = gpd.GeoSeries.from_xy(*coords.T)
+    >>> std_distance(geoms)
+    np.float64(40.21575987282547)
+    """
+    try:
+        points = np.asarray(points)
+        return std_distance(points)
+    except AttributeError as e:
+        raise NotImplementedError from e
+
+
+@std_distance.register
+def _(points: np.ndarray) -> np.float64:
+    n, _ = points.shape
     m = points.mean(axis=0)
     return np.sqrt(((points * points).sum(axis=0) / n - m * m).sum())
 
 
+@std_distance.register
+def _(points: GeoPandasBase) -> np.float64:
+    coords = shapely.get_coordinates(points.geometry)
+    return std_distance(coords)
+
+
+@singledispatch
 def ellipse(points):
     """
     Calculate parameters of standard deviational ellipse for a point pattern.
@@ -245,26 +598,64 @@ def ellipse(points):
     Parameters
     ----------
     points : arraylike
-             (n,2), (x,y) coordinates of a series of event points.
+             array representing a point pattern
 
     Returns
     -------
-    _      : float
-             semi-major axis.
-    _      : float
-             semi-minor axis.
-    theta  : float
-             clockwise rotation angle of the ellipse.
+    ellipse
+        representation of the standard ellipse
 
     Notes
     -----
     Implements approach from:
 
     https://www.icpsr.umich.edu/CrimeStat/files/CrimeStatChapter.4.pdf
-    """
 
-    points = np.asarray(points)
-    n, k = points.shape
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import geopandas as gpd
+
+    Create an array of point coordinates.
+
+    >>> coords = np.array(
+    ...     [
+    ...         [66.22, 32.54],
+    ...         [22.52, 22.39],
+    ...         [31.01, 81.21],
+    ...         [9.47, 31.02],
+    ...         [30.78, 60.10],
+    ...         [75.21, 58.93],
+    ...         [79.26, 7.68],
+    ...         [8.23, 39.93],
+    ...         [98.73, 77.17],
+    ...         [89.78, 42.53],
+    ...         [65.19, 92.08],
+    ...     ]
+    ... )
+
+    Passing an array of coordinates returns a tuple capturing the semi-major axis,
+    semi-minor axis and clockwise rotation angle of the ellipse.
+
+    >>> ellipse(coords)
+    (np.float64(37.952226702678644), np.float64(45.55366350677291), np.float64(1.2242381172906325))
+
+    Passing a GeoPandas object returns a shapely geometry.
+
+    >>> geoms = gpd.GeoSeries.from_xy(*coords.T)
+    >>> ellipse(geoms)
+    <POLYGON ((65.291 85.294, 69.428 83.606, 73.402 81.59, 77.173 79.265, 80.706...>
+    """  # noqa: E501
+    try:
+        points = np.asarray(points)
+        return ellipse(points)
+    except AttributeError as e:
+        raise NotImplementedError from e
+
+
+@ellipse.register
+def _(points: np.ndarray) -> tuple[float, float, float]:
+    n, _ = points.shape
     x = points[:, 0]
     y = points[:, 1]
     xd = x - x.mean()
@@ -283,51 +674,165 @@ def ellipse(points):
     return np.sqrt(sd_x), np.sqrt(sd_y), theta
 
 
-def dtot(coord, points):
+@ellipse.register
+def _(points: GeoPandasBase) -> shapely.Polygon:
+    coords = shapely.get_coordinates(points.geometry)
+    major, minor, rotation = ellipse(coords)
+    centre = mean_center(points).buffer(1)
+    scaled = shapely.affinity.scale(centre, major, minor)
+    rotated = shapely.affinity.rotate(scaled, rotation, use_radians=True)
+    return rotated
+
+
+@singledispatch
+def dtot(coord, points) -> float:
     """
     Sum of Euclidean distances between event points and a selected point.
 
     Parameters
     ----------
-    coord   : arraylike
-              (x,y) coordinates of a point.
+    coord
+              starting point
     points  : arraylike
-              (n,2), (x,y) coordinates of a series of event points.
+              array representing a point pattern
 
     Returns
     -------
-    d       : float
-              sum of Euclidean distances.
+    distance
+        sum of Euclidean distances.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import geopandas as gpd
+    >>> import shapely
+
+    Create an array of point coordinates.
+
+    >>> coords = np.array(
+    ...     [
+    ...         [66.22, 32.54],
+    ...         [22.52, 22.39],
+    ...         [31.01, 81.21],
+    ...         [9.47, 31.02],
+    ...         [30.78, 60.10],
+    ...         [75.21, 58.93],
+    ...         [79.26, 7.68],
+    ...         [8.23, 39.93],
+    ...         [98.73, 77.17],
+    ...         [89.78, 42.53],
+    ...         [65.19, 92.08],
+    ...     ]
+    ... )
+
+    Passing an array of coordinates returns a tuple capturing the bounds.
+
+    >>> point = [30.78, 60.10]
+    >>> dtot(point, coords)
+    np.float64(465.3617957739617)
+
+    The same applies to a GeoPandas object.
+
+    >>> point = shapely.Point(point)
+    >>> geoms = gpd.GeoSeries.from_xy(*coords.T)
+    >>> dtot(point, geoms)
+    np.float64(465.3617957739617)
 
     """
-    points = np.asarray(points)
+    try:
+        coord = np.asarray(coord)
+        points = np.asarray(points)
+        return dtot(coord, points)
+    except AttributeError as e:
+        raise NotImplementedError from e
+
+
+@dtot.register
+def _(coord: np.ndarray, points: np.ndarray) -> float:
     xd = points[:, 0] - coord[0]
     yd = points[:, 1] - coord[1]
     d = np.sqrt(xd * xd + yd * yd).sum()
     return d
 
 
+@dtot.register
+def _(coord: shapely.Point, points: GeoPandasBase) -> float:
+    coord = shapely.get_coordinates(coord).flatten()
+    points = shapely.get_coordinates(points.geometry)
+    return dtot(coord, points)
+
+
+@singledispatch
 def euclidean_median(points):
     """
     Calculate the Euclidean median for a point pattern.
 
     Parameters
     ----------
-    points: arraylike
-            (n,2), (x,y) coordinates of a series of event points.
+    points  : arraylike
+        array representing a point pattern
 
     Returns
     -------
-    _     : array
-            (2,), (x,y) coordinates of the Euclidean median.
+    median
+        Euclidean median of a given point pattern
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import geopandas as gpd
+
+    Create an array of point coordinates.
+
+    >>> coords = np.array(
+    ...     [
+    ...         [66.22, 32.54],
+    ...         [22.52, 22.39],
+    ...         [31.01, 81.21],
+    ...         [9.47, 31.02],
+    ...         [30.78, 60.10],
+    ...         [75.21, 58.93],
+    ...         [79.26, 7.68],
+    ...         [8.23, 39.93],
+    ...         [98.73, 77.17],
+    ...         [89.78, 42.53],
+    ...         [65.19, 92.08],
+    ...     ]
+    ... )
+
+    Passing an array of coordinates returns an array capturing the median.
+
+    >>> euclidean_median(coords)
+    array([53.51770575, 49.6572671 ])
+
+    Passing a GeoPandas object returns a shapely geometry.
+
+    >>> geoms = gpd.GeoSeries.from_xy(*coords.T)
+    >>> euclidean_median(geoms)
+    <POINT (53.518 49.657)>
 
     """
-    points = np.asarray(points)
+    try:
+        points = np.asarray(points)
+        return euclidean_median(points)
+    except AttributeError as e:
+        raise NotImplementedError from e
+
+
+@euclidean_median.register
+def _(points: np.ndarray) -> NDArray[np.float64]:
     start = mean_center(points)
     res = minimize(dtot, start, args=(points,))
     return res["x"]
 
 
+@euclidean_median.register
+def _(points: GeoPandasBase) -> shapely.Point:
+    coords = shapely.get_coordinates(points.geometry)
+    return shapely.Point(euclidean_median(coords))
+
+
+@singledispatch
 def minimum_bounding_circle(points):
     """
     Implements Skyum (1990)'s algorithm for the minimum bounding circle in R^2.
@@ -343,42 +848,81 @@ def minimum_bounding_circle(points):
 
     Parameters
     ----------
-    points  :   numpy.ndarray
-        a numpy array of shape (n_observations, 2) to compute
-        the minimum bounding circle
+    points  : arraylike
+        array representing a point pattern
 
     Returns
     -------
-    (x,y),center for the minimum bounding circle.
+    circle
+        minimum bounding circle
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import geopandas as gpd
+
+    Create an array of point coordinates.
+
+    >>> coords = np.array(
+    ...     [
+    ...         [66.22, 32.54],
+    ...         [22.52, 22.39],
+    ...         [31.01, 81.21],
+    ...         [9.47, 31.02],
+    ...         [30.78, 60.10],
+    ...         [75.21, 58.93],
+    ...         [79.26, 7.68],
+    ...         [8.23, 39.93],
+    ...         [98.73, 77.17],
+    ...         [89.78, 42.53],
+    ...         [65.19, 92.08],
+    ...     ]
+    ... )
+
+    Passing an array of coordinates returns an tuple of (x, y), radius.
+
+    >>> minimum_bounding_circle(coords)
+    ((55.244520477497474, 51.88135107645883), np.float64(50.304102155590726))
+
+    Passing a GeoPandas object returns a shapely geometry.
+
+    >>> geoms = gpd.GeoSeries.from_xy(*coords.T)
+    >>> minimum_bounding_circle(geoms)
+    <POLYGON ((105.549 51.881, 105.306 46.951, 104.582 42.068, 103.383 37.279, 1...>
     """
+    try:
+        points = np.asarray(points)
+        return minimum_bounding_circle(points)
+    except AttributeError as e:
+        raise NotImplementedError from e
+
+
+@minimum_bounding_circle.register
+def _(points: np.ndarray) -> tuple[tuple[float, float], float]:
+    try:
+        from numba import njit
+
+        HAS_NUMBA = True
+    except ImportError:
+        HAS_NUMBA = False
     points = hull(points)
     if not_clockwise(points):
         points = points[::-1]
         if not_clockwise(points):
             raise Exception("Points are neither clockwise nor counterclockwise")
     POINTS = copy.deepcopy(points)
-    removed = []
-    i = 0
-    if HAS_NUMBA:
+    if HAS_NUMBA:  # noqa: SIM108
         circ = _skyum_numba(POINTS)[0]
     else:
         circ = _skyum_lists(POINTS)[0]
     return (circ[1], circ[2]), circ[0]
 
 
-def skyum(points):
-    warnings.warn(
-        "This function will be deprecated in the next release of pointpats.",
-        FutureWarning,
-        stacklevel=2,
-    )
-    return minimum_bounding_circle(points)
-
-
-skyum.__doc__ = (
-    "WARNING: This function is deprecated in favor of minimum_bounding_circle\n"
-    + minimum_bounding_circle.__doc__
-)
+@minimum_bounding_circle.register
+def _(points: GeoPandasBase) -> shapely.Polygon:
+    coords = shapely.get_coordinates(points.geometry)
+    (x, y), r = minimum_bounding_circle(coords)
+    return shapely.Point(x, y).buffer(r)
 
 
 def _skyum_lists(points):
@@ -454,7 +998,6 @@ try:
         # the maximum radius for the largest angle
         lexmax = (radii * (angles == angle_max)).argmax()
 
-        candidate = (lexmax - 1) % n, lexmax, (lexmax + 1) % n
         if angles[lexmax] <= (np.pi / 2.0):
             return True, points, lexmax, circles[lexmax]
         else:
@@ -472,6 +1015,9 @@ except ModuleNotFoundError:
 
 @njit
 def _angle(p, q, r):
+    p = np.asarray(p)
+    q = np.asarray(q)
+    r = np.asarray(r)
     pq = p - q
     rq = r - q
     magnitudes = np.linalg.norm(pq) * np.linalg.norm(rq)
