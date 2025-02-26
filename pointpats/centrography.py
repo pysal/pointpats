@@ -665,13 +665,23 @@ def _(points: np.ndarray) -> tuple[float, float, float]:
     cv = (xd * yd).sum()
     num = (xss - yss) + np.sqrt((xss - yss) ** 2 + 4 * (cv) ** 2)
     den = 2 * cv
-    theta = np.arctan(num / den)
-    cos_theta = np.cos(theta)
-    sin_theta = np.sin(theta)
-    n_2 = n - 2
-    sd_x = (2 * (xd * cos_theta - yd * sin_theta) ** 2).sum() / n_2
-    sd_y = (2 * (xd * sin_theta - yd * cos_theta) ** 2).sum() / n_2
-    return np.sqrt(sd_x), np.sqrt(sd_y), theta
+    theta = np.arctan(num / den)   # tan_theta = num/den
+    if theta < 0:
+        theta = np.pi / 2 + theta
+    cos = np.cos(theta)
+    sin = np.sin(theta)
+    cos2 = cos**2
+    sin2 = sin**2
+    sincos = sin * cos
+    sx = xss * cos2 - 2 * cv * sincos + yss * sin2
+    sx /= n
+    sx = np.sqrt(sx)
+    sy = xss * sin2 + 2 * cv * sincos + yss * cos2
+    sy /= n
+    sy = np.sqrt(sy)
+    return sx, sy, -theta
+
+
 
 
 @ellipse.register
