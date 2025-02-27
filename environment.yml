@@ -10,4 +10,4 @@ dependencies:
   - numpy
   - pandas
   - scipy
-  - shapley
+  - shapely
