@@ -158,7 +158,7 @@ class PointProcess(object):
 class PoissonPointProcess(PointProcess):
     """
     Poisson point process including :math:`N`-conditioned CSR process and
-    :math:`\lambda`-conditioned CSR process.
+    :math:`\\lambda`-conditioned CSR process.
 
     Parameters
     ----------
@@ -170,7 +170,7 @@ class PoissonPointProcess(PointProcess):
     samples       : list
                     Number of realizations.
     conditioning  : bool
-                    If True, use the :math:`\lambda`-conditioned CSR process,
+                    If True, use the :math:`\\lambda`-conditioned CSR process,
                     number of events would vary across realizations;
                     if False, use the :math:`N`-conditioned CSR process.
     asPP          : bool
@@ -235,7 +235,7 @@ class PoissonPointProcess(PointProcess):
            [-76.33475868,  36.62635347],
            [-79.71621808,  37.27396618]])
 
-    2. Simulate a :math:`\lambda`-conditioned csr process in the same window (10
+    2. Simulate a :math:`\\lambda`-conditioned csr process in the same window (10
     points, 2 realizations)
 
     >>> np.random.seed(5)
@@ -297,8 +297,8 @@ class PoissonClusterPointProcess(PointProcess):
     Poisson cluster point process (Neyman Scott).
     Two stages:
     1. parent CSR process: :math:`N`-conditioned or
-    :math:`\lambda`-conditioned. If parent events follow a
-    :math:`\lambda`-conditioned CSR process,
+    :math:`\\lambda`-conditioned. If parent events follow a
+    :math:`\\lambda`-conditioned CSR process,
     the number of parent events varies across realizations.
     2. child process: fixed number of points in circle centered
     on each parent.
@@ -388,7 +388,7 @@ class PoissonClusterPointProcess(PointProcess):
 
     2. Simulate a Poisson cluster process of size 200 with 10 parents
     and 20 children within 0.5 units of each parent
-    (parent events:  :math:`\lambda`-conditioned CSR)
+    (parent events:  :math:`\\lambda`-conditioned CSR)
 
     >>> np.random.seed(10)
     >>> samples2 = PoissonClusterPointProcess(window, 200, 10, 0.5, 1, asPP=True, conditioning=True)

@@ -55,6 +55,8 @@ docs = [
 tests = [
     "codecov",
     "coverage",
+    "folium",
+    "mapclassify",
     "pytest",
     "pytest-mpl",
     "pytest-cov",

@@ -283,7 +283,7 @@ class PointPattern(object):
         .. math::
 
             \\lambda(s_j) = \\lim \\limits_{|\\mathbf{A}s_j|
-            \\to 0} \\left \\{ \\frac{E(Y(\mathbf{A}s_j)}{|\mathbf{A}s_j|}
+            \\to 0} \\left \\{ \\frac{E(Y(\\mathbf{A}s_j)}{|\\mathbf{A}s_j|}
             \\right \\}
 
         where :math:`\\mathbf{A}s_j` is a small region surrounding location
