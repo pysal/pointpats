@@ -169,15 +169,15 @@ def minimum_rotated_rectangle(points, return_angle=False):
 
     >>> minimum_rotated_rectangle(coords)
     array([[107.91345156,  73.47376296],
-       [ 36.40164577, 104.61744544],
-       [  4.08727852,  30.41752523],
-       [ 75.5990843 ,  -0.72615725]])
+           [ 36.40164577, 104.61744544],
+           [  4.08727852,  30.41752523],
+           [ 75.5990843 ,  -0.72615725]])
 
     >>> minimum_rotated_rectangle(coords, return_angle=True)
     (array([[107.91345156,  73.47376296],
-            [ 36.40164577, 104.61744544],
-            [  4.08727852,  30.41752523],
-            [ 75.5990843 ,  -0.72615725]]), 66.46667861350298)
+           [ 36.40164577, 104.61744544],
+           [  4.08727852,  30.41752523],
+           [ 75.5990843 ,  -0.72615725]]), 66.46667861350298)
 
     Passing a GeoPandas object returns a shapely geometry.
 
@@ -609,7 +609,7 @@ def ellipse(points):
     -----
     Implements approach from:
 
-    https://www.icpsr.umich.edu/CrimeStat/files/CrimeStatChapter.4.pdf
+               Ebdon, D. (1985) Statistics in Geography. Basil Blackwell. Second Edition.
 
     Examples
     --------
@@ -638,13 +638,13 @@ def ellipse(points):
     semi-minor axis and clockwise rotation angle of the ellipse.
 
     >>> ellipse(coords)
-    (np.float64(37.952226702678644), np.float64(45.55366350677291), np.float64(1.2242381172906325))
+    (np.float64(24.27432576090484), np.float64(32.063444153774746), np.float64(-1.2242381172906325))
 
     Passing a GeoPandas object returns a shapely geometry.
 
     >>> geoms = gpd.GeoSeries.from_xy(*coords.T)
     >>> ellipse(geoms)
-    <POLYGON ((65.291 85.294, 69.428 83.606, 73.402 81.59, 77.173 79.265, 80.706...>
+    <POLYGON ((60.645 26.767, 57.649 25.809, 54.603 25.081, 51.536 24.589, 48.47...>
     """  # noqa: E501
     try:
         points = np.asarray(points)
@@ -665,13 +665,21 @@ def _(points: np.ndarray) -> tuple[float, float, float]:
     cv = (xd * yd).sum()
     num = (xss - yss) + np.sqrt((xss - yss) ** 2 + 4 * (cv) ** 2)
     den = 2 * cv
-    theta = np.arctan(num / den)
-    cos_theta = np.cos(theta)
-    sin_theta = np.sin(theta)
-    n_2 = n - 2
-    sd_x = (2 * (xd * cos_theta - yd * sin_theta) ** 2).sum() / n_2
-    sd_y = (2 * (xd * sin_theta - yd * cos_theta) ** 2).sum() / n_2
-    return np.sqrt(sd_x), np.sqrt(sd_y), theta
+    theta = np.arctan(num / den)  # tan_theta = num/den
+    if theta < 0:
+        theta = np.pi / 2 + theta
+    cos = np.cos(theta)
+    sin = np.sin(theta)
+    cos2 = cos**2
+    sin2 = sin**2
+    sincos = sin * cos
+    sx = xss * cos2 - 2 * cv * sincos + yss * sin2
+    sx /= n
+    sx = np.sqrt(sx)
+    sy = xss * sin2 + 2 * cv * sincos + yss * cos2
+    sy /= n
+    sy = np.sqrt(sy)
+    return sx, sy, -theta
 
 
 @ellipse.register
