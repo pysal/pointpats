@@ -1,4 +1,4 @@
-mpo"""
+"""
 Centrographic measures for point patterns
 
 - documentation
