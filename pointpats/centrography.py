@@ -1,4 +1,4 @@
-"""
+mpo"""
 Centrographic measures for point patterns
 
 - documentation
@@ -33,11 +33,10 @@ import warnings
 from collections.abc import Sequence
 from functools import singledispatch
 
-from geopandas.geodataframe import GeoDataFrame
-
 import numpy as np
 import shapely
 from geopandas.base import GeoPandasBase
+from geopandas import GeoDataFrame, GeoSeries, points_from_xy
 from libpysal.cg import is_clockwise
 from numpy.typing import NDArray
 from esda import shape
@@ -872,25 +871,21 @@ def trim_pointset(points, p=1, peeling=True, hull='convex', **hull_args):
     the percentage of the input dataset that is contained within the concave hull in
     each iteration. Generally, ratio should be larger than p if peeling=True.
     """
-    try:
-        import geopandas, pandas
-    except (ImportError, ModuleNotFoundError):
-        raise ImportError("pandas and geopandas are needed in order to use robust centrography statistics.")
-    if isinstance(points, geopandas.GeoSeries):
+    if isinstance(points, GeoSeries):
         pass
-    elif isinstance(points, geopandas.GeoDataFrame):
+    elif isinstance(points, GeoDataFrame):
         points = points.geometry
     else:
         if points.shape[1] == 2:
-            points = geopandas.GeoSeries(geopandas.points_from_xy(*points.T))
+            points = GeoSeries(points_from_xy(*points.T))
         else:
-            points = geopandas.GeoSeries(points)
+            points = GeoSeries(points)
     n_points = len(points)
     trimmed = pandas.Series(np.zeros(n_points), index=points.index).astype(bool)
     if hull=='convex':
         huller = lambda x: x.convex_hull
     elif hull == 'concave':
-        huller = lambda x: geopandas.GeoSeries(x).concave_hull(**hull_args).item()
+        huller = lambda x: GeoSeries(x).concave_hull(**hull_args).item()
     elif callable(hull):
         huller = lambda x: hull(x, **hull_args)
     else:
@@ -916,7 +911,7 @@ def trim_pointset(points, p=1, peeling=True, hull='convex', **hull_args):
             if (angles < 0).any() | (angles > np.pi).any():
                 raise NotImplementedError("negative angle or reflexive angle encountered. Your polygon likely has an incorrect winding direction.")
             # ring is always closed at the same point as it starts
-            ordered_hull_points = geopandas.GeoSeries(geopandas.points_from_xy(*hull_.boundary.xy)[:-1])
+            ordered_hull_points = GeoSeries(points_from_xy(*hull_.boundary.xy)[:-1])
             hull_locs, points_hull_locs = points[on_hull.values].sindex.query(ordered_hull_points, predicate='intersects')
             points_hull_ixs = points[on_hull.values].index[points_hull_locs]
             current_knob_on_hull = angles.argmin()
@@ -932,7 +927,7 @@ def trimmed_hull(points, p=1, peeling=True, hull='convex', **hull_args):
 
     Parameters
     ----------
-    points : numpy.ndarray or geopandas.GeoSeries
+    points : numpy.ndarray or GeoSeries
         input points intended to be pared
     p : float
         value between 0 and 1 indicating how much of the point set should be left
@@ -967,24 +962,20 @@ def trimmed_hull(points, p=1, peeling=True, hull='convex', **hull_args):
     The peeling heuristic tends to maintain the shape of the original pointcloud, while the
     paring heuristic tends to return central coverage areas that are more circular.
     """
-    try:
-        import geopandas, pandas
-    except (ImportError, ModuleNotFoundError):
-        raise ImportError("pandas and geopandas are needed in order to use robust centrography statistics.")
-    if isinstance(points, geopandas.GeoSeries):
+    if isinstance(points, GeoSeries):
         pass
-    elif isinstance(points, geopandas.GeoDataFrame):
+    elif isinstance(points, GeoDataFrame):
         points = points.geometry
     else:
         if points.shape[1] == 2:
-            points = geopandas.GeoSeries(geopandas.points_from_xy(*points.T))
+            points = GeoSeries(points_from_xy(*points.T))
         else:
-            points = geopandas.GeoSeries(points)
+            points = GeoSeries(points)
     mask = trim_pointset(points, p=p, peeling=peeling, hull=hull, hull_args=hull_args)
     if hull == 'convex':
         return points[mask.values].union_all().convex_hull
     elif hull == 'concave':
-        return geopandas.GeoSeries(points[mask.values].union_all()).concave_hull(**hull_args).item()
+        return GeoSeries(points[mask.values].union_all()).concave_hull(**hull_args).item()
     elif callable(hull):
         return hull(points[mask.values], **hull_args)
     else:
