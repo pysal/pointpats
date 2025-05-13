@@ -168,25 +168,26 @@ def minimum_rotated_rectangle(points, return_angle=False):
     Passing an array of coordinates returns an array capturing the corners.
 
     >>> minimum_rotated_rectangle(coords)
-    array([[107.91345156,  73.47376296],
-           [ 36.40164577, 104.61744544],
+    array([[ 75.5990843 ,  -0.72615725],
            [  4.08727852,  30.41752523],
-           [ 75.5990843 ,  -0.72615725]])
+           [ 36.40164577, 104.61744544],
+           [107.91345156,  73.47376296]])
+    
 
     >>> minimum_rotated_rectangle(coords, return_angle=True)
-    (array([[107.91345156,  73.47376296],
-           [ 36.40164577, 104.61744544],
+    (array([[ 75.5990843 ,  -0.72615725],
            [  4.08727852,  30.41752523],
-           [ 75.5990843 ,  -0.72615725]]), 66.46667861350298)
-
+           [ 36.40164577, 104.61744544],
+           [107.91345156,  73.47376296]]), 66.466678613503)
+    
     Passing a GeoPandas object returns a shapely geometry.
 
     >>> geoms = gpd.GeoSeries.from_xy(*coords.T)
     >>> minimum_rotated_rectangle(geoms)
-    <POLYGON ((75.599 -0.7, 4.087 30.418, 36.402 104.617, 107.913 73.474, 75.599...>
+    <POLYGON ((107.913 73.474, 36.402 104.617, 4.087 30.418, 75.599 -0.726, 107....>
 
     >>> minimum_rotated_rectangle(geoms, return_angle=True)
-    (<POLYGON ((75.599 -0.7, 4.087 30.418, 36.402 104.617, 107.913 73.474, 75.599...>, 66.46667861350298)
+    (<POLYGON ((107.913 73.474, 36.402 104.617, 4.087 30.418, 75.599 -0.726, 107....>, 66.466678613503)
     """  # noqa: E501
     try:
         points = np.asarray(points)
@@ -597,17 +598,64 @@ def ellipse(points, weights=None, method="crimestat",
     """
     Computes a weighted standard deviational ellipse for a set of point geometries.
 
-    Parameters:
-        points : arraylike
-                 array representing a point pattern
-        weights : arraylike
-                 array of weights for each point (Optional)
-        method (str): Correction method to apply. Must be 'crimestat' or 'yuill'.
-        crimestatCorr (bool): Apply CrimeStat correction if method == 'yuill'.
-        degfreedCorr (bool): Apply degrees-of-freedom correction if method == 'yuill'.
+    Parameters
+    ----------
+    points : array-like
+        Array representing a point pattern.
+    weights : array-like, optional
+        Array of weights for each point.
+    method : str
+        Correction method to apply. Must be either 'crimestat' or 'yuill'.
+    crimestatCorr : bool
+        Whether to apply the CrimeStat correction (used only if `method == 'yuill'`).
+    degfreedCorr : bool
+        Whether to apply degrees-of-freedom correction (used only if `method == 'yuill'`).
+        Apply degrees-of-freedom correction if method == 'yuill'.
 
-    Returns:
-        tuple: (major_axis_length, minor_axis_length, rotation_angle)
+    Returns
+    -------
+    tuple(major_axis_length, minor_axis_length, rotation_angle) | ellipse
+
+    Notes
+    -----
+    Implements approach from:
+
+    https://www.icpsr.umich.edu/CrimeStat/files/CrimeStatChapter.4.pdf
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import geopandas as gpd
+
+    Create an array of point coordinates.
+
+    >>> coords = np.array(
+    ...     [
+    ...         [66.22, 32.54],
+    ...         [22.52, 22.39],
+    ...         [31.01, 81.21],
+    ...         [9.47, 31.02],
+    ...         [30.78, 60.10],
+    ...         [75.21, 58.93],
+    ...         [79.26, 7.68],
+    ...         [8.23, 39.93],
+    ...         [98.73, 77.17],
+    ...         [89.78, 42.53],
+    ...         [65.19, 92.08],
+    ...     ]
+    ... )
+
+    Passing an array of coordinates returns a tuple capturing the semi-major axis,
+    semi-minor axis and clockwise rotation angle of the ellipse.
+
+    >>> ellipse(coords)
+    (np.float64(50.13029459102783), np.float64(37.95222670267865), np.float64(0.3465582095042642))
+
+    Passing a GeoPandas object returns a shapely geometry.
+
+    >>> geoms = gpd.GeoSeries.from_xy(*coords.T)
+    >>> ellipse(geoms)
+    <POLYGON ((99.55 66.626, 100.586 63.045, 101.159 59.334, 101.262 55.53, 100....>
     """
     try:
         points = np.asarray(points)
