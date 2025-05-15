@@ -99,7 +99,7 @@ def parse_size_and_intensity(hull, intensity=None, size=None):
 # ------------------------------------------------------------ #
 
 
-def poisson(hull, intensity=None, size=None):
+def poisson(hull, intensity=None, size=None, seed=None):
     """
     Simulate a poisson random point process with a specified intensity.
 
@@ -122,7 +122,13 @@ def poisson(hull, intensity=None, size=None):
         If an integer is provided and intensity is None, n_replications is assumed to be 1.
         If size is an integer and intensity is also provided, then size indicates n_replications,
         and the number of observations is computed from the intensity.
+    seed : int or None, optional
+        A seed to initialize the NumPy default random number generator (`numpy.random.default_rng`).
+        If `None` (the default), the generator is initialized with entropy from the operating system,
+        producing different sequences each time. Setting a specific integer seed ensures that the
+        sequence of random numbers is reproducible.
 
+    
     Returns
     --------
         :   numpy.ndarray
@@ -141,14 +147,14 @@ def poisson(hull, intensity=None, size=None):
     result = numpy.empty((n_simulations, n_observations, 2))
 
     bbox = _bbox(hull)
-
+    rng = numpy.random.default_rng(seed)
     for i_replication in range(n_simulations):
         generating = True
         i_observation = 0
         while i_observation < n_observations:
             x, y = (
-                numpy.random.uniform(bbox[0], bbox[2]),
-                numpy.random.uniform(bbox[1], bbox[3]),
+                rng.uniform(bbox[0], bbox[2]),
+                rng.uniform(bbox[1], bbox[3]),
             )
             if _contains(hull, x, y):
                 result[i_replication, i_observation] = (x, y)
@@ -156,7 +162,7 @@ def poisson(hull, intensity=None, size=None):
     return result.squeeze()
 
 
-def normal(hull, center=None, cov=None, size=None):
+def normal(hull, center=None, cov=None, size=None, seed=None):
     """
     Simulate a multivariate random normal point cluster
 
@@ -181,6 +187,12 @@ def normal(hull, center=None, cov=None, size=None):
         of points to simulate in each replication and the second number is the number of
         total replications. So, (10, 4) indicates 10 points, 4 times.
         If an integer is provided, n_replications is assumed to be 1.
+    seed : int or None, optional
+        A seed to initialize the NumPy default random number generator (`numpy.random.default_rng`).
+        If `None` (the default), the generator is initialized with entropy from the operating system,
+        producing different sequences each time. Setting a specific integer seed ensures that the
+        sequence of random numbers is reproducible.
+
 
     Returns
     --------
@@ -228,7 +240,7 @@ def normal(hull, center=None, cov=None, size=None):
     result = numpy.empty((n_simulations, n_observations, 2))
 
     bbox = _bbox(hull)
-
+    rng = numpy.random.default_rng(seed)
     for i_replication in range(n_simulations):
         generating = True
         i_observation = 0
@@ -237,7 +249,8 @@ def normal(hull, center=None, cov=None, size=None):
         replication_cor = (1 / replication_sd) * replication_cov * (1 / replication_sd)
 
         while i_observation < n_observations:
-            candidate = numpy.random.multivariate_normal((0, 0), replication_cor)
+            # candidate = numpy.random.multivariate_normal((0, 0), replication_cor)
+            candidate = rng.multivariate_normal((0, 0), replication_cor)
             x, y = center + candidate * replication_sd
             if _contains(hull, x, y):
                 result[i_replication, i_observation] = (x, y)
@@ -246,7 +259,7 @@ def normal(hull, center=None, cov=None, size=None):
 
 
 def cluster_poisson(
-    hull, intensity=None, size=None, n_seeds=2, cluster_radius=None,
+        hull, intensity=None, size=None, n_seeds=2, cluster_radius=None, seed=None
 ):
     """
     Simulate a cluster poisson random point process with a specified intensity & number of seeds.
@@ -279,6 +292,12 @@ def cluster_poisson(
         If an array, then there must be the same number of radii as clusters.
         If None, 50% of the minimum inter-point distance is used, which may fluctuate across
         replications.
+    seed : int or None, optional
+        A seed to initialize the NumPy default random number generator (`numpy.random.default_rng`).
+        If `None` (the default), the generator is initialized with entropy from the operating system,
+        producing different sequences each time. Setting a specific integer seed ensures that the
+        sequence of random numbers is reproducible.
+
 
     Returns
     --------
@@ -308,8 +327,11 @@ def cluster_poisson(
 
     result = numpy.empty((n_simulations, n_observations, 2))
     hull_area = _area(hull)
+    rng = numpy.random.default_rng(seed)
+    center_seeds = rng.integers(100_000, size=n_simulations)
     for i_replication in range(n_simulations):
-        seeds = poisson(hull, size=(n_seeds, n_simulations))
+        seeds = poisson(hull, size=n_seeds, seed=[center_seeds[i_replication]])
+        print(f'{seeds=}')
         if cluster_radius is None:
             # default cluster radius is one half the minimum distance between seeds
             cluster_radii = [spatial.distance.pdist(seeds).min() * 0.5] * n_seeds
@@ -335,7 +357,7 @@ def cluster_poisson(
     return result.squeeze()
 
 
-def cluster_normal(hull, cov=None, size=None, n_seeds=2):
+def cluster_normal(hull, cov=None, size=None, n_seeds=2, seed=None):
     """
     Simulate a cluster poisson random point process with a specified intensity & number of seeds.
     A cluster poisson process is a poisson process where the center of each "cluster" is
@@ -362,6 +384,12 @@ def cluster_normal(hull, cov=None, size=None, n_seeds=2):
         and the number of observations is computed from the intensity.
     n_seeds : int
         the number of sub-clusters to use.
+    seed : int or None, optional
+        A seed to initialize the NumPy default random number generator (`numpy.random.default_rng`).
+        If `None` (the default), the generator is initialized with entropy from the operating system,
+        producing different sequences each time. Setting a specific integer seed ensures that the
+        sequence of random numbers is reproducible.
+
 
     Returns
     --------
@@ -378,16 +406,19 @@ def cluster_normal(hull, cov=None, size=None, n_seeds=2):
         hull, intensity=None, size=size
     )
     result = numpy.empty((n_simulations, n_observations, 2))
+    rng = numpy.random.default_rng(seed)
+    seeds = rng.integers(100_000, size=n_simulations)
     for i_replication in range(n_simulations):
-        seeds = poisson(hull, size=(n_seeds, n_simulations))
+        centers = poisson(hull, size=n_seeds, seed=seeds[i_replication])
         if cov is None:
-            cov = spatial.distance.pdist(seeds).mean() ** 2
+            cov = spatial.distance.pdist(centers).mean() ** 2
         clusters = numpy.array_split(result[i_replication], n_seeds)
-        for i_cluster, seed in enumerate(seeds):
+        candidate_seeds = rng.integers(100_000, size=n_seeds)
+        for i_cluster, center in enumerate(centers):
             cluster_points = clusters[i_cluster]
             n_in_cluster = len(cluster_points)
             if n_in_cluster == 1:
-                clusters[i_cluster] = seed
+                clusters[i_cluster] = center
                 continue
             if n_in_cluster < 1:
                 raise Exception(
@@ -395,13 +426,14 @@ def cluster_normal(hull, cov=None, size=None, n_seeds=2):
                     " inputted number of samples. Reduce `n_seeds` or"
                     " increase the number of sampled points."
                 )
-            candidates = normal(hull, center=seed, cov=cov, size=n_in_cluster - 1)
-            clusters[i_cluster] = numpy.row_stack((seed, candidates))
+            candidates = normal(hull, center=center, cov=cov, size=n_in_cluster - 1,
+                                seed=candidate_seeds[i_cluster])
+            clusters[i_cluster] = numpy.row_stack((center, candidates))
         result[i_replication] = numpy.row_stack(clusters)
     return result.squeeze()
 
 
-def _uniform_circle(n, radius=1.0, center=(0.0, 0.0), burn=2, verbose=False, hull=None):
+def _uniform_circle(n, radius=1.0, center=(0.0, 0.0), burn=2, verbose=False, hull=None, seed=None):
     """
     Generate n points within a circle of given radius.
 
@@ -416,6 +448,12 @@ def _uniform_circle(n, radius=1.0, center=(0.0, 0.0), burn=2, verbose=False, hul
     burn : int
         number of coordinates to simulate at a time. This is the "chunk"
         size sent to numpy.random.uniform each iteration of the rejection sampler
+    seed : int or None, optional
+        A seed to initialize the NumPy default random number generator (`numpy.random.default_rng`).
+        If `None` (the default), the generator is initialized with entropy from the operating system,
+        producing different sequences each time. Setting a specific integer seed ensures that the
+        sequence of random numbers is reproducible.
+
 
     Returns
     -------
@@ -430,9 +468,10 @@ def _uniform_circle(n, radius=1.0, center=(0.0, 0.0), burn=2, verbose=False, hul
     r = radius
     r2 = r * r
     it = 0
+    rng = numpy.random.default_rng(seed)
     while c < n:
-        x = numpy.random.uniform(-r, r, (burn * n, 1))
-        y = numpy.random.uniform(-r, r, (burn * n, 1))
+        x = rng.uniform(-r, r, (burn * n, 1))
+        y = rng.uniform(-r, r, (burn * n, 1))
         if hull is None:
             in_hull = True
         else:
