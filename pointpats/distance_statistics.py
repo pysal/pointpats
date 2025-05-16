@@ -132,6 +132,7 @@ def f(
     metric="euclidean",
     hull=None,
     edge_correction=None,
+    seed=None,
 ):
     """
     Ripley's F function
@@ -156,6 +157,7 @@ def f(
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
+    seed
 
     Returns
     -------
@@ -195,7 +197,7 @@ def f(
         # empty space distribution.
         n_empty_points = 1000
 
-        randoms = poisson(hull=hull, size=(n_empty_points, 1))
+        randoms = poisson(hull=hull, size=(n_empty_points, 1), seed=seed)
         try:
             tree
         except NameError:
@@ -307,6 +309,7 @@ def j(
     hull=None,
     edge_correction=None,
     truncate=True,
+    seed=None
 ):
     """
     Ripely's J function
@@ -353,6 +356,7 @@ def j(
         metric=metric,
         hull=hull,
         edge_correction=edge_correction,
+        seed=seed,
     )
 
     gsupport, gstats = g(
@@ -553,6 +557,7 @@ def _ripley_test(
     edge_correction=None,
     keep_simulations=False,
     n_simulations=9999,
+    seed=None,
     **kwargs,
 ):
     if isinstance(coordinates, geopandas.GeoDataFrame | geopandas.GeoSeries):
@@ -590,8 +595,10 @@ def _ripley_test(
     if keep_simulations:
         simulations = numpy.empty((len(observed_support), n_simulations)).T
     pvalues = numpy.ones_like(observed_support)
+    rng = numpy.random.default_rng(seed)
+    seeds = rng.integers(100_000, size=n_simulations)
     for i_replication in range(n_simulations):
-        random_i = poisson(hull, size=n_observations)
+        random_i = poisson(hull, size=n_observations, seed=seeds[i_replication])
         if calltype in ("F", "J"):
             random_tree = _build_best_tree(random_i, metric)
             empty_distances, _ = random_tree.query(empty_space_points, k=1)
@@ -626,6 +633,7 @@ def f_test(
     edge_correction=None,
     keep_simulations=False,
     n_simulations=9999,
+    seed=None,
 ):
     """
     Ripley's F function
@@ -680,6 +688,7 @@ def f_test(
         edge_correction=edge_correction,
         keep_simulations=keep_simulations,
         n_simulations=n_simulations,
+        seed=seed,
     )
 
 
@@ -692,6 +701,7 @@ def g_test(
     edge_correction=None,
     keep_simulations=False,
     n_simulations=9999,
+    seed=None,
 ):
     """
     Ripley's G function
@@ -744,6 +754,7 @@ def g_test(
         edge_correction=edge_correction,
         keep_simulations=keep_simulations,
         n_simulations=n_simulations,
+        seed=seed,
     )
 
 
@@ -757,6 +768,7 @@ def j_test(
     truncate=True,
     keep_simulations=False,
     n_simulations=9999,
+    seed=None,
 ):
     """
     Ripley's J function
@@ -808,6 +820,7 @@ def j_test(
         keep_simulations=keep_simulations,
         n_simulations=n_simulations,
         truncate=False,
+        seed=seed,
     )
     if truncate:
         result_trunc = _truncate(*result)
@@ -834,6 +847,7 @@ def k_test(
     edge_correction=None,
     keep_simulations=False,
     n_simulations=9999,
+    seed=None,
 ):
     """
     Ripley's K function
@@ -886,6 +900,7 @@ def k_test(
         edge_correction=edge_correction,
         keep_simulations=keep_simulations,
         n_simulations=n_simulations,
+        seed=seed,
     )
 
 
@@ -899,6 +914,7 @@ def l_test(
     linearized=False,
     keep_simulations=False,
     n_simulations=9999,
+    seed=None,
 ):
     """
     Ripley's L function
@@ -953,6 +969,7 @@ def l_test(
         linearized=linearized,
         keep_simulations=keep_simulations,
         n_simulations=n_simulations,
+        seed=seed,
     )
 
 
