@@ -157,7 +157,11 @@ def f(
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
-    seed
+    seed : int or None, optional
+        A seed to initialize the NumPy default random number generator (`numpy.random.default_rng`).
+        If `None` (the default), the generator is initialized with entropy from the operating system,
+        producing different sequences each time. Setting a specific integer seed ensures that the
+        sequence of random numbers is reproducible.
 
     Returns
     -------
@@ -218,6 +222,7 @@ def g(
     distances=None,
     metric="euclidean",
     edge_correction=None,
+    seed=None,
 ):
     """
     Ripley's G function
@@ -239,6 +244,11 @@ def g(
         distance metric to use when building search tree
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
+    seed : int or None, optional
+        A seed to initialize the NumPy default random number generator (`numpy.random.default_rng`).
+        If `None` (the default), the generator is initialized with entropy from the operating system,
+        producing different sequences each time. Setting a specific integer seed ensures that the
+        sequence of random numbers is reproducible.
 
     Returns
     -------
@@ -339,6 +349,11 @@ def j(
         whether or not to truncate the results when the F function reaches one. If the
         F function is one but the G function is less than one, this function will return
         numpy.nan values.
+    seed : int or None, optional
+        A seed to initialize the NumPy default random number generator (`numpy.random.default_rng`).
+        If `None` (the default), the generator is initialized with entropy from the operating system,
+        producing different sequences each time. Setting a specific integer seed ensures that the
+        sequence of random numbers is reproducible.
 
     Returns
     -------
@@ -667,6 +682,11 @@ def f_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness.
+    seed : int or None, optional
+        A seed to initialize the NumPy default random number generator (`numpy.random.default_rng`).
+        If `None` (the default), the generator is initialized with entropy from the operating system,
+        producing different sequences each time. Setting a specific integer seed ensures that the
+        sequence of random numbers is reproducible.
 
     Returns
     -------
@@ -734,6 +754,11 @@ def g_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness.
+    seed : int or None, optional
+        A seed to initialize the NumPy default random number generator (`numpy.random.default_rng`).
+        If `None` (the default), the generator is initialized with entropy from the operating system,
+        producing different sequences each time. Setting a specific integer seed ensures that the
+        sequence of random numbers is reproducible.
 
     Returns
     -------
@@ -799,6 +824,11 @@ def j_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness.
+    seed : int or None, optional
+        A seed to initialize the NumPy default random number generator (`numpy.random.default_rng`).
+        If `None` (the default), the generator is initialized with entropy from the operating system,
+        producing different sequences each time. Setting a specific integer seed ensures that the
+        sequence of random numbers is reproducible.
 
     Returns
     -------
@@ -880,6 +910,11 @@ def k_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness.
+    seed : int or None, optional
+        A seed to initialize the NumPy default random number generator (`numpy.random.default_rng`).
+        If `None` (the default), the generator is initialized with entropy from the operating system,
+        producing different sequences each time. Setting a specific integer seed ensures that the
+        sequence of random numbers is reproducible.
 
     Returns
     -------
@@ -948,6 +983,11 @@ def l_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness.
+    seed : int or None, optional
+        A seed to initialize the NumPy default random number generator (`numpy.random.default_rng`).
+        If `None` (the default), the generator is initialized with entropy from the operating system,
+        producing different sequences each time. Setting a specific integer seed ensures that the
+        sequence of random numbers is reproducible.
 
     Returns
     -------
