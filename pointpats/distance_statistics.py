@@ -574,7 +574,7 @@ def _ripley_test(
     if calltype in ("F", "J"):  # these require simulations
         core_kwargs["hull"] = hull
         # amortize to avoid doing this every time
-        empty_space_points = poisson(coordinates, size=(1000, 1))
+        empty_space_points = poisson(coordinates, size=(1000, 1), seed=seed)
         if distances is None:
             empty_space_distances, _ = _k_neighbors(tree, empty_space_points, k=1)
             if calltype == "F":
