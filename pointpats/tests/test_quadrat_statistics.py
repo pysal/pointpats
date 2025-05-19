@@ -1,5 +1,6 @@
 import unittest
 import numpy as np
+import geopandas
 
 from ..quadrat_statistics import *
 from ..pointpattern import PointPattern
@@ -62,3 +63,10 @@ class TestQuadratStatistics(unittest.TestCase):
                                       [0, 2, 4, 5, 0, 0, 0, 0, 9, 6, 10, 7, 3, 0, 2, 2, 3, 7, 4,
                                        13, 1, 1, 1, 4, 11, 3, 0, 4, 0, 5, 15, 15, 3, 10, 0, 0,
                                        0, 9, 0, 7, 1, 1])
+    def test_geoseries(self):
+        pp_array = np.array(self.points)
+        pts = geopandas.GeoSeries.from_xy(x=pp_array[:, 0], y=pp_array[:, 1])
+        q_r = QStatistic(pts, shape="rectangle", nx=3, ny=3)
+        np.testing.assert_allclose(q_r.chi2, 33.1071428571, RTOL)
+        np.testing.assert_allclose(q_r.chi2_pvalue, 5.89097854516e-05, ATOL)
+        assert q_r.df == 8

@@ -13,11 +13,15 @@ TODO
 __author__ = "Serge Rey, Wei Kang, Hu Shao"
 __all__ = ["RectangleM", "HexagonM", "QStatistic"]
 
-from .pointpattern import PointPattern
-import numpy as np
-from matplotlib import pyplot as plt
 import math
+
+import geopandas
+import numpy as np
 import scipy
+import shapely
+from matplotlib import pyplot as plt
+
+from .pointpattern import PointPattern
 
 
 class RectangleM:
@@ -428,6 +432,8 @@ class QStatistic:
                  rectangle_height=0, lh=10, realizations=0):
         if isinstance(pp, np.ndarray):
             pp = PointPattern(pp)
+        if isinstance(pp, geopandas.GeoDataFrame | geopandas.GeoSeries):
+            pp = PointPattern(shapely.get_coordinates(pp.geometry))
         self.pp = pp
         if shape == "rectangle":
             self.mr = RectangleM(pp, count_column=nx, count_row=ny,
