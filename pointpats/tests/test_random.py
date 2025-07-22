@@ -18,27 +18,27 @@ def rng():
 square_hull = np.array([[0, 0], [0, 10], [10, 10], [10, 0]])
 
 def test_poisson_output_shape():
-    result = poisson(square_hull, intensity=1, size=2, seed=42)
+    result = poisson(square_hull, intensity=1, size=2, rng=42)
     assert result.shape == (2, 100, 2)  # default is 100 points
 
 def test_normal_output_with_custom_cov():
     cov = np.array([[1, 0.5], [0.5, 2]])
-    result = normal(square_hull, cov=cov, size=(20, 3), seed=42)
+    result = normal(square_hull, cov=cov, size=(20, 3), rng=42)
     assert result.shape == (3, 20, 2)
 
 def test_all_points_within_hull_poisson():
-    result = poisson(square_hull, size=(10, 2), seed=42)
+    result = poisson(square_hull, size=(10, 2), rng=42)
     for sim in result:
         for x, y in sim:
             assert 0 <= x <= 10 and 0 <= y <= 10
 
 def test_seed_consistency():
-    a = poisson(square_hull, intensity=1, size=2, seed=42)
-    b = poisson(square_hull, intensity=1, size=2, seed=42)
+    a = poisson(square_hull, intensity=1, size=2, rng=42)
+    b = poisson(square_hull, intensity=1, size=2, rng=42)
     np.testing.assert_allclose(a, b)
 
 def test_cluster_poisson_shapes():
-    result = cluster_poisson(square_hull, size=(20, 2), n_seeds=4, seed=123)
+    result = cluster_poisson(square_hull, size=(20, 2), n_seeds=4, rng=123)
     assert result.shape == (2, 20, 2)
 
 def test_value_error_on_conflicting_inputs():
@@ -46,7 +46,7 @@ def test_value_error_on_conflicting_inputs():
         poisson(square_hull, intensity=1.0, size=(10, 2))
 
 def test_cluster_normal_output():
-    result = cluster_normal(square_hull, size=(50, 3), n_seeds=5, seed=100)
+    result = cluster_normal(square_hull, size=(50, 3), n_seeds=5, rng=100)
     assert result.shape == (3, 50, 2)
 
 
@@ -70,7 +70,7 @@ def test_strauss_basic_box():
         gamma=0.5,
         r=0.1,
         n_iter=100,
-        seed=42,
+        rng=42,
         max_iter=5
     )
     assert isinstance(output, np.ndarray)
@@ -81,7 +81,7 @@ def test_strauss_basic_box():
         gamma=0.5,
         r=0.1,
         n_iter=100,
-        seed=42,
+        rng=42,
         max_iter=5
         )
     assert isinstance(output, np.ndarray)
@@ -92,4 +92,4 @@ def test_strauss_invalid_pattern_raises():
     hull = np.array([0.0, 0.0, 1.0, 1.0])  # bounding box
     with pytest.raises(RuntimeError):
         # Use extreme inhibition to force rejection
-        strauss(hull, size=(100, 1), gamma=0.0001, r=0.9, max_iter=2, seed=999)
+        strauss(hull, size=(100, 1), gamma=0.0001, r=0.9, max_iter=2, rng=999)

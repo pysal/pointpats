@@ -126,7 +126,7 @@ def parse_size_and_intensity(hull, intensity=None, size=None):
 # ------------------------------------------------------------ #
 
 
-def poisson(hull, intensity=None, size=None, seed=None, rng=None):
+def poisson(hull, intensity=None, size=None, rng=None):
     """
     Simulate a poisson random point process with a specified intensity.
 
@@ -149,12 +149,15 @@ def poisson(hull, intensity=None, size=None, seed=None, rng=None):
         If an integer is provided and intensity is None, n_replications is assumed to be 1.
         If size is an integer and intensity is also provided, then size indicates n_replications,
         and the number of observations is computed from the intensity.
-   seed : int or None, default=None
-        Seed for initializing the random number generator if `rng` is not provided.
-        Has no effect if `rng` is explicitly passed.
-   rng : numpy.random.Generator or None, default=None
-        A NumPy random number generator. If None, a new generator is created
-        using `numpy.random.default_rng(seed)`.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
 
 
     Returns
@@ -175,8 +178,7 @@ def poisson(hull, intensity=None, size=None, seed=None, rng=None):
     result = numpy.empty((n_simulations, n_observations, 2))
 
     bbox = _bbox(hull)
-    if rng is None:
-        rng = numpy.random.default_rng(seed)
+    rng = numpy.random.default_rng(rng)
     for i_replication in range(n_simulations):
         generating = True
         i_observation = 0
@@ -216,13 +218,15 @@ def normal(hull, center=None, cov=None, size=None, seed=None, rng=None):
         of points to simulate in each replication and the second number is the number of
         total replications. So, (10, 4) indicates 10 points, 4 times.
         If an integer is provided, n_replications is assumed to be 1.
-    seed : int or None, optional
-        A seed to initialize the NumPy default random number generator (`numpy.random.default_rng`).
-        If `None` (the default), the generator is initialized with entropy from the operating system,
-        producing different sequences each time. Setting a specific integer seed ensures that the
-        sequence of random numbers is reproducible.
-    rng : numpy.random.Generator or None, optional
-        Optional random number generator. If None, a new generator is created.
+     rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
 
 
     Returns
@@ -272,8 +276,7 @@ def normal(hull, center=None, cov=None, size=None, seed=None, rng=None):
 
     bbox = _bbox(hull)
 
-    if rng is None:
-        rng = numpy.random.default_rng(seed)
+    rng = numpy.random.default_rng(rng)
     for i_replication in range(n_simulations):
         generating = True
         i_observation = 0
@@ -326,13 +329,15 @@ def cluster_poisson(
         If an array, then there must be the same number of radii as clusters.
         If None, 50% of the minimum inter-point distance is used, which may fluctuate across
         replications.
-    seed : int or None, optional
-        A seed to initialize the NumPy default random number generator (`numpy.random.default_rng`).
-        If `None` (the default), the generator is initialized with entropy from the operating system,
-        producing different sequences each time. Setting a specific integer seed ensures that the
-        sequence of random numbers is reproducible.
-    rng : numpy.random.Generator or None, optional
-        Optional random number generator. If None, a new generator is created.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
 
 
     Returns
@@ -363,12 +368,11 @@ def cluster_poisson(
 
     result = numpy.empty((n_simulations, n_observations, 2))
     hull_area = _area(hull)
-    if rng is None:
-        rng = numpy.random.default_rng(seed)
+    rng = numpy.random.default_rng(rng)
     
     center_seeds = rng.integers(100_000, size=n_simulations)
     for i_replication in range(n_simulations):
-        seeds = poisson(hull, size=n_seeds, seed=[center_seeds[i_replication]])
+        seeds = poisson(hull, size=n_seeds, rng=[center_seeds[i_replication]])
         if cluster_radius is None:
             # default cluster radius is one half the minimum distance between seeds
             cluster_radii = [spatial.distance.pdist(seeds).min() * 0.5] * n_seeds
@@ -394,7 +398,7 @@ def cluster_poisson(
     return result.squeeze()
 
 
-def cluster_normal(hull, cov=None, size=None, n_seeds=2, seed=None, rng=None):
+def cluster_normal(hull, cov=None, size=None, n_seeds=2, rng=None):
     """
     Simulate a cluster poisson random point process with a specified intensity & number of seeds.
     A cluster poisson process is a poisson process where the center of each "cluster" is
@@ -421,13 +425,15 @@ def cluster_normal(hull, cov=None, size=None, n_seeds=2, seed=None, rng=None):
         and the number of observations is computed from the intensity.
     n_seeds : int
         the number of sub-clusters to use.
-    seed : int or None, optional
-        A seed to initialize the NumPy default random number generator (`numpy.random.default_rng`).
-        If `None` (the default), the generator is initialized with entropy from the operating system,
-        producing different sequences each time. Setting a specific integer seed ensures that the
-        sequence of random numbers is reproducible.
-    rng : numpy.random.Generator or None, optional
-        Optional random number generator. If None, a new generator is created.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
 
 
     Returns
@@ -445,11 +451,10 @@ def cluster_normal(hull, cov=None, size=None, n_seeds=2, seed=None, rng=None):
         hull, intensity=None, size=size
     )
     result = numpy.empty((n_simulations, n_observations, 2))
-    if rng is None:
-        rng = numpy.random.default_rng(seed)
+    rng = numpy.random.default_rng(rng)
     seeds = rng.integers(100_000, size=n_simulations)
     for i_replication in range(n_simulations):
-        centers = poisson(hull, size=n_seeds, seed=seeds[i_replication])
+        centers = poisson(hull, size=n_seeds, rng=seeds[i_replication])
         if cov is None:
             cov = spatial.distance.pdist(centers).mean() ** 2
         clusters = numpy.array_split(result[i_replication], n_seeds)
@@ -494,8 +499,15 @@ def _uniform_circle(n, radius=1.0, center=(0.0, 0.0), burn=2, verbose=False,
         If `None` (the default), the generator is initialized with entropy from the operating system,
         producing different sequences each time. Setting a specific integer seed ensures that the
         sequence of random numbers is reproducible.
-    rng : numpy.random.Generator or None, optional
-        Optional random number generator. If None, a new generator is created.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
 
 
     Returns
@@ -548,7 +560,7 @@ def _pairwise_count_kdtree(points, r):
 
 
 def strauss(hull, intensity=None, size=None, gamma=0.1, r=0.05,
-            n_iter=5000, seed=None, rng=None, max_iter=10):
+            n_iter=5000,  rng=None, max_iter=10):
     """
     Simulate a realization of the Strauss spatial point process using
     Metropolis-Hastings within a Gibbs sampler.
@@ -581,14 +593,19 @@ def strauss(hull, intensity=None, size=None, gamma=0.1, r=0.05,
     n_iter : int, optional
         Number of iterations for the Metropolis-Hastings sampler per
         replication. Default is 5000.
-    seed : int or None, optional
-        Random seed for reproducibility, passed to NumPy's RNG. Ignored if
-        `rng` is provided.
-    rng : numpy.random.Generator or None, optional
-        Optional random number generator. If None, a new generator is created.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
     max_iter : int, optional
         Maximum number of regeneration attempts per replication if a valid
         point pattern of the desired size is not achieved. Default is 10.
+
 
     Returns
     -------
@@ -623,8 +640,7 @@ def strauss(hull, intensity=None, size=None, gamma=0.1, r=0.05,
 
     result = numpy.empty((n_simulations, n_observations, 2))
 
-    if rng is None:
-        rng = numpy.random.default_rng(seed)
+    rng = numpy.random.default_rng(rng)
 
     for i_replication in range(n_simulations):
         found = False

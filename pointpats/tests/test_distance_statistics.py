@@ -39,7 +39,8 @@ support = numpy.linspace(0, 100, num=15)
 d_self = spatial.distance.pdist(points)
 D_self = spatial.distance.squareform(d_self)
 try:
-    random_pattern = random.poisson(bbox, size=500, seed=2478879)
+    rng = numpy.random.default_rng(2478879)
+    random_pattern = random.poisson(bbox, size=500, rng=rng)
     D_other = spatial.distance.cdist(points, random_pattern)
 except:
     # will cause failures in all ripley tests later from NameErrors about D_other
@@ -220,7 +221,7 @@ def test_f(points):
     manual_f = numpy.asarray([0, *numpy.cumsum(n_obs_at_dist) / n_obs_at_dist.sum()])
     seed=2478879
     f_test = ripley.f_test(points, support=support, distances=D_other, n_simulations=99,
-                           seed=seed)
+                           rng=seed)
 
     numpy.testing.assert_allclose(support, f_test.support)
     numpy.testing.assert_allclose(manual_f, f_test.statistic)
@@ -246,9 +247,9 @@ def test_g(points):
 
     nn_self = (D_self + numpy.eye(points.shape[0]) * 10000).min(axis=0)
     n_obs_at_dist, histogram_support = numpy.histogram(nn_self, bins=support)
-    seed=2478879
+    seed=numpy.random.default_rng(2478879)
     manual_g = numpy.asarray([0, *numpy.cumsum(n_obs_at_dist) / n_obs_at_dist.sum()])
-    g_test = ripley.g_test(points, support=support, n_simulations=99, seed=seed)
+    g_test = ripley.g_test(points, support=support, n_simulations=99, rng=seed)
 
     numpy.testing.assert_allclose(support, g_test.support)
     numpy.testing.assert_allclose(manual_g, g_test.statistic)
@@ -268,14 +269,15 @@ def test_j(points):
     # -------------------------------------------------------------------------#
     # Check j function works, matches manual, is truncated correctly
 
-    seed=2478879
-    j_test = ripley.j_test(points, support=support, n_simulations=99, truncate=True, seed=seed)
+    seed=numpy.random.default_rng(2478879)
+    j_test = ripley.j_test(points, support=support, n_simulations=99, truncate=True, rng=seed)
     j_test_fullno = ripley.j_test(
-        points, support=support, n_simulations=0, truncate=False, seed=seed
+        points, support=support, n_simulations=0, truncate=False, rng=seed
     )
     numpy.testing.assert_array_equal(j_test.support[:4], support[:4])
     numpy.testing.assert_array_equal(j_test_fullno.support, support)
-    _, f_tmp = ripley.f(points, support=support, seed=seed)
+    seed=numpy.random.default_rng(2478879)
+    _, f_tmp = ripley.f(points, support=support, rng=seed)
     _, g_tmp = ripley.g(points, support=support)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
