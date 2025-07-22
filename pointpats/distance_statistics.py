@@ -132,6 +132,7 @@ def f(
     metric="euclidean",
     hull=None,
     edge_correction=None,
+    rng=None,
 ):
     """
     Ripley's F function
@@ -156,6 +157,16 @@ def f(
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
+
 
     Returns
     -------
@@ -195,7 +206,7 @@ def f(
         # empty space distribution.
         n_empty_points = 1000
 
-        randoms = poisson(hull=hull, size=(n_empty_points, 1))
+        randoms = poisson(hull=hull, size=(n_empty_points, 1), rng=rng)
         try:
             tree
         except NameError:
@@ -216,6 +227,7 @@ def g(
     distances=None,
     metric="euclidean",
     edge_correction=None,
+    rng=None,
 ):
     """
     Ripley's G function
@@ -237,6 +249,16 @@ def g(
         distance metric to use when building search tree
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
+
 
     Returns
     -------
@@ -307,6 +329,7 @@ def j(
     hull=None,
     edge_correction=None,
     truncate=True,
+    rng=None
 ):
     """
     Ripely's J function
@@ -336,6 +359,16 @@ def j(
         whether or not to truncate the results when the F function reaches one. If the
         F function is one but the G function is less than one, this function will return
         numpy.nan values.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
+
 
     Returns
     -------
@@ -353,6 +386,7 @@ def j(
         metric=metric,
         hull=hull,
         edge_correction=edge_correction,
+        rng=rng,
     )
 
     gsupport, gstats = g(
@@ -553,6 +587,7 @@ def _ripley_test(
     edge_correction=None,
     keep_simulations=False,
     n_simulations=9999,
+    rng=None,
     **kwargs,
 ):
     if isinstance(coordinates, geopandas.GeoDataFrame | geopandas.GeoSeries):
@@ -569,7 +604,7 @@ def _ripley_test(
     if calltype in ("F", "J"):  # these require simulations
         core_kwargs["hull"] = hull
         # amortize to avoid doing this every time
-        empty_space_points = poisson(coordinates, size=(1000, 1))
+        empty_space_points = poisson(coordinates, size=(1000, 1), rng=rng)
         if distances is None:
             empty_space_distances, _ = _k_neighbors(tree, empty_space_points, k=1)
             if calltype == "F":
@@ -590,8 +625,10 @@ def _ripley_test(
     if keep_simulations:
         simulations = numpy.empty((len(observed_support), n_simulations)).T
     pvalues = numpy.ones_like(observed_support)
+    rng = numpy.random.default_rng(rng)
+    rngs = rng.integers(100_000, size=n_simulations)
     for i_replication in range(n_simulations):
-        random_i = poisson(hull, size=n_observations)
+        random_i = poisson(hull, size=n_observations, rng=rngs[i_replication])
         if calltype in ("F", "J"):
             random_tree = _build_best_tree(random_i, metric)
             empty_distances, _ = random_tree.query(empty_space_points, k=1)
@@ -626,6 +663,7 @@ def f_test(
     edge_correction=None,
     keep_simulations=False,
     n_simulations=9999,
+    rng=None,
 ):
     """
     Ripley's F function
@@ -659,6 +697,16 @@ def f_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
+
 
     Returns
     -------
@@ -680,6 +728,7 @@ def f_test(
         edge_correction=edge_correction,
         keep_simulations=keep_simulations,
         n_simulations=n_simulations,
+        rng=rng,
     )
 
 
@@ -692,6 +741,7 @@ def g_test(
     edge_correction=None,
     keep_simulations=False,
     n_simulations=9999,
+    rng=None,
 ):
     """
     Ripley's G function
@@ -724,6 +774,16 @@ def g_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
+
 
     Returns
     -------
@@ -744,6 +804,7 @@ def g_test(
         edge_correction=edge_correction,
         keep_simulations=keep_simulations,
         n_simulations=n_simulations,
+        rng=rng,
     )
 
 
@@ -757,6 +818,7 @@ def j_test(
     truncate=True,
     keep_simulations=False,
     n_simulations=9999,
+    rng=None,
 ):
     """
     Ripley's J function
@@ -787,6 +849,16 @@ def j_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
+
 
     Returns
     -------
@@ -808,6 +880,7 @@ def j_test(
         keep_simulations=keep_simulations,
         n_simulations=n_simulations,
         truncate=False,
+        rng=rng,
     )
     if truncate:
         result_trunc = _truncate(*result)
@@ -834,6 +907,7 @@ def k_test(
     edge_correction=None,
     keep_simulations=False,
     n_simulations=9999,
+    rng=None,
 ):
     """
     Ripley's K function
@@ -866,6 +940,16 @@ def k_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
+
 
     Returns
     -------
@@ -886,6 +970,7 @@ def k_test(
         edge_correction=edge_correction,
         keep_simulations=keep_simulations,
         n_simulations=n_simulations,
+        rng=rng,
     )
 
 
@@ -899,6 +984,7 @@ def l_test(
     linearized=False,
     keep_simulations=False,
     n_simulations=9999,
+    rng=None,
 ):
     """
     Ripley's L function
@@ -932,6 +1018,16 @@ def l_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
+
 
     Returns
     -------
@@ -953,6 +1049,7 @@ def l_test(
         linearized=linearized,
         keep_simulations=keep_simulations,
         n_simulations=n_simulations,
+        rng=rng,
     )
 
 
