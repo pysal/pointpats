@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>API reference &#8212; pointpats v2.3.0 Manual</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pysal-styles.css?v=f8dcc4ae" />
+    <script src="_static/documentation_options.js?v=c3c8ae58"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="icon" href="_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pointpats.PointPattern" href="generated/pointpats.PointPattern.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          pointpats</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.3.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="#">API</a></li>
+                <li><a href="references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installing-released-version">Installing released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installing-development-version">Installing development version</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#point-pattern">Point Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#point-processes">Point Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#centrography">Centrography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#density">Density</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quadrat-based-statistics">Quadrat Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#distance-based-statistics">Distance Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#window-functions">Window functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#random-distributions">Random distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#space-time-interaction-tests">Space-Time Interaction Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">API reference</a><ul>
+<li><a class="reference internal" href="#point-pattern">Point Pattern</a></li>
+<li><a class="reference internal" href="#point-processes">Point Processes</a></li>
+<li><a class="reference internal" href="#centrography">Centrography</a></li>
+<li><a class="reference internal" href="#density">Density</a></li>
+<li><a class="reference internal" href="#quadrat-based-statistics">Quadrat Based Statistics</a></li>
+<li><a class="reference internal" href="#distance-based-statistics">Distance Based Statistics</a></li>
+<li><a class="reference internal" href="#window-functions">Window functions</a></li>
+<li><a class="reference internal" href="#random-distributions">Random distributions</a></li>
+<li><a class="reference internal" href="#space-time-interaction-tests">Space-Time Interaction Tests</a></li>
+<li><a class="reference internal" href="#visualization">Visualization</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="api-reference">
+<span id="api-ref"></span><h1>API reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h1>
+<section id="point-pattern">
+<span id="pointpattern-api"></span><h2>Point Pattern<a class="headerlink" href="#point-pattern" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.PointPattern.html#pointpats.PointPattern" title="pointpats.PointPattern"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PointPattern</span></code></a>(points[, window, names, ...])</p></td>
+<td><p>Planar Point Pattern Class 2-D.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="point-processes">
+<span id="pointprocess-api"></span><h2>Point Processes<a class="headerlink" href="#point-processes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.PointProcess.html#pointpats.PointProcess" title="pointpats.PointProcess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PointProcess</span></code></a>(window, n, samples[, asPP])</p></td>
+<td><p>Point Process base class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.PoissonPointProcess.html#pointpats.PoissonPointProcess" title="pointpats.PoissonPointProcess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PoissonPointProcess</span></code></a>(window, n, samples[, ...])</p></td>
+<td><p>Poisson point process including <span class="math notranslate nohighlight">\(N\)</span>-conditioned CSR process and <span class="math notranslate nohighlight">\(\lambda\)</span>-conditioned CSR process.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.PoissonClusterPointProcess.html#pointpats.PoissonClusterPointProcess" title="pointpats.PoissonClusterPointProcess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PoissonClusterPointProcess</span></code></a>(window, n, ...[, ...])</p></td>
+<td><p>Poisson cluster point process (Neyman Scott).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="centrography">
+<span id="centrgraphy-api"></span><h2>Centrography<a class="headerlink" href="#centrography" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.minimum_bounding_rectangle.html#pointpats.minimum_bounding_rectangle" title="pointpats.minimum_bounding_rectangle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum_bounding_rectangle</span></code></a>(-&gt; tuple[float, ...)</p></td>
+<td><p>Find minimum bounding rectangle of a point array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.minimum_bounding_circle.html#pointpats.minimum_bounding_circle" title="pointpats.minimum_bounding_circle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum_bounding_circle</span></code></a>(...)</p></td>
+<td><p>Implements Skyum (1990)'s algorithm for the minimum bounding circle in R^2.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.minimum_rotated_rectangle.html#pointpats.minimum_rotated_rectangle" title="pointpats.minimum_rotated_rectangle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum_rotated_rectangle</span></code></a>(...)</p></td>
+<td><p>Compute the minimum rotated rectangle for a point array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.hull.html#pointpats.hull" title="pointpats.hull"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hull</span></code></a>(-&gt; ~numpy.ndarray[tuple[~typing.Any, ...)</p></td>
+<td><p>Find convex hull of a point array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.mean_center.html#pointpats.mean_center" title="pointpats.mean_center"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_center</span></code></a>(...)</p></td>
+<td><p>Find mean center of a point array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.weighted_mean_center.html#pointpats.weighted_mean_center" title="pointpats.weighted_mean_center"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weighted_mean_center</span></code></a>(...)</p></td>
+<td><p>Find weighted mean center of a marked point pattern.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.manhattan_median.html#pointpats.manhattan_median" title="pointpats.manhattan_median"><code class="xref py py-obj docutils literal notranslate"><span class="pre">manhattan_median</span></code></a>(...)</p></td>
+<td><p>Find manhattan median of a point array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.std_distance.html#pointpats.std_distance" title="pointpats.std_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">std_distance</span></code></a>(-&gt; ~numpy.float64)</p></td>
+<td><p>Calculate standard distance of a point array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.euclidean_median.html#pointpats.euclidean_median" title="pointpats.euclidean_median"><code class="xref py py-obj docutils literal notranslate"><span class="pre">euclidean_median</span></code></a>(...)</p></td>
+<td><p>Calculate the Euclidean median for a point pattern.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.ellipse.html#pointpats.ellipse" title="pointpats.ellipse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ellipse</span></code></a>(-&gt; tuple[float, float, float])</p></td>
+<td><p>Computes a weighted standard deviational ellipse for a set of point geometries.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.dtot.html#pointpats.dtot" title="pointpats.dtot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtot</span></code></a>(-&gt; float)</p></td>
+<td><p>Sum of Euclidean distances between event points and a selected point.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="density">
+<span id="density-api"></span><h2>Density<a class="headerlink" href="#density" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.plot_density.html#pointpats.plot_density" title="pointpats.plot_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_density</span></code></a>(data, bandwidth[, kernel, ...])</p></td>
+<td><p>Plot kernel density of a given point pattern</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="quadrat-based-statistics">
+<span id="quadrat-api"></span><h2>Quadrat Based Statistics<a class="headerlink" href="#quadrat-based-statistics" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.RectangleM.html#pointpats.RectangleM" title="pointpats.RectangleM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RectangleM</span></code></a>(pp[, count_column, count_row, ...])</p></td>
+<td><p>Rectangle grid structure for quadrat-based method.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.HexagonM.html#pointpats.HexagonM" title="pointpats.HexagonM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HexagonM</span></code></a>(pp, lh)</p></td>
+<td><p>Hexagon grid structure for quadrat-based method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.QStatistic.html#pointpats.QStatistic" title="pointpats.QStatistic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QStatistic</span></code></a>(pp[, shape, nx, ny, ...])</p></td>
+<td><p>Quadrat analysis of point pattern.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="distance-based-statistics">
+<span id="distance-api"></span><h2>Distance Based Statistics<a class="headerlink" href="#distance-based-statistics" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.f.html#pointpats.f" title="pointpats.f"><code class="xref py py-obj docutils literal notranslate"><span class="pre">f</span></code></a>(coordinates[, support, distances, metric, ...])</p></td>
+<td><p>Ripley's F function</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.g.html#pointpats.g" title="pointpats.g"><code class="xref py py-obj docutils literal notranslate"><span class="pre">g</span></code></a>(coordinates[, support, distances, metric, ...])</p></td>
+<td><p>Ripley's G function</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.k.html#pointpats.k" title="pointpats.k"><code class="xref py py-obj docutils literal notranslate"><span class="pre">k</span></code></a>(coordinates[, support, distances, metric, ...])</p></td>
+<td><p>Ripley's K function</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.j.html#pointpats.j" title="pointpats.j"><code class="xref py py-obj docutils literal notranslate"><span class="pre">j</span></code></a>(coordinates[, support, distances, metric, ...])</p></td>
+<td><p>Ripely's J function</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.l.html#pointpats.l" title="pointpats.l"><code class="xref py py-obj docutils literal notranslate"><span class="pre">l</span></code></a>(coordinates[, support, permutations, ...])</p></td>
+<td><p>Ripley's L function</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.f_test.html#pointpats.f_test" title="pointpats.f_test"><code class="xref py py-obj docutils literal notranslate"><span class="pre">f_test</span></code></a>(coordinates[, support, distances, ...])</p></td>
+<td><p>Ripley's F function</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.g_test.html#pointpats.g_test" title="pointpats.g_test"><code class="xref py py-obj docutils literal notranslate"><span class="pre">g_test</span></code></a>(coordinates[, support, distances, ...])</p></td>
+<td><p>Ripley's G function</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.k_test.html#pointpats.k_test" title="pointpats.k_test"><code class="xref py py-obj docutils literal notranslate"><span class="pre">k_test</span></code></a>(coordinates[, support, distances, ...])</p></td>
+<td><p>Ripley's K function</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.j_test.html#pointpats.j_test" title="pointpats.j_test"><code class="xref py py-obj docutils literal notranslate"><span class="pre">j_test</span></code></a>(coordinates[, support, distances, ...])</p></td>
+<td><p>Ripley's J function</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.l_test.html#pointpats.l_test" title="pointpats.l_test"><code class="xref py py-obj docutils literal notranslate"><span class="pre">l_test</span></code></a>(coordinates[, support, distances, ...])</p></td>
+<td><p>Ripley's L function</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="window-functions">
+<span id="window-api"></span><h2>Window functions<a class="headerlink" href="#window-functions" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.Window.html#pointpats.Window" title="pointpats.Window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Window</span></code></a>(parts[, holes])</p></td>
+<td><p>Geometric container for point patterns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.as_window.html#pointpats.as_window" title="pointpats.as_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">as_window</span></code></a>(pysal_polygon)</p></td>
+<td><p>Convert a libpysal polygon to a Window.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.poly_from_bbox.html#pointpats.poly_from_bbox" title="pointpats.poly_from_bbox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">poly_from_bbox</span></code></a>(bbox)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.to_ccf.html#pointpats.to_ccf" title="pointpats.to_ccf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_ccf</span></code></a>(poly)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="random-distributions">
+<h2>Random distributions<a class="headerlink" href="#random-distributions" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.random.poisson.html#pointpats.random.poisson" title="pointpats.random.poisson"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random.poisson</span></code></a>(hull[, intensity, size])</p></td>
+<td><p>Simulate a poisson random point process with a specified intensity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.random.normal.html#pointpats.random.normal" title="pointpats.random.normal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random.normal</span></code></a>(hull[, center, cov, size])</p></td>
+<td><p>Simulate a multivariate random normal point cluster</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.random.cluster_poisson.html#pointpats.random.cluster_poisson" title="pointpats.random.cluster_poisson"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random.cluster_poisson</span></code></a>(hull[, intensity, ...])</p></td>
+<td><p>Simulate a cluster poisson random point process with a specified intensity &amp; number of seeds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.random.cluster_normal.html#pointpats.random.cluster_normal" title="pointpats.random.cluster_normal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random.cluster_normal</span></code></a>(hull[, cov, size, n_seeds])</p></td>
+<td><p>Simulate a cluster poisson random point process with a specified intensity &amp; number of seeds.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="space-time-interaction-tests">
+<h2>Space-Time Interaction Tests<a class="headerlink" href="#space-time-interaction-tests" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.SpaceTimeEvents.html#pointpats.SpaceTimeEvents" title="pointpats.SpaceTimeEvents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpaceTimeEvents</span></code></a>(path, time_col[, ...])</p></td>
+<td><p>Method for reformatting event data stored in a shapefile for use in calculating metrics of spatio-temporal interaction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.Knox.html#pointpats.Knox" title="pointpats.Knox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Knox</span></code></a>(s_coords, t_coords, delta, tau[, ...])</p></td>
+<td><p>Global Knox statistic for space-time interactions</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.KnoxLocal.html#pointpats.KnoxLocal" title="pointpats.KnoxLocal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KnoxLocal</span></code></a>(s_coords, t_coords, delta, tau[, ...])</p></td>
+<td><p>Local Knox statistics for space-time interactions</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.mantel.html#pointpats.mantel" title="pointpats.mantel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mantel</span></code></a>(s_coords, t_coords[, permutations, ...])</p></td>
+<td><p>Standardized Mantel test for spatio-temporal interaction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.jacquez.html#pointpats.jacquez" title="pointpats.jacquez"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jacquez</span></code></a>(s_coords, t_coords, k[, permutations])</p></td>
+<td><p>Jacquez k nearest neighbors test for spatio-temporal interaction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/pointpats.modified_knox.html#pointpats.modified_knox" title="pointpats.modified_knox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modified_knox</span></code></a>(s_coords, t_coords, delta, tau)</p></td>
+<td><p>Baker's modified Knox test for spatio-temporal interaction.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="visualization">
+<h2>Visualization<a class="headerlink" href="#visualization" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/pointpats.plot_density.html#pointpats.plot_density" title="pointpats.plot_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_density</span></code></a>(data, bandwidth[, kernel, ...])</p></td>
+<td><p>Plot kernel density of a given point pattern</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="_sources/api.rst.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.3.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

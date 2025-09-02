@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pointpats.PoissonClusterPointProcess &#8212; pointpats v2.3.0 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
+    <script src="../_static/documentation_options.js?v=c3c8ae58"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="icon" href="../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pointpats.minimum_bounding_rectangle" href="pointpats.minimum_bounding_rectangle.html" />
+    <link rel="prev" title="pointpats.PoissonPointProcess" href="pointpats.PoissonPointProcess.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          pointpats</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.3.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-released-version">Installing released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-development-version">Installing development version</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#point-pattern">Point Pattern</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#point-processes">Point Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#centrography">Centrography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#density">Density</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#quadrat-based-statistics">Quadrat Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#distance-based-statistics">Distance Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#window-functions">Window functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#random-distributions">Random distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#space-time-interaction-tests">Space-Time Interaction Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">pointpats.PoissonClusterPointProcess</a><ul>
+<li><a class="reference internal" href="#pointpats.PoissonClusterPointProcess"><code class="docutils literal notranslate"><span class="pre">PoissonClusterPointProcess</span></code></a><ul>
+<li><a class="reference internal" href="#pointpats.PoissonClusterPointProcess.__init__"><code class="docutils literal notranslate"><span class="pre">PoissonClusterPointProcess.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PoissonClusterPointProcess.draw"><code class="docutils literal notranslate"><span class="pre">PoissonClusterPointProcess.draw()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PoissonClusterPointProcess.realize"><code class="docutils literal notranslate"><span class="pre">PoissonClusterPointProcess.realize()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PoissonClusterPointProcess.setup"><code class="docutils literal notranslate"><span class="pre">PoissonClusterPointProcess.setup()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="pointpats-poissonclusterpointprocess">
+<h1>pointpats.PoissonClusterPointProcess<a class="headerlink" href="#pointpats-poissonclusterpointprocess" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pointpats.PoissonClusterPointProcess">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">PoissonClusterPointProcess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asPP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditioning</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/process.html#PoissonClusterPointProcess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PoissonClusterPointProcess" title="Link to this definition">¶</a></dt>
+<dd><p>Poisson cluster point process (Neyman Scott).
+Two stages:
+1. parent CSR process: <span class="math notranslate nohighlight">\(N\)</span>-conditioned or
+<span class="math notranslate nohighlight">\(\lambda\)</span>-conditioned. If parent events follow a
+<span class="math notranslate nohighlight">\(\lambda\)</span>-conditioned CSR process,
+the number of parent events varies across realizations.
+2. child process: fixed number of points in circle centered
+on each parent.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>window</strong><span class="classifier"><a class="reference internal" href="pointpats.Window.html#pointpats.Window" title="pointpats.window.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></a></span></dt><dd><p>Bounding geometric object to contain point process
+realizations.</p>
+</dd>
+<dt><strong>n</strong><span class="classifier">int</span></dt><dd><p>Size of each realization.</p>
+</dd>
+<dt><strong>parents</strong><span class="classifier">int</span></dt><dd><p>Number of parents.</p>
+</dd>
+<dt><strong>radius</strong><span class="classifier">float</span></dt><dd><p>Radius of the circle centered on each parent.</p>
+</dd>
+<dt><strong>samples</strong><span class="classifier">list</span></dt><dd><p>Number of realizations.</p>
+</dd>
+<dt><strong>asPP</strong><span class="classifier">bool</span></dt><dd><p>Control the data type of value in the “realizations”
+dictionary. If True, the data type is point
+pattern as defined in pointpattern.py; if False,
+the data type is an two-dimensional array.</p>
+</dd>
+<dt><strong>conditioning</strong><span class="classifier">bool</span></dt><dd><p>If True, use the <span class="math notranslate nohighlight">\(lambda\)</span>-conditioned CSR process
+for parent events, leading to varied number of
+parent events across realizations;
+if False, use the <span class="math notranslate nohighlight">\(N\)</span>-conditioned CSR process.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>children</strong><span class="classifier">int</span></dt><dd><p>Number of childrens centered on each parent. Can
+be considered as local intensity.</p>
+</dd>
+<dt><strong>num_parents</strong><span class="classifier">dictionary</span></dt><dd><p>The key is the index of each realization. The
+value is the number of parent events for each
+realization.</p>
+</dd>
+<dt><strong>realizations</strong><span class="classifier">dictionary</span></dt><dd><p>The key is the index of each realization, and the
+value is simulated event points for each
+realization. The data type of the value is
+controlled by the parameter “asPP”.</p>
+</dd>
+<dt><strong>parameters</strong><span class="classifier">dictionary</span></dt><dd><p>Dictionary of a dictionary.
+The key is the index of each realization, and the
+value is a dictionary with the key ‘n’ and the
+value always equal to the parameter n in the
+case of
+N-conditioned process.
+For example, {0:{‘n’:100},1:{‘n’:100},2:{‘n’:100}}
+2. randomly generated from a Possion process in
+the case of lambda-conditioned process.
+For example, {0:{‘n’:97},1:{‘n’:100},2:{‘n’:98}}</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">libpysal</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ps</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">Window</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">libpysal.cg</span><span class="w"> </span><span class="kn">import</span> <span class="n">shapely_ext</span>
+</pre></div>
+</div>
+<p>Open the virginia polygon shapefile</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">va</span> <span class="o">=</span> <span class="n">ps</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">ps</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">&quot;virginia.shp&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Create the exterior polygons for VA from the union of the county shapes</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">polys</span> <span class="o">=</span> <span class="p">[</span><span class="n">shp</span> <span class="k">for</span> <span class="n">shp</span> <span class="ow">in</span> <span class="n">va</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state</span> <span class="o">=</span> <span class="n">shapely_ext</span><span class="o">.</span><span class="n">cascaded_union</span><span class="p">(</span><span class="n">polys</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Create window from virginia state boundary</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">window</span> <span class="o">=</span> <span class="n">Window</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">parts</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>1. Simulate a Poisson cluster process of size 200 with 10 parents
+and 20 children within 0.5 units of each parent
+(parent events:  <span class="math notranslate nohighlight">\(N\)</span>-conditioned CSR)</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples1</span> <span class="o">=</span> <span class="n">PoissonClusterPointProcess</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">asPP</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">conditioning</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples1</span><span class="o">.</span><span class="n">parameters</span> <span class="c1"># number of events for the realization</span>
+<span class="go">{0: {&#39;n&#39;: 200}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples1</span><span class="o">.</span><span class="n">num_parents</span> <span class="c1">#number of parent events for each realization</span>
+<span class="go">{0: 10}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples1</span><span class="o">.</span><span class="n">children</span> <span class="c1"># number of children events centered on each parent event</span>
+<span class="go">20</span>
+</pre></div>
+</div>
+<p>2. Simulate a Poisson cluster process of size 200 with 10 parents
+and 20 children within 0.5 units of each parent
+(parent events:  <span class="math notranslate nohighlight">\(\lambda\)</span>-conditioned CSR)</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples2</span> <span class="o">=</span> <span class="n">PoissonClusterPointProcess</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">asPP</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">conditioning</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples2</span><span class="o">.</span><span class="n">parameters</span> <span class="c1"># number of events for the realization might not be equal to 200</span>
+<span class="go">{0: {&#39;n&#39;: 260}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples2</span><span class="o">.</span><span class="n">num_parents</span> <span class="c1">#number of parent events for each realization</span>
+<span class="go">{0: 13}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples2</span><span class="o">.</span><span class="n">children</span> <span class="c1"># number of children events centered on each parent event</span>
+<span class="go">20</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.PoissonClusterPointProcess.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asPP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditioning</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/process.html#PoissonClusterPointProcess.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PoissonClusterPointProcess.__init__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.PoissonClusterPointProcess.__init__" title="pointpats.PoissonClusterPointProcess.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(window, n, parents, radius, samples)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.PoissonClusterPointProcess.draw" title="pointpats.PoissonClusterPointProcess.draw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw</span></code></a>(parameter)</p></td>
+<td><p>Generate a series of point coordinates within the given window.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.PoissonClusterPointProcess.realize" title="pointpats.PoissonClusterPointProcess.realize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">realize</span></code></a>(n)</p></td>
+<td><p>Generate n points which are distributed in a clustered fashion in the minimum bounding box of &quot;window&quot;.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.PoissonClusterPointProcess.setup" title="pointpats.PoissonClusterPointProcess.setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></a>()</p></td>
+<td><p>Generate the number of events for each realization.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.PoissonClusterPointProcess.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pointpats.PoissonClusterPointProcess.draw" title="Link to this definition">¶</a></dt>
+<dd><p>Generate a series of point coordinates within the given window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>parameter</strong><span class="classifier">dictionary</span></dt><dd><p>Key: ‘n’.
+Value: size of the realization.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>: array</dt><dd><p>A series of point coordinates.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.PoissonClusterPointProcess.realize">
+<span class="sig-name descname"><span class="pre">realize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/process.html#PoissonClusterPointProcess.realize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PoissonClusterPointProcess.realize" title="Link to this definition">¶</a></dt>
+<dd><p>Generate n points which are distributed in a clustered
+fashion in the minimum bounding box of “window”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>n</strong><span class="classifier">int</span></dt><dd><p>Number of point events.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>res</strong><span class="classifier">array</span></dt><dd><p>(n,2), n point coordinates.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.PoissonClusterPointProcess.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/process.html#PoissonClusterPointProcess.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PoissonClusterPointProcess.setup" title="Link to this definition">¶</a></dt>
+<dd><p>Generate the number of events for each realization. If
+“conditioning” is False, all the event numbers are the same;
+if it is True, the number of parents is a random variable
+following a Poisson distribution, resulting in varied number
+of events.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/generated/pointpats.PoissonClusterPointProcess.rst.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.3.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

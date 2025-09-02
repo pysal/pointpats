@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pointpats.centrography &#8212; pointpats v2.3.0 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pysal-styles.css?v=f8dcc4ae" />
+    <script src="../../_static/documentation_options.js?v=c3c8ae58"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          pointpats</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.3.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../installation.html">Installation</a></li>
+                <li><a href="../../api.html">API</a></li>
+                <li><a href="../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#installing-released-version">Installing released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#installing-development-version">Installing development version</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#point-pattern">Point Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#point-processes">Point Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#centrography">Centrography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#density">Density</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#quadrat-based-statistics">Quadrat Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#distance-based-statistics">Distance Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#window-functions">Window functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#random-distributions">Random distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#space-time-interaction-tests">Space-Time Interaction Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for pointpats.centrography</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Centrographic measures for point patterns</span>
+
+<span class="sd">- documentation</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Serge Rey sjsrey@gmail.com&quot;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;hull&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mean_center&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;weighted_mean_center&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;manhattan_median&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;std_distance&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;euclidean_median&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ellipse&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;minimum_rotated_rectangle&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;minimum_bounding_rectangle&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;minimum_bounding_circle&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dtot&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;_circle&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">singledispatch</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shapely</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">geopandas.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeoPandasBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">libpysal.cg</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_clockwise</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDArray</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConvexHull</span>
+
+<span class="n">not_clockwise</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="ow">not</span> <span class="n">is_clockwise</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="n">MAXD</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">float_info</span><span class="o">.</span><span class="n">max</span>
+<span class="n">MIND</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">float_info</span><span class="o">.</span><span class="n">min</span>
+
+
+<div class="viewcode-block" id="minimum_bounding_rectangle">
+<a class="viewcode-back" href="../../generated/pointpats.minimum_bounding_rectangle.html#pointpats.minimum_bounding_rectangle">[docs]</a>
+<span class="nd">@singledispatch</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">minimum_bounding_rectangle</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find minimum bounding rectangle of a point array.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points : arraylike</span>
+<span class="sd">             array representing a point pattern</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rectangle</span>
+<span class="sd">        minimum bounding rectangle of a given point pattern</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import geopandas as gpd</span>
+
+<span class="sd">    Create an array of point coordinates.</span>
+
+<span class="sd">    &gt;&gt;&gt; coords = np.array(</span>
+<span class="sd">    ...     [</span>
+<span class="sd">    ...         [66.22, 32.54],</span>
+<span class="sd">    ...         [22.52, 22.39],</span>
+<span class="sd">    ...         [31.01, 81.21],</span>
+<span class="sd">    ...         [9.47, 31.02],</span>
+<span class="sd">    ...         [30.78, 60.10],</span>
+<span class="sd">    ...         [75.21, 58.93],</span>
+<span class="sd">    ...         [79.26, 7.68],</span>
+<span class="sd">    ...         [8.23, 39.93],</span>
+<span class="sd">    ...         [98.73, 77.17],</span>
+<span class="sd">    ...         [89.78, 42.53],</span>
+<span class="sd">    ...         [65.19, 92.08],</span>
+<span class="sd">    ...         [54.46, 8.48],</span>
+<span class="sd">    ...     ]</span>
+<span class="sd">    ... )</span>
+
+<span class="sd">    Passing an array of coordinates returns a tuple capturing the bounds.</span>
+
+<span class="sd">    &gt;&gt;&gt; minimum_bounding_rectangle(coords)</span>
+<span class="sd">    (np.float64(8.23), np.float64(7.68), np.float64(98.73), np.float64(92.08))</span>
+
+<span class="sd">    Passing a GeoPandas object returns a shapely geometry.</span>
+
+<span class="sd">    &gt;&gt;&gt; geoms = gpd.GeoSeries.from_xy(*coords.T)</span>
+<span class="sd">    &gt;&gt;&gt; minimum_bounding_rectangle(geoms)</span>
+<span class="sd">    &lt;POLYGON ((8.23 7.68, 98.73 7.68, 98.73 92.08, 8.23 92.08, 8.23 7.68))&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">minimum_bounding_rectangle</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+
+
+<span class="nd">@minimum_bounding_rectangle</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="n">min_x</span> <span class="o">=</span> <span class="n">min_y</span> <span class="o">=</span> <span class="n">MAXD</span>
+    <span class="n">max_x</span> <span class="o">=</span> <span class="n">max_y</span> <span class="o">=</span> <span class="n">MIND</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">points</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">min_x</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">min_y</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">max_x</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">max_y</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">min_x</span><span class="p">,</span> <span class="n">min_y</span><span class="p">,</span> <span class="n">max_x</span><span class="p">,</span> <span class="n">max_y</span>
+
+
+<span class="nd">@minimum_bounding_rectangle</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">GeoPandasBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Polygon</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">shapely</span><span class="o">.</span><span class="n">envelope</span><span class="p">(</span><span class="n">shapely</span><span class="o">.</span><span class="n">geometrycollections</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="minimum_rotated_rectangle">
+<a class="viewcode-back" href="../../generated/pointpats.minimum_rotated_rectangle.html#pointpats.minimum_rotated_rectangle">[docs]</a>
+<span class="nd">@singledispatch</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">minimum_rotated_rectangle</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">return_angle</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the minimum rotated rectangle for a point array.</span>
+
+<span class="sd">    This is the smallest enclosing rectangle (possibly rotated)</span>
+<span class="sd">    for the input point set. It is computed using Shapely.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points : arraylike</span>
+<span class="sd">             array representing a point pattern</span>
+<span class="sd">    return_angle : bool</span>
+<span class="sd">        whether to return the angle (in degrees) of the angle between</span>
+<span class="sd">        the horizontal axis of the rectanle and the first side (i.e. length).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rectangle | tuple(rectangle, angle)</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import geopandas as gpd</span>
+
+<span class="sd">    Create an array of point coordinates.</span>
+
+<span class="sd">    &gt;&gt;&gt; coords = np.array(</span>
+<span class="sd">    ...     [</span>
+<span class="sd">    ...         [66.22, 32.54],</span>
+<span class="sd">    ...         [22.52, 22.39],</span>
+<span class="sd">    ...         [31.01, 81.21],</span>
+<span class="sd">    ...         [9.47, 31.02],</span>
+<span class="sd">    ...         [30.78, 60.10],</span>
+<span class="sd">    ...         [75.21, 58.93],</span>
+<span class="sd">    ...         [79.26, 7.68],</span>
+<span class="sd">    ...         [8.23, 39.93],</span>
+<span class="sd">    ...         [98.73, 77.17],</span>
+<span class="sd">    ...         [89.78, 42.53],</span>
+<span class="sd">    ...         [65.19, 92.08],</span>
+<span class="sd">    ...         [54.46, 8.48],</span>
+<span class="sd">    ...     ]</span>
+<span class="sd">    ... )</span>
+
+
+<span class="sd">    Passing an array of coordinates returns an array capturing the corners.</span>
+
+<span class="sd">    &gt;&gt;&gt; minimum_rotated_rectangle(coords)</span>
+<span class="sd">    array([[ 75.5990843 ,  -0.72615725],</span>
+<span class="sd">           [  4.08727852,  30.41752523],</span>
+<span class="sd">           [ 36.40164577, 104.61744544],</span>
+<span class="sd">           [107.91345156,  73.47376296]])</span>
+<span class="sd">    </span>
+
+<span class="sd">    &gt;&gt;&gt; minimum_rotated_rectangle(coords, return_angle=True)</span>
+<span class="sd">    (array([[ 75.5990843 ,  -0.72615725],</span>
+<span class="sd">           [  4.08727852,  30.41752523],</span>
+<span class="sd">           [ 36.40164577, 104.61744544],</span>
+<span class="sd">           [107.91345156,  73.47376296]]), 66.466678613503)</span>
+<span class="sd">    </span>
+<span class="sd">    Passing a GeoPandas object returns a shapely geometry.</span>
+
+<span class="sd">    &gt;&gt;&gt; geoms = gpd.GeoSeries.from_xy(*coords.T)</span>
+<span class="sd">    &gt;&gt;&gt; minimum_rotated_rectangle(geoms)</span>
+<span class="sd">    &lt;POLYGON ((107.913 73.474, 36.402 104.617, 4.087 30.418, 75.599 -0.726, 107....&gt;</span>
+
+<span class="sd">    &gt;&gt;&gt; minimum_rotated_rectangle(geoms, return_angle=True)</span>
+<span class="sd">    (&lt;POLYGON ((107.913 73.474, 36.402 104.617, 4.087 30.418, 75.599 -0.726, 107....&gt;, 66.466678613503)</span>
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">minimum_rotated_rectangle</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">return_angle</span><span class="o">=</span><span class="n">return_angle</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_mrr_angle</span><span class="p">(</span><span class="n">out_points</span><span class="p">):</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span>
+            <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span>
+                <span class="n">out_points</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">out_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">out_points</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">out_points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="o">%</span> <span class="mi">90</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">angle</span>
+
+
+<span class="nd">@minimum_rotated_rectangle</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span>
+    <span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">return_angle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="n">out_points</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">(</span>
+        <span class="n">shapely</span><span class="o">.</span><span class="n">minimum_rotated_rectangle</span><span class="p">(</span><span class="n">shapely</span><span class="o">.</span><span class="n">multipoints</span><span class="p">(</span><span class="n">points</span><span class="p">))</span>
+    <span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">return_angle</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">out_points</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">_get_mrr_angle</span><span class="p">(</span><span class="n">out_points</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">out_points</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+
+<span class="nd">@minimum_rotated_rectangle</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span>
+    <span class="n">points</span><span class="p">:</span> <span class="n">GeoPandasBase</span><span class="p">,</span> <span class="n">return_angle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Polygon</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">shapely</span><span class="o">.</span><span class="n">Polygon</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="n">rectangle</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">minimum_rotated_rectangle</span><span class="p">(</span><span class="n">shapely</span><span class="o">.</span><span class="n">multipoints</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">geometry</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">return_angle</span><span class="p">:</span>
+        <span class="n">out_points</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">(</span><span class="n">rectangle</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">rectangle</span><span class="p">,</span> <span class="n">_get_mrr_angle</span><span class="p">(</span><span class="n">out_points</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">rectangle</span>
+
+
+<div class="viewcode-block" id="hull">
+<a class="viewcode-back" href="../../generated/pointpats.hull.html#pointpats.hull">[docs]</a>
+<span class="nd">@singledispatch</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">hull</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find convex hull of a point array.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points : arraylike</span>
+<span class="sd">             array representing a point pattern</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rectangle</span>
+<span class="sd">        convex hull of a given point pattern</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import geopandas as gpd</span>
+
+<span class="sd">    Create an array of point coordinates.</span>
+
+<span class="sd">    &gt;&gt;&gt; coords = np.array(</span>
+<span class="sd">    ...     [</span>
+<span class="sd">    ...         [66.22, 32.54],</span>
+<span class="sd">    ...         [22.52, 22.39],</span>
+<span class="sd">    ...         [31.01, 81.21],</span>
+<span class="sd">    ...         [9.47, 31.02],</span>
+<span class="sd">    ...         [30.78, 60.10],</span>
+<span class="sd">    ...         [75.21, 58.93],</span>
+<span class="sd">    ...         [79.26, 7.68],</span>
+<span class="sd">    ...         [8.23, 39.93],</span>
+<span class="sd">    ...         [98.73, 77.17],</span>
+<span class="sd">    ...         [89.78, 42.53],</span>
+<span class="sd">    ...         [65.19, 92.08],</span>
+<span class="sd">    ...         [54.46, 8.48],</span>
+<span class="sd">    ...     ]</span>
+<span class="sd">    ... )</span>
+
+<span class="sd">    Passing an array of coordinates returns an array capturing the vertices.</span>
+
+<span class="sd">    &gt;&gt;&gt; hull(coords)</span>
+<span class="sd">    array([[31.01, 81.21],</span>
+<span class="sd">           [ 8.23, 39.93],</span>
+<span class="sd">           [ 9.47, 31.02],</span>
+<span class="sd">           [22.52, 22.39],</span>
+<span class="sd">           [54.46,  8.48],</span>
+<span class="sd">           [79.26,  7.68],</span>
+<span class="sd">           [89.78, 42.53],</span>
+<span class="sd">           [98.73, 77.17],</span>
+<span class="sd">           [65.19, 92.08]])</span>
+
+<span class="sd">    Passing a GeoPandas object returns a shapely geometry.</span>
+
+<span class="sd">    &gt;&gt;&gt; geoms = gpd.GeoSeries.from_xy(*coords.T)</span>
+<span class="sd">    &gt;&gt;&gt; hull(geoms)</span>
+<span class="sd">    &lt;POLYGON ((79.26 7.68, 54.46 8.48, 22.52 22.39, 9.47 31.02, 8.23 39.93, 31.0...&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hull</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+
+
+<span class="nd">@hull</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">ConvexHull</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">points</span><span class="p">[</span><span class="n">h</span><span class="o">.</span><span class="n">vertices</span><span class="p">]</span>
+
+
+<span class="nd">@hull</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">GeoPandasBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Polygon</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">shapely</span><span class="o">.</span><span class="n">convex_hull</span><span class="p">(</span><span class="n">shapely</span><span class="o">.</span><span class="n">multipoints</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">geometry</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="mean_center">
+<a class="viewcode-back" href="../../generated/pointpats.mean_center.html#pointpats.mean_center">[docs]</a>
+<span class="nd">@singledispatch</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mean_center</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find mean center of a point array.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points : arraylike</span>
+<span class="sd">             array representing a point pattern</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    center</span>
+<span class="sd">        center of a given point pattern</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import geopandas as gpd</span>
+
+<span class="sd">    Create an array of point coordinates.</span>
+
+<span class="sd">    &gt;&gt;&gt; coords = np.array(</span>
+<span class="sd">    ...     [</span>
+<span class="sd">    ...         [66.22, 32.54],</span>
+<span class="sd">    ...         [22.52, 22.39],</span>
+<span class="sd">    ...         [31.01, 81.21],</span>
+<span class="sd">    ...         [9.47, 31.02],</span>
+<span class="sd">    ...         [30.78, 60.10],</span>
+<span class="sd">    ...         [75.21, 58.93],</span>
+<span class="sd">    ...         [79.26, 7.68],</span>
+<span class="sd">    ...         [8.23, 39.93],</span>
+<span class="sd">    ...         [98.73, 77.17],</span>
+<span class="sd">    ...         [89.78, 42.53],</span>
+<span class="sd">    ...         [65.19, 92.08],</span>
+<span class="sd">    ...         [54.46, 8.48],</span>
+<span class="sd">    ...     ]</span>
+<span class="sd">    ... )</span>
+
+<span class="sd">    Passing an array of coordinates returns an array capturing the center.</span>
+
+<span class="sd">    &gt;&gt;&gt; mean_center(coords)</span>
+<span class="sd">    array([52.57166667, 46.17166667])</span>
+
+<span class="sd">    Passing a GeoPandas object returns a shapely geometry.</span>
+
+<span class="sd">    &gt;&gt;&gt; geoms = gpd.GeoSeries.from_xy(*coords.T)</span>
+<span class="sd">    &gt;&gt;&gt; mean_center(geoms)</span>
+<span class="sd">    &lt;POINT (52.572 46.172)&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mean_center</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+
+
+<span class="nd">@mean_center</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="n">points</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+
+<span class="nd">@mean_center</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">GeoPandasBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Point</span><span class="p">:</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span><span class="n">mean_center</span><span class="p">(</span><span class="n">coords</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="weighted_mean_center">
+<a class="viewcode-back" href="../../generated/pointpats.weighted_mean_center.html#pointpats.weighted_mean_center">[docs]</a>
+<span class="nd">@singledispatch</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">weighted_mean_center</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find weighted mean center of a marked point pattern.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points : arraylike</span>
+<span class="sd">        array representing a point pattern</span>
+<span class="sd">    weights : arraylike</span>
+<span class="sd">        a series of attribute values of length n.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    center</span>
+<span class="sd">        center of a given point pattern</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import geopandas as gpd</span>
+
+<span class="sd">    Create an array of point coordinates.</span>
+
+<span class="sd">    &gt;&gt;&gt; coords = np.array(</span>
+<span class="sd">    ...     [</span>
+<span class="sd">    ...         [66.22, 32.54],</span>
+<span class="sd">    ...         [22.52, 22.39],</span>
+<span class="sd">    ...         [31.01, 81.21],</span>
+<span class="sd">    ...         [9.47, 31.02],</span>
+<span class="sd">    ...         [30.78, 60.10],</span>
+<span class="sd">    ...         [75.21, 58.93],</span>
+<span class="sd">    ...         [79.26, 7.68],</span>
+<span class="sd">    ...         [8.23, 39.93],</span>
+<span class="sd">    ...         [98.73, 77.17],</span>
+<span class="sd">    ...         [89.78, 42.53],</span>
+<span class="sd">    ...         [65.19, 92.08],</span>
+<span class="sd">    ...         [54.46, 8.48],</span>
+<span class="sd">    ...     ]</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; weight = np.arange(1, 13, 1)</span>
+
+<span class="sd">    Passing an array of coordinates returns an array capturing the center.</span>
+
+<span class="sd">    &gt;&gt;&gt; weighted_mean_center(coords, weight)</span>
+<span class="sd">    array([59.29448718, 47.52282051])</span>
+
+<span class="sd">    Passing a GeoPandas object returns a shapely geometry.</span>
+
+<span class="sd">    &gt;&gt;&gt; geoms = gpd.GeoSeries.from_xy(*coords.T)</span>
+<span class="sd">    &gt;&gt;&gt; weighted_mean_center(geoms, weight)</span>
+<span class="sd">    &lt;POINT (59.294 47.523)&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">weighted_mean_center</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+
+
+<span class="nd">@weighted_mean_center</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">weights</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+    <span class="n">points</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">weights</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">weights</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">points</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="nd">@weighted_mean_center</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">GeoPandasBase</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Point</span><span class="p">:</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span><span class="n">weighted_mean_center</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">weights</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="manhattan_median">
+<a class="viewcode-back" href="../../generated/pointpats.manhattan_median.html#pointpats.manhattan_median">[docs]</a>
+<span class="nd">@singledispatch</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">manhattan_median</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find manhattan median of a point array.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points  : arraylike</span>
+<span class="sd">              array representing a point pattern</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    median</span>
+<span class="sd">        manhattan median of a given point pattern</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import geopandas as gpd</span>
+
+<span class="sd">    Create an array of point coordinates.</span>
+
+<span class="sd">    &gt;&gt;&gt; coords = np.array(</span>
+<span class="sd">    ...     [</span>
+<span class="sd">    ...         [66.22, 32.54],</span>
+<span class="sd">    ...         [22.52, 22.39],</span>
+<span class="sd">    ...         [31.01, 81.21],</span>
+<span class="sd">    ...         [9.47, 31.02],</span>
+<span class="sd">    ...         [30.78, 60.10],</span>
+<span class="sd">    ...         [75.21, 58.93],</span>
+<span class="sd">    ...         [79.26, 7.68],</span>
+<span class="sd">    ...         [8.23, 39.93],</span>
+<span class="sd">    ...         [98.73, 77.17],</span>
+<span class="sd">    ...         [89.78, 42.53],</span>
+<span class="sd">    ...         [65.19, 92.08],</span>
+<span class="sd">    ...     ]</span>
+<span class="sd">    ... )</span>
+
+<span class="sd">    Passing an array of coordinates returns an array capturing the median.</span>
+
+<span class="sd">    &gt;&gt;&gt; manhattan_median(coords)</span>
+<span class="sd">    array([65.19, 42.53])</span>
+
+<span class="sd">    Passing a GeoPandas object returns a shapely geometry.</span>
+
+<span class="sd">    &gt;&gt;&gt; geoms = gpd.GeoSeries.from_xy(*coords.T)</span>
+<span class="sd">    &gt;&gt;&gt; manhattan_median(geoms)</span>
+<span class="sd">    &lt;POINT (65.19 42.53)&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">manhattan_median</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+
+
+<span class="nd">@manhattan_median</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Manhattan Median is not unique for even point patterns.&quot;</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+
+<span class="nd">@manhattan_median</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">GeoPandasBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Point</span><span class="p">:</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span><span class="n">manhattan_median</span><span class="p">(</span><span class="n">coords</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="std_distance">
+<a class="viewcode-back" href="../../generated/pointpats.std_distance.html#pointpats.std_distance">[docs]</a>
+<span class="nd">@singledispatch</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">std_distance</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate standard distance of a point array.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points  : arraylike</span>
+<span class="sd">              array representing a point pattern</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    distance</span>
+<span class="sd">       standard distance of a given point pattern</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import geopandas as gpd</span>
+
+<span class="sd">    Create an array of point coordinates.</span>
+
+<span class="sd">    &gt;&gt;&gt; coords = np.array(</span>
+<span class="sd">    ...     [</span>
+<span class="sd">    ...         [66.22, 32.54],</span>
+<span class="sd">    ...         [22.52, 22.39],</span>
+<span class="sd">    ...         [31.01, 81.21],</span>
+<span class="sd">    ...         [9.47, 31.02],</span>
+<span class="sd">    ...         [30.78, 60.10],</span>
+<span class="sd">    ...         [75.21, 58.93],</span>
+<span class="sd">    ...         [79.26, 7.68],</span>
+<span class="sd">    ...         [8.23, 39.93],</span>
+<span class="sd">    ...         [98.73, 77.17],</span>
+<span class="sd">    ...         [89.78, 42.53],</span>
+<span class="sd">    ...         [65.19, 92.08],</span>
+<span class="sd">    ...     ]</span>
+<span class="sd">    ... )</span>
+
+<span class="sd">    Passing an array of coordinates returns a tuple capturing the bounds.</span>
+
+<span class="sd">    &gt;&gt;&gt; std_distance(coords)</span>
+<span class="sd">    np.float64(40.21575987282547)</span>
+
+<span class="sd">    The same applies to a GeoPandas object.</span>
+
+<span class="sd">    &gt;&gt;&gt; geoms = gpd.GeoSeries.from_xy(*coords.T)</span>
+<span class="sd">    &gt;&gt;&gt; std_distance(geoms)</span>
+<span class="sd">    np.float64(40.21575987282547)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">std_distance</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+
+
+<span class="nd">@std_distance</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="n">points</span> <span class="o">*</span> <span class="n">points</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span> <span class="o">-</span> <span class="n">m</span> <span class="o">*</span> <span class="n">m</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+
+<span class="nd">@std_distance</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">GeoPandasBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">std_distance</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+
+
+
+<div class="viewcode-block" id="ellipse">
+<a class="viewcode-back" href="../../generated/pointpats.ellipse.html#pointpats.ellipse">[docs]</a>
+<span class="nd">@singledispatch</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ellipse</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;crimestat&quot;</span><span class="p">,</span> 
+              <span class="n">crimestatCorr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">degfreedCorr</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes a weighted standard deviational ellipse for a set of point geometries.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points : array-like</span>
+<span class="sd">        Array representing a point pattern.</span>
+<span class="sd">    weights : array-like, optional</span>
+<span class="sd">        Array of weights for each point.</span>
+<span class="sd">    method : str</span>
+<span class="sd">        Correction method to apply. Must be either &#39;crimestat&#39; or &#39;yuill&#39;.</span>
+<span class="sd">    crimestatCorr : bool</span>
+<span class="sd">        Whether to apply the CrimeStat correction (used only if `method == &#39;yuill&#39;`).</span>
+<span class="sd">    degfreedCorr : bool</span>
+<span class="sd">        Whether to apply degrees-of-freedom correction (used only if `method == &#39;yuill&#39;`).</span>
+<span class="sd">        Apply degrees-of-freedom correction if method == &#39;yuill&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple(major_axis_length, minor_axis_length, rotation_angle) | ellipse</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Implements approach from:</span>
+
+<span class="sd">    https://www.icpsr.umich.edu/CrimeStat/files/CrimeStatChapter.4.pdf</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import geopandas as gpd</span>
+
+<span class="sd">    Create an array of point coordinates.</span>
+
+<span class="sd">    &gt;&gt;&gt; coords = np.array(</span>
+<span class="sd">    ...     [</span>
+<span class="sd">    ...         [66.22, 32.54],</span>
+<span class="sd">    ...         [22.52, 22.39],</span>
+<span class="sd">    ...         [31.01, 81.21],</span>
+<span class="sd">    ...         [9.47, 31.02],</span>
+<span class="sd">    ...         [30.78, 60.10],</span>
+<span class="sd">    ...         [75.21, 58.93],</span>
+<span class="sd">    ...         [79.26, 7.68],</span>
+<span class="sd">    ...         [8.23, 39.93],</span>
+<span class="sd">    ...         [98.73, 77.17],</span>
+<span class="sd">    ...         [89.78, 42.53],</span>
+<span class="sd">    ...         [65.19, 92.08],</span>
+<span class="sd">    ...     ]</span>
+<span class="sd">    ... )</span>
+
+<span class="sd">    Passing an array of coordinates returns a tuple capturing the semi-major axis,</span>
+<span class="sd">    semi-minor axis and clockwise rotation angle of the ellipse.</span>
+
+<span class="sd">    &gt;&gt;&gt; ellipse(coords)</span>
+<span class="sd">    (np.float64(50.13029459102783), np.float64(37.95222670267865), np.float64(0.3465582095042642))</span>
+
+<span class="sd">    Passing a GeoPandas object returns a shapely geometry.</span>
+
+<span class="sd">    &gt;&gt;&gt; geoms = gpd.GeoSeries.from_xy(*coords.T)</span>
+<span class="sd">    &gt;&gt;&gt; ellipse(geoms)</span>
+<span class="sd">    &lt;POLYGON ((99.55 66.626, 100.586 63.045, 101.159 59.334, 101.262 55.53, 100....&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ellipse</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span>
+                          <span class="n">crimestatCorr</span><span class="p">,</span> <span class="n">degfreedCorr</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+
+<span class="nd">@ellipse</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span>
+    <span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s1">&#39;crimestat&#39;</span><span class="p">,</span>
+    <span class="n">crimestatCorr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">degfreedCorr</span><span class="o">=</span><span class="kc">True</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;crimestat&quot;</span><span class="p">,</span> <span class="s2">&quot;yuill&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`method` must be either &#39;crimestat&#39; or &#39;yuill&#39;&quot;</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;weights must have same length as points&quot;</span><span class="p">)</span>
+        
+    <span class="n">w</span> <span class="o">=</span> <span class="n">weights</span>
+    <span class="n">sumw</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">meanx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">meany</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">w</span><span class="p">)</span>
+
+    <span class="n">xm</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">meanx</span>
+    <span class="n">ym</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">meany</span>
+
+    <span class="n">xyw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xm</span> <span class="o">*</span> <span class="n">ym</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span>
+    <span class="n">x2w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xm</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span>
+    <span class="n">y2w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ym</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span>
+
+    <span class="n">den</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">xyw</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="n">x2w</span> <span class="o">-</span> <span class="n">y2w</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">left</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">xyw</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">den</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">theta1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">theta2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">theta1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">)</span> <span class="o">/</span> <span class="n">den</span><span class="p">)</span>
+        <span class="n">theta2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">left</span> <span class="o">-</span> <span class="n">right</span><span class="p">)</span> <span class="o">/</span> <span class="n">den</span><span class="p">)</span>
+
+    <span class="n">term1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="p">(</span><span class="n">ym</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta1</span><span class="p">)</span> <span class="o">-</span> <span class="n">xm</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta1</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">term2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="p">(</span><span class="n">ym</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta2</span><span class="p">)</span> <span class="o">-</span> <span class="n">xm</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta2</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">sx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">term1</span> <span class="o">/</span> <span class="n">sumw</span><span class="p">)</span>
+    <span class="n">sy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">term2</span> <span class="o">/</span> <span class="n">sumw</span><span class="p">)</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;crimestat&quot;</span><span class="p">:</span>
+        <span class="n">correction</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">sx</span> <span class="o">*=</span> <span class="n">correction</span>
+        <span class="n">sy</span> <span class="o">*=</span> <span class="n">correction</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;yuill&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">crimestatCorr</span><span class="p">:</span>
+            <span class="n">sx</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">sy</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">degfreedCorr</span><span class="p">:</span>
+            <span class="n">sx</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">sy</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">sy</span> <span class="o">&gt;</span> <span class="n">sx</span><span class="p">:</span>
+        <span class="n">major_axis</span><span class="p">,</span> <span class="n">minor_axis</span> <span class="o">=</span> <span class="n">sy</span><span class="p">,</span> <span class="n">sx</span>
+        <span class="n">major_angle</span> <span class="o">=</span> <span class="n">theta1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">major_axis</span><span class="p">,</span> <span class="n">minor_axis</span> <span class="o">=</span> <span class="n">sx</span><span class="p">,</span> <span class="n">sy</span>
+        <span class="n">major_angle</span> <span class="o">=</span> <span class="n">theta2</span>
+
+    <span class="k">return</span> <span class="n">major_axis</span><span class="p">,</span> <span class="n">minor_axis</span><span class="p">,</span> <span class="n">major_angle</span>
+
+<span class="nd">@ellipse</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">GeoPandasBase</span><span class="p">,</span>
+      <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">method</span><span class="o">=</span><span class="s1">&#39;crimestat&#39;</span><span class="p">,</span>
+      <span class="n">crimestatCorr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+      <span class="n">degfreedCorr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Polygon</span><span class="p">:</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+    <span class="n">major</span><span class="p">,</span> <span class="n">minor</span><span class="p">,</span> <span class="n">rotation</span> <span class="o">=</span> <span class="n">ellipse</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span>
+                                       <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
+                                       <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+                                       <span class="n">crimestatCorr</span><span class="o">=</span><span class="n">crimestatCorr</span><span class="p">,</span>
+                                       <span class="n">degfreedCorr</span><span class="o">=</span><span class="n">degfreedCorr</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">centre</span> <span class="o">=</span> <span class="n">mean_center</span><span class="p">(</span><span class="n">points</span><span class="p">)</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">centre</span> <span class="o">=</span> <span class="n">weighted_mean_center</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        
+    <span class="n">scaled</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">affinity</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">centre</span><span class="p">,</span> <span class="n">major</span><span class="p">,</span> <span class="n">minor</span><span class="p">)</span>
+    <span class="n">rotated</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">affinity</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">scaled</span><span class="p">,</span> <span class="n">rotation</span><span class="p">,</span> <span class="n">use_radians</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rotated</span>
+
+
+<div class="viewcode-block" id="dtot">
+<a class="viewcode-back" href="../../generated/pointpats.dtot.html#pointpats.dtot">[docs]</a>
+<span class="nd">@singledispatch</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dtot</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sum of Euclidean distances between event points and a selected point.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coord</span>
+<span class="sd">              starting point</span>
+<span class="sd">    points  : arraylike</span>
+<span class="sd">              array representing a point pattern</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    distance</span>
+<span class="sd">        sum of Euclidean distances.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import geopandas as gpd</span>
+<span class="sd">    &gt;&gt;&gt; import shapely</span>
+
+<span class="sd">    Create an array of point coordinates.</span>
+
+<span class="sd">    &gt;&gt;&gt; coords = np.array(</span>
+<span class="sd">    ...     [</span>
+<span class="sd">    ...         [66.22, 32.54],</span>
+<span class="sd">    ...         [22.52, 22.39],</span>
+<span class="sd">    ...         [31.01, 81.21],</span>
+<span class="sd">    ...         [9.47, 31.02],</span>
+<span class="sd">    ...         [30.78, 60.10],</span>
+<span class="sd">    ...         [75.21, 58.93],</span>
+<span class="sd">    ...         [79.26, 7.68],</span>
+<span class="sd">    ...         [8.23, 39.93],</span>
+<span class="sd">    ...         [98.73, 77.17],</span>
+<span class="sd">    ...         [89.78, 42.53],</span>
+<span class="sd">    ...         [65.19, 92.08],</span>
+<span class="sd">    ...     ]</span>
+<span class="sd">    ... )</span>
+
+<span class="sd">    Passing an array of coordinates returns a tuple capturing the bounds.</span>
+
+<span class="sd">    &gt;&gt;&gt; point = [30.78, 60.10]</span>
+<span class="sd">    &gt;&gt;&gt; dtot(point, coords)</span>
+<span class="sd">    np.float64(465.3617957739617)</span>
+
+<span class="sd">    The same applies to a GeoPandas object.</span>
+
+<span class="sd">    &gt;&gt;&gt; point = shapely.Point(point)</span>
+<span class="sd">    &gt;&gt;&gt; geoms = gpd.GeoSeries.from_xy(*coords.T)</span>
+<span class="sd">    &gt;&gt;&gt; dtot(point, geoms)</span>
+<span class="sd">    np.float64(465.3617957739617)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">coord</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dtot</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+
+
+<span class="nd">@dtot</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">coord</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">xd</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">yd</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xd</span> <span class="o">*</span> <span class="n">xd</span> <span class="o">+</span> <span class="n">yd</span> <span class="o">*</span> <span class="n">yd</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">d</span>
+
+
+<span class="nd">@dtot</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">coord</span><span class="p">:</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Point</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">GeoPandasBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">coord</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dtot</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="euclidean_median">
+<a class="viewcode-back" href="../../generated/pointpats.euclidean_median.html#pointpats.euclidean_median">[docs]</a>
+<span class="nd">@singledispatch</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">euclidean_median</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the Euclidean median for a point pattern.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points  : arraylike</span>
+<span class="sd">        array representing a point pattern</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    median</span>
+<span class="sd">        Euclidean median of a given point pattern</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import geopandas as gpd</span>
+
+<span class="sd">    Create an array of point coordinates.</span>
+
+<span class="sd">    &gt;&gt;&gt; coords = np.array(</span>
+<span class="sd">    ...     [</span>
+<span class="sd">    ...         [66.22, 32.54],</span>
+<span class="sd">    ...         [22.52, 22.39],</span>
+<span class="sd">    ...         [31.01, 81.21],</span>
+<span class="sd">    ...         [9.47, 31.02],</span>
+<span class="sd">    ...         [30.78, 60.10],</span>
+<span class="sd">    ...         [75.21, 58.93],</span>
+<span class="sd">    ...         [79.26, 7.68],</span>
+<span class="sd">    ...         [8.23, 39.93],</span>
+<span class="sd">    ...         [98.73, 77.17],</span>
+<span class="sd">    ...         [89.78, 42.53],</span>
+<span class="sd">    ...         [65.19, 92.08],</span>
+<span class="sd">    ...     ]</span>
+<span class="sd">    ... )</span>
+
+<span class="sd">    Passing an array of coordinates returns an array capturing the median.</span>
+
+<span class="sd">    &gt;&gt;&gt; euclidean_median(coords)</span>
+<span class="sd">    array([53.51770575, 49.6572671 ])</span>
+
+<span class="sd">    Passing a GeoPandas object returns a shapely geometry.</span>
+
+<span class="sd">    &gt;&gt;&gt; geoms = gpd.GeoSeries.from_xy(*coords.T)</span>
+<span class="sd">    &gt;&gt;&gt; euclidean_median(geoms)</span>
+<span class="sd">    &lt;POINT (53.518 49.657)&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">euclidean_median</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+
+
+<span class="nd">@euclidean_median</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">mean_center</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">dtot</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">points</span><span class="p">,))</span>
+    <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span>
+
+
+<span class="nd">@euclidean_median</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">GeoPandasBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Point</span><span class="p">:</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span><span class="n">euclidean_median</span><span class="p">(</span><span class="n">coords</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="minimum_bounding_circle">
+<a class="viewcode-back" href="../../generated/pointpats.minimum_bounding_circle.html#pointpats.minimum_bounding_circle">[docs]</a>
+<span class="nd">@singledispatch</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">minimum_bounding_circle</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implements Skyum (1990)&#39;s algorithm for the minimum bounding circle in R^2.</span>
+
+<span class="sd">    Store points clockwise.</span>
+<span class="sd">    Find p in S that maximizes angle(prec(p), p, succ(p) THEN radius(prec(</span>
+<span class="sd">    p), p, succ(p)). This is also called the lexicographic maximum, and is the last</span>
+<span class="sd">    entry of a list of (radius, angle) in lexicographical order.</span>
+
+<span class="sd">    * If angle(prec(p), p, succ(p)) &lt;= 90 degrees, then finish.</span>
+
+<span class="sd">    * If not, remove p from set.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points  : arraylike</span>
+<span class="sd">        array representing a point pattern</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    circle</span>
+<span class="sd">        minimum bounding circle</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import geopandas as gpd</span>
+
+<span class="sd">    Create an array of point coordinates.</span>
+
+<span class="sd">    &gt;&gt;&gt; coords = np.array(</span>
+<span class="sd">    ...     [</span>
+<span class="sd">    ...         [66.22, 32.54],</span>
+<span class="sd">    ...         [22.52, 22.39],</span>
+<span class="sd">    ...         [31.01, 81.21],</span>
+<span class="sd">    ...         [9.47, 31.02],</span>
+<span class="sd">    ...         [30.78, 60.10],</span>
+<span class="sd">    ...         [75.21, 58.93],</span>
+<span class="sd">    ...         [79.26, 7.68],</span>
+<span class="sd">    ...         [8.23, 39.93],</span>
+<span class="sd">    ...         [98.73, 77.17],</span>
+<span class="sd">    ...         [89.78, 42.53],</span>
+<span class="sd">    ...         [65.19, 92.08],</span>
+<span class="sd">    ...     ]</span>
+<span class="sd">    ... )</span>
+
+<span class="sd">    Passing an array of coordinates returns an tuple of (x, y), radius.</span>
+
+<span class="sd">    &gt;&gt;&gt; minimum_bounding_circle(coords)</span>
+<span class="sd">    ((55.244520477497474, 51.88135107645883), np.float64(50.304102155590726))</span>
+
+<span class="sd">    Passing a GeoPandas object returns a shapely geometry.</span>
+
+<span class="sd">    &gt;&gt;&gt; geoms = gpd.GeoSeries.from_xy(*coords.T)</span>
+<span class="sd">    &gt;&gt;&gt; minimum_bounding_circle(geoms)</span>
+<span class="sd">    &lt;POLYGON ((105.549 51.881, 105.306 46.951, 104.582 42.068, 103.383 37.279, 1...&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">minimum_bounding_circle</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+
+
+<span class="nd">@minimum_bounding_circle</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">numba</span><span class="w"> </span><span class="kn">import</span> <span class="n">njit</span>
+
+        <span class="n">HAS_NUMBA</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">HAS_NUMBA</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">hull</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">not_clockwise</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">points</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">not_clockwise</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Points are neither clockwise nor counterclockwise&quot;</span><span class="p">)</span>
+    <span class="n">POINTS</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">HAS_NUMBA</span><span class="p">:</span>  <span class="c1"># noqa: SIM108</span>
+        <span class="n">circ</span> <span class="o">=</span> <span class="n">_skyum_numba</span><span class="p">(</span><span class="n">POINTS</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">circ</span> <span class="o">=</span> <span class="n">_skyum_lists</span><span class="p">(</span><span class="n">POINTS</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">circ</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">circ</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">circ</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="nd">@minimum_bounding_circle</span><span class="o">.</span><span class="n">register</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">GeoPandasBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Polygon</span><span class="p">:</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">r</span> <span class="o">=</span> <span class="n">minimum_bounding_circle</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_skyum_lists</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">removed</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">angles</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">_angle</span><span class="p">(</span>
+                <span class="n">_prec</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">points</span><span class="p">),</span>
+                <span class="n">p</span><span class="p">,</span>
+                <span class="n">_succ</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">points</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">points</span>
+        <span class="p">]</span>
+        <span class="n">circles</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">_circle</span><span class="p">(</span>
+                <span class="n">_prec</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">points</span><span class="p">),</span>
+                <span class="n">p</span><span class="p">,</span>
+                <span class="n">_succ</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">points</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">points</span>
+        <span class="p">]</span>
+        <span class="n">radii</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">circles</span><span class="p">]</span>
+        <span class="n">lexord</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">lexsort</span><span class="p">((</span><span class="n">radii</span><span class="p">,</span> <span class="n">angles</span><span class="p">))</span>  <span class="c1"># confusing as hell defaults...</span>
+        <span class="n">lexmax</span> <span class="o">=</span> <span class="n">lexord</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">candidate</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">_prec</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="n">lexmax</span><span class="p">],</span> <span class="n">points</span><span class="p">),</span>
+            <span class="n">points</span><span class="p">[</span><span class="n">lexmax</span><span class="p">],</span>
+            <span class="n">_succ</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="n">lexmax</span><span class="p">],</span> <span class="n">points</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">angles</span><span class="p">[</span><span class="n">lexmax</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">):</span>
+            <span class="c1"># print(&quot;Constrained by points: {}&quot;.format(candidate))</span>
+            <span class="k">return</span> <span class="n">_circle</span><span class="p">(</span><span class="o">*</span><span class="n">candidate</span><span class="p">),</span> <span class="n">points</span><span class="p">,</span> <span class="n">removed</span><span class="p">,</span> <span class="n">candidate</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">removed</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">points</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">lexmax</span><span class="p">),</span> <span class="n">i</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Construction of Minimum Bounding Circle failed!&quot;</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">numba</span><span class="w"> </span><span class="kn">import</span> <span class="n">njit</span><span class="p">,</span> <span class="n">boolean</span>
+
+    <span class="n">HAS_NUMBA</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_skyum_numba</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">complete</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">complete</span><span class="p">:</span>
+            <span class="n">complete</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">circle</span> <span class="o">=</span> <span class="n">_skyum_iteration</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">complete</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">circle</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">candidate</span>
+
+    <span class="nd">@njit</span><span class="p">(</span><span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_skyum_iteration</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,))</span>
+        <span class="n">circles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">points</span><span class="p">[(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span><span class="p">]</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="n">n</span><span class="p">]</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">points</span><span class="p">[(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span><span class="p">]</span>
+            <span class="n">angles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">_angle</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+            <span class="n">circles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">_circle</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+        <span class="n">radii</span> <span class="o">=</span> <span class="n">circles</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># workaround for no lexsort in numba</span>
+        <span class="n">angle_argmax</span> <span class="o">=</span> <span class="n">angles</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+        <span class="n">angle_max</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[</span><span class="n">angle_argmax</span><span class="p">]</span>
+        <span class="c1"># the maximum radius for the largest angle</span>
+        <span class="n">lexmax</span> <span class="o">=</span> <span class="p">(</span><span class="n">radii</span> <span class="o">*</span> <span class="p">(</span><span class="n">angles</span> <span class="o">==</span> <span class="n">angle_max</span><span class="p">))</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">angles</span><span class="p">[</span><span class="n">lexmax</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">lexmax</span><span class="p">,</span> <span class="n">circles</span><span class="p">[</span><span class="n">lexmax</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">boolean</span><span class="p">)</span>
+            <span class="n">mask</span><span class="p">[</span><span class="n">lexmax</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">new_points</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">new_points</span><span class="p">,</span> <span class="n">lexmax</span><span class="p">,</span> <span class="n">circles</span><span class="p">[</span><span class="n">lexmax</span><span class="p">]</span>
+
+
+<span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">njit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">func</span>
+
+
+<span class="nd">@njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_angle</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="n">pq</span> <span class="o">=</span> <span class="n">p</span> <span class="o">-</span> <span class="n">q</span>
+    <span class="n">rq</span> <span class="o">=</span> <span class="n">r</span> <span class="o">-</span> <span class="n">q</span>
+    <span class="n">magnitudes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pq</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rq</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">pq</span><span class="p">,</span> <span class="n">rq</span><span class="p">)</span> <span class="o">/</span> <span class="n">magnitudes</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_prec</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">l</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    retrieve the predecessor of p in list l</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pos</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">l</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">l</span><span class="p">[</span><span class="n">pos</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_succ</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">l</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    retrieve the successor of p in list l</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">l</span><span class="p">[</span><span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+
+<span class="nd">@njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_euclidean_distance</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">px</span> <span class="o">-</span> <span class="n">qx</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">py</span> <span class="o">-</span> <span class="n">qy</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+
+<span class="nd">@njit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_circle</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">dmetric</span><span class="o">=</span><span class="n">_euclidean_distance</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns (radius, (center_x, center_y)) of the circumscribed circle by the</span>
+<span class="sd">    triangle pqr.</span>
+
+<span class="sd">    note, this does not assume that p!=q!=r</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">px</span><span class="p">,</span> <span class="n">py</span> <span class="o">=</span> <span class="n">p</span>
+    <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span> <span class="o">=</span> <span class="n">q</span>
+    <span class="n">rx</span><span class="p">,</span> <span class="n">ry</span> <span class="o">=</span> <span class="n">r</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">_angle</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">r</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">angle</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">:</span>  <span class="c1"># angle is pi</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="n">_euclidean_distance</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">rx</span><span class="p">,</span> <span class="n">ry</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">center_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">px</span> <span class="o">+</span> <span class="n">rx</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">center_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">py</span> <span class="o">+</span> <span class="n">ry</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">:</span>  <span class="c1"># angle is zero</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="n">_euclidean_distance</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">center_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">px</span> <span class="o">+</span> <span class="n">qx</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">center_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">py</span> <span class="o">+</span> <span class="n">qy</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">px</span> <span class="o">*</span> <span class="p">(</span><span class="n">qy</span> <span class="o">-</span> <span class="n">ry</span><span class="p">)</span> <span class="o">+</span> <span class="n">qx</span> <span class="o">*</span> <span class="p">(</span><span class="n">ry</span> <span class="o">-</span> <span class="n">py</span><span class="p">)</span> <span class="o">+</span> <span class="n">rx</span> <span class="o">*</span> <span class="p">(</span><span class="n">py</span> <span class="o">-</span> <span class="n">qy</span><span class="p">))</span>
+        <span class="n">center_x</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">px</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">py</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">qy</span> <span class="o">-</span> <span class="n">ry</span><span class="p">)</span>
+            <span class="o">+</span> <span class="p">(</span><span class="n">qx</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">qy</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ry</span> <span class="o">-</span> <span class="n">py</span><span class="p">)</span>
+            <span class="o">+</span> <span class="p">(</span><span class="n">rx</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">ry</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">py</span> <span class="o">-</span> <span class="n">qy</span><span class="p">)</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">D</span><span class="p">)</span>
+        <span class="n">center_y</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">px</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">py</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">rx</span> <span class="o">-</span> <span class="n">qx</span><span class="p">)</span>
+            <span class="o">+</span> <span class="p">(</span><span class="n">qx</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">qy</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">px</span> <span class="o">-</span> <span class="n">rx</span><span class="p">)</span>
+            <span class="o">+</span> <span class="p">(</span><span class="n">rx</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">ry</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">qx</span> <span class="o">-</span> <span class="n">px</span><span class="p">)</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">D</span><span class="p">)</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="n">_euclidean_distance</span><span class="p">(</span><span class="n">center_x</span><span class="p">,</span> <span class="n">center_y</span><span class="p">,</span> <span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">radius</span><span class="p">,</span> <span class="n">center_x</span><span class="p">,</span> <span class="n">center_y</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.3.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

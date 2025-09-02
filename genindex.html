@@ -1,101 +1,576 @@
-
-
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <title>Index &#8212; No Errors Test Project  documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index &#8212; pointpats v2.3.0 Manual</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pysal-styles.css?v=f8dcc4ae" />
+    <script src="_static/documentation_options.js?v=c3c8ae58"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="_static/pysal_favicon.ico"/>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
-   
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
 
   </head><body>
-  
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          pointpats</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.3.0</b></span>
+      </div>
 
-          <div class="body" role="main">
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
             
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="api.html">API</a></li>
+                <li><a href="references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installing-released-version">Installing released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installing-development-version">Installing development version</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#point-pattern">Point Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#point-processes">Point Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#centrography">Centrography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#density">Density</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#quadrat-based-statistics">Quadrat Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#distance-based-statistics">Distance Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#window-functions">Window functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#random-distributions">Random distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#space-time-interaction-tests">Space-Time Interaction Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
 
 <h1 id="index">Index</h1>
 
 <div class="genindex-jumpbox">
+ <a href="#_"><strong>_</strong></a>
+ | <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
+ | <a href="#J"><strong>J</strong></a>
+ | <a href="#K"><strong>K</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#Q"><strong>Q</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
+ | <a href="#W"><strong>W</strong></a>
  
 </div>
+<h2 id="_">_</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.HexagonM.html#pointpats.HexagonM.__init__">__init__() (pointpats.HexagonM method)</a>
+
+      <ul>
+        <li><a href="generated/pointpats.Knox.html#pointpats.Knox.__init__">(pointpats.Knox method)</a>
+</li>
+        <li><a href="generated/pointpats.KnoxLocal.html#pointpats.KnoxLocal.__init__">(pointpats.KnoxLocal method)</a>
+</li>
+        <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.__init__">(pointpats.PointPattern method)</a>
+</li>
+        <li><a href="generated/pointpats.PointProcess.html#pointpats.PointProcess.__init__">(pointpats.PointProcess method)</a>
+</li>
+        <li><a href="generated/pointpats.PoissonClusterPointProcess.html#pointpats.PoissonClusterPointProcess.__init__">(pointpats.PoissonClusterPointProcess method)</a>
+</li>
+        <li><a href="generated/pointpats.PoissonPointProcess.html#pointpats.PoissonPointProcess.__init__">(pointpats.PoissonPointProcess method)</a>
+</li>
+        <li><a href="generated/pointpats.QStatistic.html#pointpats.QStatistic.__init__">(pointpats.QStatistic method)</a>
+</li>
+        <li><a href="generated/pointpats.RectangleM.html#pointpats.RectangleM.__init__">(pointpats.RectangleM method)</a>
+</li>
+        <li><a href="generated/pointpats.SpaceTimeEvents.html#pointpats.SpaceTimeEvents.__init__">(pointpats.SpaceTimeEvents method)</a>
+</li>
+        <li><a href="generated/pointpats.Window.html#pointpats.Window.__init__">(pointpats.Window method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.add_marks">add_marks() (pointpats.PointPattern method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.Window.html#pointpats.Window.area">area (pointpats.Window property)</a>
+</li>
+      <li><a href="generated/pointpats.as_window.html#pointpats.as_window">as_window() (in module pointpats)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.Window.html#pointpats.Window.bbox">bbox (pointpats.Window property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.Window.html#pointpats.Window.bounding_box">bounding_box (pointpats.Window property)</a>
+</li>
+      <li><a href="generated/pointpats.Window.html#pointpats.Window.build_quad_tree_structure">build_quad_tree_structure() (pointpats.Window method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.Window.html#pointpats.Window.centroid">centroid (pointpats.Window property)</a>
+</li>
+      <li><a href="generated/pointpats.random.cluster_normal.html#pointpats.random.cluster_normal">cluster_normal() (in module pointpats.random)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.random.cluster_poisson.html#pointpats.random.cluster_poisson">cluster_poisson() (in module pointpats.random)</a>
+</li>
+      <li><a href="generated/pointpats.Window.html#pointpats.Window.contains_point">contains_point() (pointpats.Window method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.PointProcess.html#pointpats.PointProcess.draw">draw() (pointpats.PointProcess method)</a>
+
+      <ul>
+        <li><a href="generated/pointpats.PoissonClusterPointProcess.html#pointpats.PoissonClusterPointProcess.draw">(pointpats.PoissonClusterPointProcess method)</a>
+</li>
+        <li><a href="generated/pointpats.PoissonPointProcess.html#pointpats.PoissonPointProcess.draw">(pointpats.PoissonPointProcess method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.dtot.html#pointpats.dtot">dtot() (in module pointpats)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.ellipse.html#pointpats.ellipse">ellipse() (in module pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.euclidean_median.html#pointpats.euclidean_median">euclidean_median() (in module pointpats)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.explode">explode() (pointpats.PointPattern method)</a>
+</li>
+      <li><a href="generated/pointpats.KnoxLocal.html#pointpats.KnoxLocal.explore">explore() (pointpats.KnoxLocal method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.f.html#pointpats.f">f() (in module pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.f_test.html#pointpats.f_test">f_test() (in module pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.Window.html#pointpats.Window.filter_contained">filter_contained() (pointpats.Window method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.find_pairs">find_pairs() (pointpats.PointPattern method)</a>
+</li>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.flip_coordinates">flip_coordinates() (pointpats.PointPattern method)</a>
+</li>
+      <li><a href="generated/pointpats.Knox.html#pointpats.Knox.from_dataframe">from_dataframe() (pointpats.Knox class method)</a>
+
+      <ul>
+        <li><a href="generated/pointpats.KnoxLocal.html#pointpats.KnoxLocal.from_dataframe">(pointpats.KnoxLocal class method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.g.html#pointpats.g">g() (in module pointpats)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.g_test.html#pointpats.g_test">g_test() (in module pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.get_window">get_window() (pointpats.PointPattern method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.HexagonM.html#pointpats.HexagonM">HexagonM (class in pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.Window.html#pointpats.Window.holes">holes (pointpats.Window property)</a>
+</li>
+      <li><a href="generated/pointpats.KnoxLocal.html#pointpats.KnoxLocal.hotspots">hotspots() (pointpats.KnoxLocal method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.hull">hull (pointpats.PointPattern property)</a>
+</li>
+      <li><a href="generated/pointpats.hull.html#pointpats.hull">hull() (in module pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.hull_area">hull_area (pointpats.PointPattern property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="J">J</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.j.html#pointpats.j">j() (in module pointpats)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.j_test.html#pointpats.j_test">j_test() (in module pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.jacquez.html#pointpats.jacquez">jacquez() (in module pointpats)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.k.html#pointpats.k">k() (in module pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.k_test.html#pointpats.k_test">k_test() (in module pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.knn">knn() (pointpats.PointPattern method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.knn_other">knn_other() (pointpats.PointPattern method)</a>
+</li>
+      <li><a href="generated/pointpats.Knox.html#pointpats.Knox">Knox (class in pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.KnoxLocal.html#pointpats.KnoxLocal">KnoxLocal (class in pointpats)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.l.html#pointpats.l">l() (in module pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.l_test.html#pointpats.l_test">l_test() (in module pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.lambda_hull">lambda_hull (pointpats.PointPattern property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.lambda_mbb">lambda_mbb (pointpats.PointPattern property)</a>
+</li>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.lambda_window">lambda_window (pointpats.PointPattern property)</a>
+</li>
+      <li><a href="generated/pointpats.Window.html#pointpats.Window.len">len (pointpats.Window property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.manhattan_median.html#pointpats.manhattan_median">manhattan_median() (in module pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.mantel.html#pointpats.mantel">mantel() (in module pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.max_nnd">max_nnd (pointpats.PointPattern property)</a>
+</li>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.mbb">mbb (pointpats.PointPattern property)</a>
+</li>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.mbb_area">mbb_area (pointpats.PointPattern property)</a>
+</li>
+      <li><a href="generated/pointpats.mean_center.html#pointpats.mean_center">mean_center() (in module pointpats)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.mean_nnd">mean_nnd (pointpats.PointPattern property)</a>
+</li>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.min_nnd">min_nnd (pointpats.PointPattern property)</a>
+</li>
+      <li><a href="generated/pointpats.minimum_bounding_circle.html#pointpats.minimum_bounding_circle">minimum_bounding_circle() (in module pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.minimum_bounding_rectangle.html#pointpats.minimum_bounding_rectangle">minimum_bounding_rectangle() (in module pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.minimum_rotated_rectangle.html#pointpats.minimum_rotated_rectangle">minimum_rotated_rectangle() (in module pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.modified_knox.html#pointpats.modified_knox">modified_knox() (in module pointpats)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.n">n (pointpats.PointPattern property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.nnd">nnd (pointpats.PointPattern property)</a>
+</li>
+      <li><a href="generated/pointpats.random.normal.html#pointpats.random.normal">normal() (in module pointpats.random)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.Window.html#pointpats.Window.parts">parts (pointpats.Window property)</a>
+</li>
+      <li><a href="generated/pointpats.Window.html#pointpats.Window.perimeter">perimeter (pointpats.Window property)</a>
+</li>
+      <li><a href="generated/pointpats.HexagonM.html#pointpats.HexagonM.plot">plot() (pointpats.HexagonM method)</a>
+
+      <ul>
+        <li><a href="generated/pointpats.KnoxLocal.html#pointpats.KnoxLocal.plot">(pointpats.KnoxLocal method)</a>
+</li>
+        <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.plot">(pointpats.PointPattern method)</a>
+</li>
+        <li><a href="generated/pointpats.QStatistic.html#pointpats.QStatistic.plot">(pointpats.QStatistic method)</a>
+</li>
+        <li><a href="generated/pointpats.RectangleM.html#pointpats.RectangleM.plot">(pointpats.RectangleM method)</a>
+</li>
+      </ul></li>
+      <li><a href="generated/pointpats.plot_density.html#pointpats.plot_density">plot_density() (in module pointpats)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.HexagonM.html#pointpats.HexagonM.point_location_sta">point_location_sta() (pointpats.HexagonM method)</a>
+
+      <ul>
+        <li><a href="generated/pointpats.RectangleM.html#pointpats.RectangleM.point_location_sta">(pointpats.RectangleM method)</a>
+</li>
+      </ul></li>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern">PointPattern (class in pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.PointProcess.html#pointpats.PointProcess">PointProcess (class in pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.random.poisson.html#pointpats.random.poisson">poisson() (in module pointpats.random)</a>
+</li>
+      <li><a href="generated/pointpats.PoissonClusterPointProcess.html#pointpats.PoissonClusterPointProcess">PoissonClusterPointProcess (class in pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.PoissonPointProcess.html#pointpats.PoissonPointProcess">PoissonPointProcess (class in pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.poly_from_bbox.html#pointpats.poly_from_bbox">poly_from_bbox() (in module pointpats)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Q">Q</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.QStatistic.html#pointpats.QStatistic">QStatistic (class in pointpats)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.PointProcess.html#pointpats.PointProcess.realize">realize() (pointpats.PointProcess method)</a>
+
+      <ul>
+        <li><a href="generated/pointpats.PoissonClusterPointProcess.html#pointpats.PoissonClusterPointProcess.realize">(pointpats.PoissonClusterPointProcess method)</a>
+</li>
+        <li><a href="generated/pointpats.PoissonPointProcess.html#pointpats.PoissonPointProcess.realize">(pointpats.PoissonPointProcess method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.RectangleM.html#pointpats.RectangleM">RectangleM (class in pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.rot">rot (pointpats.PointPattern property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.set_window">set_window() (pointpats.PointPattern method)</a>
+</li>
+      <li><a href="generated/pointpats.PointProcess.html#pointpats.PointProcess.setup">setup() (pointpats.PointProcess method)</a>
+
+      <ul>
+        <li><a href="generated/pointpats.PoissonClusterPointProcess.html#pointpats.PoissonClusterPointProcess.setup">(pointpats.PoissonClusterPointProcess method)</a>
+</li>
+        <li><a href="generated/pointpats.PoissonPointProcess.html#pointpats.PoissonPointProcess.setup">(pointpats.PoissonPointProcess method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.SpaceTimeEvents.html#pointpats.SpaceTimeEvents">SpaceTimeEvents (class in pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.std_distance.html#pointpats.std_distance">std_distance() (in module pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.summary">summary() (pointpats.PointPattern method)</a>
+</li>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.superimpose">superimpose() (pointpats.PointPattern method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.to_ccf.html#pointpats.to_ccf">to_ccf() (in module pointpats)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.tree">tree (pointpats.PointPattern property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.unique">unique() (pointpats.PointPattern method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.Window.html#pointpats.Window.vertices">vertices (pointpats.Window property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.weighted_mean_center.html#pointpats.weighted_mean_center">weighted_mean_center() (in module pointpats)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/pointpats.Window.html#pointpats.Window">Window (class in pointpats)</a>
+</li>
+      <li><a href="generated/pointpats.PointPattern.html#pointpats.PointPattern.window">window (pointpats.PointPattern property)</a>
+</li>
+  </ul></td>
+</tr></table>
 
 
-          </div>
-          
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">No Errors Test Project</a></h1>
 
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019, sphinx-action Test Suite.
       
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
       
-    </div>
-
-    
-
-    
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.3.0.<br/>
+    </p>
+  </div>
+</footer>
   </body>
 </html>

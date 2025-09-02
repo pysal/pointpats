@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pointpats.Knox &#8212; pointpats v2.3.0 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
+    <script src="../_static/documentation_options.js?v=c3c8ae58"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pointpats.KnoxLocal" href="pointpats.KnoxLocal.html" />
+    <link rel="prev" title="pointpats.SpaceTimeEvents" href="pointpats.SpaceTimeEvents.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          pointpats</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.3.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-released-version">Installing released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-development-version">Installing development version</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#point-pattern">Point Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#point-processes">Point Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#centrography">Centrography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#density">Density</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#quadrat-based-statistics">Quadrat Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#distance-based-statistics">Distance Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#window-functions">Window functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#random-distributions">Random distributions</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#space-time-interaction-tests">Space-Time Interaction Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">pointpats.Knox</a><ul>
+<li><a class="reference internal" href="#pointpats.Knox"><code class="docutils literal notranslate"><span class="pre">Knox</span></code></a><ul>
+<li><a class="reference internal" href="#pointpats.Knox.__init__"><code class="docutils literal notranslate"><span class="pre">Knox.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.Knox.from_dataframe"><code class="docutils literal notranslate"><span class="pre">Knox.from_dataframe()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="pointpats-knox">
+<h1>pointpats.Knox<a class="headerlink" href="#pointpats-knox" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pointpats.Knox">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">Knox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permutations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/spacetime.html#Knox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.Knox" title="Link to this definition">¶</a></dt>
+<dd><p>Global Knox statistic for space-time interactions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>s_coords: array-like</strong></dt><dd><p>spatial coordinates of point events</p>
+</dd>
+<dt><strong>t_coords: array-like</strong></dt><dd><p>temporal coordinates of point events (floats or ints, not dateTime)</p>
+</dd>
+<dt><strong>delta: float</strong></dt><dd><p>spatial threshold defining distance below which pairs are spatial
+neighbors</p>
+</dd>
+<dt><strong>tau: float</strong></dt><dd><p>temporal threshold defining distance below which pairs are temporal
+neighbors</p>
+</dd>
+<dt><strong>permutations: int</strong></dt><dd><p>number of random permutations for inference</p>
+</dd>
+<dt><strong>keep: bool</strong></dt><dd><p>whether to store realized values of the statistic under permutations</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>s_coords: array-like</strong></dt><dd><p>spatial coordinates of point events</p>
+</dd>
+<dt><strong>t_coords: array-like</strong></dt><dd><p>temporal coordinates of point events (floats or ints, not dateTime)</p>
+</dd>
+<dt><strong>delta: float</strong></dt><dd><p>spatial threshold defining distance below which pairs are spatial
+neighbors</p>
+</dd>
+<dt><strong>tau: float</strong></dt><dd><p>temporal threshold defining distance below which pairs are temporal
+neighbors</p>
+</dd>
+<dt><strong>permutations: int</strong></dt><dd><p>number of random permutations for inference</p>
+</dd>
+<dt><strong>keep: bool</strong></dt><dd><p>whether to store realized values of the statistic under permutations</p>
+</dd>
+<dt><strong>nst: int</strong></dt><dd><p>number of space-time pairs</p>
+</dd>
+<dt><strong>p_poisson: float</strong></dt><dd><p>Analytical p-value under Poisson assumption</p>
+</dd>
+<dt><strong>p_sim: float</strong></dt><dd><p>Pseudo p-value based on random permutations</p>
+</dd>
+<dt><strong>expected: array</strong></dt><dd><p>Two-by-two array with expected counts under the null of no space-time
+interactions. [[NST, <a href="#id5"><span class="problematic" id="id6">NS_</span></a>], [<a href="#id7"><span class="problematic" id="id8">NT_</span></a>, <a href="#id2"><span class="problematic" id="id3">N__</span></a>]] where NST is the expected number
+of space-time pairs, <a href="#id9"><span class="problematic" id="id10">NS_</span></a> is the expected number of spatial (but not also
+temporal) pairs, <a href="#id11"><span class="problematic" id="id12">NT_</span></a> is the number of expected temporal (but not also
+spatial pairs), <a href="#id2"><span class="problematic" id="id4">N__</span></a> is the number of pairs that are neighor spatial or
+temporal neighbors.</p>
+</dd>
+<dt><strong>observed: array</strong></dt><dd><p>Same structure as expected with the observed pair classifications</p>
+</dd>
+<dt><strong>sim: array</strong></dt><dd><p>Global statistics from permutations (if keep=True)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Technical details can be found in <span id="id1">[<a class="reference internal" href="../references.html#id6" title="P. Rogerson. Monitoring point patterns for the development of space-time clusters. Journal of the Royal Statistical Society, Series A, 164:87–96, 2001.">Rog01</a>]</span></p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">libpysal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">libpysal</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s1">&#39;burkitt.shp&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pointpats.spacetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">Knox</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">global_knox</span> <span class="o">=</span> <span class="n">Knox</span><span class="p">(</span><span class="n">df</span><span class="p">[[</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">]],</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;T&quot;</span><span class="p">]],</span> <span class="n">delta</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">global_knox</span><span class="o">.</span><span class="n">statistic_</span>
+<span class="go">13</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">global_knox</span><span class="o">.</span><span class="n">p_poisson</span>
+<span class="go">0.14624558197140414</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">global_knox</span><span class="o">.</span><span class="n">observed</span>
+<span class="go">array([[1.300e+01, 3.416e+03],</span>
+<span class="go">       [3.900e+01, 1.411e+04]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">global_knox</span><span class="o">.</span><span class="n">expected</span>
+<span class="go">array([[1.01438161e+01, 3.41885618e+03],</span>
+<span class="go">       [4.18561839e+01, 1.41071438e+04]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hasattr</span><span class="p">(</span><span class="n">global_knox</span><span class="p">,</span> <span class="s1">&#39;sim&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">global_knox</span> <span class="o">=</span> <span class="n">Knox</span><span class="p">(</span><span class="n">df</span><span class="p">[[</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">]],</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;T&quot;</span><span class="p">]],</span> <span class="n">delta</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">keep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hasattr</span><span class="p">(</span><span class="n">global_knox</span><span class="p">,</span> <span class="s1">&#39;sim&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">global_knox</span><span class="o">.</span><span class="n">p_sim</span>
+<span class="go">0.21</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.Knox.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permutations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/spacetime.html#Knox.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.Knox.__init__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.Knox.__init__" title="pointpats.Knox.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(s_coords, t_coords, delta, tau[, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.Knox.from_dataframe" title="pointpats.Knox.from_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dataframe</span></code></a>(dataframe, time_col, delta, tau)</p></td>
+<td><p>Compute a Knox statistic from a dataframe of Point observations</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.Knox.from_dataframe">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">permutations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/spacetime.html#Knox.from_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.Knox.from_dataframe" title="Link to this definition">¶</a></dt>
+<dd><p>Compute a Knox statistic from a dataframe of Point observations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>dataframe</strong><span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>geodataframe holding observations. Should be in a projected coordinate
+system with geometries stored as Point</p>
+</dd>
+<dt><strong>time_col</strong><span class="classifier">str</span></dt><dd><p>column in the dataframe storing the time values (integer coordinate)
+for each observation. For example if the observations are stored with
+a timestamp, the time_col should be converted to a series of integers
+representing, e.g. hours, days, seconds, etc.</p>
+</dd>
+<dt><strong>delta</strong><span class="classifier">int</span></dt><dd><p>delta parameter defining the spatial neighbor threshold measured in the
+same units as the dataframe CRS</p>
+</dd>
+<dt><strong>tau</strong><span class="classifier">int</span></dt><dd><p>tau parameter defining the temporal neihgbor threshold (in the units
+measured by <cite>time_col</cite>)</p>
+</dd>
+<dt><strong>permutations</strong><span class="classifier">int, optional</span></dt><dd><p>permutations to use for computation inference, by default 99</p>
+</dd>
+<dt><strong>keep</strong><span class="classifier">bool</span></dt><dd><p>whether to store realized values of the statistic under permutations</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>pointpats.spacetime.Knox</dt><dd><p>a fitted Knox class</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/generated/pointpats.Knox.rst.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.3.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

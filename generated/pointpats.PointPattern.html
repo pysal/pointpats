@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pointpats.PointPattern &#8212; pointpats v2.3.0 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
+    <script src="../_static/documentation_options.js?v=c3c8ae58"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="icon" href="../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pointpats.PointProcess" href="pointpats.PointProcess.html" />
+    <link rel="prev" title="API reference" href="../api.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          pointpats</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.3.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-released-version">Installing released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-development-version">Installing development version</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#point-pattern">Point Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#point-processes">Point Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#centrography">Centrography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#density">Density</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#quadrat-based-statistics">Quadrat Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#distance-based-statistics">Distance Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#window-functions">Window functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#random-distributions">Random distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#space-time-interaction-tests">Space-Time Interaction Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">pointpats.PointPattern</a><ul>
+<li><a class="reference internal" href="#pointpats.PointPattern"><code class="docutils literal notranslate"><span class="pre">PointPattern</span></code></a><ul>
+<li><a class="reference internal" href="#pointpats.PointPattern.__init__"><code class="docutils literal notranslate"><span class="pre">PointPattern.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.add_marks"><code class="docutils literal notranslate"><span class="pre">PointPattern.add_marks()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.explode"><code class="docutils literal notranslate"><span class="pre">PointPattern.explode()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.find_pairs"><code class="docutils literal notranslate"><span class="pre">PointPattern.find_pairs()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.flip_coordinates"><code class="docutils literal notranslate"><span class="pre">PointPattern.flip_coordinates()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.get_window"><code class="docutils literal notranslate"><span class="pre">PointPattern.get_window()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.hull"><code class="docutils literal notranslate"><span class="pre">PointPattern.hull</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.hull_area"><code class="docutils literal notranslate"><span class="pre">PointPattern.hull_area</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.knn"><code class="docutils literal notranslate"><span class="pre">PointPattern.knn()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.knn_other"><code class="docutils literal notranslate"><span class="pre">PointPattern.knn_other()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.lambda_hull"><code class="docutils literal notranslate"><span class="pre">PointPattern.lambda_hull</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.lambda_mbb"><code class="docutils literal notranslate"><span class="pre">PointPattern.lambda_mbb</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.lambda_window"><code class="docutils literal notranslate"><span class="pre">PointPattern.lambda_window</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.max_nnd"><code class="docutils literal notranslate"><span class="pre">PointPattern.max_nnd</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.mbb"><code class="docutils literal notranslate"><span class="pre">PointPattern.mbb</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.mbb_area"><code class="docutils literal notranslate"><span class="pre">PointPattern.mbb_area</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.mean_nnd"><code class="docutils literal notranslate"><span class="pre">PointPattern.mean_nnd</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.min_nnd"><code class="docutils literal notranslate"><span class="pre">PointPattern.min_nnd</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.n"><code class="docutils literal notranslate"><span class="pre">PointPattern.n</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.nnd"><code class="docutils literal notranslate"><span class="pre">PointPattern.nnd</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.plot"><code class="docutils literal notranslate"><span class="pre">PointPattern.plot()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.rot"><code class="docutils literal notranslate"><span class="pre">PointPattern.rot</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.set_window"><code class="docutils literal notranslate"><span class="pre">PointPattern.set_window()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.summary"><code class="docutils literal notranslate"><span class="pre">PointPattern.summary()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.superimpose"><code class="docutils literal notranslate"><span class="pre">PointPattern.superimpose()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.tree"><code class="docutils literal notranslate"><span class="pre">PointPattern.tree</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.unique"><code class="docutils literal notranslate"><span class="pre">PointPattern.unique()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.PointPattern.window"><code class="docutils literal notranslate"><span class="pre">PointPattern.window</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="pointpats-pointpattern">
+<h1>pointpats.PointPattern<a class="headerlink" href="#pointpats-pointpattern" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pointpats.PointPattern">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">PointPattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/pointpattern.html#PointPattern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PointPattern" title="Link to this definition">¶</a></dt>
+<dd><p>Planar Point Pattern Class 2-D.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>points:       array</strong></dt><dd><p>(n,p), n points with p &gt;= 2 attributes on each
+point. Two attributes must comprise the spatial
+coordinate pair. Default is that the first two
+attributes are the x and y spatial coordinates.</p>
+</dd>
+<dt><strong>window:       :class:`.Window`</strong></dt><dd><p>Bounding geometric object for the point pattern.
+If not specified, window will be set to the minimum
+bounding rectangle of the point pattern.</p>
+</dd>
+<dt><strong>names:        list</strong></dt><dd><p>The names of the attributes.</p>
+</dd>
+<dt><strong>coord_names:  list</strong></dt><dd><p>The names of the attributes defining the two spatial
+coordinates.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointPattern</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">66.22</span><span class="p">,</span> <span class="mf">32.54</span><span class="p">],</span> <span class="p">[</span><span class="mf">22.52</span><span class="p">,</span> <span class="mf">22.39</span><span class="p">],</span> <span class="p">[</span><span class="mf">31.01</span><span class="p">,</span> <span class="mf">81.21</span><span class="p">],</span>
+<span class="gp">... </span>          <span class="p">[</span><span class="mf">9.47</span><span class="p">,</span> <span class="mf">31.02</span><span class="p">],</span> <span class="p">[</span><span class="mf">30.78</span><span class="p">,</span> <span class="mf">60.10</span><span class="p">],</span> <span class="p">[</span><span class="mf">75.21</span><span class="p">,</span> <span class="mf">58.93</span><span class="p">],</span>
+<span class="gp">... </span>          <span class="p">[</span><span class="mf">79.26</span><span class="p">,</span>  <span class="mf">7.68</span><span class="p">],</span> <span class="p">[</span><span class="mf">8.23</span><span class="p">,</span> <span class="mf">39.93</span><span class="p">],</span> <span class="p">[</span><span class="mf">98.73</span><span class="p">,</span> <span class="mf">77.17</span><span class="p">],</span>
+<span class="gp">... </span>          <span class="p">[</span><span class="mf">89.78</span><span class="p">,</span> <span class="mf">42.53</span><span class="p">],</span> <span class="p">[</span><span class="mf">65.19</span><span class="p">,</span> <span class="mf">92.08</span><span class="p">],</span> <span class="p">[</span><span class="mf">54.46</span><span class="p">,</span> <span class="mf">8.48</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span> <span class="o">=</span> <span class="n">PointPattern</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">n</span>
+<span class="go">12</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">mean_nnd</span>
+<span class="go">21.612139802089246</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">lambda_mbb</span>
+<span class="go">0.0015710507711240867</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">lambda_hull</span>
+<span class="go">0.0022667153468973137</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">hull_area</span>
+<span class="go">5294.00395</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">mbb_area</span>
+<span class="go">7638.200000000001</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.PointPattern.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/pointpattern.html#PointPattern.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PointPattern.__init__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.PointPattern.__init__" title="pointpats.PointPattern.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(points[, window, names, coord_names])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.PointPattern.add_marks" title="pointpats.PointPattern.add_marks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_marks</span></code></a>(marks[, mark_names])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.PointPattern.explode" title="pointpats.PointPattern.explode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">explode</span></code></a>(mark)</p></td>
+<td><p>Explode a marked point pattern into a sequence of individual point patterns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.PointPattern.find_pairs" title="pointpats.PointPattern.find_pairs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_pairs</span></code></a>(r)</p></td>
+<td><p>Find all pairs of points in the pattern that are within r units of each other</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.PointPattern.flip_coordinates" title="pointpats.PointPattern.flip_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flip_coordinates</span></code></a>()</p></td>
+<td><p>Flips the coordinates of a point pattern.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.PointPattern.get_window" title="pointpats.PointPattern.get_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_window</span></code></a>()</p></td>
+<td><p>Bounding geometry for the point pattern</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.PointPattern.knn" title="pointpats.PointPattern.knn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">knn</span></code></a>([k])</p></td>
+<td><p>Find k nearest neighbors for each point in the pattern</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.PointPattern.knn_other" title="pointpats.PointPattern.knn_other"><code class="xref py py-obj docutils literal notranslate"><span class="pre">knn_other</span></code></a>(other[, k])</p></td>
+<td><p>Find k nearest neighbors in the pattern for each point in other</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.PointPattern.plot" title="pointpats.PointPattern.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([window, title, hull, get_ax])</p></td>
+<td><p>Plot function for a point pattern.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.PointPattern.set_window" title="pointpats.PointPattern.set_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_window</span></code></a>(window)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.PointPattern.summary" title="pointpats.PointPattern.summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">summary</span></code></a>()</p></td>
+<td><p>Description of the point pattern.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.PointPattern.superimpose" title="pointpats.PointPattern.superimpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">superimpose</span></code></a>(point_pattern)</p></td>
+<td><p>Returns a superimposed point pattern.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.PointPattern.unique" title="pointpats.PointPattern.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a>()</p></td>
+<td><p>Remove duplicate points in the point pattern.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.PointPattern.hull" title="pointpats.PointPattern.hull"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hull</span></code></a></p></td>
+<td><p>Points defining convex hull in counterclockwise order</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.PointPattern.hull_area" title="pointpats.PointPattern.hull_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hull_area</span></code></a></p></td>
+<td><p>Area of convex hull</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.PointPattern.lambda_hull" title="pointpats.PointPattern.lambda_hull"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lambda_hull</span></code></a></p></td>
+<td><p>Intensity based on convex hull</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.PointPattern.lambda_mbb" title="pointpats.PointPattern.lambda_mbb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lambda_mbb</span></code></a></p></td>
+<td><p>Intensity based on minimum bounding box</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.PointPattern.lambda_window" title="pointpats.PointPattern.lambda_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lambda_window</span></code></a></p></td>
+<td><p>Intensity estimate based on area of window</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.PointPattern.max_nnd" title="pointpats.PointPattern.max_nnd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_nnd</span></code></a></p></td>
+<td><p>Max nearest neighbor distance</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.PointPattern.mbb" title="pointpats.PointPattern.mbb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mbb</span></code></a></p></td>
+<td><p>Minimum bounding box</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.PointPattern.mbb_area" title="pointpats.PointPattern.mbb_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mbb_area</span></code></a></p></td>
+<td><p>Area of minimum bounding box</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.PointPattern.mean_nnd" title="pointpats.PointPattern.mean_nnd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_nnd</span></code></a></p></td>
+<td><p>Mean nearest neighbor distance</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.PointPattern.min_nnd" title="pointpats.PointPattern.min_nnd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min_nnd</span></code></a></p></td>
+<td><p>Min nearest neighbor distance</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.PointPattern.n" title="pointpats.PointPattern.n"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n</span></code></a></p></td>
+<td><p>Number of points</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.PointPattern.nnd" title="pointpats.PointPattern.nnd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nnd</span></code></a></p></td>
+<td><p>Nearest neighbor distances</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.PointPattern.rot" title="pointpats.PointPattern.rot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rot</span></code></a></p></td>
+<td><p>Ripley's rule of thumb for distance range in plotting k and related functions</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.PointPattern.tree" title="pointpats.PointPattern.tree"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tree</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.PointPattern.window" title="pointpats.PointPattern.window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">window</span></code></a></p></td>
+<td><p>Bounding geometry for the point pattern</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.PointPattern.add_marks">
+<span class="sig-name descname"><span class="pre">add_marks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">marks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mark_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/pointpattern.html#PointPattern.add_marks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PointPattern.add_marks" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.PointPattern.explode">
+<span class="sig-name descname"><span class="pre">explode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mark</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/pointpattern.html#PointPattern.explode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PointPattern.explode" title="Link to this definition">¶</a></dt>
+<dd><p>Explode a marked point pattern into a sequence of individual point
+patterns. If the mark has k unique values, then the sequence will be of
+length k.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>mark: string</strong></dt><dd><p>The label of the mark to use for the subsetting</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>pps: list</dt><dd><p>sequence of <a class="reference internal" href="#pointpats.PointPattern" title="pointpats.PointPattern"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointPattern</span></code></a> instances</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.PointPattern.find_pairs">
+<span class="sig-name descname"><span class="pre">find_pairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/pointpattern.html#PointPattern.find_pairs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PointPattern.find_pairs" title="Link to this definition">¶</a></dt>
+<dd><p>Find all pairs of points in the pattern that are within r units of each
+other</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>r: float</strong></dt><dd><p>diameter of pair circle</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>s: set</dt><dd><p>pairs of points within r units of each other</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.PointPattern.flip_coordinates">
+<span class="sig-name descname"><span class="pre">flip_coordinates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/pointpattern.html#PointPattern.flip_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PointPattern.flip_coordinates" title="Link to this definition">¶</a></dt>
+<dd><p>Flips the coordinates of a point pattern.</p>
+<p>Doesn’t change the structure of data frame. This function swaps
+<cite>_x</cite> and <cite>_y</cite> variables, which are used to represent coordinates.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.PointPattern.get_window">
+<span class="sig-name descname"><span class="pre">get_window</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/pointpattern.html#PointPattern.get_window"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PointPattern.get_window" title="Link to this definition">¶</a></dt>
+<dd><p>Bounding geometry for the point pattern</p>
+<p><a class="reference internal" href="pointpats.Window.html#pointpats.Window" title="pointpats.window.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">window.Window</span></code></a></p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pointpats.PointPattern.hull">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hull</span></span><a class="headerlink" href="#pointpats.PointPattern.hull" title="Link to this definition">¶</a></dt>
+<dd><p>Points defining convex hull in counterclockwise order</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pointpats.PointPattern.hull_area">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hull_area</span></span><a class="headerlink" href="#pointpats.PointPattern.hull_area" title="Link to this definition">¶</a></dt>
+<dd><p>Area of convex hull</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.PointPattern.knn">
+<span class="sig-name descname"><span class="pre">knn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/pointpattern.html#PointPattern.knn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PointPattern.knn" title="Link to this definition">¶</a></dt>
+<dd><p>Find k nearest neighbors for each point in the pattern</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>k:      int</strong></dt><dd><p>number of nearest neighbors to find</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>nn:    array (n x k)</dt><dd><p>row i  column j contains the id for i’s jth nearest neighbor</p>
+</dd>
+<dt>nnd:   array(n x k)</dt><dd><p>row i column j contains the distance between i and its jth
+nearest neighbor</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.PointPattern.knn_other">
+<span class="sig-name descname"><span class="pre">knn_other</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/pointpattern.html#PointPattern.knn_other"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PointPattern.knn_other" title="Link to this definition">¶</a></dt>
+<dd><p>Find k nearest neighbors in the pattern for each point in other</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>other:  PointPattern</strong></dt><dd><p><a class="reference internal" href="#pointpats.PointPattern" title="pointpats.PointPattern"><code class="xref py py-class docutils literal notranslate"><span class="pre">pointpats.PointPattern</span></code></a></p>
+</dd>
+<dt><strong>k:      int</strong></dt><dd><p>number of nearest neighbors to find</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>nn:    array (n x k)</dt><dd><p>row i  column j contains the id for i’s jth nearest neighbor</p>
+</dd>
+<dt>nnd:   array(n x k)</dt><dd><p>row i column j contains the distance between i and its jth
+nearest neighbor</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pointpats.PointPattern.lambda_hull">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lambda_hull</span></span><a class="headerlink" href="#pointpats.PointPattern.lambda_hull" title="Link to this definition">¶</a></dt>
+<dd><p>Intensity based on convex hull</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pointpats.PointPattern.lambda_mbb">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lambda_mbb</span></span><a class="headerlink" href="#pointpats.PointPattern.lambda_mbb" title="Link to this definition">¶</a></dt>
+<dd><p>Intensity based on minimum bounding box</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pointpats.PointPattern.lambda_window">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lambda_window</span></span><a class="headerlink" href="#pointpats.PointPattern.lambda_window" title="Link to this definition">¶</a></dt>
+<dd><p>Intensity estimate based on area of window</p>
+<p>The intensity of a point process at point <span class="math notranslate nohighlight">\(s_j\)</span> can be defined
+as:</p>
+<div class="math notranslate nohighlight">
+\[\lambda(s_j) = \lim \limits_{|\mathbf{A}s_j|
+\to 0} \left \{ \frac{E(Y(\mathbf{A}s_j)}{|\mathbf{A}s_j|}
+\right \}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{A}s_j\)</span> is a small region surrounding location
+<span class="math notranslate nohighlight">\(s_j\)</span> with area <span class="math notranslate nohighlight">\(|\mathbf{A}s_j|\)</span>, and
+<span class="math notranslate nohighlight">\(E(Y(\mathbf{A}s_j))\)</span> is the expected number of event points in
+<span class="math notranslate nohighlight">\(\mathbf{A}s_j\)</span>.</p>
+<p>The intensity is the mean number of event points per unit of area at
+point <span class="math notranslate nohighlight">\(s_j\)</span>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pointpats.PointPattern.max_nnd">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_nnd</span></span><a class="headerlink" href="#pointpats.PointPattern.max_nnd" title="Link to this definition">¶</a></dt>
+<dd><p>Max nearest neighbor distance</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pointpats.PointPattern.mbb">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mbb</span></span><a class="headerlink" href="#pointpats.PointPattern.mbb" title="Link to this definition">¶</a></dt>
+<dd><p>Minimum bounding box</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pointpats.PointPattern.mbb_area">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mbb_area</span></span><a class="headerlink" href="#pointpats.PointPattern.mbb_area" title="Link to this definition">¶</a></dt>
+<dd><p>Area of minimum bounding box</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pointpats.PointPattern.mean_nnd">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mean_nnd</span></span><a class="headerlink" href="#pointpats.PointPattern.mean_nnd" title="Link to this definition">¶</a></dt>
+<dd><p>Mean nearest neighbor distance</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pointpats.PointPattern.min_nnd">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">min_nnd</span></span><a class="headerlink" href="#pointpats.PointPattern.min_nnd" title="Link to this definition">¶</a></dt>
+<dd><p>Min nearest neighbor distance</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pointpats.PointPattern.n">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n</span></span><a class="headerlink" href="#pointpats.PointPattern.n" title="Link to this definition">¶</a></dt>
+<dd><p>Number of points</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pointpats.PointPattern.nnd">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nnd</span></span><a class="headerlink" href="#pointpats.PointPattern.nnd" title="Link to this definition">¶</a></dt>
+<dd><p>Nearest neighbor distances</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.PointPattern.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Point</span> <span class="pre">Pattern'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hull</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/pointpattern.html#PointPattern.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PointPattern.plot" title="Link to this definition">¶</a></dt>
+<dd><p>Plot function for a point pattern.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>window</strong><span class="classifier">boolean</span></dt><dd><p>If window is True, plot window of the point
+pattern. If not, don’t plot window.</p>
+</dd>
+<dt><strong>title</strong><span class="classifier">string</span></dt><dd><p>Name of the figure.</p>
+</dd>
+<dt><strong>hull</strong><span class="classifier">boolean</span></dt><dd><p>If hull is True, plot convex hull of the point
+pattern. If not, don’t plot convex hull.</p>
+</dd>
+<dt><strong>get_ax</strong><span class="classifier">boolean</span></dt><dd><p>If get_ax is True, return the current plot ax.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>ax</strong><span class="classifier">matplotlib.axes._subplots.AxesSubplot</span></dt><dd><p>Current plot ax. Only return it when get_ax is True.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pointpats.PointPattern.rot">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rot</span></span><a class="headerlink" href="#pointpats.PointPattern.rot" title="Link to this definition">¶</a></dt>
+<dd><p>Ripley’s rule of thumb for distance range in plotting k and related functions</p>
+<p>One-quarter the smallest side of the mbb.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.PointPattern.set_window">
+<span class="sig-name descname"><span class="pre">set_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/pointpattern.html#PointPattern.set_window"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PointPattern.set_window" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.PointPattern.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/pointpattern.html#PointPattern.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PointPattern.summary" title="Link to this definition">¶</a></dt>
+<dd><p>Description of the point pattern.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.PointPattern.superimpose">
+<span class="sig-name descname"><span class="pre">superimpose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point_pattern</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/pointpattern.html#PointPattern.superimpose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PointPattern.superimpose" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a superimposed point pattern.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>point_pattern:</strong></dt><dd><p><a class="reference internal" href="#pointpats.PointPattern" title="pointpats.PointPattern"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointPattern</span></code></a> instance</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>superimposed</dt><dd><p><a class="reference internal" href="#pointpats.PointPattern" title="pointpats.PointPattern"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointPattern</span></code></a> instance</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointPattern</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points1</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points2</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp1</span> <span class="o">=</span> <span class="n">PointPattern</span><span class="p">(</span><span class="n">points1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp2</span> <span class="o">=</span> <span class="n">PointPattern</span><span class="p">(</span><span class="n">points2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp1</span><span class="o">.</span><span class="n">superimpose</span><span class="p">(</span><span class="n">pp2</span><span class="p">)</span><span class="o">.</span><span class="n">points</span>
+<span class="go">   x  y</span>
+<span class="go">0  1  3</span>
+<span class="go">1  4  5</span>
+<span class="go">2  0  0</span>
+<span class="go">0  5  6</span>
+<span class="go">1  1  4</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pointpats.PointPattern.tree">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tree</span></span><a class="headerlink" href="#pointpats.PointPattern.tree" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.PointPattern.unique">
+<span class="sig-name descname"><span class="pre">unique</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/pointpattern.html#PointPattern.unique"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PointPattern.unique" title="Link to this definition">¶</a></dt>
+<dd><p>Remove duplicate points in the point pattern.</p>
+<p>Two points in a point pattern are deemed to be identical if their
+coordinates are the same, and their marks are the same (if any)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>pp: list</dt><dd><p>A deduplicated <a class="reference internal" href="#pointpats.PointPattern" title="pointpats.PointPattern"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointPattern</span></code></a> instance</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointPattern</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span> <span class="o">=</span> <span class="n">PointPattern</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">df</span>
+<span class="go">     x    y</span>
+<span class="go">0  1.2  2.1</span>
+<span class="go">2  0.0  1.0</span>
+<span class="go">3  1.0  2.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pointpats.PointPattern.window">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">window</span></span><a class="headerlink" href="#pointpats.PointPattern.window" title="Link to this definition">¶</a></dt>
+<dd><p>Bounding geometry for the point pattern</p>
+<p><a class="reference internal" href="pointpats.Window.html#pointpats.Window" title="pointpats.window.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">window.Window</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/generated/pointpats.PointPattern.rst.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.3.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

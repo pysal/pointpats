@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pointpats.random &#8212; pointpats v2.3.0 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pysal-styles.css?v=f8dcc4ae" />
+    <script src="../../_static/documentation_options.js?v=c3c8ae58"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          pointpats</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.3.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../installation.html">Installation</a></li>
+                <li><a href="../../api.html">API</a></li>
+                <li><a href="../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#installing-released-version">Installing released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#installing-development-version">Installing development version</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#point-pattern">Point Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#point-processes">Point Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#centrography">Centrography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#density">Density</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#quadrat-based-statistics">Quadrat Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#distance-based-statistics">Distance Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#window-functions">Window functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#random-distributions">Random distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#space-time-interaction-tests">Space-Time Interaction Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for pointpats.random</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">spatial</span><span class="p">,</span>
+    <span class="n">area</span> <span class="k">as</span> <span class="n">_area</span><span class="p">,</span>
+    <span class="n">centroid</span> <span class="k">as</span> <span class="n">_centroid</span><span class="p">,</span>
+    <span class="n">contains</span> <span class="k">as</span> <span class="n">_contains</span><span class="p">,</span>
+    <span class="n">bbox</span> <span class="k">as</span> <span class="n">_bbox</span><span class="p">,</span>
+    <span class="n">prepare_hull</span> <span class="k">as</span> <span class="n">_prepare_hull</span><span class="p">,</span>
+    <span class="n">HULL_TYPES</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># ------------------------------------------------------------ #</span>
+<span class="c1"># Utilities                                                    #</span>
+<span class="c1"># ------------------------------------------------------------ #</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_size_and_intensity</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">intensity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a hull, an intensity, and a size int/tuple, correctly</span>
+<span class="sd">    compute the resulting missing quantities. Defaults to 100 points in one</span>
+<span class="sd">    replication, meaning the intensity will be computed on the fly</span>
+<span class="sd">    if nothing is provided.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hull : A geometry-like object</span>
+<span class="sd">        This encodes the &quot;space&quot; in which to simulate the normal pattern. All points will</span>
+<span class="sd">        lie within this hull. Supported values are:</span>
+<span class="sd">        - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])</span>
+<span class="sd">        - an (N,2) array of points for which the bounding box will be computed &amp; used</span>
+<span class="sd">        - a shapely polygon/multipolygon</span>
+<span class="sd">        - a scipy convexh hull</span>
+<span class="sd">    intensity : float</span>
+<span class="sd">        the number of observations per unit area in the hull to use. If provided,</span>
+<span class="sd">        then the number of observations is determined using the intensity * area(hull) and</span>
+<span class="sd">        the size is assumed to represent n_replications (if provided).</span>
+<span class="sd">    size : tuple or int</span>
+<span class="sd">        a tuple of (n_observations, n_replications), where the first number is the number</span>
+<span class="sd">        of points to simulate in each replication and the second number is the number of</span>
+<span class="sd">        total replications. So, (10, 4) indicates 10 points, 4 times.</span>
+<span class="sd">        If an integer is provided and intensity is None, n_replications is assumed to be 1.</span>
+<span class="sd">        If size is an integer and intensity is also provided, then size indicates n_replications,</span>
+<span class="sd">        and the number of observations is computed on the fly using intensity and area.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">intensity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># if intensity is provided, assume</span>
+            <span class="c1"># n_observations</span>
+            <span class="n">n_observations</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">_area</span><span class="p">(</span><span class="n">hull</span><span class="p">)</span> <span class="o">*</span> <span class="n">intensity</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># default to 100 points</span>
+            <span class="n">n_observations</span> <span class="o">=</span> <span class="mi">100</span>
+            <span class="n">intensity</span> <span class="o">=</span> <span class="n">n_observations</span> <span class="o">/</span> <span class="n">_area</span><span class="p">(</span><span class="n">hull</span><span class="p">)</span>
+        <span class="n">n_simulations</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_observations</span><span class="p">,</span> <span class="n">n_simulations</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">intensity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n_observations</span><span class="p">,</span> <span class="n">n_simulations</span> <span class="o">=</span> <span class="n">size</span>
+            <span class="n">intensity</span> <span class="o">=</span> <span class="n">n_observations</span> <span class="o">/</span> <span class="n">_area</span><span class="p">(</span><span class="n">hull</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">intensity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Either intensity or size as (n observations, n simulations)&quot;</span>
+                <span class="s2">&quot; can be provided. Providing both creates statistical conflicts.&quot;</span>
+                <span class="s2">&quot; between the requested intensity and implied intensity by&quot;</span>
+                <span class="s2">&quot; the number of observations and the area of the hull. If&quot;</span>
+                <span class="s2">&quot; you want to specify the intensity, use the intensity argument&quot;</span>
+                <span class="s2">&quot; and set size equal to the number of simulations.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Intensity and size not understood. Provide size as a tuple&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; containing (number of observations, number of simulations)&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; with no specified intensity, or an intensity and size equal&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; to the number of simulations.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; Recieved: `intensity=</span><span class="si">{</span><span class="n">intensity</span><span class="si">}</span><span class="s2">, size=</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">`&quot;</span>
+            <span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="c1"># assume int size with specified intensity means n_simulations at x intensity</span>
+        <span class="k">if</span> <span class="n">intensity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n_observations</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">intensity</span> <span class="o">*</span> <span class="n">_area</span><span class="p">(</span><span class="n">hull</span><span class="p">))</span>
+            <span class="n">n_simulations</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># assume we have one replication at the specified number of points</span>
+            <span class="n">n_simulations</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">n_observations</span> <span class="o">=</span> <span class="n">size</span>
+            <span class="n">intensity</span> <span class="o">=</span> <span class="n">n_observations</span> <span class="o">/</span> <span class="n">_area</span><span class="p">(</span><span class="n">hull</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Intensity and size not understood. Provide size as a tuple&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; containing (number of observations, number of simulations)&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; with no specified intensity, or an intensity and size equal&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; to the number of simulations.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; Recieved: `intensity=</span><span class="si">{</span><span class="n">intensity</span><span class="si">}</span><span class="s2">, size=</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">`&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">n_observations</span><span class="p">,</span> <span class="n">n_simulations</span><span class="p">,</span> <span class="n">intensity</span><span class="p">)</span>
+
+
+<span class="c1"># ------------------------------------------------------------ #</span>
+<span class="c1"># Distributions                                                #</span>
+<span class="c1"># ------------------------------------------------------------ #</span>
+
+
+<div class="viewcode-block" id="poisson">
+<a class="viewcode-back" href="../../generated/pointpats.random.poisson.html#pointpats.random.poisson">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">poisson</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">intensity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulate a poisson random point process with a specified intensity.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hull : A geometry-like object</span>
+<span class="sd">        This encodes the &quot;space&quot; in which to simulate the normal pattern. All points will</span>
+<span class="sd">        lie within this hull. Supported values are:</span>
+<span class="sd">        - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])</span>
+<span class="sd">        - an (N,2) array of points for which the bounding box will be computed &amp; used</span>
+<span class="sd">        - a shapely polygon/multipolygon</span>
+<span class="sd">        - a scipy convexh hull</span>
+<span class="sd">    intensity : float</span>
+<span class="sd">        the number of observations per unit area in the hull to use. If provided, then</span>
+<span class="sd">        size must be an integer describing the number of replications to use.</span>
+<span class="sd">    size : tuple or int</span>
+<span class="sd">        a tuple of (n_observations, n_replications), where the first number is the number</span>
+<span class="sd">        of points to simulate in each replication and the second number is the number of</span>
+<span class="sd">        total replications. So, (10, 4) indicates 10 points, 4 times.</span>
+<span class="sd">        If an integer is provided and intensity is None, n_replications is assumed to be 1.</span>
+<span class="sd">        If size is an integer and intensity is also provided, then size indicates n_replications,</span>
+<span class="sd">        and the number of observations is computed from the intensity.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">        :   numpy.ndarray</span>
+<span class="sd">        either an (n_replications, n_observations, 2) or (n_observations,2) array containing</span>
+<span class="sd">        the simulated realizations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">hull</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,):</span>
+            <span class="n">hull</span> <span class="o">=</span> <span class="n">hull</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hull</span> <span class="o">=</span> <span class="n">_prepare_hull</span><span class="p">(</span><span class="n">hull</span><span class="p">)</span>
+    <span class="n">n_observations</span><span class="p">,</span> <span class="n">n_simulations</span><span class="p">,</span> <span class="n">intensity</span> <span class="o">=</span> <span class="n">parse_size_and_intensity</span><span class="p">(</span>
+        <span class="n">hull</span><span class="p">,</span> <span class="n">intensity</span><span class="o">=</span><span class="n">intensity</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span>
+    <span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_simulations</span><span class="p">,</span> <span class="n">n_observations</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="n">bbox</span> <span class="o">=</span> <span class="n">_bbox</span><span class="p">(</span><span class="n">hull</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i_replication</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_simulations</span><span class="p">):</span>
+        <span class="n">generating</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">i_observation</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i_observation</span> <span class="o">&lt;</span> <span class="n">n_observations</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">_contains</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">i_replication</span><span class="p">,</span> <span class="n">i_observation</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                <span class="n">i_observation</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="normal">
+<a class="viewcode-back" href="../../generated/pointpats.random.normal.html#pointpats.random.normal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normal</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulate a multivariate random normal point cluster</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hull : A geometry-like object</span>
+<span class="sd">        This encodes the &quot;space&quot; in which to simulate the normal pattern. All points will</span>
+<span class="sd">        lie within this hull. Supported values are:</span>
+<span class="sd">        - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])</span>
+<span class="sd">        - an (N,2) array of points for which the bounding box will be computed &amp; used</span>
+<span class="sd">        - a shapely polygon/multipolygon</span>
+<span class="sd">        - a scipy convexh hull</span>
+<span class="sd">    center : iterable of shape (2, )</span>
+<span class="sd">        A point where the simulations will be centered.</span>
+<span class="sd">    cov : float or a numpy array of shape (2,2)</span>
+<span class="sd">        either the standard deviation of an independent and identically distributed</span>
+<span class="sd">        normal distribution, or a 2 by 2 covariance matrix expressing the covariance</span>
+<span class="sd">        of the x and y for the distribution. Default is half of the width or height</span>
+<span class="sd">        of the hull&#39;s bounding box, whichever is larger.</span>
+<span class="sd">    size : tuple or int</span>
+<span class="sd">        a tuple of (n_observations, n_replications), where the first number is the number</span>
+<span class="sd">        of points to simulate in each replication and the second number is the number of</span>
+<span class="sd">        total replications. So, (10, 4) indicates 10 points, 4 times.</span>
+<span class="sd">        If an integer is provided, n_replications is assumed to be 1.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">        :   numpy.ndarray</span>
+<span class="sd">        either an (n_replications, n_observations, 2) or (n_observations,2) array containing</span>
+<span class="sd">        the simulated realizations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">hull</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,):</span>
+            <span class="n">hull</span> <span class="o">=</span> <span class="n">hull</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hull</span> <span class="o">=</span> <span class="n">_prepare_hull</span><span class="p">(</span><span class="n">hull</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">center</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">center</span> <span class="o">=</span> <span class="n">_centroid</span><span class="p">(</span><span class="n">hull</span><span class="p">)</span>
+    <span class="n">n_observations</span><span class="p">,</span> <span class="n">n_simulations</span><span class="p">,</span> <span class="n">intensity</span> <span class="o">=</span> <span class="n">parse_size_and_intensity</span><span class="p">(</span>
+        <span class="n">hull</span><span class="p">,</span> <span class="n">intensity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">cov</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">bbox</span> <span class="o">=</span> <span class="n">_bbox</span><span class="p">(</span><span class="n">hull</span><span class="p">)</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">height</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">cov</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cov</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="n">sd</span> <span class="o">=</span> <span class="n">cov</span>
+        <span class="n">cov</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">sd</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cov</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cov</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">cov</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;Bivariate covariance matrices must be 2 by 2&quot;</span>
+        <span class="k">elif</span> <span class="n">cov</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">cov</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span>
+                <span class="mi">2</span><span class="p">,</span>
+                <span class="mi">2</span><span class="p">,</span>
+            <span class="p">),</span> <span class="s2">&quot;3-dimensional covariance matrices must have shape (n_simulations, 2,2)&quot;</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">cov</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">n_simulations</span>
+            <span class="p">),</span> <span class="s2">&quot;3-dimensional covariance matrices must have shape (n_simulations, 2,2)&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;`cov` argument must be a float (signifying a standard deviation)&quot;</span>
+            <span class="s2">&quot; or a 2 by 2 array expressing the covariance matrix of the &quot;</span>
+            <span class="s2">&quot; bivariate normal distribution.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_simulations</span><span class="p">,</span> <span class="n">n_observations</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="n">bbox</span> <span class="o">=</span> <span class="n">_bbox</span><span class="p">(</span><span class="n">hull</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i_replication</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_simulations</span><span class="p">):</span>
+        <span class="n">generating</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">i_observation</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">replication_cov</span> <span class="o">=</span> <span class="n">cov</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">cov</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="k">else</span> <span class="n">cov</span>
+        <span class="n">replication_sd</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="n">replication_cov</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+        <span class="n">replication_cor</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">replication_sd</span><span class="p">)</span> <span class="o">*</span> <span class="n">replication_cov</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">replication_sd</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="n">i_observation</span> <span class="o">&lt;</span> <span class="n">n_observations</span><span class="p">:</span>
+            <span class="n">candidate</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">replication_cor</span><span class="p">)</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">center</span> <span class="o">+</span> <span class="n">candidate</span> <span class="o">*</span> <span class="n">replication_sd</span>
+            <span class="k">if</span> <span class="n">_contains</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">i_replication</span><span class="p">,</span> <span class="n">i_observation</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                <span class="n">i_observation</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="cluster_poisson">
+<a class="viewcode-back" href="../../generated/pointpats.random.cluster_poisson.html#pointpats.random.cluster_poisson">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cluster_poisson</span><span class="p">(</span>
+    <span class="n">hull</span><span class="p">,</span> <span class="n">intensity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_seeds</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cluster_radius</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulate a cluster poisson random point process with a specified intensity &amp; number of seeds.</span>
+<span class="sd">    A cluster poisson process is a poisson process where the center of each &quot;cluster&quot; is</span>
+<span class="sd">    itself distributed according to a spatial poisson process.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hull : A geometry-like object</span>
+<span class="sd">        This encodes the &quot;space&quot; in which to simulate the normal pattern. All points will</span>
+<span class="sd">        lie within this hull. Supported values are:</span>
+<span class="sd">        - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])</span>
+<span class="sd">        - an (N,2) array of points for which the bounding box will be computed &amp; used</span>
+<span class="sd">        - a shapely polygon/multipolygon</span>
+<span class="sd">        - a scipy convexh hull</span>
+<span class="sd">    intensity : float</span>
+<span class="sd">        the number of observations per unit area in the hull to use. If provided, then</span>
+<span class="sd">        size must be an integer describing the number of replications to use.</span>
+<span class="sd">    size : tuple or int</span>
+<span class="sd">        a tuple of (n_observations, n_replications), where the first number is the number</span>
+<span class="sd">        of points to simulate in each replication and the second number is the number of</span>
+<span class="sd">        total replications. So, (10, 4) indicates 10 points, 4 times.</span>
+<span class="sd">        If an integer is provided and intensity is None, n_replications is assumed to be 1.</span>
+<span class="sd">        If size is an integer and intensity is also provided, then size indicates n_replications,</span>
+<span class="sd">        and the number of observations is computed from the intensity.</span>
+<span class="sd">    n_seeds : int</span>
+<span class="sd">        the number of sub-clusters to use.</span>
+<span class="sd">    cluster_radius : float or iterable</span>
+<span class="sd">        the radius of each cluster. If a float, the same radius is used for all clusters.</span>
+<span class="sd">        If an array, then there must be the same number of radii as clusters.</span>
+<span class="sd">        If None, 50% of the minimum inter-point distance is used, which may fluctuate across</span>
+<span class="sd">        replications.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">        :   numpy.ndarray</span>
+<span class="sd">        either an (n_replications, n_observations, 2) or (n_observations,2) array containing</span>
+<span class="sd">        the simulated realizations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">hull</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,):</span>
+            <span class="n">hull</span> <span class="o">=</span> <span class="n">hull</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hull</span> <span class="o">=</span> <span class="n">_prepare_hull</span><span class="p">(</span><span class="n">hull</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cluster_radius</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">cluster_radii</span> <span class="o">=</span> <span class="n">cluster_radius</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster_radii</span><span class="p">)</span> <span class="o">==</span> <span class="n">n_seeds</span><span class="p">,</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;number of radii provided (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cluster_radii</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;does not match number of clusters requested&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; (</span><span class="si">{</span><span class="n">n_seeds</span><span class="si">}</span><span class="s2">).&quot;</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cluster_radius</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="n">cluster_radii</span> <span class="o">=</span> <span class="p">[</span><span class="n">cluster_radius</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_seeds</span>
+
+    <span class="n">n_observations</span><span class="p">,</span> <span class="n">n_simulations</span><span class="p">,</span> <span class="n">intensity</span> <span class="o">=</span> <span class="n">parse_size_and_intensity</span><span class="p">(</span>
+        <span class="n">hull</span><span class="p">,</span> <span class="n">intensity</span><span class="o">=</span><span class="n">intensity</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span>
+    <span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_simulations</span><span class="p">,</span> <span class="n">n_observations</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">hull_area</span> <span class="o">=</span> <span class="n">_area</span><span class="p">(</span><span class="n">hull</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i_replication</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_simulations</span><span class="p">):</span>
+        <span class="n">seeds</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_seeds</span><span class="p">,</span> <span class="n">n_simulations</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">cluster_radius</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># default cluster radius is one half the minimum distance between seeds</span>
+            <span class="n">cluster_radii</span> <span class="o">=</span> <span class="p">[</span><span class="n">spatial</span><span class="o">.</span><span class="n">distance</span><span class="o">.</span><span class="n">pdist</span><span class="p">(</span><span class="n">seeds</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_seeds</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">i_replication</span><span class="p">],</span> <span class="n">n_seeds</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i_cluster</span><span class="p">,</span> <span class="n">radius</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cluster_radii</span><span class="p">):</span>
+            <span class="n">seed</span> <span class="o">=</span> <span class="n">seeds</span><span class="p">[</span><span class="n">i_cluster</span><span class="p">]</span>
+            <span class="n">cluster_points</span> <span class="o">=</span> <span class="n">clusters</span><span class="p">[</span><span class="n">i_cluster</span><span class="p">]</span>
+            <span class="n">n_in_cluster</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster_points</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n_in_cluster</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">clusters</span><span class="p">[</span><span class="n">i_cluster</span><span class="p">]</span> <span class="o">=</span> <span class="n">seed</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">n_in_cluster</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="s2">&quot;There are too many clusters requested for the &quot;</span>
+                    <span class="s2">&quot; inputted number of samples. Reduce `n_seeds` or&quot;</span>
+                    <span class="s2">&quot; increase the number of sampled points.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">candidates</span> <span class="o">=</span> <span class="n">_uniform_circle</span><span class="p">(</span>
+                <span class="n">n_in_cluster</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">hull</span>
+            <span class="p">)</span>
+            <span class="n">clusters</span><span class="p">[</span><span class="n">i_cluster</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">row_stack</span><span class="p">((</span><span class="n">seed</span><span class="p">,</span> <span class="n">candidates</span><span class="p">))</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">i_replication</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">row_stack</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="cluster_normal">
+<a class="viewcode-back" href="../../generated/pointpats.random.cluster_normal.html#pointpats.random.cluster_normal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cluster_normal</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_seeds</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulate a cluster poisson random point process with a specified intensity &amp; number of seeds.</span>
+<span class="sd">    A cluster poisson process is a poisson process where the center of each &quot;cluster&quot; is</span>
+<span class="sd">    itself distributed according to a spatial poisson process.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hull : A geometry-like object</span>
+<span class="sd">        This encodes the &quot;space&quot; in which to simulate the normal pattern. All points will</span>
+<span class="sd">        lie within this hull. Supported values are:</span>
+<span class="sd">        - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])</span>
+<span class="sd">        - an (N,2) array of points for which the bounding box will be computed &amp; used</span>
+<span class="sd">        - a shapely polygon/multipolygon</span>
+<span class="sd">        - a scipy convexh hull</span>
+<span class="sd">    cov : float, int, or numpy.ndarray of shape (2,2)</span>
+<span class="sd">        The covariance structure for clusters. By default, this is the squared</span>
+<span class="sd">        average distance between cluster seeds.</span>
+<span class="sd">    size : tuple or int</span>
+<span class="sd">        a tuple of (n_observations, n_replications), where the first number is the number</span>
+<span class="sd">        of points to simulate in each replication and the second number is the number of</span>
+<span class="sd">        total replications. So, (10, 4) indicates 10 points, 4 times.</span>
+<span class="sd">        If an integer is provided and intensity is None, n_replications is assumed to be 1.</span>
+<span class="sd">        If size is an integer and intensity is also provided, then size indicates n_replications,</span>
+<span class="sd">        and the number of observations is computed from the intensity.</span>
+<span class="sd">    n_seeds : int</span>
+<span class="sd">        the number of sub-clusters to use.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">        :   numpy.ndarray</span>
+<span class="sd">        either an (n_replications, n_observations, 2) or (n_observations,2) array containing</span>
+<span class="sd">        the simulated realizations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">hull</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,):</span>
+            <span class="n">hull</span> <span class="o">=</span> <span class="n">hull</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hull</span> <span class="o">=</span> <span class="n">_prepare_hull</span><span class="p">(</span><span class="n">hull</span><span class="p">)</span>
+    <span class="n">n_observations</span><span class="p">,</span> <span class="n">n_simulations</span><span class="p">,</span> <span class="n">intensity</span> <span class="o">=</span> <span class="n">parse_size_and_intensity</span><span class="p">(</span>
+        <span class="n">hull</span><span class="p">,</span> <span class="n">intensity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span>
+    <span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_simulations</span><span class="p">,</span> <span class="n">n_observations</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i_replication</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_simulations</span><span class="p">):</span>
+        <span class="n">seeds</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_seeds</span><span class="p">,</span> <span class="n">n_simulations</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">cov</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cov</span> <span class="o">=</span> <span class="n">spatial</span><span class="o">.</span><span class="n">distance</span><span class="o">.</span><span class="n">pdist</span><span class="p">(</span><span class="n">seeds</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">i_replication</span><span class="p">],</span> <span class="n">n_seeds</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i_cluster</span><span class="p">,</span> <span class="n">seed</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">seeds</span><span class="p">):</span>
+            <span class="n">cluster_points</span> <span class="o">=</span> <span class="n">clusters</span><span class="p">[</span><span class="n">i_cluster</span><span class="p">]</span>
+            <span class="n">n_in_cluster</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster_points</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n_in_cluster</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">clusters</span><span class="p">[</span><span class="n">i_cluster</span><span class="p">]</span> <span class="o">=</span> <span class="n">seed</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">n_in_cluster</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="s2">&quot;There are too many clusters requested for the &quot;</span>
+                    <span class="s2">&quot; inputted number of samples. Reduce `n_seeds` or&quot;</span>
+                    <span class="s2">&quot; increase the number of sampled points.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">candidates</span> <span class="o">=</span> <span class="n">normal</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="n">cov</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_in_cluster</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">clusters</span><span class="p">[</span><span class="n">i_cluster</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">row_stack</span><span class="p">((</span><span class="n">seed</span><span class="p">,</span> <span class="n">candidates</span><span class="p">))</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">i_replication</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">row_stack</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_uniform_circle</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="n">burn</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate n points within a circle of given radius.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n : int</span>
+<span class="sd">        Number of points.</span>
+<span class="sd">    radius : float</span>
+<span class="sd">        Radius of the circle.</span>
+<span class="sd">    center : tuple</span>
+<span class="sd">        Coordinates of the center.</span>
+<span class="sd">    burn : int</span>
+<span class="sd">        number of coordinates to simulate at a time. This is the &quot;chunk&quot;</span>
+<span class="sd">        size sent to numpy.random.uniform each iteration of the rejection sampler</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">      : array</span>
+<span class="sd">        (n, 2), coordinates of generated points</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">good</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">center_x</span><span class="p">,</span> <span class="n">center_y</span> <span class="o">=</span> <span class="n">center</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">radius</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">r</span>
+    <span class="n">it</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">r</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="p">(</span><span class="n">burn</span> <span class="o">*</span> <span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">r</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="p">(</span><span class="n">burn</span> <span class="o">*</span> <span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">hull</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">in_hull</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">in_hull</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">_contains</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">xi</span> <span class="o">+</span> <span class="n">center_x</span><span class="p">,</span> <span class="n">yi</span> <span class="o">+</span> <span class="n">center_y</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span> <span class="ow">in</span> <span class="n">numpy</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+                <span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">ids</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(((</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">r2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">in_hull</span><span class="p">)</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))[</span><span class="n">ids</span><span class="p">]</span>
+        <span class="n">nc</span> <span class="o">=</span> <span class="n">candidates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">need</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="n">c</span>
+        <span class="k">if</span> <span class="n">nc</span> <span class="o">&gt;</span> <span class="n">need</span><span class="p">:</span>  <span class="c1"># more than we need</span>
+            <span class="n">good</span><span class="p">[</span><span class="n">c</span><span class="p">:]</span> <span class="o">=</span> <span class="n">candidates</span><span class="p">[:</span><span class="n">need</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># use them all and keep going</span>
+            <span class="n">good</span><span class="p">[</span><span class="n">c</span> <span class="p">:</span> <span class="n">c</span> <span class="o">+</span> <span class="n">nc</span><span class="p">]</span> <span class="o">=</span> <span class="n">candidates</span>
+        <span class="n">c</span> <span class="o">+=</span> <span class="n">nc</span>
+        <span class="n">it</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Iterations: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">it</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">good</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">center</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.3.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

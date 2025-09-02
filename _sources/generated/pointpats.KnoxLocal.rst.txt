@@ -1,0 +1,26 @@
+﻿pointpats.KnoxLocal
+===================
+
+.. currentmodule:: pointpats
+
+.. autoclass:: KnoxLocal
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~KnoxLocal.__init__
+      ~KnoxLocal.explore
+      ~KnoxLocal.from_dataframe
+      ~KnoxLocal.hotspots
+      ~KnoxLocal.plot
+   
+   
+
+   
+   
+   

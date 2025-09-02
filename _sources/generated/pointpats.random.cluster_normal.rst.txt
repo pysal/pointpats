@@ -1,0 +1,6 @@
+﻿pointpats.random.cluster\_normal
+================================
+
+.. currentmodule:: pointpats.random
+
+.. autofunction:: cluster_normal

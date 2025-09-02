@@ -1,0 +1,6 @@
+﻿pointpats.k\_test
+=================
+
+.. currentmodule:: pointpats
+
+.. autofunction:: k_test

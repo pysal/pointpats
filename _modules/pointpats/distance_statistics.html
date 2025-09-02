@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pointpats.distance_statistics &#8212; pointpats v2.3.0 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pysal-styles.css?v=f8dcc4ae" />
+    <script src="../../_static/documentation_options.js?v=c3c8ae58"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          pointpats</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.3.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../installation.html">Installation</a></li>
+                <li><a href="../../api.html">API</a></li>
+                <li><a href="../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#installing-released-version">Installing released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#installing-development-version">Installing development version</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#point-pattern">Point Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#point-processes">Point Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#centrography">Centrography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#density">Density</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#quadrat-based-statistics">Quadrat Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#distance-based-statistics">Distance Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#window-functions">Window functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#random-distributions">Random distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#space-time-interaction-tests">Space-Time Interaction Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for pointpats.distance_statistics</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shapely</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">spatial</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TREE_TYPES</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">area</span> <span class="k">as</span> <span class="n">_area</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">build_best_tree</span> <span class="k">as</span> <span class="n">_build_best_tree</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">k_neighbors</span> <span class="k">as</span> <span class="n">_k_neighbors</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">prepare_hull</span> <span class="k">as</span> <span class="n">_prepare_hull</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.random</span><span class="w"> </span><span class="kn">import</span> <span class="n">poisson</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;f&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;g&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;j&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;l&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;f_test&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;g_test&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;k_test&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;j_test&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;l_test&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_prepare</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">distances</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">hull</span><span class="p">,</span> <span class="n">edge_correction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    prepare the arguments to convert into a standard format</span>
+<span class="sd">    1. cast the coordinates to a numpy array</span>
+<span class="sd">    2. precomputed metrics must have distances provided</span>
+<span class="sd">    3. metrics must be callable or string</span>
+<span class="sd">    4. warn if distances are specified and metric is not default</span>
+<span class="sd">    5. make distances a numpy.ndarray</span>
+<span class="sd">    6. construct the support, accepting:</span>
+<span class="sd">        - num_steps -&gt; a linspace with len(support) == num_steps</span>
+<span class="sd">                       from zero to a quarter of the bounding box&#39;s smallest side</span>
+<span class="sd">        - (stop, ) -&gt; a linspace with len(support) == 20</span>
+<span class="sd">                 from zero to stop</span>
+<span class="sd">        - (start, stop) -&gt; a linspace with len(support) == 20</span>
+<span class="sd">                           from start to stop</span>
+<span class="sd">        - (start, stop, num_steps) -&gt; a linspace with len(support) == num_steps</span>
+<span class="sd">                                      from start to stop</span>
+<span class="sd">        - numpy.ndarray -&gt; passed through</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Throw early if edge correction is requested</span>
+    <span class="k">if</span> <span class="n">edge_correction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Edge correction is not currently implemented.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">GeoDataFrame</span> <span class="o">|</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">GeoSeries</span><span class="p">):</span>
+        <span class="n">coordinates</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">(</span><span class="n">coordinates</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+
+    <span class="c1"># cast to coordinate array</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">TREE_TYPES</span><span class="p">):</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">coordinates</span>
+        <span class="n">coordinates</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">data</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">coordinates</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span>
+    <span class="n">hull</span> <span class="o">=</span> <span class="n">_prepare_hull</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">hull</span><span class="p">)</span>
+
+    <span class="c1"># evaluate distances</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">distances</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;precomputed&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;If metric =`precomputed` then distances must&quot;</span>
+            <span class="s2">&quot; be provided as a (n,n) numpy array.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">callable</span><span class="p">(</span><span class="n">metric</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;`metric` argument must be callable or a string. Recieved: </span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">distances</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">metric</span> <span class="o">!=</span> <span class="s2">&quot;euclidean&quot;</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Distances were provided. The specified metric will be ignored.&quot;</span>
+            <span class="s2">&quot; To use precomputed distances with a custom distance metric,&quot;</span>
+            <span class="s2">&quot; do not specify a `metric` argument.&quot;</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">metric</span> <span class="o">=</span> <span class="s2">&quot;euclidean&quot;</span>
+
+    <span class="k">if</span> <span class="n">support</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">support</span> <span class="o">=</span> <span class="mi">20</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">support</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>  <span class="c1"># if just n_steps, use the max nnd</span>
+        <span class="c1"># this is O(n log n) for kdtrees &amp; balltrees</span>
+        <span class="n">tmp_tree</span> <span class="o">=</span> <span class="n">_build_best_tree</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
+        <span class="n">max_dist</span> <span class="o">=</span> <span class="n">_k_neighbors</span><span class="p">(</span><span class="n">tmp_tree</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">support</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_dist</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">support</span><span class="p">)</span>
+    <span class="c1"># otherwise, we need to build it using (start, stop, step) semantics</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">support</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">support</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># assuming this is with zero implicit start</span>
+            <span class="n">support</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">support</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>  <span class="c1"># default support n bins</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">support</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">support</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">*</span><span class="n">support</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>  <span class="c1"># default support n bins</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">support</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">support</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">support</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">support</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">num</span><span class="o">=</span><span class="n">support</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># try to use it as is</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">support</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">support</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;`support` must be a tuple (either (start, stop, step), (start, stop) or (stop,)),&quot;</span>
+                <span class="s2">&quot; an int describing the number of breaks to use to evalute the function,&quot;</span>
+                <span class="s2">&quot; or an iterable containing the breaks to use to evaluate the function.&quot;</span>
+                <span class="s2">&quot; Recieved object of type </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">support</span><span class="p">),</span> <span class="n">support</span><span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">coordinates</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">distances</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">hull</span><span class="p">,</span> <span class="n">edge_correction</span>
+
+
+<span class="c1"># ------------------------------------------------------------#</span>
+<span class="c1"># Statistical Functions                                       #</span>
+<span class="c1"># ------------------------------------------------------------#</span>
+
+
+<div class="viewcode-block" id="f">
+<a class="viewcode-back" href="../../generated/pointpats.f.html#pointpats.f">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span>
+    <span class="n">coordinates</span><span class="p">,</span>
+    <span class="n">support</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">distances</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span>
+    <span class="n">hull</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ripley&#39;s F function</span>
+
+<span class="sd">    The so-called &quot;empty space&quot; function, this is the cumulative density function of</span>
+<span class="sd">    the distances from a random set of points to the known points in the pattern.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coordinates : geopandas object | numpy.ndarray of shape (n,2)</span>
+<span class="sd">        input coordinates to function</span>
+<span class="sd">    support : tuple of length 1, 2, or 3, int, or numpy.ndarray</span>
+<span class="sd">        tuple, encoding (stop,), (start, stop), or (start, stop, num)</span>
+<span class="sd">        int, encoding number of equally-spaced intervals</span>
+<span class="sd">        numpy.ndarray, used directly within numpy.histogram</span>
+<span class="sd">    distances: numpy.ndarray, (n, p) or (p,)</span>
+<span class="sd">        distances from every point in a random point set of size p</span>
+<span class="sd">        to some point in `coordinates`</span>
+<span class="sd">    metric: str or callable</span>
+<span class="sd">        distance metric to use when building search tree</span>
+<span class="sd">    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon</span>
+<span class="sd">        the hull used to construct a random sample pattern, if distances is None</span>
+<span class="sd">    edge_correction: bool or str</span>
+<span class="sd">        whether or not to conduct edge correction. Not yet implemented.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    a tuple containing the support values used to evalute the function</span>
+<span class="sd">    and the values of the function at each distance value in the support.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">coordinates</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">distances</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">hull</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_prepare</span><span class="p">(</span>
+        <span class="n">coordinates</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">distances</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">hull</span><span class="p">,</span> <span class="n">edge_correction</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">distances</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">distances</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">k</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">distances</span><span class="o">.</span><span class="n">shape</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">p</span> <span class="o">==</span> <span class="n">n</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;A full distance matrix is not required for this function, and&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; the intput matrix is a square </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> matrix. Only the&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; distances from p random points to their nearest neighbor within&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; the pattern is required, as an </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">,p matrix. Assuming the&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; provided distance matrix has rows pertaining to input&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; pattern and columns pertaining to the output points.&quot;</span><span class="p">,</span>
+                    <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">distances</span> <span class="o">=</span> <span class="n">distances</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="n">n</span><span class="p">:</span>
+                <span class="n">distances</span> <span class="o">=</span> <span class="n">distances</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Distance matrix should have the same rows as the input&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; coordinates with p columns, where n may be equal to p.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; Recieved an </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> distance matrix for </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> coordinates&quot;</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">distances</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Do 1000 empties. Users can control this by computing their own</span>
+        <span class="c1"># empty space distribution.</span>
+        <span class="n">n_empty_points</span> <span class="o">=</span> <span class="mi">1000</span>
+
+        <span class="n">randoms</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">(</span><span class="n">hull</span><span class="o">=</span><span class="n">hull</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_empty_points</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">tree</span>
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="n">tree</span> <span class="o">=</span> <span class="n">_build_best_tree</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">distances</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">randoms</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">distances</span> <span class="o">=</span> <span class="n">distances</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+    <span class="n">counts</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">support</span><span class="p">)</span>
+    <span class="n">fracs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span> <span class="o">/</span> <span class="n">counts</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">bins</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="n">fracs</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="g">
+<a class="viewcode-back" href="../../generated/pointpats.g.html#pointpats.g">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">g</span><span class="p">(</span>
+    <span class="n">coordinates</span><span class="p">,</span>
+    <span class="n">support</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">distances</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span>
+    <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ripley&#39;s G function</span>
+
+<span class="sd">    The G function is computed from the cumulative density function of the nearest neighbor</span>
+<span class="sd">    distances between points in the pattern.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    coordinates : geopandas object | numpy.ndarray of shape (n,2)</span>
+<span class="sd">        input coordinates to function</span>
+<span class="sd">    support : tuple of length 1, 2, or 3, int, or numpy.ndarray</span>
+<span class="sd">        tuple, encoding (stop,), (start, stop), or (start, stop, num)</span>
+<span class="sd">        int, encoding number of equally-spaced intervals</span>
+<span class="sd">        numpy.ndarray, used directly within numpy.histogram</span>
+<span class="sd">    distances: numpy.ndarray, (n, n) or (n,)</span>
+<span class="sd">        distances from every point in the point to another point in `coordinates`</span>
+<span class="sd">    metric: str or callable</span>
+<span class="sd">        distance metric to use when building search tree</span>
+<span class="sd">    edge_correction: bool or str</span>
+<span class="sd">        whether or not to conduct edge correction. Not yet implemented.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    a tuple containing the support values used to evalute the function</span>
+<span class="sd">    and the values of the function at each distance value in the support.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">coordinates</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">distances</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">_prepare</span><span class="p">(</span>
+        <span class="n">coordinates</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">distances</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">edge_correction</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">distances</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">distances</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;The full distance matrix is not required for this function,&quot;</span>
+                    <span class="s2">&quot; only the distance to the nearest neighbor within the pattern.&quot;</span>
+                    <span class="s2">&quot; Computing this and discarding the rest.&quot;</span><span class="p">,</span>
+                    <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">distances</span> <span class="o">=</span> <span class="n">distances</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">k</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">distances</span><span class="o">.</span><span class="n">shape</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot; Input distance matrix has an invalid shape: </span><span class="si">{k}</span><span class="s2">,</span><span class="si">{p}</span><span class="s2">.&quot;</span>
+                    <span class="s2">&quot; Distances supplied can either be 2 dimensional&quot;</span>
+                    <span class="s2">&quot; square matrices with the same number of rows&quot;</span>
+                    <span class="s2">&quot; as `coordinates` (</span><span class="si">{n}</span><span class="s2">) or 1 dimensional and contain&quot;</span>
+                    <span class="s2">&quot; the shortest distance from each point in &quot;</span>
+                    <span class="s2">&quot; `coordinates` to some other point in coordinates.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">distances</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Distances are not aligned with coordinates! Distance&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; matrix must be (n_coordinates, n_coordinates), but recieved&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> instead of (</span><span class="si">{</span><span class="n">coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">,)&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Distances supplied can either be 2 dimensional&quot;</span>
+                <span class="s2">&quot; square matrices with the same number of rows&quot;</span>
+                <span class="s2">&quot; as `coordinates` or 1 dimensional and contain&quot;</span>
+                <span class="s2">&quot; the shortest distance from each point in &quot;</span>
+                <span class="s2">&quot; `coordinates` to some other point in coordinates.&quot;</span>
+                <span class="s2">&quot; Input matrix was </span><span class="si">{distances.ndim}</span><span class="s2"> dimensioanl&quot;</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">tree</span>
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="n">tree</span> <span class="o">=</span> <span class="n">_build_best_tree</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">distances</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">_k_neighbors</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">counts</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">distances</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="n">support</span><span class="p">)</span>
+    <span class="n">fracs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span> <span class="o">/</span> <span class="n">counts</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">bins</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="n">fracs</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="j">
+<a class="viewcode-back" href="../../generated/pointpats.j.html#pointpats.j">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">j</span><span class="p">(</span>
+    <span class="n">coordinates</span><span class="p">,</span>
+    <span class="n">support</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">distances</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span>
+    <span class="n">hull</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">truncate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ripely&#39;s J function</span>
+
+<span class="sd">    The so-called &quot;spatial hazard&quot; function, this is a function relating the F and G functions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    coordinates : geopandas object | numpy.ndarray, (n,2)</span>
+<span class="sd">        input coordinates to function</span>
+<span class="sd">    support : tuple of length 1, 2, or 3, int, or numpy.ndarray</span>
+<span class="sd">        tuple, encoding (stop,), (start, stop), or (start, stop, num)</span>
+<span class="sd">        int, encoding number of equally-spaced intervals</span>
+<span class="sd">        numpy.ndarray, used directly within numpy.histogram</span>
+<span class="sd">    distances: tuple of numpy.ndarray</span>
+<span class="sd">        precomputed distances to use to evaluate the j function.</span>
+<span class="sd">        The first must be of shape (n,n) or (n,) and is used in the g function.</span>
+<span class="sd">        the second must be of shape (n,p) or (p,) (with p possibly equal to n)</span>
+<span class="sd">        used in the f function.</span>
+<span class="sd">    metric: str or callable</span>
+<span class="sd">        distance metric to use when building search tree</span>
+<span class="sd">    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon</span>
+<span class="sd">        the hull used to construct a random sample pattern for the f function.</span>
+<span class="sd">    edge_correction: bool or str</span>
+<span class="sd">        whether or not to conduct edge correction. Not yet implemented.</span>
+<span class="sd">    truncate: bool (default: True)</span>
+<span class="sd">        whether or not to truncate the results when the F function reaches one. If the</span>
+<span class="sd">        F function is one but the G function is less than one, this function will return</span>
+<span class="sd">        numpy.nan values.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    a tuple containing the support values used to evalute the function</span>
+<span class="sd">    and the values of the function at each distance value in the support.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">distances</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">g_distances</span><span class="p">,</span> <span class="n">f_distances</span> <span class="o">=</span> <span class="n">distances</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">g_distances</span> <span class="o">=</span> <span class="n">f_distances</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">fsupport</span><span class="p">,</span> <span class="n">fstats</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span>
+        <span class="n">coordinates</span><span class="p">,</span>
+        <span class="n">support</span><span class="o">=</span><span class="n">support</span><span class="p">,</span>
+        <span class="n">distances</span><span class="o">=</span><span class="n">f_distances</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+        <span class="n">hull</span><span class="o">=</span><span class="n">hull</span><span class="p">,</span>
+        <span class="n">edge_correction</span><span class="o">=</span><span class="n">edge_correction</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">gsupport</span><span class="p">,</span> <span class="n">gstats</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span>
+        <span class="n">coordinates</span><span class="p">,</span>
+        <span class="n">support</span><span class="o">=</span><span class="n">support</span><span class="p">,</span>
+        <span class="n">distances</span><span class="o">=</span><span class="n">g_distances</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+        <span class="n">edge_correction</span><span class="o">=</span><span class="n">edge_correction</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">support</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">gsupport</span><span class="p">,</span> <span class="n">support</span><span class="p">):</span>
+            <span class="n">gfunction</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">gsupport</span><span class="p">,</span> <span class="n">gstats</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">gstats</span> <span class="o">=</span> <span class="n">gfunction</span><span class="p">(</span><span class="n">support</span><span class="p">)</span>
+            <span class="n">gsupport</span> <span class="o">=</span> <span class="n">support</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">gsupport</span><span class="p">,</span> <span class="n">fsupport</span><span class="p">)):</span>
+        <span class="n">ffunction</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">fsupport</span><span class="p">,</span> <span class="n">fstats</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">fstats</span> <span class="o">=</span> <span class="n">ffunction</span><span class="p">(</span><span class="n">gsupport</span><span class="p">)</span>
+        <span class="n">fsupport</span> <span class="o">=</span> <span class="n">gsupport</span>
+
+    <span class="k">with</span> <span class="n">numpy</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">invalid</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">divide</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">):</span>
+        <span class="n">hazard_ratio</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">gstats</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">fstats</span><span class="p">)</span>
+    <span class="n">both_zero</span> <span class="o">=</span> <span class="p">(</span><span class="n">gstats</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">fstats</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">hazard_ratio</span><span class="p">[</span><span class="n">both_zero</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">if</span> <span class="n">truncate</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">_truncate</span><span class="p">(</span><span class="n">gsupport</span><span class="p">,</span> <span class="n">hazard_ratio</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hazard_ratio</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;requested </span><span class="si">{</span><span class="n">support</span><span class="si">}</span><span class="s2"> bins to evaluate the J function, but&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; it reaches infinity at d=</span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, meaning only&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2"> bins will be used to characterize the J function.&quot;</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">gsupport</span><span class="p">,</span> <span class="n">hazard_ratio</span></div>
+
+
+
+<div class="viewcode-block" id="k">
+<a class="viewcode-back" href="../../generated/pointpats.k.html#pointpats.k">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">k</span><span class="p">(</span>
+    <span class="n">coordinates</span><span class="p">,</span>
+    <span class="n">support</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">distances</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span>
+    <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ripley&#39;s K function</span>
+
+<span class="sd">    This function counts the number of pairs of points that are closer than a given distance.</span>
+<span class="sd">    As d increases, K approaches the number of point pairs.</span>
+
+<span class="sd">    coordinates : geopandas object | numpy.ndarray, (n,2)</span>
+<span class="sd">        input coordinates to function</span>
+<span class="sd">    support : tuple of length 1, 2, or 3, int, or numpy.ndarray</span>
+<span class="sd">        tuple, encoding (stop,), (start, stop), or (start, stop, num)</span>
+<span class="sd">        int, encoding number of equally-spaced intervals</span>
+<span class="sd">        numpy.ndarray, used directly within numpy.histogram</span>
+<span class="sd">    distances: numpy.ndarray, (n, p) or (p,)</span>
+<span class="sd">        distances from every point in a random point set of size p</span>
+<span class="sd">        to some point in `coordinates`</span>
+<span class="sd">    metric: str or callable</span>
+<span class="sd">        distance metric to use when building search tree</span>
+<span class="sd">    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon</span>
+<span class="sd">        the hull used to construct a random sample pattern, if distances is None</span>
+<span class="sd">    edge_correction: bool or str</span>
+<span class="sd">        whether or not to conduct edge correction. Not yet implemented.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    a tuple containing the support values used to evalute the function</span>
+<span class="sd">    and the values of the function at each distance value in the support.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">coordinates</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">distances</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">hull</span><span class="p">,</span> <span class="n">edge_correction</span> <span class="o">=</span> <span class="n">_prepare</span><span class="p">(</span>
+        <span class="n">coordinates</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">distances</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">edge_correction</span>
+    <span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">upper_tri_n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
+    <span class="k">if</span> <span class="n">distances</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">distances</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">upper_tri_n</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Shape of inputted distances is not square, nor is the upper triangular&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; matrix matching the number of input points. The shape of the input matrix&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; is </span><span class="si">{</span><span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, but required shape is (</span><span class="si">{</span><span class="n">upper_tri_n</span><span class="si">}</span><span class="s2">,) or (</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="p">)</span>
+            <span class="n">upper_tri_distances</span> <span class="o">=</span> <span class="n">distances</span>
+        <span class="k">elif</span> <span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">n</span><span class="p">:</span>
+            <span class="n">upper_tri_distances</span> <span class="o">=</span> <span class="n">distances</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">triu_indices_from</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Shape of inputted distances is not square, nor is the upper triangular&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; matrix matching the number of input points. The shape of the input matrix&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; is </span><span class="si">{</span><span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, but required shape is (</span><span class="si">{</span><span class="n">upper_tri_n</span><span class="si">}</span><span class="s2">,) or (</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">upper_tri_distances</span> <span class="o">=</span> <span class="n">spatial</span><span class="o">.</span><span class="n">distance</span><span class="o">.</span><span class="n">pdist</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
+    <span class="n">n_pairs_less_than_d</span> <span class="o">=</span> <span class="p">(</span><span class="n">upper_tri_distances</span> <span class="o">&lt;</span> <span class="n">support</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">intensity</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="n">_area</span><span class="p">(</span><span class="n">hull</span><span class="p">)</span>
+    <span class="n">k_estimate</span> <span class="o">=</span> <span class="p">((</span><span class="n">n_pairs_less_than_d</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="n">intensity</span>
+    <span class="k">return</span> <span class="n">support</span><span class="p">,</span> <span class="n">k_estimate</span></div>
+
+
+
+<div class="viewcode-block" id="l">
+<a class="viewcode-back" href="../../generated/pointpats.l.html#pointpats.l">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">l</span><span class="p">(</span>
+    <span class="n">coordinates</span><span class="p">,</span>
+    <span class="n">support</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">permutations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
+    <span class="n">distances</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span>
+    <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">linearized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ripley&#39;s L function</span>
+
+<span class="sd">    This is a scaled and shifted version of the K function that accounts for the K function&#39;s</span>
+<span class="sd">    increasing expected value as distances increase. This means that the L function, for a</span>
+<span class="sd">    completely random pattern, should be close to zero at all distance values in the support.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coordinates : geopandas object | numpy.ndarray, (n,2)</span>
+<span class="sd">        input coordinates to function</span>
+<span class="sd">    support : tuple of length 1, 2, or 3, int, or numpy.ndarray</span>
+<span class="sd">        tuple, encoding (stop,), (start, stop), or (start, stop, num)</span>
+<span class="sd">        int, encoding number of equally-spaced intervals</span>
+<span class="sd">        numpy.ndarray, used directly within numpy.histogram</span>
+<span class="sd">    distances: numpy.ndarray, (n, p) or (p,)</span>
+<span class="sd">        distances from every point in a random point set of size p</span>
+<span class="sd">        to some point in `coordinates`</span>
+<span class="sd">    metric: str or callable</span>
+<span class="sd">        distance metric to use when building search tree</span>
+<span class="sd">    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon</span>
+<span class="sd">        the hull used to construct a random sample pattern, if distances is None</span>
+<span class="sd">    edge_correction: bool or str</span>
+<span class="sd">        whether or not to conduct edge correction. Not yet implemented.</span>
+<span class="sd">    linearized : bool</span>
+<span class="sd">        whether or not to subtract l from its expected value (support) at each</span>
+<span class="sd">        distance bin. This centers the l function on zero for all distances.</span>
+<span class="sd">        Proposed by Besag (1977)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    a tuple containing the support values used to evalute the function</span>
+<span class="sd">    and the values of the function at each distance value in the support.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">support</span><span class="p">,</span> <span class="n">k_estimate</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span>
+        <span class="n">coordinates</span><span class="p">,</span>
+        <span class="n">support</span><span class="o">=</span><span class="n">support</span><span class="p">,</span>
+        <span class="n">distances</span><span class="o">=</span><span class="n">distances</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+        <span class="n">edge_correction</span><span class="o">=</span><span class="n">edge_correction</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">l</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">k_estimate</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">linearized</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">support</span><span class="p">,</span> <span class="n">l</span> <span class="o">-</span> <span class="n">support</span>
+    <span class="k">return</span> <span class="n">support</span><span class="p">,</span> <span class="n">l</span></div>
+
+
+
+<span class="c1"># ------------------------------------------------------------#</span>
+<span class="c1"># Statistical Tests based on Ripley Functions                 #</span>
+<span class="c1"># ------------------------------------------------------------#</span>
+
+<span class="n">FtestResult</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span>
+    <span class="s2">&quot;FtestResult&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;support&quot;</span><span class="p">,</span> <span class="s2">&quot;statistic&quot;</span><span class="p">,</span> <span class="s2">&quot;pvalue&quot;</span><span class="p">,</span> <span class="s2">&quot;simulations&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">GtestResult</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span>
+    <span class="s2">&quot;GtestResult&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;support&quot;</span><span class="p">,</span> <span class="s2">&quot;statistic&quot;</span><span class="p">,</span> <span class="s2">&quot;pvalue&quot;</span><span class="p">,</span> <span class="s2">&quot;simulations&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">JtestResult</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span>
+    <span class="s2">&quot;JtestResult&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;support&quot;</span><span class="p">,</span> <span class="s2">&quot;statistic&quot;</span><span class="p">,</span> <span class="s2">&quot;pvalue&quot;</span><span class="p">,</span> <span class="s2">&quot;simulations&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">KtestResult</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span>
+    <span class="s2">&quot;KtestResult&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;support&quot;</span><span class="p">,</span> <span class="s2">&quot;statistic&quot;</span><span class="p">,</span> <span class="s2">&quot;pvalue&quot;</span><span class="p">,</span> <span class="s2">&quot;simulations&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">LtestResult</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span>
+    <span class="s2">&quot;LtestResult&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;support&quot;</span><span class="p">,</span> <span class="s2">&quot;statistic&quot;</span><span class="p">,</span> <span class="s2">&quot;pvalue&quot;</span><span class="p">,</span> <span class="s2">&quot;simulations&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">_ripley_dispatch</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;F&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">FtestResult</span><span class="p">),</span>
+    <span class="s2">&quot;G&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">GtestResult</span><span class="p">),</span>
+    <span class="s2">&quot;J&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">JtestResult</span><span class="p">),</span>
+    <span class="s2">&quot;K&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">KtestResult</span><span class="p">),</span>
+    <span class="s2">&quot;L&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">LtestResult</span><span class="p">),</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_ripley_test</span><span class="p">(</span>
+    <span class="n">calltype</span><span class="p">,</span>
+    <span class="n">coordinates</span><span class="p">,</span>
+    <span class="n">support</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">distances</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span>
+    <span class="n">hull</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">keep_simulations</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">n_simulations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">GeoDataFrame</span> <span class="o">|</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">GeoSeries</span><span class="p">):</span>
+        <span class="n">coordinates</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">(</span><span class="n">coordinates</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+
+    <span class="n">stat_function</span><span class="p">,</span> <span class="n">result_container</span> <span class="o">=</span> <span class="n">_ripley_dispatch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">calltype</span><span class="p">)</span>
+    <span class="n">core_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">support</span><span class="o">=</span><span class="n">support</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+        <span class="n">edge_correction</span><span class="o">=</span><span class="n">edge_correction</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">_build_best_tree</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
+    <span class="n">hull</span> <span class="o">=</span> <span class="n">_prepare_hull</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">hull</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">calltype</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="s2">&quot;J&quot;</span><span class="p">):</span>  <span class="c1"># these require simulations</span>
+        <span class="n">core_kwargs</span><span class="p">[</span><span class="s2">&quot;hull&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hull</span>
+        <span class="c1"># amortize to avoid doing this every time</span>
+        <span class="n">empty_space_points</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">distances</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">empty_space_distances</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_k_neighbors</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">empty_space_points</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">calltype</span> <span class="o">==</span> <span class="s2">&quot;F&quot;</span><span class="p">:</span>
+                <span class="n">distances</span> <span class="o">=</span> <span class="n">empty_space_distances</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># calltype == &#39;J&#39;:</span>
+                <span class="n">n_distances</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_k_neighbors</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">distances</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_distances</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">empty_space_distances</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="n">core_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">observed_support</span><span class="p">,</span> <span class="n">observed_statistic</span> <span class="o">=</span> <span class="n">stat_function</span><span class="p">(</span>
+        <span class="n">tree</span><span class="p">,</span> <span class="n">distances</span><span class="o">=</span><span class="n">distances</span><span class="p">,</span> <span class="o">**</span><span class="n">core_kwargs</span>
+    <span class="p">)</span>
+    <span class="n">core_kwargs</span><span class="p">[</span><span class="s2">&quot;support&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">observed_support</span>
+    <span class="n">n_observations</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">keep_simulations</span><span class="p">:</span>
+        <span class="n">simulations</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">observed_support</span><span class="p">),</span> <span class="n">n_simulations</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">pvalues</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">observed_support</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i_replication</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_simulations</span><span class="p">):</span>
+        <span class="n">random_i</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_observations</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">calltype</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="s2">&quot;J&quot;</span><span class="p">):</span>
+            <span class="n">random_tree</span> <span class="o">=</span> <span class="n">_build_best_tree</span><span class="p">(</span><span class="n">random_i</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
+            <span class="n">empty_distances</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">random_tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">empty_space_points</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">calltype</span> <span class="o">==</span> <span class="s2">&quot;F&quot;</span><span class="p">:</span>
+                <span class="n">core_kwargs</span><span class="p">[</span><span class="s2">&quot;distances&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">empty_distances</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># calltype == &#39;J&#39;:</span>
+                <span class="n">n_distances</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_k_neighbors</span><span class="p">(</span><span class="n">random_tree</span><span class="p">,</span> <span class="n">random_i</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">core_kwargs</span><span class="p">[</span><span class="s2">&quot;distances&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">n_distances</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
+                    <span class="n">empty_distances</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
+                <span class="p">)</span>
+        <span class="n">rep_support</span><span class="p">,</span> <span class="n">simulations_i</span> <span class="o">=</span> <span class="n">stat_function</span><span class="p">(</span><span class="n">random_i</span><span class="p">,</span> <span class="o">**</span><span class="n">core_kwargs</span><span class="p">)</span>
+        <span class="n">pvalues</span> <span class="o">+=</span> <span class="n">simulations_i</span> <span class="o">&gt;=</span> <span class="n">observed_statistic</span>
+        <span class="k">if</span> <span class="n">keep_simulations</span><span class="p">:</span>
+            <span class="n">simulations</span><span class="p">[</span><span class="n">i_replication</span><span class="p">]</span> <span class="o">=</span> <span class="n">simulations_i</span>
+    <span class="n">pvalues</span> <span class="o">/=</span> <span class="n">n_simulations</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">pvalues</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">pvalues</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">pvalues</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result_container</span><span class="p">(</span>
+        <span class="n">observed_support</span><span class="p">,</span>
+        <span class="n">observed_statistic</span><span class="p">,</span>
+        <span class="n">pvalues</span><span class="p">,</span>
+        <span class="n">simulations</span> <span class="k">if</span> <span class="n">keep_simulations</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="f_test">
+<a class="viewcode-back" href="../../generated/pointpats.f_test.html#pointpats.f_test">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">f_test</span><span class="p">(</span>
+    <span class="n">coordinates</span><span class="p">,</span>
+    <span class="n">support</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">distances</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span>
+    <span class="n">hull</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">keep_simulations</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">n_simulations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ripley&#39;s F function</span>
+
+<span class="sd">    The so-called &quot;empty space&quot; function, this is the cumulative density function of</span>
+<span class="sd">    the distances from a random set of points to the known points in the pattern.</span>
+
+<span class="sd">    When the estimated statistic is larger than simulated values at a given distance, then</span>
+<span class="sd">    the pattern is considered &quot;dispersed&quot; or &quot;regular&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    coordinates : geopandas object | numpy.ndarray, (n,2)</span>
+<span class="sd">        input coordinates to function</span>
+<span class="sd">    support : tuple of length 1, 2, or 3, int, or numpy.ndarray</span>
+<span class="sd">        tuple, encoding (stop,), (start, stop), or (start, stop, num)</span>
+<span class="sd">        int, encoding number of equally-spaced intervals</span>
+<span class="sd">        numpy.ndarray, used directly within numpy.histogram</span>
+<span class="sd">    distances: numpy.ndarray, (n, p) or (p,)</span>
+<span class="sd">        distances from every point in a random point set of size p</span>
+<span class="sd">        to some point in `coordinates`</span>
+<span class="sd">    metric: str or callable</span>
+<span class="sd">        distance metric to use when building search tree</span>
+<span class="sd">    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon</span>
+<span class="sd">        the hull used to construct a random sample pattern, if distances is None</span>
+<span class="sd">    edge_correction: bool or str</span>
+<span class="sd">        whether or not to conduct edge correction. Not yet implemented.</span>
+<span class="sd">    keep_simulations: bool</span>
+<span class="sd">        whether or not to keep the simulation envelopes. If so,</span>
+<span class="sd">        will be returned as the result&#39;s simulations attribute</span>
+<span class="sd">    n_simulations: int</span>
+<span class="sd">        how many simulations to conduct, assuming that the reference pattern</span>
+<span class="sd">        has complete spatial randomness.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    a named tuple with properties</span>
+<span class="sd">    - support, the exact distance values used to evalute the statistic</span>
+<span class="sd">    - statistic, the values of the statistic at each distance</span>
+<span class="sd">    - pvalue, the percent of simulations that were as extreme as the observed value</span>
+<span class="sd">    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))</span>
+<span class="sd">        or None if keep_simulations=False (which is the default)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">_ripley_test</span><span class="p">(</span>
+        <span class="s2">&quot;F&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="p">,</span>
+        <span class="n">support</span><span class="o">=</span><span class="n">support</span><span class="p">,</span>
+        <span class="n">distances</span><span class="o">=</span><span class="n">distances</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+        <span class="n">hull</span><span class="o">=</span><span class="n">hull</span><span class="p">,</span>
+        <span class="n">edge_correction</span><span class="o">=</span><span class="n">edge_correction</span><span class="p">,</span>
+        <span class="n">keep_simulations</span><span class="o">=</span><span class="n">keep_simulations</span><span class="p">,</span>
+        <span class="n">n_simulations</span><span class="o">=</span><span class="n">n_simulations</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="g_test">
+<a class="viewcode-back" href="../../generated/pointpats.g_test.html#pointpats.g_test">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">g_test</span><span class="p">(</span>
+    <span class="n">coordinates</span><span class="p">,</span>
+    <span class="n">support</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">distances</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span>
+    <span class="n">hull</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">keep_simulations</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">n_simulations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ripley&#39;s G function</span>
+
+<span class="sd">    The G function is computed from the cumulative density function of the nearest neighbor</span>
+<span class="sd">    distances between points in the pattern.</span>
+
+<span class="sd">    When the G function is below the simulated values, it suggests dispersion.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coordinates : geopandas object | numpy.ndarray, (n,2)</span>
+<span class="sd">        input coordinates to function</span>
+<span class="sd">    support : tuple of length 1, 2, or 3, int, or numpy.ndarray</span>
+<span class="sd">        tuple, encoding (stop,), (start, stop), or (start, stop, num)</span>
+<span class="sd">        int, encoding number of equally-spaced intervals</span>
+<span class="sd">        numpy.ndarray, used directly within numpy.histogram</span>
+<span class="sd">    distances: numpy.ndarray, (n, p) or (p,)</span>
+<span class="sd">        distances from every point in a random point set of size p</span>
+<span class="sd">        to some point in `coordinates`</span>
+<span class="sd">    metric: str or callable</span>
+<span class="sd">        distance metric to use when building search tree</span>
+<span class="sd">    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon</span>
+<span class="sd">        the hull used to construct a random sample pattern, if distances is None</span>
+<span class="sd">    edge_correction: bool or str</span>
+<span class="sd">        whether or not to conduct edge correction. Not yet implemented.</span>
+<span class="sd">    keep_simulations: bool</span>
+<span class="sd">        whether or not to keep the simulation envelopes. If so,</span>
+<span class="sd">        will be returned as the result&#39;s simulations attribute</span>
+<span class="sd">    n_simulations: int</span>
+<span class="sd">        how many simulations to conduct, assuming that the reference pattern</span>
+<span class="sd">        has complete spatial randomness.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    a named tuple with properties</span>
+<span class="sd">    - support, the exact distance values used to evalute the statistic</span>
+<span class="sd">    - statistic, the values of the statistic at each distance</span>
+<span class="sd">    - pvalue, the percent of simulations that were as extreme as the observed value</span>
+<span class="sd">    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))</span>
+<span class="sd">        or None if keep_simulations=False (which is the default)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_ripley_test</span><span class="p">(</span>
+        <span class="s2">&quot;G&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="p">,</span>
+        <span class="n">support</span><span class="o">=</span><span class="n">support</span><span class="p">,</span>
+        <span class="n">distances</span><span class="o">=</span><span class="n">distances</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+        <span class="n">hull</span><span class="o">=</span><span class="n">hull</span><span class="p">,</span>
+        <span class="n">edge_correction</span><span class="o">=</span><span class="n">edge_correction</span><span class="p">,</span>
+        <span class="n">keep_simulations</span><span class="o">=</span><span class="n">keep_simulations</span><span class="p">,</span>
+        <span class="n">n_simulations</span><span class="o">=</span><span class="n">n_simulations</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="j_test">
+<a class="viewcode-back" href="../../generated/pointpats.j_test.html#pointpats.j_test">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">j_test</span><span class="p">(</span>
+    <span class="n">coordinates</span><span class="p">,</span>
+    <span class="n">support</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">distances</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span>
+    <span class="n">hull</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">truncate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">keep_simulations</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">n_simulations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ripley&#39;s J function</span>
+
+<span class="sd">    The so-called &quot;spatial hazard&quot; function, this is a function relating the F and G functions.</span>
+
+<span class="sd">    When the J function is consistently below 1, then it indicates clustering.</span>
+<span class="sd">    When consistently above 1, it suggests dispersion.</span>
+
+<span class="sd">    coordinates : geopandas object | numpy.ndarray, (n,2)</span>
+<span class="sd">        input coordinates to function</span>
+<span class="sd">    support : tuple of length 1, 2, or 3, int, or numpy.ndarray</span>
+<span class="sd">        tuple, encoding (stop,), (start, stop), or (start, stop, num)</span>
+<span class="sd">        int, encoding number of equally-spaced intervals</span>
+<span class="sd">        numpy.ndarray, used directly within numpy.histogram</span>
+<span class="sd">    distances: numpy.ndarray, (n, p) or (p,)</span>
+<span class="sd">        distances from every point in a random point set of size p</span>
+<span class="sd">        to some point in `coordinates`</span>
+<span class="sd">    metric: str or callable</span>
+<span class="sd">        distance metric to use when building search tree</span>
+<span class="sd">    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon</span>
+<span class="sd">        the hull used to construct a random sample pattern, if distances is None</span>
+<span class="sd">    edge_correction: bool or str</span>
+<span class="sd">        whether or not to conduct edge correction. Not yet implemented.</span>
+<span class="sd">    keep_simulations: bool</span>
+<span class="sd">        whether or not to keep the simulation envelopes. If so,</span>
+<span class="sd">        will be returned as the result&#39;s simulations attribute</span>
+<span class="sd">    n_simulations: int</span>
+<span class="sd">        how many simulations to conduct, assuming that the reference pattern</span>
+<span class="sd">        has complete spatial randomness.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    a named tuple with properties</span>
+<span class="sd">    - support, the exact distance values used to evalute the statistic</span>
+<span class="sd">    - statistic, the values of the statistic at each distance</span>
+<span class="sd">    - pvalue, the percent of simulations that were as extreme as the observed value</span>
+<span class="sd">    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))</span>
+<span class="sd">        or None if keep_simulations=False (which is the default)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_ripley_test</span><span class="p">(</span>
+        <span class="s2">&quot;J&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="p">,</span>
+        <span class="n">support</span><span class="o">=</span><span class="n">support</span><span class="p">,</span>
+        <span class="n">distances</span><span class="o">=</span><span class="n">distances</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+        <span class="n">hull</span><span class="o">=</span><span class="n">hull</span><span class="p">,</span>
+        <span class="n">edge_correction</span><span class="o">=</span><span class="n">edge_correction</span><span class="p">,</span>
+        <span class="n">keep_simulations</span><span class="o">=</span><span class="n">keep_simulations</span><span class="p">,</span>
+        <span class="n">n_simulations</span><span class="o">=</span><span class="n">n_simulations</span><span class="p">,</span>
+        <span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">truncate</span><span class="p">:</span>
+        <span class="n">result_trunc</span> <span class="o">=</span> <span class="n">_truncate</span><span class="p">(</span><span class="o">*</span><span class="n">result</span><span class="p">)</span>
+        <span class="n">result_trunc</span> <span class="o">=</span> <span class="n">JtestResult</span><span class="p">(</span><span class="o">*</span><span class="n">result_trunc</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result_trunc</span><span class="o">.</span><span class="n">statistic</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">statistic</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;requested </span><span class="si">{</span><span class="n">support</span><span class="si">}</span><span class="s2"> bins to evaluate the J function, but&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; it reaches infinity at d=</span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, meaning only&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2"> bins will be used to characterize the J function.&quot;</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">result_trunc</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="k_test">
+<a class="viewcode-back" href="../../generated/pointpats.k_test.html#pointpats.k_test">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">k_test</span><span class="p">(</span>
+    <span class="n">coordinates</span><span class="p">,</span>
+    <span class="n">support</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">distances</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span>
+    <span class="n">hull</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">keep_simulations</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">n_simulations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ripley&#39;s K function</span>
+
+<span class="sd">    This function counts the number of pairs of points that are closer than a given distance.</span>
+<span class="sd">    As d increases, K approaches the number of point pairs.</span>
+
+<span class="sd">    When the K function is below simulated values, it suggests that the pattern is dispersed.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coordinates : geopandas object | numpy.ndarray, (n,2)</span>
+<span class="sd">        input coordinates to function</span>
+<span class="sd">    support : tuple of length 1, 2, or 3, int, or numpy.ndarray</span>
+<span class="sd">        tuple, encoding (stop,), (start, stop), or (start, stop, num)</span>
+<span class="sd">        int, encoding number of equally-spaced intervals</span>
+<span class="sd">        numpy.ndarray, used directly within numpy.histogram</span>
+<span class="sd">    distances: numpy.ndarray, (n, p) or (p,)</span>
+<span class="sd">        distances from every point in a random point set of size p</span>
+<span class="sd">        to some point in `coordinates`</span>
+<span class="sd">    metric: str or callable</span>
+<span class="sd">        distance metric to use when building search tree</span>
+<span class="sd">    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon</span>
+<span class="sd">        the hull used to construct a random sample pattern, if distances is None</span>
+<span class="sd">    edge_correction: bool or str</span>
+<span class="sd">        whether or not to conduct edge correction. Not yet implemented.</span>
+<span class="sd">    keep_simulations: bool</span>
+<span class="sd">        whether or not to keep the simulation envelopes. If so,</span>
+<span class="sd">        will be returned as the result&#39;s simulations attribute</span>
+<span class="sd">    n_simulations: int</span>
+<span class="sd">        how many simulations to conduct, assuming that the reference pattern</span>
+<span class="sd">        has complete spatial randomness.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    a named tuple with properties</span>
+<span class="sd">    - support, the exact distance values used to evalute the statistic</span>
+<span class="sd">    - statistic, the values of the statistic at each distance</span>
+<span class="sd">    - pvalue, the percent of simulations that were as extreme as the observed value</span>
+<span class="sd">    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))</span>
+<span class="sd">        or None if keep_simulations=False (which is the default)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_ripley_test</span><span class="p">(</span>
+        <span class="s2">&quot;K&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="p">,</span>
+        <span class="n">support</span><span class="o">=</span><span class="n">support</span><span class="p">,</span>
+        <span class="n">distances</span><span class="o">=</span><span class="n">distances</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+        <span class="n">hull</span><span class="o">=</span><span class="n">hull</span><span class="p">,</span>
+        <span class="n">edge_correction</span><span class="o">=</span><span class="n">edge_correction</span><span class="p">,</span>
+        <span class="n">keep_simulations</span><span class="o">=</span><span class="n">keep_simulations</span><span class="p">,</span>
+        <span class="n">n_simulations</span><span class="o">=</span><span class="n">n_simulations</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="l_test">
+<a class="viewcode-back" href="../../generated/pointpats.l_test.html#pointpats.l_test">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">l_test</span><span class="p">(</span>
+    <span class="n">coordinates</span><span class="p">,</span>
+    <span class="n">support</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">distances</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span>
+    <span class="n">hull</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">linearized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">keep_simulations</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">n_simulations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ripley&#39;s L function</span>
+
+<span class="sd">    This is a scaled and shifted version of the K function that accounts for the K function&#39;s</span>
+<span class="sd">    increasing expected value as distances increase. This means that the L function, for a</span>
+<span class="sd">    completely random pattern, should be close to zero at all distance values in the support.</span>
+
+<span class="sd">    When the L function is negative, this suggests dispersion.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coordinates : geopandas object | numpy.ndarray, (n,2)</span>
+<span class="sd">        input coordinates to function</span>
+<span class="sd">    support : tuple of length 1, 2, or 3, int, or numpy.ndarray</span>
+<span class="sd">        tuple, encoding (stop,), (start, stop), or (start, stop, num)</span>
+<span class="sd">        int, encoding number of equally-spaced intervals</span>
+<span class="sd">        numpy.ndarray, used directly within numpy.histogram</span>
+<span class="sd">    distances: numpy.ndarray, (n, p) or (p,)</span>
+<span class="sd">        distances from every point in a random point set of size p</span>
+<span class="sd">        to some point in `coordinates`</span>
+<span class="sd">    metric: str or callable</span>
+<span class="sd">        distance metric to use when building search tree</span>
+<span class="sd">    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon</span>
+<span class="sd">        the hull used to construct a random sample pattern, if distances is None</span>
+<span class="sd">    edge_correction: bool or str</span>
+<span class="sd">        whether or not to conduct edge correction. Not yet implemented.</span>
+<span class="sd">    keep_simulations: bool</span>
+<span class="sd">        whether or not to keep the simulation envelopes. If so,</span>
+<span class="sd">        will be returned as the result&#39;s simulations attribute</span>
+<span class="sd">    n_simulations: int</span>
+<span class="sd">        how many simulations to conduct, assuming that the reference pattern</span>
+<span class="sd">        has complete spatial randomness.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    a named tuple with properties</span>
+<span class="sd">    - support, the exact distance values used to evalute the statistic</span>
+<span class="sd">    - statistic, the values of the statistic at each distance</span>
+<span class="sd">    - pvalue, the percent of simulations that were as extreme as the observed value</span>
+<span class="sd">    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))</span>
+<span class="sd">        or None if keep_simulations=False (which is the default)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_ripley_test</span><span class="p">(</span>
+        <span class="s2">&quot;L&quot;</span><span class="p">,</span>
+        <span class="n">coordinates</span><span class="p">,</span>
+        <span class="n">support</span><span class="o">=</span><span class="n">support</span><span class="p">,</span>
+        <span class="n">distances</span><span class="o">=</span><span class="n">distances</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+        <span class="n">hull</span><span class="o">=</span><span class="n">hull</span><span class="p">,</span>
+        <span class="n">edge_correction</span><span class="o">=</span><span class="n">edge_correction</span><span class="p">,</span>
+        <span class="n">linearized</span><span class="o">=</span><span class="n">linearized</span><span class="p">,</span>
+        <span class="n">keep_simulations</span><span class="o">=</span><span class="n">keep_simulations</span><span class="p">,</span>
+        <span class="n">n_simulations</span><span class="o">=</span><span class="n">n_simulations</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_truncate</span><span class="p">(</span><span class="n">support</span><span class="p">,</span> <span class="n">realizations</span><span class="p">,</span> <span class="o">*</span><span class="n">rest</span><span class="p">):</span>
+    <span class="n">is_invalid</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">realizations</span><span class="p">)</span> <span class="o">|</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">realizations</span><span class="p">)</span>
+    <span class="n">first_inv</span> <span class="o">=</span> <span class="n">is_invalid</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_invalid</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">support</span><span class="p">,</span> <span class="n">realizations</span><span class="p">,</span> <span class="o">*</span><span class="n">rest</span>
+    <span class="k">elif</span> <span class="n">first_inv</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">realizations</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">support</span><span class="p">[:</span><span class="n">first_inv</span><span class="p">],</span>
+            <span class="n">realizations</span><span class="p">[:</span><span class="n">first_inv</span><span class="p">],</span>
+            <span class="o">*</span><span class="p">[</span><span class="n">r</span><span class="p">[:</span><span class="n">first_inv</span><span class="p">]</span> <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rest</span><span class="p">],</span>
+        <span class="p">)</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.3.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

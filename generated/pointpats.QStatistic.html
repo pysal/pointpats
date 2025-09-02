@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pointpats.QStatistic &#8212; pointpats v2.3.0 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
+    <script src="../_static/documentation_options.js?v=c3c8ae58"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pointpats.f" href="pointpats.f.html" />
+    <link rel="prev" title="pointpats.HexagonM" href="pointpats.HexagonM.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          pointpats</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.3.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-released-version">Installing released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-development-version">Installing development version</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#point-pattern">Point Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#point-processes">Point Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#centrography">Centrography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#density">Density</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#quadrat-based-statistics">Quadrat Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#distance-based-statistics">Distance Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#window-functions">Window functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#random-distributions">Random distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#space-time-interaction-tests">Space-Time Interaction Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">pointpats.QStatistic</a><ul>
+<li><a class="reference internal" href="#pointpats.QStatistic"><code class="docutils literal notranslate"><span class="pre">QStatistic</span></code></a><ul>
+<li><a class="reference internal" href="#pointpats.QStatistic.__init__"><code class="docutils literal notranslate"><span class="pre">QStatistic.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#pointpats.QStatistic.plot"><code class="docutils literal notranslate"><span class="pre">QStatistic.plot()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="pointpats-qstatistic">
+<h1>pointpats.QStatistic<a class="headerlink" href="#pointpats-qstatistic" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pointpats.QStatistic">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">QStatistic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rectangle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rectangle_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rectangle_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realizations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/quadrat_statistics.html#QStatistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic" title="Link to this definition">¶</a></dt>
+<dd><p>Quadrat analysis of point pattern.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>pp</strong><span class="classifier"><a class="reference internal" href="pointpats.PointPattern.html#pointpats.PointPattern" title="pointpats.PointPattern"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointPattern</span></code></a> or numpy.ndarray</span></dt><dd><p>Point Pattern instance, or (n_observations, 2) array
+that can be used to construct a Point Pattern instance.</p>
+</dd>
+<dt><strong>shape</strong><span class="classifier">string</span></dt><dd><p>Grid structure. Either “rectangle” or “hexagon”.
+Default is “rectangle”.</p>
+</dd>
+<dt><strong>nx</strong><span class="classifier">integer</span></dt><dd><p>Number of rectangles in the horizontal
+direction. Only when shape is specified as
+“rectangle” will nx be considered.</p>
+</dd>
+<dt><strong>ny</strong><span class="classifier">integer</span></dt><dd><p>Number of rectangles in the vertical direction.
+Only when shape is specified as “rectangle”
+will ny be considered.</p>
+</dd>
+<dt><strong>rectangle_width</strong><span class="classifier">float</span></dt><dd><p>Rectangle width. Use in pair with
+rectangle_height to fully specify a rectangle.
+Incompatible with nx &amp; ny.</p>
+</dd>
+<dt><strong>rectangle_height</strong><span class="classifier">float</span></dt><dd><p>Rectangle height. Use in pair with
+rectangle_width to fully specify a rectangle.
+Incompatible with nx &amp; ny.</p>
+</dd>
+<dt><strong>lh</strong><span class="classifier">float</span></dt><dd><p>Hexagon length (hexagon). Only when shape is
+specified as “hexagon” will lh be considered.
+Incompatible with nx &amp; ny.</p>
+</dd>
+<dt><strong>realizations</strong><span class="classifier"><a class="reference internal" href="pointpats.PointProcess.html#pointpats.PointProcess" title="pointpats.PointProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointProcess</span></code></a></span></dt><dd><p>Point process instance with more than 1 point
+pattern realizations which would be used for
+simulation based inference. Default is 0
+where no simulation based inference is
+performed.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><strong>pp</strong><span class="classifier"><a class="reference internal" href="pointpats.PointPattern.html#pointpats.PointPattern" title="pointpats.PointPattern"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointPattern</span></code></a></span></dt><dd><p>Point Pattern instance.</p>
+</dd>
+<dt><strong>mr</strong><span class="classifier"><a class="reference internal" href="pointpats.RectangleM.html#pointpats.RectangleM" title="pointpats.RectangleM"><code class="xref py py-class docutils literal notranslate"><span class="pre">RectangleM</span></code></a> or <a class="reference internal" href="pointpats.HexagonM.html#pointpats.HexagonM" title="pointpats.HexagonM"><code class="xref py py-class docutils literal notranslate"><span class="pre">HexagonM</span></code></a></span></dt><dd><p>RectangleM or HexagonM instance.</p>
+</dd>
+<dt><strong>chi2</strong><span class="classifier">float</span></dt><dd><p>Chi-squared test statistic for the observed
+point pattern pp.</p>
+</dd>
+<dt><strong>df</strong><span class="classifier">integer</span></dt><dd><p>Degree of freedom.</p>
+</dd>
+<dt><strong>chi2_pvalue</strong><span class="classifier">float</span></dt><dd><p>p-value based on analytical chi-squared
+distribution.</p>
+</dd>
+<dt><strong>chi2_r_pvalue</strong><span class="classifier">float</span></dt><dd><p>p-value based on simulated sampling
+distribution. Only available when
+realizations is correctly specified.</p>
+</dd>
+<dt><strong>chi2_realizations</strong><span class="classifier">array</span></dt><dd><p>Chi-squared test statistics calculated for
+all the simulated csr point patterns.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.QStatistic.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rectangle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rectangle_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rectangle_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realizations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/quadrat_statistics.html#QStatistic.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.__init__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.QStatistic.__init__" title="pointpats.QStatistic.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(pp[, shape, nx, ny, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.QStatistic.plot" title="pointpats.QStatistic.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([title])</p></td>
+<td><p>Plot quadrats as well as the number of points falling in each quadrat.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="pointpats.QStatistic.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Quadrat</span> <span class="pre">Count'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/quadrat_statistics.html#QStatistic.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.plot" title="Link to this definition">¶</a></dt>
+<dd><p>Plot quadrats as well as the number of points falling in each quadrat.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>title:   str, optional</strong></dt><dd><p>Title of the plot. Default is “Quadrat Count”.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/generated/pointpats.QStatistic.rst.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.3.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
