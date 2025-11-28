@@ -60,6 +60,7 @@ tests = [
     "pytest",
     "pytest-mpl",
     "pytest-cov",
+    "pytest-xdist",
     "scikit-learn >=1.2",
     "statsmodels",
     "watermark",

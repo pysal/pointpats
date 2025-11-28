@@ -57,6 +57,7 @@ jobs:
         run: |
           pytest \
           -v \
+          -n logical \
           --color yes \
           --cov pointpats \
           --cov-append \

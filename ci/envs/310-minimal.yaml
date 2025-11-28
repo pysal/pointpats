@@ -16,4 +16,5 @@ dependencies:
   - statsmodels
   - pytest
   - pytest-cov
+  - pytest-xdist
   - codecov

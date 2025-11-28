@@ -15,6 +15,7 @@ dependencies:
   - fiona
   - pytest
   - pytest-cov
+  - pytest-xdist
   - pyproj
   - pip
   - pip:
