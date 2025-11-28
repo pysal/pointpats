@@ -3,7 +3,7 @@
 Installation
 ============
 
-Currently, pointpats supports Python >=`3.11`_.
+Currently, pointpats supports Python >= `3.11`_.
 Please make sure that you are operating in a Python 3 environment.
 
 Installing released version
