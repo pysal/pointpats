@@ -1,0 +1,19 @@
+name: test
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - geopandas=1.0
+  - libpysal=4.10
+  - matplotlib=3.9
+  - numpy=2.0
+  - pandas=2.2
+  - scipy=1.12
+  - shapely=2.1
+  # tests
+  - scikit-learn=1.4
+  - statsmodels
+  - pytest
+  - pytest-cov
+  - pytest-xdist
+  - codecov
