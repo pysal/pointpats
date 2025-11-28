@@ -12,7 +12,6 @@ dependencies:
   - shapely
   # tests
   - codecov
-  - fiona
   - pytest
   - pytest-cov
   - pytest-xdist
