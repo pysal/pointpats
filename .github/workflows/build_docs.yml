@@ -28,7 +28,7 @@
      strategy:
        matrix:
          os: ['ubuntu-latest']
-         environment-file: [ci/envs/311-latest.yaml]
+         environment-file: [ci/envs/313-latest.yaml]
          experimental: [false]
      defaults:
        run:
@@ -36,10 +36,10 @@
 
      steps:
        - name: checkout repo
-         uses: actions/checkout@v3
+         uses: actions/checkout@v4
 
        - name: setup micromamba
-         uses: mamba-org/setup-micromamba@v1
+         uses: mamba-org/setup-micromamba@v2
          with:
            environment-file: ${{ matrix.environment-file }}
            micromamba-version: 'latest'
