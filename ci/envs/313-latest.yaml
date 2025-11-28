@@ -20,9 +20,3 @@ dependencies:
   - pip
   - pip:
       - KDEpy
-  # for docs build action (this env only)
-  - nbsphinx
-  - numpydoc
-  - sphinx
-  - sphinxcontrib-bibtex
-  - sphinx_bootstrap_theme
