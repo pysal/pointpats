@@ -4,9 +4,9 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
-SPHINXPROJ    = pointpats
+SPHINXPROJ    = PACKAGE_NAME
 SOURCEDIR     = .
-BUILDDIR      = _build
+BUILDDIR      = build
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -23,7 +23,7 @@ github:
 	@make html
 
 sync:
-	@rsync -avh _build/html/ ../docs/ --delete
+	@rsync -avh build/html/ ../docs/ --delete
 	@make clean
 	touch .nojekyll
 
