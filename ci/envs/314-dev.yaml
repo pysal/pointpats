@@ -2,7 +2,7 @@ name: test
 channels:
   - conda-forge
 dependencies:
-  - python=3.12
+  - python=3.14
   - folium
   - libpysal
   - mapclassify
@@ -12,13 +12,15 @@ dependencies:
   - shapely
   # tests
   - codecov
-  - fiona
   - pytest
   - pytest-cov
+  - pytest-xdist
   - pyproj
   - pip
   - pip:
-      - --pre --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple --extra-index-url https://pypi.org/simple
+      - --pre \
+        --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple \
+        --extra-index-url https://pypi.org/simple
       - KDEpy
       - scipy
       - scikit-learn

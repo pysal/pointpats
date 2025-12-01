@@ -181,90 +181,78 @@ def _(shape: spatial.ConvexHull):
     return centroid(shape.points[shape.vertices])
 
 
-try:
-    from shapely.geometry.base import BaseGeometry as _BaseGeometry
-    from shapely.geometry import (
-        Polygon as _ShapelyPolygon,
-        MultiPolygon as _ShapelyMultiPolygon,
-    )
-    from shapely.geometry import Point as _ShapelyPoint
+from shapely.geometry.base import BaseGeometry as _BaseGeometry
+from shapely.geometry import (
+    Polygon as _ShapelyPolygon,
+    MultiPolygon as _ShapelyMultiPolygon,
+)
+from shapely.geometry import Point as _ShapelyPoint
 
-    HULL_TYPES = (*HULL_TYPES, _ShapelyPolygon, _ShapelyMultiPolygon)
-    HAS_SHAPELY = True
-
-    @contains.register
-    def _(shape: _BaseGeometry, x: float, y: float):
-        """
-        If we know we're working with a shapely polygon,
-        then use the contains method & cast input coords to a shapely point
-        """
-        return shape.contains(_ShapelyPoint((x, y)))
-
-    @bbox.register
-    def _(shape: _BaseGeometry):
-        """
-        If a shape is an array of points, compute the minima/maxima
-        or let it pass through if it's 1 dimensional & length 4
-        """
-        return numpy.asarray(list(shape.bounds))
-
-    @centroid.register
-    def _(shape: _BaseGeometry):
-        """
-        Handle shapely, which requires explicit centroid extraction
-        """
-        return numpy.asarray(list(shape.centroid.coords)).squeeze()
-
-except ModuleNotFoundError:
-    HAS_SHAPELY = False
+HULL_TYPES = (*HULL_TYPES, _ShapelyPolygon, _ShapelyMultiPolygon)
 
 
-try:
-    import shapely
+@contains.register
+def _(shape: _BaseGeometry, x: float, y: float):
+    """
+    If we know we're working with a shapely polygon,
+    then use the contains method & cast input coords to a shapely point
+    """
+    return shape.contains(_ShapelyPoint((x, y)))
 
-    from packaging.version import Version
+@bbox.register
+def _(shape: _BaseGeometry):
+    """
+    If a shape is an array of points, compute the minima/maxima
+    or let it pass through if it's 1 dimensional & length 4
+    """
+    return numpy.asarray(list(shape.bounds))
 
-    if Version(shapely.__version__) < Version("2"):
-        HAS_SHAPELY2 = False
-    else:
-        HAS_SHAPELY2 = True
+@centroid.register
+def _(shape: _BaseGeometry):
+    """
+    Handle shapely, which requires explicit centroid extraction
+    """
+    return numpy.asarray(list(shape.centroid.coords)).squeeze()
 
-    HULL_TYPES = (*HULL_TYPES, shapely.Geometry)
 
-    @area.register
-    def _(shape: shapely.Geometry):
-        """
-        If we know we're working with a shapely polygon,
-        then use shapely.area
-        """
-        return shapely.area(shape)
 
-    @contains.register
-    def _(shape: shapely.Geometry, x: float, y: float):
-        """
-        If we know we're working with a shapely polygon,
-        then use shapely.within casting the points to a shapely object too
-        """
-        return shapely.within(shapely.points((x, y)), shape)
+import shapely
 
-    @bbox.register
-    def _(shape: shapely.Geometry):
-        """
-        If we know we're working with a shapely polygon,
-        then use shapely.bounds
-        """
-        return shapely.bounds(shape)
 
-    @centroid.register
-    def _(shape: shapely.Geometry):
-        """
-        if we know we're working with a shapely polygon,
-        then use shapely.centroid
-        """
-        return shapely.coordinates.get_coordinates(shapely.centroid(shape)).squeeze()
+HULL_TYPES = (*HULL_TYPES, shapely.Geometry)
 
-except ModuleNotFoundError:
-    HAS_SHAPELY2 = False
+@area.register
+def _(shape: shapely.Geometry):
+    """
+    If we know we're working with a shapely polygon,
+    then use shapely.area
+    """
+    return shapely.area(shape)
+
+@contains.register
+def _(shape: shapely.Geometry, x: float, y: float):
+    """
+    If we know we're working with a shapely polygon,
+    then use shapely.within casting the points to a shapely object too
+    """
+    return shapely.within(shapely.points((x, y)), shape)
+
+@bbox.register
+def _(shape: shapely.Geometry):
+    """
+    If we know we're working with a shapely polygon,
+    then use shapely.bounds
+    """
+    return shapely.bounds(shape)
+
+@centroid.register
+def _(shape: shapely.Geometry):
+    """
+    if we know we're working with a shapely polygon,
+    then use shapely.centroid
+    """
+    return shapely.coordinates.get_coordinates(shapely.centroid(shape)).squeeze()
+
 
 # ------------------------------------------------------------#
 # Constructors for trees, prepared inputs, & neighbors        #
@@ -411,12 +399,10 @@ def prepare_hull(coordinates, hull=None):
         return hull
     if (hull is None) or (hull == "bbox"):
         return bbox(coordinates)
-    if HAS_SHAPELY:  # protect the isinstance check if import has failed
-        if isinstance(hull, (_ShapelyPolygon, _ShapelyMultiPolygon)):
-            return hull
-    if HAS_SHAPELY2:
-        if isinstance(hull, shapely.Geometry):
-            return hull
+    if isinstance(hull, (_ShapelyPolygon, _ShapelyMultiPolygon)):
+        return hull
+    if isinstance(hull, shapely.Geometry):
+        return hull
     if isinstance(hull, str):
         if hull.startswith("convex"):
             return spatial.ConvexHull(coordinates)
