@@ -211,7 +211,10 @@ def test_simulate():
     # cluster poisson
     # cluster normal
 
-@pytest.mark.parametrize("points", [points, points_gs], ids=["numpy.ndarray", "GeoSeries"])
+
+@pytest.mark.parametrize(
+    "points", [points, points_gs], ids=["numpy.ndarray", "GeoSeries"]
+)
 def test_f(points):
     # -------------------------------------------------------------------------#
     # Check f function has consistent performance
@@ -220,7 +223,9 @@ def test_f(points):
     n_obs_at_dist, histogram_support = numpy.histogram(nn_other, bins=support)
     manual_f = numpy.asarray([0, *numpy.cumsum(n_obs_at_dist) / n_obs_at_dist.sum()])
     numpy.random.seed(2478879)
-    f_test = ripley.f_test(points, support=support, distances=D_other, n_simulations=99)
+    f_test = ripley.f_test(
+        points, support=support, distances=D_other, n_simulations=99, n_jobs=1
+    )
 
     numpy.testing.assert_allclose(support, f_test.support)
     numpy.testing.assert_allclose(manual_f, f_test.statistic)
@@ -238,7 +243,10 @@ def test_f(points):
     )
     assert f_test.simulations.shape == (99, 15)
 
-@pytest.mark.parametrize("points", [points, points_gs], ids=["numpy.ndarray", "GeoSeries"])
+
+@pytest.mark.parametrize(
+    "points", [points, points_gs], ids=["numpy.ndarray", "GeoSeries"]
+)
 def test_g(points):
     # -------------------------------------------------------------------------#
     # Check f function works, has statistical results that are consistent
@@ -247,7 +255,7 @@ def test_g(points):
     n_obs_at_dist, histogram_support = numpy.histogram(nn_self, bins=support)
     numpy.random.seed(2478879)
     manual_g = numpy.asarray([0, *numpy.cumsum(n_obs_at_dist) / n_obs_at_dist.sum()])
-    g_test = ripley.g_test(points, support=support, n_simulations=99)
+    g_test = ripley.g_test(points, support=support, n_simulations=99, n_jobs=1)
 
     numpy.testing.assert_allclose(support, g_test.support)
     numpy.testing.assert_allclose(manual_g, g_test.statistic)
@@ -257,11 +265,14 @@ def test_g(points):
     assert g_test.simulations is None
 
     g_test = ripley.g_test(
-        points, support=support, n_simulations=99, keep_simulations=True
+        points, support=support, n_simulations=99, keep_simulations=True, n_jobs=1
     )
     assert g_test.simulations.shape == (99, 15)
 
-@pytest.mark.parametrize("points", [points, points_gs], ids=["numpy.ndarray", "GeoSeries"])
+
+@pytest.mark.parametrize(
+    "points", [points, points_gs], ids=["numpy.ndarray", "GeoSeries"]
+)
 def test_j(points):
     # -------------------------------------------------------------------------#
     # Check j function works, matches manual, is truncated correctly
@@ -286,7 +297,10 @@ def test_j(points):
 
     numpy.testing.assert_allclose(j_test.statistic, manual_j[:4], atol=0.1, rtol=0.05)
 
-@pytest.mark.parametrize("points", [points, points_gs], ids=["numpy.ndarray", "GeoSeries"])
+
+@pytest.mark.parametrize(
+    "points", [points, points_gs], ids=["numpy.ndarray", "GeoSeries"]
+)
 def test_k(points):
     # -------------------------------------------------------------------------#
     # Check K function works, matches a manual, slower explicit computation
@@ -301,7 +315,10 @@ def test_k(points):
         k_test.statistic, manual_unscaled_k * 2 / n / intensity
     )
 
-@pytest.mark.parametrize("points", [points, points_gs], ids=["numpy.array", "GeoSeries"])
+
+@pytest.mark.parametrize(
+    "points", [points, points_gs], ids=["numpy.array", "GeoSeries"]
+)
 def test_l(points):
     # -------------------------------------------------------------------------#
     # Check L Function works, can be linearized, and has the right value
