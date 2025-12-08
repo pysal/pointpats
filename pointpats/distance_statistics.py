@@ -687,11 +687,11 @@ def f_test(
         Simulations are independent and can be run in parallel to significantly
         reduce execution time.
 
-        * If **n_jobs = -1**, all available CPU cores will be used.
-        * If **n_jobs = 1**, the execution will be forced to run sequentially (serially),
-            disabling parallel processing. This is often useful for debugging or
-            testing purposes.
-        * If **n_jobs > 1**, that specific number of cores will be used.
+        * If ``n_jobs = -1``, all available CPU cores will be used.
+        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),
+          disabling parallel processing. This is often useful for debugging or
+          testing purposes.
+        * If ``n_jobs > 1``, that specific number of cores will be used.
 
     Returns
     -------
@@ -764,11 +764,11 @@ def g_test(
         Simulations are independent and can be run in parallel to significantly
         reduce execution time.
 
-        * If **n_jobs = -1**, all available CPU cores will be used.
-        * If **n_jobs = 1**, the execution will be forced to run sequentially (serially),
-            disabling parallel processing. This is often useful for debugging or
-            testing purposes.
-        * If **n_jobs > 1**, that specific number of cores will be used.
+        * If ``n_jobs = -1``, all available CPU cores will be used.
+        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),
+          disabling parallel processing. This is often useful for debugging or
+          testing purposes.
+        * If ``n_jobs > 1``, that specific number of cores will be used.
 
 
     Returns
@@ -840,11 +840,11 @@ def j_test(
         Simulations are independent and can be run in parallel to significantly
         reduce execution time.
 
-        * If **n_jobs = -1**, all available CPU cores will be used.
-        * If **n_jobs = 1**, the execution will be forced to run sequentially (serially),
-            disabling parallel processing. This is often useful for debugging or
-            testing purposes.
-        * If **n_jobs > 1**, that specific number of cores will be used.
+        * If ``n_jobs = -1``, all available CPU cores will be used.
+        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),
+          disabling parallel processing. This is often useful for debugging or
+          testing purposes.
+        * If ``n_jobs > 1``, that specific number of cores will be used.
 
 
     Returns
@@ -932,11 +932,11 @@ def k_test(
         Simulations are independent and can be run in parallel to significantly
         reduce execution time.
 
-        * If **n_jobs = -1**, all available CPU cores will be used.
-        * If **n_jobs = 1**, the execution will be forced to run sequentially (serially),
-            disabling parallel processing. This is often useful for debugging or
-            testing purposes.
-        * If **n_jobs > 1**, that specific number of cores will be used.
+        * If ``n_jobs = -1``, all available CPU cores will be used.
+        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),
+          disabling parallel processing. This is often useful for debugging or
+          testing purposes.
+        * If ``n_jobs > 1``, that specific number of cores will be used.
 
 
     Returns
@@ -1011,11 +1011,11 @@ def l_test(
         Simulations are independent and can be run in parallel to significantly
         reduce execution time.
 
-        * If **n_jobs = -1**, all available CPU cores will be used.
-        * If **n_jobs = 1**, the execution will be forced to run sequentially (serially),
-            disabling parallel processing. This is often useful for debugging or
-            testing purposes.
-        * If **n_jobs > 1**, that specific number of cores will be used.
+        * If ``n_jobs = -1``, all available CPU cores will be used.
+        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),
+          disabling parallel processing. This is often useful for debugging or
+          testing purposes.
+        * If ``n_jobs > 1``, that specific number of cores will be used.
 
     Returns
     -------
