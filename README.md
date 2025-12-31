@@ -48,7 +48,7 @@ pointpats development is hosted on
 [github](https://github.com/pysal/pointpats).
 
 As part of the PySAL project, pointpats development follows these
-[guidelines](http://pysal.org/getting_started).
+[PySAL's documentation for developers](https://pysal.org/docs/devs/) and the PySAL [development guidelines](https://github.com/pysal/pysal/wiki).
 
 ##  Bug reports
 
