@@ -330,8 +330,8 @@ def cluster_poisson(
             candidates = _uniform_circle(
                 n_in_cluster - 1, radius=radius, center=seed, hull=hull
             )
-            clusters[i_cluster] = numpy.row_stack((seed, candidates))
-        result[i_replication] = numpy.row_stack(clusters)
+            clusters[i_cluster] = numpy.vstack((seed, candidates))
+        result[i_replication] = numpy.vstack(clusters)
     return result.squeeze()
 
 
@@ -396,8 +396,8 @@ def cluster_normal(hull, cov=None, size=None, n_seeds=2):
                     " increase the number of sampled points."
                 )
             candidates = normal(hull, center=seed, cov=cov, size=n_in_cluster - 1)
-            clusters[i_cluster] = numpy.row_stack((seed, candidates))
-        result[i_replication] = numpy.row_stack(clusters)
+            clusters[i_cluster] = numpy.vstack((seed, candidates))
+        result[i_replication] = numpy.vstack(clusters)
     return result.squeeze()
 
 
