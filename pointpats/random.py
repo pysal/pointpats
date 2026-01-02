@@ -124,7 +124,7 @@ def poisson(hull, intensity=None, size=None):
         and the number of observations is computed from the intensity.
 
     Returns
-    --------
+    -------
         :   numpy.ndarray
         either an (n_replications, n_observations, 2) or (n_observations,2) array containing
         the simulated realizations.
@@ -183,7 +183,7 @@ def normal(hull, center=None, cov=None, size=None):
         If an integer is provided, n_replications is assumed to be 1.
 
     Returns
-    --------
+    -------
         :   numpy.ndarray
         either an (n_replications, n_observations, 2) or (n_observations,2) array containing
         the simulated realizations.
@@ -246,7 +246,11 @@ def normal(hull, center=None, cov=None, size=None):
 
 
 def cluster_poisson(
-    hull, intensity=None, size=None, n_seeds=2, cluster_radius=None,
+    hull,
+    intensity=None,
+    size=None,
+    n_seeds=2,
+    cluster_radius=None,
 ):
     """
     Simulate a cluster poisson random point process with a specified intensity & number of seeds.
@@ -281,7 +285,7 @@ def cluster_poisson(
         replications.
 
     Returns
-    --------
+    -------
         :   numpy.ndarray
         either an (n_replications, n_observations, 2) or (n_observations,2) array containing
         the simulated realizations.
@@ -364,7 +368,7 @@ def cluster_normal(hull, cov=None, size=None, n_seeds=2):
         the number of sub-clusters to use.
 
     Returns
-    --------
+    -------
         :   numpy.ndarray
         either an (n_replications, n_observations, 2) or (n_observations,2) array containing
         the simulated realizations.
