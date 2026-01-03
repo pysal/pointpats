@@ -44,6 +44,11 @@
            environment-file: ${{ matrix.environment-file }}
            micromamba-version: 'latest'
 
+       - name: Register Jupyter kernel "python3" (for nbsphinx)
+         run: |
+           python -m ipykernel install --sys-prefix --name python3 --display-name "Python 3"
+           jupyter kernelspec list
+
        - name: make docs
          run: |
            pip install -e . --no-deps --force-reinstall

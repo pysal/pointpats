@@ -1,6 +1,7 @@
 name: test
 channels:
   - conda-forge
+
 dependencies:
   - python=3.14
   - geopandas
@@ -10,6 +11,7 @@ dependencies:
   - pandas
   - scipy
   - shapely
+
   # tests
   - scikit-learn
   - statsmodels
@@ -17,12 +19,21 @@ dependencies:
   - pytest-cov
   - pytest-xdist
   - codecov
+
   - pip
   - pip:
       - KDEpy
+
   # for docs build action (this env only)
+  - sphinx
   - nbsphinx
   - numpydoc
-  - sphinx
   - sphinxcontrib-bibtex
   - sphinx_bootstrap_theme
+
+  # notebook execution support (required by nbsphinx)
+  - ipykernel
+  - jupyter_client
+  - nbconvert
+  - nbformat
+  - nbclient
