@@ -7,7 +7,7 @@ __author__ = (
     "Eli Knaap <eknaap@sdsu.edu>",
     "Nicholas Malizia <nmalizia@asu.edu>",
     "Sergio J. Rey <srey@sdsu.edu>",
-    "Philip Stephens <philip.stephens@asu.edu",
+    "Philip Stephens <philip.stephens@asu.edu>",
 )
 
 __all__ = [
@@ -682,16 +682,64 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
 
 
     Returns
-    =======
+    -------
+    results : dict
+        Dictionary containing global counts, contingency tables, p-values, and
+        intermediate neighbor/pair structures. Keys include:
 
-    summary table observed
-    summary table h0
+        Counts (global)
+            - ``"ns"`` : float
+              Total number of spatial neighbor pairs, denoted ``NS``.
+            - ``"nt"`` : float
+              Total number of temporal neighbor pairs, denoted ``NT``.
+            - ``"nst"`` : float
+              Total number of space-time neighbor pairs, denoted ``NST``.
+            - ``"pairs"`` : float
+              Total number of unordered pairs, ``n * (n - 1) / 2``.
 
-    ns
-    nt
-    nst
-    n
-    p-value
+        Tables
+            - ``"observed"`` : ndarray of shape (2, 2)
+              Observed contingency table::
+
+                  [[NST,  NS - NST],
+                   [NT - NST,  pairs - (NS + NT - NST)]]
+
+            - ``"expected"`` : ndarray of shape (2, 2)
+              Expected contingency table under independence. The expected
+              space-time count is ``ENST = NS * NT / pairs``.
+
+        Inference
+            - ``"p_value_poisson"`` : float
+              One-sided analytic p-value using a Poisson model for ``NST`` with
+              mean equal to the expected space-time count.
+            - ``"p_value_sim"`` : float, optional
+              One-sided permutation p-value (present when ``permutations > 0``).
+            - ``"exceedence"`` : int, optional
+              Number of permutations with statistic >= observed (present when
+              ``permutations > 0``).
+            - ``"st_perm"`` : ndarray of shape (permutations,), optional
+              Permutation distribution of the statistic (present when
+              ``permutations > 0`` and ``keep=True``).
+
+        Neighbor and pair structures
+            - ``"sneighbors"`` : list of sets
+              Spatial neighbors for each event index.
+            - ``"tneighbors"`` : list of sets
+              Temporal neighbors for each event index.
+            - ``"stneighbors"`` : list of sets
+              Intersection of spatial and temporal neighbors for each index.
+            - ``"st_pairs"`` : set of tuple(int, int)
+              Set of unordered index pairs that are neighbors in both space and
+              time.
+
+    Notes
+    -----
+    - All pair counts are **unordered** (i.e., each pair is counted once), hence
+      the division by 2 after summing directed neighbor counts.
+    - The permutation procedure randomly reassigns temporal neighbor labels to
+      spatial neighborhoods via index permutations, generating a null
+      distribution for the global space-time neighbor count.
+    
     """
 
     n = s_coords.shape[0]
@@ -801,7 +849,7 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
 
 
 class Knox:
-    """Global Knox statistic for space-time interactions
+    """Global Knox statistic for space-time interactions.
 
     Parameters
     ----------
@@ -845,10 +893,10 @@ class Knox:
         Pseudo p-value based on random permutations
     expected: array
         Two-by-two array with expected counts under the null of no space-time
-        interactions. [[NST, NS_], [NT_, N__]] where NST is the expected number
-        of space-time pairs, NS_ is the expected number of spatial (but not also
-        temporal) pairs, NT_ is the number of expected temporal (but not also
-        spatial pairs), N__ is the number of pairs that are neighor spatial or
+        interactions. ``[[NST, NS_], [NT_, N__]]`` where ``NST`` is the expected number
+        of space-time pairs, ``NS_`` is the expected number of spatial (but not also
+        temporal) pairs, ``NT_`` is the number of expected temporal (but not also
+        spatial pairs), ``N__`` is the number of pairs that are neighor spatial or
         temporal neighbors.
     observed: array
         Same structure as expected with the observed pair classifications
@@ -1069,7 +1117,7 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
 
 
 class KnoxLocal:
-    """Local Knox statistics for space-time interactions
+    """Local Knox statistics for space-time interactions.
 
     Parameters
     ----------
@@ -1118,10 +1166,10 @@ class KnoxLocal:
         Pseudo p-value based on random permutations (global)
     expected: array
         Two-by-two array with expected counts under the null of no space-time
-        interactions. [[NST, NS_], [NT_, N__]] where NST is the expected number
-        of space-time pairs, NS_ is the expected number of spatial (but not also
-        temporal) pairs, NT_ is the number of expected temporal (but not also
-        spatial pairs), N__ is the number of pairs that are neighor spatial or
+        interactions. ``[[NST, NS_], [NT_, N__]]`` where ``NST`` is the expected number
+        of space-time pairs, ``NS_`` is the expected number of spatial (but not also
+        temporal) pairs, ``NT_`` is the number of expected temporal (but not also
+        spatial pairs), ``N__`` is the number of pairs that are neighor spatial or
         temporal neighbors. (global)
     observed: array
         Same structure as expected with the observed pair classifications (global)
@@ -1143,7 +1191,7 @@ class KnoxLocal:
     permutation inference is unique to pysal.pointpats.
 
     Examples
-    -------
+    --------
     >>> import libpysal
     >>> path = libpysal.examples.get_path('burkitt.shp')
     >>> import geopandas

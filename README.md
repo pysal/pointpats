@@ -24,18 +24,6 @@ module.
 Online documentation is available
 [here](http://pysal.org/pointpats/).
 
-## Examples
-
-- [Basic point pattern
-    structure](https://github.com/pysal/pointpats/tree/main/notebooks/pointpattern.ipynb)
-- [Centrography and
-    visualization](https://github.com/pysal/pointpats/tree/main/notebooks/centrography.ipynb)
-- [Marks](https://github.com/pysal/pointpats/tree/main/notebooks/marks.ipynb)
-- [Simulation of point
-    processes](https://github.com/pysal/pointpats/tree/main/notebooks/process.ipynb)
-- [Distance based
-    statistics](https://github.com/pysal/pointpats/tree/main/notebooks/distance_statistics-numpy-oriented.ipynb)
-
 ##  Installation
 
 Install pointpats by running:
