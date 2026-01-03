@@ -108,12 +108,7 @@ The full user guide is organized around executable notebooks:
    :maxdepth: 1
    :caption: User Guide
 
-   user-guide/centrography
-   user-guide/sd_ellipse
-   user-guide/Quadrat_statistics
-   user-guide/ripley
-   user-guide/random
-   user-guide/marks
+   user-guide/intro
 
 .. toctree::
    :maxdepth: 2
