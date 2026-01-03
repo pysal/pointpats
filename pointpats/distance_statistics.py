@@ -225,7 +225,7 @@ def g(
     distances between points in the pattern.
 
     Parameters
-    -----------
+    ----------
     coordinates : geopandas object | numpy.ndarray of shape (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
@@ -315,7 +315,7 @@ def j(
     The so-called "spatial hazard" function, this is a function relating the F and G functions.
 
     Parameters
-    -----------
+    ----------
     coordinates : geopandas object | numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
@@ -660,7 +660,7 @@ def f_test(
     the pattern is considered "dispersed" or "regular"
 
     Parameters
-    -----------
+    ----------
     coordinates : geopandas object | numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
