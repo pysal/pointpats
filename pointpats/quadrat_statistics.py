@@ -1,291 +1,343 @@
 """
 Quadrat statistics for planar point patterns
 
+- First argument everywhere is a NumPy ndarray of point coordinates (n, 2).
+- MBB is computed internally from the array.
+- Optional `window` (shapely geometry). If omitted, uses the MBB rectangle.
+- Optional `rng` for reproducible simulation-based inference.
+- Rectangle and hexagon grids supported.
+- Plotting is self-contained (matplotlib only): scatters points, draws window, draws grid,
+  annotates counts, and optionally annotates per-cell chi-square contributions.
 
-TODO
-
-- use patch in matplotlib to plot rectangles and hexagons
-- plot chi2 statistics in each cell
-- delete those cells that do not intersect with the window (study area)
-
+Notes
+-----
+1) The analytical chi-square currently assumes equal expected counts per *included* cell.
+   If/when you clip cells to an irregular window, you should switch expected counts to be
+   proportional to intersected area. (This module includes the hook for dropping cells
+   outside a window, but does not yet area-weight expectations.)
+2) Simulation-based p-value uses CSR with intensity = n / window.area.
 """
 
-__author__ = "Serge Rey, Wei Kang, Hu Shao"
+__author__ = "Serge Rey, Wei Kang, Hu Shao (refactor by ChatGPT)"
 __all__ = ["RectangleM", "HexagonM", "QStatistic"]
 
 import math
+from typing import Optional
 
-import geopandas
 import numpy as np
-import scipy
-import shapely
+import scipy.stats
+from shapely.geometry import Polygon, MultiPolygon, box
 from matplotlib import pyplot as plt
+from matplotlib.patches import Polygon as MplPolygon
+from matplotlib.collections import PatchCollection
 
-from .pointpattern import PointPattern
+from .random import poisson
 
 
+# -----------------------------------------------------------------------------
+# Helpers
+# -----------------------------------------------------------------------------
+def _as_points_array(points) -> np.ndarray:
+    pts = np.asarray(points)
+    if pts.ndim != 2 or pts.shape[1] != 2:
+        raise ValueError(f"points must be a (n, 2) array-like. Got shape {pts.shape}.")
+    if pts.size == 0:
+        raise ValueError("points is empty; cannot compute mbb.")
+    return pts
+
+
+def _compute_mbb(points: np.ndarray) -> np.ndarray:
+    x_min = float(np.min(points[:, 0]))
+    y_min = float(np.min(points[:, 1]))
+    x_max = float(np.max(points[:, 0]))
+    y_max = float(np.max(points[:, 1]))
+    return np.array([x_min, y_min, x_max, y_max], dtype=float)
+
+
+def _ensure_window(window, mbb):
+    if window is None:
+        return box(mbb[0], mbb[1], mbb[2], mbb[3])
+    return window
+
+
+def _coerce_rng(rng: Optional[object]):
+    """
+    Accepts:
+      - None -> creates a fresh default_rng()
+      - int  -> seeded default_rng(int)
+      - np.random.Generator -> returned as-is
+      - np.random.RandomState -> wrapped via default_rng(RandomState)
+    """
+    if rng is None:
+        return np.random.default_rng()
+    if isinstance(rng, (int, np.integer)):
+        return np.random.default_rng(int(rng))
+    if isinstance(rng, np.random.Generator):
+        return rng
+    if isinstance(rng, np.random.RandomState):
+        return np.random.default_rng(rng)
+    raise TypeError(
+        "rng must be None, an int seed, numpy.random.Generator, or numpy.random.RandomState."
+    )
+
+
+def _window_to_paths(window_geom):
+    """Return list of (x, y) arrays for plotting boundary(ies)."""
+    paths = []
+    if window_geom is None:
+        return paths
+
+    if isinstance(window_geom, Polygon):
+        x, y = window_geom.exterior.xy
+        paths.append((np.asarray(x), np.asarray(y)))
+        for ring in window_geom.interiors:
+            x, y = ring.xy
+            paths.append((np.asarray(x), np.asarray(y)))
+        return paths
+
+    if isinstance(window_geom, MultiPolygon):
+        for poly in window_geom.geoms:
+            paths.extend(_window_to_paths(poly))
+        return paths
+
+    if hasattr(window_geom, "geoms"):
+        for g in window_geom.geoms:
+            paths.extend(_window_to_paths(g))
+    return paths
+
+
+def _scatter_points(ax, points):
+    ax.scatter(points[:, 0], points[:, 1], s=10)
+
+
+def _draw_window(ax, window_geom):
+    for x, y in _window_to_paths(window_geom):
+        ax.plot(x, y, lw=1.5)
+
+
+def _cell_center_from_bounds(x0, y0, x1, y1):
+    return (0.5 * (x0 + x1), 0.5 * (y0 + y1))
+
+
+# -----------------------------------------------------------------------------
+# Rectangle grid
+# -----------------------------------------------------------------------------
 class RectangleM:
     """
     Rectangle grid structure for quadrat-based method.
-
-    Parameters
-    ----------
-    pp                : :class:`.PointPattern`
-                        Point Pattern instance.
-    count_column      : integer
-                        Number of rectangles in the horizontal
-                        direction. Use in pair with count_row to
-                        fully specify a rectangle. Incompatible with
-                        rectangle_width and rectangle_height.
-    count_row         : integer
-                        Number of rectangles in the vertical
-                        direction. Use in pair with count_column to
-                        fully specify a rectangle. Incompatible with
-                        rectangle_width and rectangle_height.
-    rectangle_width   : float
-                        Rectangle width. Use in pair with
-                        rectangle_height to fully specify a rectangle.
-                        Incompatible with count_column & count_row.
-    rectangle_height  : float
-                        Rectangle height. Use in pair with
-                        rectangle_width to fully specify a rectangle.
-                        Incompatible with count_column & count_row.
-
-    Attributes
-    ----------
-    pp                : :class:`.PointPattern`
-                        Point Pattern instance.
-    mbb               : array
-                        Minimum bounding box for the point pattern.
-    points            : array
-                        x,y coordinates of the point points.
-    count_column      : integer
-                        Number of columns.
-    count_row         : integer
-                        Number of rows.
-    num               : integer
-                        Number of rectangular quadrats.
-    rectangle_width   : float
-                        Width of a rectangular quadrat.
-    rectangle_height  : float
-                        Height of a rectangular quadrat.
-
     """
 
     def __init__(
-        self, pp, count_column=3, count_row=3, rectangle_width=0, rectangle_height=0
+        self,
+        points,
+        count_column=3,
+        count_row=3,
+        rectangle_width=0,
+        rectangle_height=0,
+        window=None,
     ):
-        self.mbb = pp.mbb
-        self.pp = pp
-        self.points = np.asarray(pp.points)
+        self.points = _as_points_array(points)
+        self.mbb = _compute_mbb(self.points)
+        self.window = _ensure_window(window, self.mbb)
+
         x_range = self.mbb[2] - self.mbb[0]
         y_range = self.mbb[3] - self.mbb[1]
+
         if rectangle_width and rectangle_height:
-            self.rectangle_width = rectangle_width
-            self.rectangle_height = rectangle_height
-
-            # calculate column count and row count
-            self.count_column = int(math.ceil(x_range / rectangle_width))
-            self.count_row = int(math.ceil(y_range / rectangle_height))
+            self.rectangle_width = float(rectangle_width)
+            self.rectangle_height = float(rectangle_height)
+            self.count_column = int(math.ceil(x_range / self.rectangle_width))
+            self.count_row = int(math.ceil(y_range / self.rectangle_height))
         else:
-            self.count_column = count_column
-            self.count_row = count_row
+            self.count_column = int(count_column)
+            self.count_row = int(count_row)
+            self.rectangle_width = x_range / float(self.count_column)
+            self.rectangle_height = y_range / float(self.count_row)
 
-            # calculate the actual width and height of cell
-            self.rectangle_width = x_range / float(count_column)
-            self.rectangle_height = y_range / float(count_row)
         self.num = self.count_column * self.count_row
 
     def point_location_sta(self):
-        """
-        Count the point events in each cell.
+        dict_id_count = {
+            j + i * self.count_column: 0
+            for i in range(self.count_row)
+            for j in range(self.count_column)
+        }
 
-        Returns
-        -------
-        dict_id_count : dict
-                        keys: rectangle id, values: number of point
-                        events in each cell.
-        """
-
-        dict_id_count = {}
-        for i in range(self.count_row):
-            for j in range(self.count_column):
-                dict_id_count[j + i * self.count_column] = 0
-
+        x_min, y_min = self.mbb[0], self.mbb[1]
         for point in self.points:
-            index_x = (point[0] - self.mbb[0]) // self.rectangle_width
-            index_y = (point[1] - self.mbb[1]) // self.rectangle_height
+            index_x = (point[0] - x_min) // self.rectangle_width
+            index_y = (point[1] - y_min) // self.rectangle_height
+
             if index_x == self.count_column:
                 index_x -= 1
             if index_y == self.count_row:
                 index_y -= 1
-            id = index_y * self.count_column + index_x
-            dict_id_count[id] += 1
+
+            cell_id = int(index_y) * self.count_column + int(index_x)
+            dict_id_count[cell_id] += 1
+
         return dict_id_count
 
-    def plot(self, title="Quadrat Count"):
-        """
-        Plot rectangle tessellation as well as the number of points falling in each rectangle.
+    def _rect_cell_bounds(self, ix, iy):
+        x0 = self.mbb[0] + ix * self.rectangle_width
+        y0 = self.mbb[1] + iy * self.rectangle_height
+        x1 = x0 + self.rectangle_width
+        y1 = y0 + self.rectangle_height
+        return x0, y0, x1, y1
 
-        Parameters
-        ----------
-        title:   str, optional
-                 Title of the plot. Default is "Quadrat Count".
+    def _rect_cell_polygon(self, ix, iy):
+        x0, y0, x1, y1 = self._rect_cell_bounds(ix, iy)
+        return box(x0, y0, x1, y1)
 
-        """
+    def _iter_cells(self, drop_nonintersecting=False):
+        for iy in range(self.count_row):
+            for ix in range(self.count_column):
+                cell_id = ix + iy * self.count_column
+                poly = self._rect_cell_polygon(ix, iy)
+                if drop_nonintersecting and (not poly.intersects(self.window)):
+                    continue
+                x0, y0, x1, y1 = self._rect_cell_bounds(ix, iy)
+                cx, cy = _cell_center_from_bounds(x0, y0, x1, y1)
+                yield cell_id, poly, (cx, cy)
 
-        line_width_cell = 1
-        line_color_cell = "red"
+    def plot(
+        self,
+        title="Quadrat Count",
+        show="counts",
+        chi2_contrib=None,
+        drop_nonintersecting=False,
+    ):
+        fig, ax = plt.subplots()
+        ax.set_title(title)
 
-        x_min = self.mbb[0]
-        y_min = self.mbb[1]
-
-        # draw the point pattern along with its window
-        ax = self.pp.plot(window=True, title=title, get_ax=True)
-
-        # draw cells and counts
-        x_start_end = [x_min, x_min + self.count_column * self.rectangle_width]
-        for row in range(self.count_row + 1):
-            y = y_min + row * self.rectangle_height
-            ax.plot(x_start_end, [y, y], lw=line_width_cell, color=line_color_cell)
-        y_start_end = [y_min, y_min + self.count_row * self.rectangle_height]
-        for column in range(self.count_column + 1):
-            x = x_min + column * self.rectangle_width
-            ax.plot([x, x], y_start_end, lw=line_width_cell, color=line_color_cell)
+        _scatter_points(ax, self.points)
+        _draw_window(ax, self.window)
 
         dict_id_count = self.point_location_sta()
-        for x in range(self.count_column):
-            for y in range(self.count_row):
-                cell_id = x + y * self.count_column
-                count = dict_id_count[cell_id]
-                position_x = x_min + self.rectangle_width * (x + 0.5)
-                position_y = y_min + self.rectangle_height * (y + 0.5)
-                ax.text(position_x, position_y, str(count), ha="center", va="center")
-        return ax
+
+        patches = []
+        ann_xy = []
+        cell_ids = []
+
+        for cell_id, poly, (cx, cy) in self._iter_cells(
+            drop_nonintersecting=drop_nonintersecting
+        ):
+            patches.append(MplPolygon(np.asarray(poly.exterior.coords), closed=True))
+            ann_xy.append((cx, cy))
+            cell_ids.append(cell_id)
+
+        pc = PatchCollection(patches, linewidths=1.0, edgecolor="red", facecolor="none")
+        ax.add_collection(pc)
+
+        if show == "counts":
+            for (cx, cy), cell_id in zip(ann_xy, cell_ids):
+                ax.text(
+                    cx, cy, str(dict_id_count.get(cell_id, 0)), ha="center", va="center"
+                )
+
+        elif show == "chi2":
+            if chi2_contrib is None:
+                raise ValueError('chi2_contrib must be provided when show="chi2".')
+            chi2_contrib = np.asarray(chi2_contrib, dtype=float)
+            if chi2_contrib.shape[0] != len(cell_ids):
+                raise ValueError(
+                    "chi2_contrib length must match number of plotted cells "
+                    f"({len(cell_ids)}). Got {chi2_contrib.shape[0]}."
+                )
+            pc.set_array(chi2_contrib)
+            pc.set_alpha(0.6)
+            pc.set_facecolor(None)
+            plt.colorbar(pc, ax=ax, label="Chi-square contribution")
+
+            for (cx, cy), v in zip(ann_xy, chi2_contrib):
+                ax.text(cx, cy, f"{v:.2f}", ha="center", va="center")
+
+        else:
+            raise ValueError('show must be "counts" or "chi2".')
+
+        ax.set_aspect("equal", adjustable="box")
+        return ax, cell_ids
 
 
+# -----------------------------------------------------------------------------
+# Hexagon grid
+# -----------------------------------------------------------------------------
 class HexagonM:
     """
     Hexagon grid structure for quadrat-based method.
-
-    Parameters
-    ----------
-    pp                : :class:`.PointPattern`
-                        Point Pattern instance.
-    lh                : float
-                        Hexagon length (hexagon).
-
-    Attributes
-    ----------
-    pp                : :class:`.PointPattern`
-                        Point Pattern instance.
-    h_length          : float
-                        Hexagon length (hexagon).
-    mbb               : array
-                        Minimum bounding box for the point pattern.
-    points            : array
-                        x,y coordinates of the point points.
-    h_length          : float
-                        Hexagon length (hexagon).
-    count_row_even    : integer
-                        Number of even rows.
-    count_row_odd     : integer
-                        Number of odd rows.
-    count_column      : integer
-                        Number of columns.
-    num               : integer
-                        Number of hexagonal quadrats.
-
     """
 
-    def __init__(self, pp, lh):
+    def __init__(self, points, lh, window=None):
+        self.points = _as_points_array(points)
+        self.h_length = float(lh)
+        self.mbb = _compute_mbb(self.points)
+        self.window = _ensure_window(window, self.mbb)
 
-        self.points = np.asarray(pp.points)
-        self.pp = pp
-        self.h_length = lh
-        self.mbb = pp.mbb
         range_x = self.mbb[2] - self.mbb[0]
         range_y = self.mbb[3] - self.mbb[1]
 
-        # calculate column count
         self.count_column = 1
         if self.h_length / 2.0 < range_x:
-            temp = math.ceil((range_x - self.h_length / 2) / (1.5 * self.h_length))
+            temp = math.ceil((range_x - self.h_length / 2.0) / (1.5 * self.h_length))
             self.count_column += int(temp)
 
-        # calculate row count for the even columns
-        self.semi_height = self.h_length * math.cos(math.pi / 6)
+        self.semi_height = self.h_length * math.cos(math.pi / 6.0)
         self.count_row_even = 1
         if self.semi_height < range_y:
-            temp = math.ceil((range_y - self.semi_height) / (self.semi_height * 2))
+            temp = math.ceil((range_y - self.semi_height) / (2.0 * self.semi_height))
             self.count_row_even += int(temp)
 
-        # for the odd columns
-        self.count_row_odd = int(math.ceil(range_y / (self.semi_height * 2)))
+        self.count_row_odd = int(math.ceil(range_y / (2.0 * self.semi_height)))
 
-        # quadrat number
         self.num = self.count_row_odd * (
-            (self.count_column // 2) + self.count_column % 2
+            (self.count_column // 2) + (self.count_column % 2)
         ) + self.count_row_even * (self.count_column // 2)
 
     def point_location_sta(self):
-        """
-        Count the point events in each hexagon cell.
-
-        Returns
-        -------
-        dict_id_count : dict
-                        keys: rectangle id, values: number of point
-                        events in each hexagon cell.
-        """
         semi_cell_length = self.h_length / 2.0
         dict_id_count = {}
 
-        # even row may be equal with odd row or 1 more than odd row
         for i in range(self.count_row_even):
             for j in range(self.count_column):
                 if (
                     self.count_row_even != self.count_row_odd
                     and i == self.count_row_even - 1
+                    and j % 2 == 1
                 ):
-                    if j % 2 == 1:
-                        continue
+                    continue
                 dict_id_count[j + i * self.count_column] = 0
 
         x_min = self.mbb[0]
         y_min = self.mbb[1]
-        x_max = self.mbb[2]
-        y_max = self.mbb[3]
-        points = np.array(self.points)
-        for point in points:
-            # find the possible x index
+
+        for point in self.points:
             intercept_degree_x = (point[0] - x_min) // semi_cell_length
 
-            # find the possible y index
             possible_y_index_even = int(
-                (point[1] + self.semi_height - y_min) / (self.semi_height * 2)
+                (point[1] + self.semi_height - y_min) / (2.0 * self.semi_height)
             )
-            possible_y_index_odd = int((point[1] - y_min) / (self.semi_height * 2))
+            possible_y_index_odd = int((point[1] - y_min) / (2.0 * self.semi_height))
+
             if intercept_degree_x % 3 != 1:
-                center_index_x = (intercept_degree_x + 1) // 3
+                center_index_x = int((intercept_degree_x + 1) // 3)
                 center_index_y = possible_y_index_odd
                 if center_index_x % 2 == 0:
                     center_index_y = possible_y_index_even
                 dict_id_count[center_index_x + center_index_y * self.count_column] += 1
-            else:  # two columns of cells can be possible
-                center_index_x = intercept_degree_x // 3
-                center_x = center_index_x * semi_cell_length * 3 + x_min
+            else:
+                center_index_x = int(intercept_degree_x // 3)
+                center_x = center_index_x * semi_cell_length * 3.0 + x_min
+
                 center_index_y = possible_y_index_odd
-                center_y = (center_index_y * 2 + 1) * self.semi_height + y_min
+                center_y = (center_index_y * 2.0 + 1.0) * self.semi_height + y_min
+
                 if center_index_x % 2 == 0:
                     center_index_y = possible_y_index_even
-                    center_y = center_index_y * self.semi_height * 2 + y_min
+                    center_y = center_index_y * 2.0 * self.semi_height + y_min
 
-                if point[1] > center_y:  # compare the upper bound
-                    x0 = center_x + self.h_length
-                    y0 = center_y
-                    x1 = center_x + semi_cell_length
-                    y1 = center_y + self.semi_height
+                if point[1] > center_y:
+                    x0, y0 = center_x + self.h_length, center_y
+                    x1, y1 = center_x + semi_cell_length, center_y + self.semi_height
                     indicator = -(
                         point[1]
                         - (
@@ -293,202 +345,362 @@ class HexagonM:
                             + (x0 * y1 - x1 * y0) / (x0 - x1)
                         )
                     )
-                else:  # compare the lower bound
-                    x0 = center_x + semi_cell_length
-                    y0 = center_y - self.semi_height
-                    x1 = center_x + self.h_length
-                    y1 = center_y
+                else:
+                    x0, y0 = center_x + semi_cell_length, center_y - self.semi_height
+                    x1, y1 = center_x + self.h_length, center_y
                     indicator = point[1] - (
                         (y0 - y1) / (x0 - x1) * point[0]
                         + (x0 * y1 - x1 * y0) / (x0 - x1)
                     )
+
                 if indicator <= 0:
-                    # we select right hexagon instead of the left
                     center_index_x += 1
                     center_index_y = possible_y_index_odd
                     if center_index_x % 2 == 0:
                         center_index_y = possible_y_index_even
+
                 dict_id_count[center_index_x + center_index_y * self.count_column] += 1
+
         return dict_id_count
 
-    def plot(self, title="Quadrat Count"):
-        """
-        Plot hexagon quadrats as well as the number of points falling in each quadrat.
+    def _hex_vertices(self, cx, cy):
+        sh = self.semi_height
+        lh = self.h_length
+        return np.array(
+            [
+                [cx + lh, cy],
+                [cx + lh / 2.0, cy + sh],
+                [cx - lh / 2.0, cy + sh],
+                [cx - lh, cy],
+                [cx - lh / 2.0, cy - sh],
+                [cx + lh / 2.0, cy - sh],
+                [cx + lh, cy],
+            ],
+            dtype=float,
+        )
 
-        Parameters
-        ----------
-        title:   str, optional
-                 Title of the plot. Default is "Quadrat Count".
-
-        """
-        line_width_cell = 1
-        line_color_cell = "red"
-
-        # draw the point pattern along with its window
-        ax = self.pp.plot(window=True, title=title, get_ax=True)
+    def _iter_cells(self, drop_nonintersecting=False):
+        dict_id_count = self.point_location_sta()
 
         x_min = self.mbb[0]
         y_min = self.mbb[1]
 
-        # draw cells and counts
+        for cell_id in dict_id_count.keys():
+            ix = cell_id % self.count_column
+            iy = cell_id // self.count_column
+
+            cx = ix * self.h_length / 2.0 * 3.0 + x_min
+            cy = iy * self.semi_height * 2.0 + y_min
+            if ix % 2 == 1:
+                cy = (iy * 2.0 + 1.0) * self.semi_height + y_min
+
+            verts = self._hex_vertices(cx, cy)
+            poly = Polygon(verts[:-1])
+
+            if drop_nonintersecting and (not poly.intersects(self.window)):
+                continue
+
+            yield cell_id, poly, (cx, cy)
+
+    def plot(
+        self,
+        title="Quadrat Count",
+        show="counts",
+        chi2_contrib=None,
+        drop_nonintersecting=False,
+    ):
+        fig, ax = plt.subplots()
+        ax.set_title(title)
+
+        _scatter_points(ax, self.points)
+        _draw_window(ax, self.window)
+
         dict_id_count = self.point_location_sta()
-        for id in dict_id_count.keys():
-            index_x = id % self.count_column
-            index_y = id // self.count_column
-            center_x = index_x * self.h_length / 2.0 * 3.0 + x_min
-            center_y = index_y * self.semi_height * 2.0 + y_min
-            if index_x % 2 == 1:  # for the odd columns
-                center_y = (index_y * 2.0 + 1) * self.semi_height + y_min
-            list_points_cell = []
-            list_points_cell.append([center_x + self.h_length, center_y])
-            list_points_cell.append(
-                [center_x + self.h_length / 2, center_y + self.semi_height]
-            )
-            list_points_cell.append(
-                [center_x - self.h_length / 2, center_y + self.semi_height]
-            )
-            list_points_cell.append([center_x - self.h_length, center_y])
-            list_points_cell.append(
-                [center_x - self.h_length / 2, center_y - self.semi_height]
-            )
-            list_points_cell.append(
-                [center_x + self.h_length / 2, center_y - self.semi_height]
-            )
-            list_points_cell.append([center_x + self.h_length, center_y])
-            ax.plot(
-                np.array(list_points_cell)[:, 0],
-                np.array(list_points_cell)[:, 1],
-                lw=line_width_cell,
-                color=line_color_cell,
-            )
 
-            ax.text(center_x, center_y, str(dict_id_count[id]), ha="center", va="center")
-        return ax
+        patches = []
+        ann_xy = []
+        cell_ids = []
+
+        for cell_id, poly, (cx, cy) in self._iter_cells(
+            drop_nonintersecting=drop_nonintersecting
+        ):
+            patches.append(MplPolygon(np.asarray(poly.exterior.coords), closed=True))
+            ann_xy.append((cx, cy))
+            cell_ids.append(cell_id)
+
+        pc = PatchCollection(patches, linewidths=1.0, edgecolor="red", facecolor="none")
+        ax.add_collection(pc)
+
+        if show == "counts":
+            for (cx, cy), cell_id in zip(ann_xy, cell_ids):
+                ax.text(
+                    cx, cy, str(dict_id_count.get(cell_id, 0)), ha="center", va="center"
+                )
+
+        elif show == "chi2":
+            if chi2_contrib is None:
+                raise ValueError('chi2_contrib must be provided when show="chi2".')
+            chi2_contrib = np.asarray(chi2_contrib, dtype=float)
+            if chi2_contrib.shape[0] != len(cell_ids):
+                raise ValueError(
+                    "chi2_contrib length must match number of plotted cells "
+                    f"({len(cell_ids)}). Got {chi2_contrib.shape[0]}."
+                )
+            pc.set_array(chi2_contrib)
+            pc.set_alpha(0.6)
+            pc.set_facecolor(None)
+            plt.colorbar(pc, ax=ax, label="Chi-square contribution")
+
+            for (cx, cy), v in zip(ann_xy, chi2_contrib):
+                ax.text(cx, cy, f"{v:.2f}", ha="center", va="center")
+
+        else:
+            raise ValueError('show must be "counts" or "chi2".')
+
+        ax.set_aspect("equal", adjustable="box")
+        return ax, cell_ids
 
 
+# -----------------------------------------------------------------------------
+# Quadrat statistic
+# -----------------------------------------------------------------------------
 class QStatistic:
     """
-    Quadrat analysis of point pattern.
+    Pearson chi-square quadrat test for complete spatial randomness (CSR).
+
+    This class partitions the study region into quadrats (rectangles or hexagons),
+    counts the number of events falling in each quadrat, and evaluates departure
+    from CSR using a Pearson chi-square statistic under an equal-intensity CSR
+    null model.
+
+    The primary outputs are the observed chi-square statistic and its analytical
+    p-value (from the chi-square distribution). Optionally, a simulation-based
+    (Monte Carlo) p-value can be computed by generating CSR realizations within
+    the study window and recomputing the chi-square statistic for each
+    realization.
 
     Parameters
     ----------
-    pp                : :class:`.PointPattern` or numpy.ndarray
-                        Point Pattern instance, or (n_observations, 2) array
-                        that can be used to construct a Point Pattern instance.
-    shape             : string
-                        Grid structure. Either "rectangle" or "hexagon".
-                        Default is "rectangle".
-    nx                : integer
-                        Number of rectangles in the horizontal
-                        direction. Only when shape is specified as
-                        "rectangle" will nx be considered.
-    ny                : integer
-                        Number of rectangles in the vertical direction.
-                        Only when shape is specified as "rectangle"
-                        will ny be considered.
-    rectangle_width   : float
-                        Rectangle width. Use in pair with
-                        rectangle_height to fully specify a rectangle.
-                        Incompatible with nx & ny.
-    rectangle_height  : float
-                        Rectangle height. Use in pair with
-                        rectangle_width to fully specify a rectangle.
-                        Incompatible with nx & ny.
-    lh                : float
-                        Hexagon length (hexagon). Only when shape is
-                        specified as "hexagon" will lh be considered.
-                        Incompatible with nx & ny.
-    realizations      : :class:`PointProcess`
-                        Point process instance with more than 1 point
-                        pattern realizations which would be used for
-                        simulation based inference. Default is 0
-                        where no simulation based inference is
-                        performed.
+    points : array_like
+        Event coordinates as an (n, 2) array-like of floats (x, y).
+    shape : {"rectangle", "hexagon"}, default="rectangle"
+        Quadrat tessellation type.
+    nx : int, default=3
+        Number of columns when `shape="rectangle"` and `rectangle_width` /
+        `rectangle_height` are not provided.
+    ny : int, default=3
+        Number of rows when `shape="rectangle"` and `rectangle_width` /
+        `rectangle_height` are not provided.
+    rectangle_width : float, default=0
+        Target rectangle width. Must be provided together with
+        `rectangle_height`. When both are provided and non-zero, `nx` and `ny`
+        are ignored and the grid dimensions are computed from the point-set MBB.
+    rectangle_height : float, default=0
+        Target rectangle height. Must be provided together with
+        `rectangle_width`. When both are provided and non-zero, `nx` and `ny`
+        are ignored and the grid dimensions are computed from the point-set MBB.
+    lh : float, default=10
+        Hexagon side length when `shape="hexagon"`.
+    realizations : int, default=0
+        Number of CSR simulations used to compute a Monte Carlo p-value.
+        If 0, no simulation-based inference is performed.
+    window : shapely geometry, optional
+        Study window (e.g., Polygon or MultiPolygon). If None, the window is
+        taken to be the axis-aligned MBB rectangle of `points`.
+    drop_nonintersecting : bool, default=False
+        If True, restricts the chi-square calculation to quadrats whose polygon
+        intersects `window`. This is primarily useful for plotting or for
+        avoiding fully external cells when `window` is irregular. Note that the
+        current implementation *does not* area-weight expected counts by the
+        intersection area of each cell with the window; expected counts remain
+        equal across retained cells.
+    rng : None | int | numpy.random.Generator | numpy.random.RandomState, optional
+        Random number generator control for reproducible CSR simulations when
+        `realizations > 0`.
+
+        - None: create a new ``numpy.random.default_rng()``
+        - int: use as a seed for ``numpy.random.default_rng(seed)``
+        - Generator: used as-is
+        - RandomState: wrapped via ``numpy.random.default_rng(RandomState)``
 
     Attributes
     ----------
-    pp                : :class:`.PointPattern`
-                        Point Pattern instance.
-    mr                : :class:`.RectangleM` or :class:`.HexagonM`
-                        RectangleM or HexagonM instance.
-    chi2              : float
-                        Chi-squared test statistic for the observed
-                        point pattern pp.
-    df                : integer
-                        Degree of freedom.
-    chi2_pvalue       : float
-                        p-value based on analytical chi-squared
-                        distribution.
-    chi2_r_pvalue     : float
-                        p-value based on simulated sampling
-                        distribution. Only available when
-                        realizations is correctly specified.
-    chi2_realizations : array
-                        Chi-squared test statistics calculated for
-                        all the simulated csr point patterns.
+    points : numpy.ndarray
+        (n, 2) array of event coordinates.
+    mbb : numpy.ndarray
+        Bounding box of `points` as ``[xmin, ymin, xmax, ymax]``.
+    window : shapely geometry
+        Study window used for simulation and plotting.
+    shape : str
+        Quadrat tessellation type: "rectangle" or "hexagon".
+    rng : numpy.random.Generator
+        RNG used for CSR simulations (always stored as a Generator).
+    mr : RectangleM or HexagonM
+        Tessellation manager instance.
+    cell_ids : list of int
+        Cell identifiers included in the test statistic (all cells unless
+        `drop_nonintersecting=True`).
+    chi2 : float
+        Observed Pearson chi-square statistic.
+    df : int
+        Degrees of freedom for the analytical chi-square reference distribution,
+        equal to ``k - 1`` where ``k`` is the number of included cells.
+    chi2_pvalue : float
+        Analytical p-value from the chi-square distribution.
+    chi2_contrib : numpy.ndarray
+        Per-cell chi-square contributions aligned with `cell_ids`, computed as
+        ``(O - E)^2 / E`` with ``E = mean(O)`` over included cells.
+    chi2_realizations : numpy.ndarray
+        Simulated chi-square statistics for CSR realizations. Present only when
+        `realizations > 0`.
+    chi2_r_pvalue : float
+        Monte Carlo p-value based on `chi2_realizations`, computed using the
+        standard +1 correction:
+        ``( #{T_sim >= T_obs} + 1 ) / (realizations + 1)``.
+        Present only when `realizations > 0`.
+
+    Notes
+    -----
+    - The analytical test uses ``scipy.stats.chisquare`` with expected counts
+      equal across included cells (i.e., ``E = mean(O)``). This corresponds to
+      a homogeneous CSR null with equal-area cells. If you clip cells to an
+      irregular window and wish to retain correct expectations, expected counts
+      should be proportional to each cell's intersection area with the window.
+    - The simulation-based null generates CSR realizations within `window` with
+      intensity ``n / area(window)``. Reproducibility depends on passing `rng`
+      through to the underlying CSR generator (``poisson(..., rng=...)``).
+
+    See Also
+    --------
+    RectangleM : Rectangular tessellation over the point-set MBB.
+    HexagonM : Hexagonal tessellation over the point-set MBB.
     """
 
-    def __init__(self, pp, shape="rectangle", nx=3, ny=3, rectangle_width=0,
-                 rectangle_height=0, lh=10, realizations=0):
-        if isinstance(pp, np.ndarray):
-            pp = PointPattern(pp)
-        if isinstance(pp, geopandas.GeoDataFrame | geopandas.GeoSeries):
-            pp = PointPattern(shapely.get_coordinates(pp.geometry))
-        self.pp = pp
+    def __init__(
+        self,
+        points,
+        shape="rectangle",
+        nx=3,
+        ny=3,
+        rectangle_width=0,
+        rectangle_height=0,
+        lh=10,
+        realizations=0,
+        window=None,
+        drop_nonintersecting=False,
+        rng=None,
+    ):
+        self.points = _as_points_array(points)
+        self.mbb = _compute_mbb(self.points)
+        self.window = _ensure_window(window, self.mbb)
+        self.shape = shape
+        self.rng = _coerce_rng(rng)
+
         if shape == "rectangle":
-            self.mr = RectangleM(pp, count_column=nx, count_row=ny,
-                                 rectangle_width=rectangle_width,
-                                 rectangle_height = rectangle_height)
+            self.mr = RectangleM(
+                self.points,
+                count_column=nx,
+                count_row=ny,
+                rectangle_width=rectangle_width,
+                rectangle_height=rectangle_height,
+                window=self.window,
+            )
         elif shape == "hexagon":
-            self.mr = HexagonM(pp, lh)
+            self.mr = HexagonM(self.points, lh, window=self.window)
         else:
-            raise ValueError(
-                f'shape type {shape} not understood. Must be either "rectangle" or'
-                ' "hexagon"'
+            raise ValueError('shape must be either "rectangle" or "hexagon".')
+
+        dict_id_count = self.mr.point_location_sta()
+
+        if drop_nonintersecting:
+            kept_ids = [
+                cell_id
+                for cell_id, _poly, _ in self.mr._iter_cells(drop_nonintersecting=True)
+            ]
+            obs_counts = np.asarray([dict_id_count[i] for i in kept_ids], dtype=float)
+            self.cell_ids = kept_ids
+        else:
+            obs_counts = np.asarray(list(dict_id_count.values()), dtype=float)
+            self.cell_ids = list(dict_id_count.keys())
+
+        self.chi2, self.chi2_pvalue = scipy.stats.chisquare(obs_counts)
+        self.df = obs_counts.size - 1
+
+        expected = obs_counts.mean() if obs_counts.size else np.nan
+        if obs_counts.size and expected > 0:
+            self.chi2_contrib = (obs_counts - expected) ** 2 / expected
+        else:
+            self.chi2_contrib = np.full_like(obs_counts, np.nan, dtype=float)
+
+        # simulation-based inference under CSR (reproducible via rng)
+        if realizations and realizations > 0:
+            n = self.points.shape[0]
+            intensity = n / float(self.window.area)
+
+            reals = poisson(self.window, intensity, realizations, rng=self.rng)
+
+            chi2_realizations = []
+            for i in range(realizations):
+                ri = reals[i]
+                pts_i = getattr(ri, "points", ri)
+                pts_i = _as_points_array(pts_i)
+
+                if shape == "rectangle":
+                    mr_temp = RectangleM(
+                        pts_i,
+                        count_column=self.mr.count_column,
+                        count_row=self.mr.count_row,
+                        window=self.window,
+                    )
+                else:
+                    mr_temp = HexagonM(pts_i, self.mr.h_length, window=self.window)
+
+                dtemp = mr_temp.point_location_sta()
+
+                if drop_nonintersecting:
+                    sim_counts = np.asarray(
+                        [dtemp[i] for i in self.cell_ids], dtype=float
+                    )
+                else:
+                    sim_counts = np.asarray(list(dtemp.values()), dtype=float)
+
+                chi2_sim, _p = scipy.stats.chisquare(sim_counts)
+                chi2_realizations.append(chi2_sim)
+
+            self.chi2_realizations = np.asarray(chi2_realizations, dtype=float)
+            self.chi2_r_pvalue = (np.sum(self.chi2_realizations >= self.chi2) + 1.0) / (
+                realizations + 1.0
             )
 
-        # calculate chi2 test statisitc for the observed point pattern
-        dict_id_count = self.mr.point_location_sta()
-        self.chi2, self.chi2_pvalue = scipy.stats.chisquare(
-            list(dict_id_count.values())
-        )
+    def plot(self, title="Quadrat Count", show="counts", drop_nonintersecting=False):
+        if show == "counts":
+            ax, _cell_ids = self.mr.plot(
+                title=title,
+                show="counts",
+                drop_nonintersecting=drop_nonintersecting,
+            )
+            return ax
 
-        self.df = self.mr.num - 1
+        if show == "chi2":
+            # get plotted ids
+            _, plotted_ids = self.mr.plot(
+                title=title,
+                show="counts",
+                drop_nonintersecting=drop_nonintersecting,
+            )
+            plt.close()
 
-        # when realizations is specified, perform simulation based
-        # inference.
-        if realizations:
-            reals = realizations.realizations
-            sim_n = realizations.samples
-            chi2_realizations = []  # store test statistics for all the
-            # similations
+            contrib_map = {cid: v for cid, v in zip(self.cell_ids, self.chi2_contrib)}
+            plotted_contrib = np.asarray(
+                [contrib_map.get(cid, np.nan) for cid in plotted_ids], dtype=float
+            )
 
-            for i in range(sim_n):
-                if shape == "rectangle":
-                    mr_temp = RectangleM(reals[i], count_column=nx, count_row=ny)
-                elif shape == "hexagon":
-                    mr_temp = HexagonM(reals[i], lh)
-                id_count_temp = mr_temp.point_location_sta().values()
+            ax, _ = self.mr.plot(
+                title=title,
+                show="chi2",
+                chi2_contrib=plotted_contrib,
+                drop_nonintersecting=drop_nonintersecting,
+            )
+            return ax
 
-                # calculate test statistics for simulated point patterns
-                chi2_sim, p = scipy.stats.chisquare(list(id_count_temp))
-                chi2_realizations.append(chi2_sim)
-            self.chi2_realizations = np.array(chi2_realizations)
-
-            # calculate pseudo pvalue
-            above_chi2 = self.chi2_realizations >= self.chi2
-            larger_chi2 = sum(above_chi2)
-            self.chi2_r_pvalue = (larger_chi2 + 1.0) / (sim_n + 1.0)
-
-    def plot(self, title="Quadrat Count"):
-        """
-        Plot quadrats as well as the number of points falling in each quadrat.
-
-        Parameters
-        ----------
-        title:   str, optional
-                 Title of the plot. Default is "Quadrat Count".
-
-        """
-
-        return self.mr.plot(title=title)
+        raise ValueError('show must be either "counts" or "chi2".')
