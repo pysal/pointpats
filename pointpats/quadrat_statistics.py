@@ -11,7 +11,7 @@ Quadrat statistics for planar point patterns
 
 """
 
-__author__ = "Serge Rey, Wei Kang, Hu Shao (refactor by ChatGPT)"
+__author__ = "Serge Rey, Wei Kang, Hu Shao"
 __all__ = ["RectangleM", "HexagonM", "QStatistic"]
 
 import math
