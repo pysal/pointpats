@@ -9,13 +9,6 @@ Quadrat statistics for planar point patterns
 - Plotting is self-contained (matplotlib only): scatters points, draws window, draws grid,
   annotates counts, and optionally annotates per-cell chi-square contributions.
 
-Notes
------
-1) The analytical chi-square currently assumes equal expected counts per *included* cell.
-   If/when you clip cells to an irregular window, you should switch expected counts to be
-   proportional to intersected area. (This module includes the hook for dropping cells
-   outside a window, but does not yet area-weight expectations.)
-2) Simulation-based p-value uses CSR with intensity = n / window.area.
 """
 
 __author__ = "Serge Rey, Wei Kang, Hu Shao (refactor by ChatGPT)"
@@ -189,13 +182,11 @@ class RectangleM:
         x0, y0, x1, y1 = self._rect_cell_bounds(ix, iy)
         return box(x0, y0, x1, y1)
 
-    def _iter_cells(self, drop_nonintersecting=False):
+    def _iter_cells(self):
         for iy in range(self.count_row):
             for ix in range(self.count_column):
                 cell_id = ix + iy * self.count_column
                 poly = self._rect_cell_polygon(ix, iy)
-                if drop_nonintersecting and (not poly.intersects(self.window)):
-                    continue
                 x0, y0, x1, y1 = self._rect_cell_bounds(ix, iy)
                 cx, cy = _cell_center_from_bounds(x0, y0, x1, y1)
                 yield cell_id, poly, (cx, cy)
@@ -205,7 +196,6 @@ class RectangleM:
         title="Quadrat Count",
         show="counts",
         chi2_contrib=None,
-        drop_nonintersecting=False,
     ):
         fig, ax = plt.subplots()
         ax.set_title(title)
@@ -219,9 +209,7 @@ class RectangleM:
         ann_xy = []
         cell_ids = []
 
-        for cell_id, poly, (cx, cy) in self._iter_cells(
-            drop_nonintersecting=drop_nonintersecting
-        ):
+        for cell_id, poly, (cx, cy) in self._iter_cells():
             patches.append(MplPolygon(np.asarray(poly.exterior.coords), closed=True))
             ann_xy.append((cx, cy))
             cell_ids.append(cell_id)
@@ -379,7 +367,7 @@ class HexagonM:
             dtype=float,
         )
 
-    def _iter_cells(self, drop_nonintersecting=False):
+    def _iter_cells(self):
         dict_id_count = self.point_location_sta()
 
         x_min = self.mbb[0]
@@ -397,9 +385,6 @@ class HexagonM:
             verts = self._hex_vertices(cx, cy)
             poly = Polygon(verts[:-1])
 
-            if drop_nonintersecting and (not poly.intersects(self.window)):
-                continue
-
             yield cell_id, poly, (cx, cy)
 
     def plot(
@@ -407,7 +392,6 @@ class HexagonM:
         title="Quadrat Count",
         show="counts",
         chi2_contrib=None,
-        drop_nonintersecting=False,
     ):
         fig, ax = plt.subplots()
         ax.set_title(title)
@@ -421,9 +405,7 @@ class HexagonM:
         ann_xy = []
         cell_ids = []
 
-        for cell_id, poly, (cx, cy) in self._iter_cells(
-            drop_nonintersecting=drop_nonintersecting
-        ):
+        for cell_id, poly, (cx, cy) in self._iter_cells():
             patches.append(MplPolygon(np.asarray(poly.exterior.coords), closed=True))
             ann_xy.append((cx, cy))
             cell_ids.append(cell_id)
@@ -465,8 +447,7 @@ class HexagonM:
 # Quadrat statistic
 # -----------------------------------------------------------------------------
 class QStatistic:
-    """
-    Pearson chi-square quadrat test for complete spatial randomness (CSR).
+    """Pearson chi-square quadrat test for complete spatial randomness (CSR).
 
     This class partitions the study region into quadrats (rectangles or hexagons),
     counts the number of events falling in each quadrat, and evaluates departure
@@ -507,13 +488,6 @@ class QStatistic:
     window : shapely geometry, optional
         Study window (e.g., Polygon or MultiPolygon). If None, the window is
         taken to be the axis-aligned MBB rectangle of `points`.
-    drop_nonintersecting : bool, default=False
-        If True, restricts the chi-square calculation to quadrats whose polygon
-        intersects `window`. This is primarily useful for plotting or for
-        avoiding fully external cells when `window` is irregular. Note that the
-        current implementation *does not* area-weight expected counts by the
-        intersection area of each cell with the window; expected counts remain
-        equal across retained cells.
     rng : None | int | numpy.random.Generator | numpy.random.RandomState, optional
         Random number generator control for reproducible CSR simulations when
         `realizations > 0`.
@@ -538,8 +512,7 @@ class QStatistic:
     mr : RectangleM or HexagonM
         Tessellation manager instance.
     cell_ids : list of int
-        Cell identifiers included in the test statistic (all cells unless
-        `drop_nonintersecting=True`).
+        Cell identifiers included in the test statistic (all grid cells).
     chi2 : float
         Observed Pearson chi-square statistic.
     df : int
@@ -561,11 +534,12 @@ class QStatistic:
 
     Notes
     -----
-    - The analytical test uses ``scipy.stats.chisquare`` with expected counts
-      equal across included cells (i.e., ``E = mean(O)``). This corresponds to
-      a homogeneous CSR null with equal-area cells. If you clip cells to an
-      irregular window and wish to retain correct expectations, expected counts
-      should be proportional to each cell's intersection area with the window.
+    - The analytical test uses ``scipy.stats.chisquare`` with expected
+      counts equal across cells (i.e., ``E = mean(O)``). This
+      corresponds to a homogeneous CSR null with equal-area cells. For
+      irregular windows, a fully-correct analytical reference would
+      area-weight expectations.
+
     - The simulation-based null generates CSR realizations within `window` with
       intensity ``n / area(window)``. Reproducibility depends on passing `rng`
       through to the underlying CSR generator (``poisson(..., rng=...)``).
@@ -574,6 +548,7 @@ class QStatistic:
     --------
     RectangleM : Rectangular tessellation over the point-set MBB.
     HexagonM : Hexagonal tessellation over the point-set MBB.
+
     """
 
     def __init__(
@@ -587,7 +562,6 @@ class QStatistic:
         lh=10,
         realizations=0,
         window=None,
-        drop_nonintersecting=False,
         rng=None,
     ):
         self.points = _as_points_array(points)
@@ -609,19 +583,10 @@ class QStatistic:
             self.mr = HexagonM(self.points, lh, window=self.window)
         else:
             raise ValueError('shape must be either "rectangle" or "hexagon".')
-
         dict_id_count = self.mr.point_location_sta()
 
-        if drop_nonintersecting:
-            kept_ids = [
-                cell_id
-                for cell_id, _poly, _ in self.mr._iter_cells(drop_nonintersecting=True)
-            ]
-            obs_counts = np.asarray([dict_id_count[i] for i in kept_ids], dtype=float)
-            self.cell_ids = kept_ids
-        else:
-            obs_counts = np.asarray(list(dict_id_count.values()), dtype=float)
-            self.cell_ids = list(dict_id_count.keys())
+        obs_counts = np.asarray(list(dict_id_count.values()), dtype=float)
+        self.cell_ids = list(dict_id_count.keys())
 
         self.chi2, self.chi2_pvalue = scipy.stats.chisquare(obs_counts)
         self.df = obs_counts.size - 1
@@ -656,13 +621,7 @@ class QStatistic:
                     mr_temp = HexagonM(pts_i, self.mr.h_length, window=self.window)
 
                 dtemp = mr_temp.point_location_sta()
-
-                if drop_nonintersecting:
-                    sim_counts = np.asarray(
-                        [dtemp[i] for i in self.cell_ids], dtype=float
-                    )
-                else:
-                    sim_counts = np.asarray(list(dtemp.values()), dtype=float)
+                sim_counts = np.asarray(list(dtemp.values()), dtype=float)
 
                 chi2_sim, _p = scipy.stats.chisquare(sim_counts)
                 chi2_realizations.append(chi2_sim)
@@ -672,22 +631,14 @@ class QStatistic:
                 realizations + 1.0
             )
 
-    def plot(self, title="Quadrat Count", show="counts", drop_nonintersecting=False):
+    def plot(self, title="Quadrat Count", show="counts"):
         if show == "counts":
-            ax, _cell_ids = self.mr.plot(
-                title=title,
-                show="counts",
-                drop_nonintersecting=drop_nonintersecting,
-            )
+            ax, _cell_ids = self.mr.plot(title=title, show="counts")
             return ax
 
         if show == "chi2":
             # get plotted ids
-            _, plotted_ids = self.mr.plot(
-                title=title,
-                show="counts",
-                drop_nonintersecting=drop_nonintersecting,
-            )
+            _, plotted_ids = self.mr.plot(title=title, show="counts")
             plt.close()
 
             contrib_map = {cid: v for cid, v in zip(self.cell_ids, self.chi2_contrib)}
@@ -695,12 +646,7 @@ class QStatistic:
                 [contrib_map.get(cid, np.nan) for cid in plotted_ids], dtype=float
             )
 
-            ax, _ = self.mr.plot(
-                title=title,
-                show="chi2",
-                chi2_contrib=plotted_contrib,
-                drop_nonintersecting=drop_nonintersecting,
-            )
+            ax, _ = self.mr.plot(title=title, show="chi2", chi2_contrib=plotted_contrib)
             return ax
 
         raise ValueError('show must be either "counts" or "chi2".')
