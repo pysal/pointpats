@@ -161,7 +161,7 @@ def poisson(hull, intensity=None, size=None, rng=None):
 
 
     Returns
-    --------
+    -------
         :   numpy.ndarray
         either an (n_replications, n_observations, 2) or (n_observations,2) array containing
         the simulated realizations.
@@ -218,7 +218,7 @@ def normal(hull, center=None, cov=None, size=None, seed=None, rng=None):
         of points to simulate in each replication and the second number is the number of
         total replications. So, (10, 4) indicates 10 points, 4 times.
         If an integer is provided, n_replications is assumed to be 1.
-     rng : int, numpy.random.Generator, or None, optional
+    rng : int, numpy.random.Generator, or None, optional
         A source of randomness. This can be:
 
         - A `numpy.random.Generator` instance (recommended)
@@ -230,7 +230,7 @@ def normal(hull, center=None, cov=None, size=None, seed=None, rng=None):
 
 
     Returns
-    --------
+    -------
         :   numpy.ndarray
         either an (n_replications, n_observations, 2) or (n_observations,2) array containing
         the simulated realizations.
@@ -340,7 +340,7 @@ def cluster_poisson(
 
 
     Returns
-    --------
+    -------
         :   numpy.ndarray
         either an (n_replications, n_observations, 2) or (n_observations,2) array containing
         the simulated realizations.
@@ -436,7 +436,7 @@ def cluster_normal(hull, cov=None, size=None, n_seeds=2, rng=None):
 
 
     Returns
-    --------
+    -------
         :   numpy.ndarray
         either an (n_replications, n_observations, 2) or (n_observations,2) array containing
         the simulated realizations.
