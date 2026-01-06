@@ -46,7 +46,7 @@ Explore the main workflows through executable notebooks:
 
         <!-- Distance statistics -->
         <div class="col-md-3 col-xs-12">
-          <a href="user-guide/distance_statistics.html" class="thumbnail">
+          <a href="user-guide/ripley.html" class="thumbnail">
             <img src="_static/images/ripleyg.png"
                  class="img-responsive center-block" alt="Distance statistics notebook">
             <div class="caption text-center">
