@@ -101,10 +101,35 @@ def poisson(hull, intensity=None, size=None, rng=None):
     """
     Simulate a poisson random point process with a specified intensity.
 
-    Added
-    -----
+    Parameters
+    ----------
+    hull : A geometry-like object
+        This encodes the "space" in which to simulate the normal pattern. All points will
+        lie within this hull. Supported values are:
+        - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])
+        - an (N,2) array of points for which the bounding box will be computed & used
+        - a shapely polygon/multipolygon
+        - a scipy convexh hull
+    intensity : float
+        the number of observations per unit area in the hull to use. If provided, then
+        size must be an integer describing the number of replications to use.
+    size : tuple or int
+        a tuple of (n_observations, n_replications), where the first number is the number
+        of points to simulate in each replication and the second number is the number of
+        total replications. So, (10, 4) indicates 10 points, 4 times.
+        If an integer is provided and intensity is None, n_replications is assumed to be 1.
+        If size is an integer and intensity is also provided, then size indicates n_replications,
+        and the number of observations is computed from the intensity.
     rng : None | int | numpy.random.Generator | numpy.random.RandomState
         Controls randomness for reproducibility.
+
+    Returns
+    -------
+        :   numpy.ndarray
+        either an (n_replications, n_observations, 2) or (n_observations,2) array containing
+        the simulated realizations.
+
+
     """
     rng = _coerce_rng(rng)
 
@@ -137,10 +162,36 @@ def normal(hull, center=None, cov=None, size=None, rng=None):
     """
     Simulate a multivariate random normal point cluster
 
-    Added
-    -----
+    Parameters
+    ----------
+    hull : A geometry-like object
+        This encodes the "space" in which to simulate the normal pattern. All points will
+        lie within this hull. Supported values are:
+        - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])
+        - an (N,2) array of points for which the bounding box will be computed & used
+        - a shapely polygon/multipolygon
+        - a scipy convexh hull
+    center : iterable of shape (2, )
+        A point where the simulations will be centered.
+    cov : float or a numpy array of shape (2,2)
+        either the standard deviation of an independent and identically distributed
+        normal distribution, or a 2 by 2 covariance matrix expressing the covariance
+        of the x and y for the distribution. Default is half of the width or height
+        of the hull's bounding box, whichever is larger.
+    size : tuple or int
+        a tuple of (n_observations, n_replications), where the first number is the number
+        of points to simulate in each replication and the second number is the number of
+        total replications. So, (10, 4) indicates 10 points, 4 times.
+        If an integer is provided, n_replications is assumed to be 1.
     rng : None | int | numpy.random.Generator | numpy.random.RandomState
         Controls randomness for reproducibility.
+
+    Returns
+    -------
+        :   numpy.ndarray
+        either an (n_replications, n_observations, 2) or (n_observations,2) array containing
+        the simulated realizations.
+
     """
     rng = _coerce_rng(rng)
 
@@ -212,11 +263,43 @@ def cluster_poisson(
 ):
     """
     Simulate a cluster poisson random point process with a specified intensity & number of seeds.
+    A cluster poisson process is a poisson process where the center of each "cluster" is
+    itself distributed according to a spatial poisson process.
 
-    Added
-    -----
+    Parameters
+    ----------
+    hull : A geometry-like object
+        This encodes the "space" in which to simulate the normal pattern. All points will
+        lie within this hull. Supported values are:
+        - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])
+        - an (N,2) array of points for which the bounding box will be computed & used
+        - a shapely polygon/multipolygon
+        - a scipy convexh hull
+    intensity : float
+        the number of observations per unit area in the hull to use. If provided, then
+        size must be an integer describing the number of replications to use.
+    size : tuple or int
+        a tuple of (n_observations, n_replications), where the first number is the number
+        of points to simulate in each replication and the second number is the number of
+        total replications. So, (10, 4) indicates 10 points, 4 times.
+        If an integer is provided and intensity is None, n_replications is assumed to be 1.
+        If size is an integer and intensity is also provided, then size indicates n_replications,
+        and the number of observations is computed from the intensity.
+    n_seeds : int
+        the number of sub-clusters to use.
+    cluster_radius : float or iterable
+        the radius of each cluster. If a float, the same radius is used for all clusters.
+        If an array, then there must be the same number of radii as clusters.
+        If None, 50% of the minimum inter-point distance is used, which may fluctuate across
+        replications.
     rng : None | int | numpy.random.Generator | numpy.random.RandomState
         Controls randomness for reproducibility.
+
+    Returns
+    -------
+        :   numpy.ndarray
+        either an (n_replications, n_observations, 2) or (n_observations,2) array containing
+        the simulated realizations.
     """
     rng = _coerce_rng(rng)
 
@@ -277,12 +360,41 @@ def cluster_poisson(
 
 def cluster_normal(hull, cov=None, size=None, n_seeds=2, rng=None):
     """
-    Simulate a cluster normal random point process.
 
-    Added
-    -----
+    Simulate a cluster poisson random point process with a specified intensity & number of seeds.
+    A cluster poisson process is a poisson process where the center of each "cluster" is
+    itself distributed according to a spatial poisson process.
+
+    Parameters
+    ----------
+    hull : A geometry-like object
+        This encodes the "space" in which to simulate the normal pattern. All points will
+        lie within this hull. Supported values are:
+        - a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])
+        - an (N,2) array of points for which the bounding box will be computed & used
+        - a shapely polygon/multipolygon
+        - a scipy convexh hull
+    cov : float, int, or numpy.ndarray of shape (2,2)
+        The covariance structure for clusters. By default, this is the squared
+        average distance between cluster seeds.
+    size : tuple or int
+        a tuple of (n_observations, n_replications), where the first number is the number
+        of points to simulate in each replication and the second number is the number of
+        total replications. So, (10, 4) indicates 10 points, 4 times.
+        If an integer is provided and intensity is None, n_replications is assumed to be 1.
+        If size is an integer and intensity is also provided, then size indicates n_replications,
+        and the number of observations is computed from the intensity.
+    n_seeds : int
+        the number of sub-clusters to use.
     rng : None | int | numpy.random.Generator | numpy.random.RandomState
         Controls randomness for reproducibility.
+
+    Returns
+    -------
+        :   numpy.ndarray
+        either an (n_replications, n_observations, 2) or (n_observations,2) array containing
+        the simulated realizations.
+
     """
     rng = _coerce_rng(rng)
 
@@ -333,10 +445,24 @@ def _uniform_circle(
     """
     Generate n points within a circle of given radius.
 
-    Added
-    -----
+    Parameters
+    ----------
+    n : int
+        Number of points.
+    radius : float
+        Radius of the circle.
+    center : tuple
+        Coordinates of the center.
+    burn : int
+        number of coordinates to simulate at a time. This is the "chunk"
+        size sent to numpy.random.uniform each iteration of the rejection sampler
     rng : None | int | numpy.random.Generator | numpy.random.RandomState
         Controls randomness for reproducibility.
+
+    Returns
+    -------
+      : array
+        (n, 2), coordinates of generated points
     """
     rng = _coerce_rng(rng)
 
