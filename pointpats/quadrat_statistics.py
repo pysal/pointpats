@@ -31,6 +31,62 @@ from .random import poisson
 # Helpers
 # -----------------------------------------------------------------------------
 def _as_points_array(points) -> np.ndarray:
+    """
+    Normalize input into an (n, 2) float ndarray.
+
+    Accepts:
+      - array-like shaped (n, 2)
+      - GeoPandas GeoSeries / GeometryArray of Points (and optionally MultiPoints)
+
+    Returns:
+      - np.ndarray of shape (n, 2)
+
+    Raises:
+      - ValueError for empty inputs or non-2D coordinate inputs
+      - TypeError for unsupported geometry types
+    """
+    # ---- GeoPandas / Shapely path (only if those objects are present) ----
+    try:
+        import geopandas as gpd  # optional dependency
+        from shapely.geometry import Point, MultiPoint
+    except Exception:
+        gpd = None
+        Point = MultiPoint = None
+
+    if gpd is not None and isinstance(
+        points, (gpd.GeoSeries, getattr(gpd.array, "GeometryArray", ()))
+    ):
+        # Convert GeoSeries/GeometryArray to a flat list of coordinate pairs
+        geoms = list(points)
+
+        if len(geoms) == 0:
+            raise ValueError("points is empty; cannot compute mbb.")
+
+        coords = []
+        for geom in geoms:
+            if geom is None or (hasattr(geom, "is_empty") and geom.is_empty):
+                continue
+
+            if Point is not None and isinstance(geom, Point):
+                coords.append((geom.x, geom.y))
+            elif MultiPoint is not None and isinstance(geom, MultiPoint):
+                coords.extend([(p.x, p.y) for p in geom.geoms])
+            else:
+                raise TypeError(
+                    "GeoSeries must contain Point geometries (optionally MultiPoint). "
+                    f"Got geometry type: {getattr(geom, 'geom_type', type(geom).__name__)}"
+                )
+
+        if len(coords) == 0:
+            raise ValueError(
+                "points has no non-empty Point geometries; cannot compute mbb."
+            )
+
+        pts = np.asarray(coords, dtype=float)
+        # guaranteed (n,2) here
+        return pts
+
+    # ---- Generic array-like path ----
     pts = np.asarray(points)
     if pts.ndim != 2 or pts.shape[1] != 2:
         raise ValueError(f"points must be a (n, 2) array-like. Got shape {pts.shape}.")
