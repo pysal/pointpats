@@ -89,23 +89,57 @@ def test_ensure_window_none_uses_box():
     assert w.equals(box(0.0, 1.0, 2.0, 3.0))
 
 
-def test_coerce_rng_variants():
-    g0 = m._coerce_rng(None)
-    assert isinstance(g0, np.random.Generator)
+def test_coerce_rng_none():
+    rng = m._coerce_rng(None)
+    assert isinstance(rng, np.random.Generator)
 
-    g1 = m._coerce_rng(123)
-    assert isinstance(g1, np.random.Generator)
 
-    g2_in = np.random.default_rng(456)
-    g2 = m._coerce_rng(g2_in)
-    assert g2 is g2_in
+def test_coerce_rng_int():
+    rng = m._coerce_rng(123)
+    assert isinstance(rng, np.random.Generator)
 
-    rs = np.random.RandomState(789)
-    g3 = m._coerce_rng(rs)
-    assert isinstance(g3, np.random.Generator)
+    # Determinism check
+    rng2 = m._coerce_rng(123)
+    assert rng.random() == rng2.random()
 
-    with pytest.raises(TypeError, match="rng must be None"):
-        m._coerce_rng("nope")
+
+def test_coerce_rng_numpy_integer():
+    rng = m._coerce_rng(np.int64(456))
+    assert isinstance(rng, np.random.Generator)
+
+
+def test_coerce_rng_generator_passthrough():
+    gen = np.random.default_rng(789)
+    out = m._coerce_rng(gen)
+    assert out is gen
+
+
+def test_coerce_rng_bitgenerator():
+    bitgen = np.random.PCG64(123)
+    rng = m._coerce_rng(bitgen)
+    assert isinstance(rng, np.random.Generator)
+    assert rng.bit_generator is bitgen
+
+
+def test_coerce_rng_randomstate():
+    rs = np.random.RandomState(321)
+    rng = m._coerce_rng(rs)
+
+    assert isinstance(rng, np.random.Generator)
+
+    # Reproduce the seed used by _coerce_rng: it is the FIRST randint draw from RS(321).
+    rs2 = np.random.RandomState(321)
+    seed = int(rs2.randint(0, 2**32 - 1, dtype=np.uint32))
+
+    expected = np.random.default_rng(seed)
+
+    assert rng.random() == expected.random()
+
+
+def test_coerce_rng_seedsequence():
+    ss = np.random.SeedSequence(999)
+    rng = m._coerce_rng(ss)
+    assert isinstance(rng, np.random.Generator)
 
 
 def test_window_to_paths_polygon_and_hole(window_poly_with_hole):

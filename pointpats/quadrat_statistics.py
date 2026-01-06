@@ -109,25 +109,40 @@ def _ensure_window(window, mbb):
     return window
 
 
-def _coerce_rng(rng: Optional[object]):
-    """
-    Accepts:
-      - None -> creates a fresh default_rng()
-      - int  -> seeded default_rng(int)
-      - np.random.Generator -> returned as-is
-      - np.random.RandomState -> wrapped via default_rng(RandomState)
+def _coerce_rng(rng):
+    """Coerce rng input to a NumPy Generator.
+
+    Parameters
+    ----------
+    rng : None | int | numpy.random.Generator | numpy.random.RandomState | numpy.random.BitGenerator
+        Random number generator specification.
+
+    Returns
+    -------
+    numpy.random.Generator
     """
     if rng is None:
         return np.random.default_rng()
-    if isinstance(rng, (int, np.integer)):
-        return np.random.default_rng(int(rng))
+
     if isinstance(rng, np.random.Generator):
         return rng
+
+    # Accept legacy RandomState by deriving a seed from it.
     if isinstance(rng, np.random.RandomState):
-        return np.random.default_rng(rng)
-    raise TypeError(
-        "rng must be None, an int seed, numpy.random.Generator, or numpy.random.RandomState."
-    )
+        # Draw a seed deterministically from the RandomState stream.
+        seed = int(rng.randint(0, 2**32 - 1, dtype=np.uint32))
+        return np.random.default_rng(seed)
+
+    # If a BitGenerator is passed, wrap it.
+    if isinstance(rng, np.random.BitGenerator):
+        return np.random.Generator(rng)
+
+    # Int-like seeds
+    if isinstance(rng, (int, np.integer)):
+        return np.random.default_rng(int(rng))
+
+    # Fall back to NumPy’s coercion (e.g., SeedSequence)
+    return np.random.default_rng(rng)
 
 
 def _window_to_paths(window_geom):
