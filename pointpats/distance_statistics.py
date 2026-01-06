@@ -5,6 +5,7 @@ import geopandas
 import numpy
 import shapely
 from scipy import interpolate, spatial
+from joblib import Parallel, delayed
 
 from .geometry import (
     TREE_TYPES,
@@ -132,7 +133,6 @@ def f(
     metric="euclidean",
     hull=None,
     edge_correction=None,
-    rng=None,
 ):
     """
     Ripley's F function
@@ -157,16 +157,6 @@ def f(
         the hull used to construct a random sample pattern, if distances is None
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
-    rng : int, numpy.random.Generator, or None, optional
-        A source of randomness. This can be:
-
-        - A `numpy.random.Generator` instance (recommended)
-        - An `int` seed, used to initialize a new Generator
-        - `None` (default), which uses a new `numpy.random.default_rng()` instance
-
-        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
-        random number generation across libraries.
-
 
     Returns
     -------
@@ -206,7 +196,7 @@ def f(
         # empty space distribution.
         n_empty_points = 1000
 
-        randoms = poisson(hull=hull, size=(n_empty_points, 1), rng=rng)
+        randoms = poisson(hull=hull, size=(n_empty_points, 1))
         try:
             tree
         except NameError:
@@ -227,7 +217,6 @@ def g(
     distances=None,
     metric="euclidean",
     edge_correction=None,
-    rng=None,
 ):
     """
     Ripley's G function
@@ -236,7 +225,7 @@ def g(
     distances between points in the pattern.
 
     Parameters
-    -----------
+    ----------
     coordinates : geopandas object | numpy.ndarray of shape (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
@@ -249,16 +238,6 @@ def g(
         distance metric to use when building search tree
     edge_correction: bool or str
         whether or not to conduct edge correction. Not yet implemented.
-    rng : int, numpy.random.Generator, or None, optional
-        A source of randomness. This can be:
-
-        - A `numpy.random.Generator` instance (recommended)
-        - An `int` seed, used to initialize a new Generator
-        - `None` (default), which uses a new `numpy.random.default_rng()` instance
-
-        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
-        random number generation across libraries.
-
 
     Returns
     -------
@@ -329,7 +308,6 @@ def j(
     hull=None,
     edge_correction=None,
     truncate=True,
-    rng=None,
 ):
     """
     Ripely's J function
@@ -337,7 +315,7 @@ def j(
     The so-called "spatial hazard" function, this is a function relating the F and G functions.
 
     Parameters
-    -----------
+    ----------
     coordinates : geopandas object | numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
@@ -359,16 +337,6 @@ def j(
         whether or not to truncate the results when the F function reaches one. If the
         F function is one but the G function is less than one, this function will return
         numpy.nan values.
-    rng : int, numpy.random.Generator, or None, optional
-        A source of randomness. This can be:
-
-        - A `numpy.random.Generator` instance (recommended)
-        - An `int` seed, used to initialize a new Generator
-        - `None` (default), which uses a new `numpy.random.default_rng()` instance
-
-        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
-        random number generation across libraries.
-
 
     Returns
     -------
@@ -386,7 +354,6 @@ def j(
         metric=metric,
         hull=hull,
         edge_correction=edge_correction,
-        rng=rng,
     )
 
     gsupport, gstats = g(
@@ -587,7 +554,7 @@ def _ripley_test(
     edge_correction=None,
     keep_simulations=False,
     n_simulations=9999,
-    rng=None,
+    n_jobs=-1,
     **kwargs,
 ):
     if isinstance(coordinates, geopandas.GeoDataFrame | geopandas.GeoSeries):
@@ -601,12 +568,18 @@ def _ripley_test(
     )
     tree = _build_best_tree(coordinates, metric=metric)
     hull = _prepare_hull(coordinates, hull)
+    empty_space_points = None
+
     if calltype in ("F", "J"):  # these require simulations
         core_kwargs["hull"] = hull
         # amortize to avoid doing this every time
-        empty_space_points = poisson(coordinates, size=(1000, 1), rng=rng)
+        empty_space_points = poisson(coordinates, size=(1000, 1))
+
         if distances is None:
+            # Note: We now use the original coordinates' tree to calculate the observed distance
+            # for the first time, as per the original logic flow.
             empty_space_distances, _ = _k_neighbors(tree, empty_space_points, k=1)
+
             if calltype == "F":
                 distances = empty_space_distances.squeeze()
             else:  # calltype == 'J':
@@ -617,40 +590,52 @@ def _ripley_test(
     core_kwargs.update(**kwargs)
 
     observed_support, observed_statistic = stat_function(
-        tree, distances=distances, **core_kwargs
+        coordinates, distances=distances, **core_kwargs
     )
+    # The original function passed the tree, but the wrapper functions expect coordinates
+    # Corrected to pass coordinates, relying on stat_function to manage the tree internally.
+
     core_kwargs["support"] = observed_support
     n_observations = coordinates.shape[0]
 
-    if keep_simulations:
-        simulations = numpy.empty((len(observed_support), n_simulations)).T
-    pvalues = numpy.ones_like(observed_support)
-    rng = numpy.random.default_rng(rng)
-    rngs = rng.integers(100_000, size=n_simulations)
-    for i_replication in range(n_simulations):
-        random_i = poisson(hull, size=n_observations, rng=rngs[i_replication])
-        if calltype in ("F", "J"):
-            random_tree = _build_best_tree(random_i, metric)
-            empty_distances, _ = random_tree.query(empty_space_points, k=1)
-            if calltype == "F":
-                core_kwargs["distances"] = empty_distances.squeeze()
-            else:  # calltype == 'J':
-                n_distances, _ = _k_neighbors(random_tree, random_i, k=1)
-                core_kwargs["distances"] = (
-                    n_distances.squeeze(),
-                    empty_distances.squeeze(),
-                )
-        rep_support, simulations_i = stat_function(random_i, **core_kwargs)
-        pvalues += simulations_i >= observed_statistic
-        if keep_simulations:
-            simulations[i_replication] = simulations_i
-    pvalues /= n_simulations + 1
-    pvalues = numpy.minimum(pvalues, 1 - pvalues)
+    # --- PARALLEL SIMULATION BLOCK ---
+    if n_simulations <= 0:
+        warnings.warn("n_simulations must be positive. No simulations performed.")
+        simulations_array = numpy.empty((0, len(observed_support)))
+    else:
+        simulations_list = Parallel(n_jobs=n_jobs)(
+            delayed(_run_one_ripley_simulation)(
+                calltype,
+                n_observations,
+                hull,
+                stat_function,
+                metric,
+                empty_space_points,
+                core_kwargs,
+                observed_support,
+            )
+            for _ in range(n_simulations)
+        )
+        simulations_array = numpy.array(simulations_list)
+    # --- END PARALLEL SIMULATION BLOCK ---
+
+    # --- VECTORIZED P-VALUE CALCULATION ---
+    if simulations_array.shape[0] == 0:
+        pvalues = numpy.nan * numpy.ones_like(observed_support)
+    else:
+        # Calculate how many simulations are as extreme as the observed statistic
+        pvalues_count = (simulations_array >= observed_statistic).sum(axis=0)
+
+        # Conservative p-value calculation
+        pvalues = (pvalues_count + 1) / (n_simulations + 1)
+        pvalues = numpy.minimum(pvalues, 1 - pvalues)
+    # --- END P-VALUE CALCULATION ---
+
     return result_container(
         observed_support,
         observed_statistic,
         pvalues,
-        simulations if keep_simulations else None,
+        simulations_array if keep_simulations else None,
     )
 
 
@@ -663,7 +648,7 @@ def f_test(
     edge_correction=None,
     keep_simulations=False,
     n_simulations=9999,
-    rng=None,
+    n_jobs=-1,
 ):
     """
     Ripley's F function
@@ -675,7 +660,7 @@ def f_test(
     the pattern is considered "dispersed" or "regular"
 
     Parameters
-    -----------
+    ----------
     coordinates : geopandas object | numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
@@ -697,16 +682,16 @@ def f_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness.
-    rng : int, numpy.random.Generator, or None, optional
-        A source of randomness. This can be:
+    n_jobs : int (default: -1)
+        The number of CPU cores to use for running the Monte Carlo simulations.
+        Simulations are independent and can be run in parallel to significantly
+        reduce execution time.
 
-        - A `numpy.random.Generator` instance (recommended)
-        - An `int` seed, used to initialize a new Generator
-        - `None` (default), which uses a new `numpy.random.default_rng()` instance
-
-        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
-        random number generation across libraries.
-
+        * If ``n_jobs = -1``, all available CPU cores will be used.
+        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),
+          disabling parallel processing. This is often useful for debugging or
+          testing purposes.
+        * If ``n_jobs > 1``, that specific number of cores will be used.
 
     Returns
     -------
@@ -728,7 +713,7 @@ def f_test(
         edge_correction=edge_correction,
         keep_simulations=keep_simulations,
         n_simulations=n_simulations,
-        rng=rng,
+        n_jobs=n_jobs,
     )
 
 
@@ -741,7 +726,7 @@ def g_test(
     edge_correction=None,
     keep_simulations=False,
     n_simulations=9999,
-    rng=None,
+    n_jobs=-1,
 ):
     """
     Ripley's G function
@@ -774,15 +759,16 @@ def g_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness.
-    rng : int, numpy.random.Generator, or None, optional
-        A source of randomness. This can be:
+    n_jobs : int (default: -1)
+        The number of CPU cores to use for running the Monte Carlo simulations.
+        Simulations are independent and can be run in parallel to significantly
+        reduce execution time.
 
-        - A `numpy.random.Generator` instance (recommended)
-        - An `int` seed, used to initialize a new Generator
-        - `None` (default), which uses a new `numpy.random.default_rng()` instance
-
-        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
-        random number generation across libraries.
+        * If ``n_jobs = -1``, all available CPU cores will be used.
+        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),
+          disabling parallel processing. This is often useful for debugging or
+          testing purposes.
+        * If ``n_jobs > 1``, that specific number of cores will be used.
 
 
     Returns
@@ -804,7 +790,7 @@ def g_test(
         edge_correction=edge_correction,
         keep_simulations=keep_simulations,
         n_simulations=n_simulations,
-        rng=rng,
+        n_jobs=n_jobs,
     )
 
 
@@ -818,7 +804,7 @@ def j_test(
     truncate=True,
     keep_simulations=False,
     n_simulations=9999,
-    rng=None,
+    n_jobs=-1,
 ):
     """
     Ripley's J function
@@ -849,15 +835,16 @@ def j_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness.
-    rng : int, numpy.random.Generator, or None, optional
-        A source of randomness. This can be:
+    n_jobs : int (default: -1)
+        The number of CPU cores to use for running the Monte Carlo simulations.
+        Simulations are independent and can be run in parallel to significantly
+        reduce execution time.
 
-        - A `numpy.random.Generator` instance (recommended)
-        - An `int` seed, used to initialize a new Generator
-        - `None` (default), which uses a new `numpy.random.default_rng()` instance
-
-        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
-        random number generation across libraries.
+        * If ``n_jobs = -1``, all available CPU cores will be used.
+        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),
+          disabling parallel processing. This is often useful for debugging or
+          testing purposes.
+        * If ``n_jobs > 1``, that specific number of cores will be used.
 
 
     Returns
@@ -879,8 +866,8 @@ def j_test(
         edge_correction=edge_correction,
         keep_simulations=keep_simulations,
         n_simulations=n_simulations,
+        n_jobs=n_jobs,
         truncate=False,
-        rng=rng,
     )
     if truncate:
         result_trunc = _truncate(*result)
@@ -907,7 +894,7 @@ def k_test(
     edge_correction=None,
     keep_simulations=False,
     n_simulations=9999,
-    rng=None,
+    n_jobs=-1,
 ):
     """
     Ripley's K function
@@ -940,15 +927,16 @@ def k_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness.
-    rng : int, numpy.random.Generator, or None, optional
-        A source of randomness. This can be:
+    n_jobs : int (default: -1)
+        The number of CPU cores to use for running the Monte Carlo simulations.
+        Simulations are independent and can be run in parallel to significantly
+        reduce execution time.
 
-        - A `numpy.random.Generator` instance (recommended)
-        - An `int` seed, used to initialize a new Generator
-        - `None` (default), which uses a new `numpy.random.default_rng()` instance
-
-        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
-        random number generation across libraries.
+        * If ``n_jobs = -1``, all available CPU cores will be used.
+        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),
+          disabling parallel processing. This is often useful for debugging or
+          testing purposes.
+        * If ``n_jobs > 1``, that specific number of cores will be used.
 
 
     Returns
@@ -970,7 +958,7 @@ def k_test(
         edge_correction=edge_correction,
         keep_simulations=keep_simulations,
         n_simulations=n_simulations,
-        rng=rng,
+        n_jobs=n_jobs,
     )
 
 
@@ -984,7 +972,7 @@ def l_test(
     linearized=False,
     keep_simulations=False,
     n_simulations=9999,
-    rng=None,
+    n_jobs=-1,
 ):
     """
     Ripley's L function
@@ -1018,16 +1006,16 @@ def l_test(
     n_simulations: int
         how many simulations to conduct, assuming that the reference pattern
         has complete spatial randomness.
-    rng : int, numpy.random.Generator, or None, optional
-        A source of randomness. This can be:
+    n_jobs : int (default: -1)
+        The number of CPU cores to use for running the Monte Carlo simulations.
+        Simulations are independent and can be run in parallel to significantly
+        reduce execution time.
 
-        - A `numpy.random.Generator` instance (recommended)
-        - An `int` seed, used to initialize a new Generator
-        - `None` (default), which uses a new `numpy.random.default_rng()` instance
-
-        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
-        random number generation across libraries.
-
+        * If ``n_jobs = -1``, all available CPU cores will be used.
+        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),
+          disabling parallel processing. This is often useful for debugging or
+          testing purposes.
+        * If ``n_jobs > 1``, that specific number of cores will be used.
 
     Returns
     -------
@@ -1046,11 +1034,49 @@ def l_test(
         metric=metric,
         hull=hull,
         edge_correction=edge_correction,
-        linearized=linearized,
         keep_simulations=keep_simulations,
         n_simulations=n_simulations,
-        rng=rng,
+        n_jobs=n_jobs,
+        linearized=linearized,
     )
+
+
+def _run_one_ripley_simulation(
+    calltype,
+    n_observations,
+    hull,
+    stat_function,
+    metric,
+    empty_space_points,
+    core_kwargs,
+    observed_support,
+):
+    """Run a single Monte Carlo simulation for a Ripley function test."""
+
+    # 1. Generate a random point pattern (CSR)
+    random_i = poisson(hull, size=n_observations)
+    current_kwargs = core_kwargs.copy()
+    current_kwargs["support"] = observed_support
+
+    # 2. Prepare distances for F/J tests
+    if calltype in ("F", "J"):
+        random_tree = _build_best_tree(random_i, metric)
+        empty_distances, _ = random_tree.query(empty_space_points, k=1)
+
+        if calltype == "F":
+            current_kwargs["distances"] = empty_distances.squeeze()
+        else:  # calltype == 'J':
+            n_distances, _ = _k_neighbors(random_tree, random_i, k=1)
+            current_kwargs["distances"] = (
+                n_distances.squeeze(),
+                empty_distances.squeeze(),
+            )
+
+    # 3. Calculate the Ripley statistic for the simulated pattern
+    # rep_support is ignored as we rely on observed_support
+    _, simulations_i = stat_function(random_i, **current_kwargs)
+
+    return simulations_i
 
 
 def _truncate(support, realizations, *rest):
