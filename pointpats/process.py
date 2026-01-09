@@ -142,8 +142,6 @@ class PointProcess(object):
         n = parameter["n"]
         while c < n:
             pnts = self.realize(n)
-            pnts = list(pnts)
-            print(f"{type(pnts[0])=}")
             pnts = [ps.cg.shapes.Point((x[0], y[0])) for x, y in pnts]
             pins = self.window.filter_contained(pnts)
             sample.extend(pins)
