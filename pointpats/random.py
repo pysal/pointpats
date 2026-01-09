@@ -475,7 +475,7 @@ def cluster_normal(hull, cov=None, size=None, n_seeds=2, rng=None):
                 center=center,
                 cov=cov,
                 size=n_in_cluster - 1,
-                seed=candidate_seeds[i_cluster],
+                rng=candidate_seeds[i_cluster],
             )
             clusters[i_cluster] = numpy.row_stack((center, candidates))
         result[i_replication] = numpy.row_stack(clusters)
