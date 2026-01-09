@@ -193,7 +193,7 @@ def poisson(hull, intensity=None, size=None, rng=None):
     return result.squeeze()
 
 
-def normal(hull, center=None, cov=None, size=None, seed=None, rng=None):
+def normal(hull, center=None, cov=None, size=None, rng=None):
     """
     Simulate a multivariate random normal point cluster
 
@@ -262,9 +262,9 @@ def normal(hull, center=None, cov=None, size=None, seed=None, rng=None):
                 2,
                 2,
             ), "3-dimensional covariance matrices must have shape (n_simulations, 2,2)"
-            assert cov.shape[0] == n_simulations, (
-                "3-dimensional covariance matrices must have shape (n_simulations, 2,2)"
-            )
+            assert (
+                cov.shape[0] == n_simulations
+            ), "3-dimensional covariance matrices must have shape (n_simulations, 2,2)"
     else:
         raise ValueError(
             "`cov` argument must be a float (signifying a standard deviation)"
@@ -295,7 +295,7 @@ def normal(hull, center=None, cov=None, size=None, seed=None, rng=None):
 
 
 def cluster_poisson(
-    hull, intensity=None, size=None, n_seeds=2, cluster_radius=None, seed=None, rng=None
+    hull, intensity=None, size=None, n_seeds=2, cluster_radius=None, rng=None
 ):
     """
     Simulate a cluster poisson random point process with a specified intensity & number of seeds.
