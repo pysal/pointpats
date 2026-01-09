@@ -8,11 +8,27 @@ from shapely.geometry import Point, MultiPoint, Polygon, MultiPolygon, box
 
 
 import pointpats.quadrat_statistics as m
+import pointpats
 
 
 # -----------------------------------------------------------------------------
 # Fixtures
 # -----------------------------------------------------------------------------
+@pytest.fixture
+def pointpattern():
+    """
+    Return a simple pointpats.PointPattern with 3 points.
+    """
+    pts = np.array(
+        [
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [2.0, 2.0],
+        ]
+    )
+    return pointpats.PointPattern(pts)
+
+
 @pytest.fixture
 def pts_simple():
     # Four points spanning a 2x2 square (mbb = [0,0,2,2])
@@ -195,6 +211,10 @@ def test_as_points_array_geoseries_all_empty_errors():
     # Point() is empty in shapely
     with pytest.raises(ValueError, match="no non-empty Point geometries"):
         m._as_points_array(s)
+
+
+def test_as_points_array_pointpattern(pointpattern):
+    assert isinstance(m._as_points_array(pointpattern), np.ndarray)
 
 
 # -----------------------------------------------------------------------------

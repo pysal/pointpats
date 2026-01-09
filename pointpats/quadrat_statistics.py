@@ -19,6 +19,7 @@ from typing import Optional
 
 import numpy as np
 import scipy.stats
+import geopandas as gpd
 from shapely.geometry import Polygon, MultiPolygon, box
 from matplotlib import pyplot as plt
 from matplotlib.patches import Polygon as MplPolygon
@@ -37,6 +38,7 @@ def _as_points_array(points) -> np.ndarray:
     Accepts:
       - array-like shaped (n, 2)
       - GeoPandas GeoSeries / GeometryArray of Points (and optionally MultiPoints)
+      - PointPattern
 
     Returns:
       - np.ndarray of shape (n, 2)
@@ -45,46 +47,24 @@ def _as_points_array(points) -> np.ndarray:
       - ValueError for empty inputs or non-2D coordinate inputs
       - TypeError for unsupported geometry types
     """
-    # ---- GeoPandas / Shapely path (only if those objects are present) ----
-    try:
-        import geopandas as gpd  # optional dependency
-        from shapely.geometry import Point, MultiPoint
-    except Exception:
-        gpd = None
-        Point = MultiPoint = None
-
-    if gpd is not None and isinstance(
-        points, (gpd.GeoSeries, getattr(gpd.array, "GeometryArray", ()))
-    ):
-        # Convert GeoSeries/GeometryArray to a flat list of coordinate pairs
-        geoms = list(points)
-
-        if len(geoms) == 0:
-            raise ValueError("points is empty; cannot compute mbb.")
-
-        coords = []
-        for geom in geoms:
-            if geom is None or (hasattr(geom, "is_empty") and geom.is_empty):
-                continue
-
-            if Point is not None and isinstance(geom, Point):
-                coords.append((geom.x, geom.y))
-            elif MultiPoint is not None and isinstance(geom, MultiPoint):
-                coords.extend([(p.x, p.y) for p in geom.geoms])
-            else:
-                raise TypeError(
-                    "GeoSeries must contain Point geometries (optionally MultiPoint). "
-                    f"Got geometry type: {getattr(geom, 'geom_type', type(geom).__name__)}"
-                )
-
-        if len(coords) == 0:
-            raise ValueError(
-                "points has no non-empty Point geometries; cannot compute mbb."
+    if isinstance(points, gpd.GeoSeries):
+        points = points.dropna()
+        if not points.geom_type.isin(["Point", "MultiPoint"]).all():
+            raise TypeError(
+                "GeoSeries must contain Point geometries (optionally MultiPoint). "
+                f"Got geometry type: {getattr(points, 'geom_type', type(points).__name__)}"
             )
 
-        pts = np.asarray(coords, dtype=float)
-        # guaranteed (n,2) here
-        return pts
+        coords = points.get_coordinates()
+
+        if len(coords) == 0:
+            raise ValueError("no non-empty Point geometries.")
+
+        return coords.values.astype(float)
+
+    # ---- PointPattern ---
+    if hasattr(points, "points"):
+        return points.points.values
 
     # ---- Generic array-like path ----
     pts = np.asarray(points)
@@ -533,7 +513,7 @@ class QStatistic:
 
     Parameters
     ----------
-    points : array_like
+    points : :class: `.PointPattern` or array_like
         Event coordinates as an (n, 2) array-like of floats (x, y).
     shape : {"rectangle", "hexagon"}, default="rectangle"
         Quadrat tessellation type.
