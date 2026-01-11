@@ -15,15 +15,14 @@ __author__ = "Serge Rey, Wei Kang, Hu Shao"
 __all__ = ["RectangleM", "HexagonM", "QStatistic"]
 
 import math
-from typing import Optional
 
+import geopandas as gpd
 import numpy as np
 import scipy.stats
-import geopandas as gpd
-from shapely.geometry import Polygon, MultiPolygon, box
 from matplotlib import pyplot as plt
-from matplotlib.patches import Polygon as MplPolygon
 from matplotlib.collections import PatchCollection
+from matplotlib.patches import Polygon as MplPolygon
+from shapely.geometry import MultiPolygon, Polygon, box
 
 from .random import poisson
 
