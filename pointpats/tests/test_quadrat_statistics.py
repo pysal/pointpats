@@ -1,72 +1,467 @@
-import unittest
+import importlib
+import math
+
 import numpy as np
-import geopandas
-
-from ..quadrat_statistics import *
-from ..pointpattern import PointPattern
-
-from libpysal.common import RTOL, ATOL
+import pytest
+import scipy.stats
+from shapely.geometry import Point, MultiPoint, Polygon, MultiPolygon, box
 
 
-class TestQuadratStatistics(unittest.TestCase):
-    def setUp(self):
-        self.points = [
-            [94., 93.], [80., 95.], [79., 90.], [78., 92.], [76., 92.], [66., 93.], [64., 90.], [27., 70.], [58., 88.],
-            [57., 92.], [53., 92.], [50., 90.], [49., 90.], [32., 90.], [31., 87.], [22., 87.], [21., 87.], [21., 86.],
-            [22., 81.], [23., 83.], [27., 85.], [27., 84.], [27., 83.], [27., 82.], [30., 84.], [31., 84.], [31., 84.],
-            [32., 83.], [33., 81.], [32., 79.], [32., 76.], [33., 77.], [34., 86.], [34., 84.], [38., 82.], [39., 81.],
-            [40., 80.], [41., 83.], [43., 75.], [44., 81.], [46., 81.], [47., 82.], [47., 81.], [48., 80.], [48., 81.],
-            [50., 85.], [51., 84.], [52., 83.], [55., 85.], [57., 88.], [57., 81.], [60., 87.], [69., 80.], [71., 82.],
-            [72., 81.], [74., 82.], [75., 81.], [77., 88.], [80., 88.], [82., 77.], [66., 62.], [64., 71.], [59., 63.],
-            [55., 64.], [53., 68.], [52., 59.], [51., 61.], [50., 75.], [50., 74.], [45., 61.], [44., 60.], [43., 59.],
-            [42., 61.], [39., 71.], [37., 67.], [35., 70.], [31., 68.], [30., 71.], [29., 61.], [26., 69.], [24., 68.],
-            [7., 52.], [11., 53.], [34., 50.], [36., 47.], [37., 45.], [37., 56.], [38., 55.], [38., 50.], [39., 52.],
-            [41., 52.], [47., 49.], [50., 57.], [52., 56.], [53., 55.], [56., 57.], [69., 52.], [69., 50.], [71., 51.],
-            [71., 51.], [73., 48.], [74., 48.], [75., 46.], [75., 46.], [86., 51.], [87., 51.], [87., 52.], [90., 52.],
-            [91., 51.], [87., 42.], [81., 39.], [80., 43.], [79., 37.], [78., 38.], [75., 44.], [73., 41.], [71., 44.],
-            [68., 29.], [62., 33.], [61., 35.], [60., 34.], [58., 36.], [54., 30.], [52., 38.], [52., 36.], [47., 37.],
-            [46., 36.], [45., 33.], [36., 32.], [22., 39.], [21., 38.], [22., 35.], [21., 36.], [22., 30.], [19., 29.],
-            [17., 40.], [14., 41.], [13., 36.], [10., 34.], [7., 37.], [2., 39.], [21., 16.], [22., 14.], [29., 17.],
-            [30., 25.], [32., 26.], [39., 28.], [40., 26.], [40., 26.], [42., 25.], [43., 24.], [43., 16.], [48., 16.],
-            [51., 25.], [52., 26.], [57., 27.], [60., 22.], [63., 24.], [64., 23.], [64., 27.], [71., 25.], [50., 10.],
-            [48., 12.], [45., 14.], [33., 8.], [31., 7.], [32., 6.], [31., 8.]
+import pointpats.quadrat_statistics as m
+import pointpats
+
+
+# -----------------------------------------------------------------------------
+# Fixtures
+# -----------------------------------------------------------------------------
+@pytest.fixture
+def pointpattern():
+    """
+    Return a simple pointpats.PointPattern with 3 points.
+    """
+    pts = np.array(
+        [
+            [0.0, 0.0],
+            [1.0, 1.0],
+            [2.0, 2.0],
         ]
-        self.pp = PointPattern(self.points)
+    )
+    return pointpats.PointPattern(pts)
 
-    def test_QStatistic(self):
-        q_r = QStatistic(self.pp, shape="rectangle", nx=3, ny=3)
-        np.testing.assert_allclose(q_r.chi2, 33.1071428571, RTOL)
-        np.testing.assert_allclose(q_r.chi2_pvalue, 5.89097854516e-05, ATOL)
-        assert q_r.df == 8
 
-        q_r = QStatistic(self.pp, shape="rectangle",
-                         rectangle_height = 29.7, rectangle_width = 30.7)
-        np.testing.assert_allclose(q_r.chi2, 33.1071428571, RTOL)
-        np.testing.assert_allclose(q_r.chi2_pvalue, 5.89097854516e-05, ATOL)
-        assert q_r.df == 8
+@pytest.fixture
+def pts_simple():
+    # Four points spanning a 2x2 square (mbb = [0,0,2,2])
+    return np.array(
+        [
+            [0.0, 0.0],
+            [0.5, 0.5],
+            [1.5, 1.5],
+            [2.0, 2.0],  # on max boundary
+        ],
+        dtype=float,
+    )
 
-        q_r = QStatistic(self.pp, shape="hexagon", lh=10)
-        np.testing.assert_allclose(q_r.chi2, 195.0, RTOL)
-        np.testing.assert_allclose(q_r.chi2_pvalue, 6.3759506952e-22, RTOL)
-        assert q_r.df == 41
 
-    def test_RectangleM1(self):
-        rm = RectangleM(self.pp, count_column = 3, count_row = 3)
-        rm2 = RectangleM(self.pp, rectangle_height = 29.7, rectangle_width = 30.7)
-        np.testing.assert_array_equal(list(rm.point_location_sta().values()),
-                                      [12, 22, 4, 11, 26, 22, 22, 33, 16])
-        np.testing.assert_array_equal(list(rm2.point_location_sta().values()),
-                                      [12, 22, 4, 11, 26, 22, 22, 33, 16])
-    def test_RectangleM2(self):
-        hm = HexagonM(self.pp, lh = 10)
-        np.testing.assert_array_equal(list(hm.point_location_sta().values()),
-                                      [0, 2, 4, 5, 0, 0, 0, 0, 9, 6, 10, 7, 3, 0, 2, 2, 3, 7, 4,
-                                       13, 1, 1, 1, 4, 11, 3, 0, 4, 0, 5, 15, 15, 3, 10, 0, 0,
-                                       0, 9, 0, 7, 1, 1])
-    def test_geoseries(self):
-        pp_array = np.array(self.points)
-        pts = geopandas.GeoSeries.from_xy(x=pp_array[:, 0], y=pp_array[:, 1])
-        q_r = QStatistic(pts, shape="rectangle", nx=3, ny=3)
-        np.testing.assert_allclose(q_r.chi2, 33.1071428571, RTOL)
-        np.testing.assert_allclose(q_r.chi2_pvalue, 5.89097854516e-05, ATOL)
-        assert q_r.df == 8
+@pytest.fixture
+def pts_random_small():
+    rng = np.random.default_rng(123)
+    return rng.random((50, 2), dtype=float) * 100.0
+
+
+@pytest.fixture
+def window_poly():
+    # Simple rectangular polygon window
+    return box(0.0, 0.0, 10.0, 5.0)
+
+
+@pytest.fixture
+def window_poly_with_hole():
+    outer = box(0.0, 0.0, 10.0, 10.0)
+    hole = box(4.0, 4.0, 6.0, 6.0)
+    return Polygon(outer.exterior.coords, holes=[hole.exterior.coords])
+
+
+@pytest.fixture
+def window_multipoly():
+    a = box(0.0, 0.0, 1.0, 1.0)
+    b = box(2.0, 2.0, 3.0, 3.0)
+    return MultiPolygon([a, b])
+
+
+# -----------------------------------------------------------------------------
+# Helper tests
+# -----------------------------------------------------------------------------
+def test_as_points_array_accepts_arraylike():
+    pts = m._as_points_array([[0, 1], [2, 3.5]])
+    assert isinstance(pts, np.ndarray)
+    assert pts.shape == (2, 2)
+    assert pts.dtype.kind in ("f", "i")  # will often be float, but allow int input
+
+
+def test_as_points_array_rejects_bad_shape():
+    with pytest.raises(ValueError, match=r"points must be a \(n, 2\)"):
+        m._as_points_array([1, 2, 3])
+
+    with pytest.raises(ValueError, match=r"points must be a \(n, 2\)"):
+        m._as_points_array(np.zeros((3, 3)))
+
+
+def test_as_points_array_rejects_empty():
+    with pytest.raises(ValueError, match="points is empty"):
+        m._as_points_array(np.empty((0, 2)))
+
+
+def test_compute_mbb():
+    pts = np.array([[1, 2], [3, 4], [-1, 10]], dtype=float)
+    mbb = m._compute_mbb(pts)
+    assert mbb.shape == (4,)
+    assert np.allclose(mbb, [-1.0, 2.0, 3.0, 10.0])
+
+
+def test_ensure_window_none_uses_box():
+    mbb = np.array([0.0, 1.0, 2.0, 3.0], dtype=float)
+    w = m._ensure_window(None, mbb)
+    assert w.equals(box(0.0, 1.0, 2.0, 3.0))
+
+
+def test_coerce_rng_none():
+    rng = m._coerce_rng(None)
+    assert isinstance(rng, np.random.Generator)
+
+
+def test_coerce_rng_int():
+    rng = m._coerce_rng(123)
+    assert isinstance(rng, np.random.Generator)
+
+    # Determinism check
+    rng2 = m._coerce_rng(123)
+    assert rng.random() == rng2.random()
+
+
+def test_coerce_rng_numpy_integer():
+    rng = m._coerce_rng(np.int64(456))
+    assert isinstance(rng, np.random.Generator)
+
+
+def test_coerce_rng_generator_passthrough():
+    gen = np.random.default_rng(789)
+    out = m._coerce_rng(gen)
+    assert out is gen
+
+
+def test_coerce_rng_bitgenerator():
+    bitgen = np.random.PCG64(123)
+    rng = m._coerce_rng(bitgen)
+    assert isinstance(rng, np.random.Generator)
+    assert rng.bit_generator is bitgen
+
+
+def test_coerce_rng_randomstate():
+    rs = np.random.RandomState(321)
+    rng = m._coerce_rng(rs)
+
+    assert isinstance(rng, np.random.Generator)
+
+    # Reproduce the seed used by _coerce_rng: it is the FIRST randint draw from RS(321).
+    rs2 = np.random.RandomState(321)
+    seed = int(rs2.randint(0, 2**32 - 1, dtype=np.uint32))
+
+    expected = np.random.default_rng(seed)
+
+    assert rng.random() == expected.random()
+
+
+def test_coerce_rng_seedsequence():
+    ss = np.random.SeedSequence(999)
+    rng = m._coerce_rng(ss)
+    assert isinstance(rng, np.random.Generator)
+
+
+def test_window_to_paths_polygon_and_hole(window_poly_with_hole):
+    paths = m._window_to_paths(window_poly_with_hole)
+    # exterior + 1 hole -> 2 paths
+    assert len(paths) == 2
+    for x, y in paths:
+        assert isinstance(x, np.ndarray)
+        assert isinstance(y, np.ndarray)
+        assert x.shape == y.shape
+        assert x.ndim == 1
+
+
+def test_window_to_paths_multipolygon(window_multipoly):
+    paths = m._window_to_paths(window_multipoly)
+    assert len(paths) == 2  # two polygons -> two exterior rings
+
+
+@pytest.mark.skipif(
+    pytest.importorskip("geopandas", reason="geopandas not installed") is None,
+    reason="geopandas not installed",
+)
+def test_as_points_array_geoseries_points_and_multipoints():
+    import geopandas as gpd
+
+    s = gpd.GeoSeries([Point(0, 0), MultiPoint([Point(1, 1), Point(2, 2)]), None])
+    pts = m._as_points_array(s)
+    assert pts.shape == (3, 2)
+    assert np.allclose(pts, np.array([[0, 0], [1, 1], [2, 2]], dtype=float))
+
+
+@pytest.mark.skipif(
+    pytest.importorskip("geopandas", reason="geopandas not installed") is None,
+    reason="geopandas not installed",
+)
+def test_as_points_array_geoseries_rejects_non_point_geoms():
+    import geopandas as gpd
+
+    poly = box(0, 0, 1, 1)
+    s = gpd.GeoSeries([poly])
+    with pytest.raises(TypeError, match="GeoSeries must contain Point geometries"):
+        m._as_points_array(s)
+
+
+@pytest.mark.skipif(
+    pytest.importorskip("geopandas", reason="geopandas not installed") is None,
+    reason="geopandas not installed",
+)
+def test_as_points_array_geoseries_all_empty_errors():
+    import geopandas as gpd
+
+    s = gpd.GeoSeries([None, Point()])
+    # Point() is empty in shapely
+    with pytest.raises(ValueError, match="no non-empty Point geometries"):
+        m._as_points_array(s)
+
+
+def test_as_points_array_pointpattern(pointpattern):
+    assert isinstance(m._as_points_array(pointpattern), np.ndarray)
+
+
+# -----------------------------------------------------------------------------
+# RectangleM tests
+# -----------------------------------------------------------------------------
+def test_rectangle_grid_default_dimensions(pts_simple):
+    r = m.RectangleM(pts_simple, count_column=2, count_row=2)
+    assert r.count_column == 2
+    assert r.count_row == 2
+    assert r.num == 4
+    assert np.allclose(r.mbb, [0.0, 0.0, 2.0, 2.0])
+    # cell size should be 1x1
+    assert math.isclose(r.rectangle_width, 1.0)
+    assert math.isclose(r.rectangle_height, 1.0)
+
+
+def test_rectangle_grid_width_height_override(pts_simple):
+    # range_x=2, range_y=2, width=0.75 -> ceil(2/0.75)=3 columns
+    r = m.RectangleM(pts_simple, rectangle_width=0.75, rectangle_height=1.0)
+    assert r.count_column == 3
+    assert r.count_row == 2
+    assert r.num == 6
+
+
+def test_rectangle_point_location_counts_sum_to_n(pts_random_small):
+    r = m.RectangleM(pts_random_small, count_column=5, count_row=4)
+    d = r.point_location_sta()
+    assert len(d) == r.num
+    assert sum(d.values()) == pts_random_small.shape[0]
+
+
+def test_rectangle_boundary_point_in_last_cell(pts_simple):
+    # The point [2,2] lies on max boundary; code clamps index==count to last cell
+    r = m.RectangleM(pts_simple, count_column=2, count_row=2)
+    d = r.point_location_sta()
+    # bottom-left cell id 0 contains [0,0] and [0.5,0.5]
+    assert d[0] == 2
+    # top-right cell id 3 contains [1.5,1.5] and [2,2]
+    assert d[3] == 2
+
+
+def test_rectangle_plot_counts_smoke(pts_simple):
+    r = m.RectangleM(pts_simple, count_column=2, count_row=2)
+    ax, cell_ids = r.plot(show="counts")
+    assert ax is not None
+    assert len(cell_ids) == r.num
+
+
+def test_rectangle_plot_chi2_requires_contrib(pts_simple):
+    r = m.RectangleM(pts_simple, count_column=2, count_row=2)
+    with pytest.raises(ValueError, match="chi2_contrib must be provided"):
+        r.plot(show="chi2", chi2_contrib=None)
+
+
+def test_rectangle_plot_chi2_length_mismatch(pts_simple):
+    r = m.RectangleM(pts_simple, count_column=2, count_row=2)
+    with pytest.raises(ValueError, match="length must match number of plotted cells"):
+        r.plot(show="chi2", chi2_contrib=np.zeros(r.num - 1))
+
+
+def test_rectangle_plot_invalid_show(pts_simple):
+    r = m.RectangleM(pts_simple, count_column=2, count_row=2)
+    with pytest.raises(ValueError, match='show must be "counts" or "chi2"'):
+        r.plot(show="nope")
+
+
+# -----------------------------------------------------------------------------
+# HexagonM tests
+# -----------------------------------------------------------------------------
+def test_hexagon_grid_basic_invariants(pts_random_small):
+    h = m.HexagonM(pts_random_small, lh=10.0)
+    assert h.h_length == 10.0
+    assert h.semi_height > 0
+    assert h.count_column >= 1
+    assert h.count_row_even >= 1
+    assert h.count_row_odd >= 1
+    assert h.num >= 1
+
+
+def test_hexagon_point_location_counts_sum_to_n(pts_random_small):
+    h = m.HexagonM(pts_random_small, lh=10.0)
+    d = h.point_location_sta()
+    assert sum(d.values()) == pts_random_small.shape[0]
+    # dict keys correspond to the number of cells included
+    assert len(d) >= 1
+
+
+def test_hexagon_plot_counts_smoke(pts_simple):
+    h = m.HexagonM(pts_simple, lh=1.0)
+    ax, cell_ids = h.plot(show="counts")
+    assert ax is not None
+    assert len(cell_ids) == len(h.point_location_sta())
+
+
+def test_hexagon_plot_chi2_requires_contrib(pts_simple):
+    h = m.HexagonM(pts_simple, lh=1.0)
+    with pytest.raises(ValueError, match="chi2_contrib must be provided"):
+        h.plot(show="chi2", chi2_contrib=None)
+
+
+def test_hexagon_plot_chi2_length_mismatch(pts_simple):
+    h = m.HexagonM(pts_simple, lh=1.0)
+    k = len(h.point_location_sta())
+    with pytest.raises(ValueError, match="length must match number of plotted cells"):
+        h.plot(show="chi2", chi2_contrib=np.zeros(k - 1))
+
+
+def test_hexagon_plot_invalid_show(pts_simple):
+    h = m.HexagonM(pts_simple, lh=1.0)
+    with pytest.raises(ValueError, match='show must be "counts" or "chi2"'):
+        h.plot(show="nope")
+
+
+# -----------------------------------------------------------------------------
+# QStatistic tests (analytical)
+# -----------------------------------------------------------------------------
+def test_qstatistic_rectangle_matches_scipy(pts_simple):
+    qs = m.QStatistic(pts_simple, shape="rectangle", nx=2, ny=2, realizations=0)
+    d = qs.mr.point_location_sta()
+    obs = np.asarray(list(d.values()), dtype=float)
+
+    chi2_ref, p_ref = scipy.stats.chisquare(obs)
+    assert math.isclose(qs.chi2, chi2_ref, rel_tol=1e-12, abs_tol=0.0)
+    assert math.isclose(qs.chi2_pvalue, p_ref, rel_tol=1e-12, abs_tol=0.0)
+    assert qs.df == obs.size - 1
+    assert len(qs.cell_ids) == obs.size
+
+
+def test_qstatistic_hexagon_basic(pts_random_small):
+    qs = m.QStatistic(pts_random_small, shape="hexagon", lh=10.0, realizations=0)
+    assert qs.shape == "hexagon"
+    assert qs.df == len(qs.cell_ids) - 1
+    assert np.isfinite(qs.chi2)
+    assert 0.0 <= qs.chi2_pvalue <= 1.0
+
+
+def test_qstatistic_contrib_formula(pts_simple):
+    qs = m.QStatistic(pts_simple, shape="rectangle", nx=2, ny=2, realizations=0)
+    d = qs.mr.point_location_sta()
+    obs = np.asarray(list(d.values()), dtype=float)
+    expected = obs.mean()
+    contrib_ref = (
+        (obs - expected) ** 2 / expected if expected > 0 else np.full_like(obs, np.nan)
+    )
+    assert np.allclose(qs.chi2_contrib, contrib_ref, equal_nan=True)
+
+
+def test_qstatistic_invalid_shape_raises(pts_simple):
+    with pytest.raises(
+        ValueError, match='shape must be either "rectangle" or "hexagon"'
+    ):
+        m.QStatistic(pts_simple, shape="triangle")
+
+
+def test_qstatistic_plot_counts_smoke(pts_simple):
+    qs = m.QStatistic(pts_simple, shape="rectangle", nx=2, ny=2, realizations=0)
+    ax = qs.plot(show="counts")
+    assert ax is not None
+
+
+def test_qstatistic_plot_chi2_smoke(pts_simple):
+    qs = m.QStatistic(pts_simple, shape="rectangle", nx=2, ny=2, realizations=0)
+    ax = qs.plot(show="chi2")
+    assert ax is not None
+
+
+def test_qstatistic_plot_invalid_show(pts_simple):
+    qs = m.QStatistic(pts_simple, shape="rectangle", nx=2, ny=2, realizations=0)
+    with pytest.raises(ValueError, match='show must be either "counts" or "chi2"'):
+        qs.plot(show="nope")
+
+
+# -----------------------------------------------------------------------------
+# QStatistic tests (simulation branch via poisson stub)
+# -----------------------------------------------------------------------------
+class _PoissonReturn:
+    """Mimic an object with a `.points` attribute."""
+
+    def __init__(self, points):
+        self.points = points
+
+
+def test_qstatistic_simulation_branch_calls_poisson_and_sets_outputs(
+    monkeypatch, pts_simple, window_poly
+):
+    # Make points fit inside the window for clarity
+    pts = np.array([[1.0, 1.0], [2.0, 1.0], [3.0, 2.0], [4.0, 4.0]], dtype=float)
+
+    calls = {}
+
+    def poisson_stub(window, intensity, realizations, rng=None):
+        # record call args for assertions
+        calls["window"] = window
+        calls["intensity"] = intensity
+        calls["realizations"] = realizations
+        calls["rng_is_generator"] = isinstance(rng, np.random.Generator)
+
+        # deterministic realizations: identical copies (chi2_sim == chi2_obs)
+        return [_PoissonReturn(pts.copy()) for _ in range(realizations)]
+
+    # Patch the imported poisson symbol in the module under test
+    monkeypatch.setattr(m, "poisson", poisson_stub)
+
+    qs = m.QStatistic(
+        pts,
+        shape="rectangle",
+        nx=2,
+        ny=2,
+        realizations=5,
+        window=window_poly,
+        rng=123,
+    )
+
+    assert calls["realizations"] == 5
+    assert calls["rng_is_generator"] is True
+    assert math.isclose(
+        calls["intensity"], pts.shape[0] / window_poly.area, rel_tol=1e-12
+    )
+
+    assert hasattr(qs, "chi2_realizations")
+    assert qs.chi2_realizations.shape == (5,)
+    # Because stub returns same points each time, simulated chi2 equals observed chi2.
+    assert np.allclose(qs.chi2_realizations, qs.chi2)
+
+    # With chi2_sim == chi2_obs, #{>=} == R, so p = (R+1)/(R+1) = 1
+    assert math.isclose(qs.chi2_r_pvalue, 1.0, rel_tol=0.0, abs_tol=0.0)
+
+
+def test_qstatistic_simulation_accepts_realizations_object_without_points_attr(
+    monkeypatch, pts_simple, window_poly
+):
+    pts = np.array([[1.0, 1.0], [2.0, 1.0], [3.0, 2.0], [4.0, 4.0]], dtype=float)
+
+    def poisson_stub(window, intensity, realizations, rng=None):
+        # Return raw arrays (code path uses getattr(ri, "points", ri))
+        return [pts.copy() for _ in range(realizations)]
+
+    monkeypatch.setattr(m, "poisson", poisson_stub)
+
+    qs = m.QStatistic(
+        pts,
+        shape="rectangle",
+        nx=2,
+        ny=2,
+        realizations=3,
+        window=window_poly,
+        rng=np.random.default_rng(0),
+    )
+    assert qs.chi2_realizations.shape == (3,)
+    assert 0.0 <= qs.chi2_r_pvalue <= 1.0

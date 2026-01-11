@@ -1,4 +1,31 @@
+"""Spatial Point Pattern Simulation Module
+=======================================
+
+This module provides tools to simulate spatial point patterns for use
+in spatial statistics, geographic analysis, and spatial modeling.
+Patterns can be generated within arbitrary hulls, defined as polygons,
+bounding boxes, or other spatial objects.
+
+Currently supported point process models include:
+
+- `poisson`: Simulates a homogeneous Poisson point process.
+- `normal`: Simulates points from a multivariate normal distribution,
+   constrained within a hull.
+- `cluster_poisson`: Simulates cluster patterns using a two-stage Poisson
+  process.
+- `cluster_normal`: Simulates clusters around randomly placed seed points using
+   a normal distribution.
+- `strauss`: Simulates a Strauss process with pairwise interaction constraints.
+
+Each distribution supports control over intensity, point count,
+replication, and randomness. Geometry utilities support arbitrary
+spatial hulls and containment logic.
+
+"""
+
 import numpy
+from scipy.spatial import cKDTree
+
 from .geometry import (
     spatial,
     area as _area,
@@ -99,7 +126,7 @@ def parse_size_and_intensity(hull, intensity=None, size=None):
 # ------------------------------------------------------------ #
 
 
-def poisson(hull, intensity=None, size=None):
+def poisson(hull, intensity=None, size=None, rng=None):
     """
     Simulate a poisson random point process with a specified intensity.
 
@@ -122,6 +149,16 @@ def poisson(hull, intensity=None, size=None):
         If an integer is provided and intensity is None, n_replications is assumed to be 1.
         If size is an integer and intensity is also provided, then size indicates n_replications,
         and the number of observations is computed from the intensity.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
+
 
     Returns
     -------
@@ -141,14 +178,14 @@ def poisson(hull, intensity=None, size=None):
     result = numpy.empty((n_simulations, n_observations, 2))
 
     bbox = _bbox(hull)
-
+    rng = numpy.random.default_rng(rng)
     for i_replication in range(n_simulations):
         generating = True
         i_observation = 0
         while i_observation < n_observations:
             x, y = (
-                numpy.random.uniform(bbox[0], bbox[2]),
-                numpy.random.uniform(bbox[1], bbox[3]),
+                rng.uniform(bbox[0], bbox[2]),
+                rng.uniform(bbox[1], bbox[3]),
             )
             if _contains(hull, x, y):
                 result[i_replication, i_observation] = (x, y)
@@ -156,7 +193,7 @@ def poisson(hull, intensity=None, size=None):
     return result.squeeze()
 
 
-def normal(hull, center=None, cov=None, size=None):
+def normal(hull, center=None, cov=None, size=None, rng=None):
     """
     Simulate a multivariate random normal point cluster
 
@@ -181,6 +218,16 @@ def normal(hull, center=None, cov=None, size=None):
         of points to simulate in each replication and the second number is the number of
         total replications. So, (10, 4) indicates 10 points, 4 times.
         If an integer is provided, n_replications is assumed to be 1.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
+
 
     Returns
     -------
@@ -229,6 +276,7 @@ def normal(hull, center=None, cov=None, size=None):
 
     bbox = _bbox(hull)
 
+    rng = numpy.random.default_rng(rng)
     for i_replication in range(n_simulations):
         generating = True
         i_observation = 0
@@ -237,7 +285,8 @@ def normal(hull, center=None, cov=None, size=None):
         replication_cor = (1 / replication_sd) * replication_cov * (1 / replication_sd)
 
         while i_observation < n_observations:
-            candidate = numpy.random.multivariate_normal((0, 0), replication_cor)
+            # candidate = numpy.random.multivariate_normal((0, 0), replication_cor)
+            candidate = rng.multivariate_normal((0, 0), replication_cor)
             x, y = center + candidate * replication_sd
             if _contains(hull, x, y):
                 result[i_replication, i_observation] = (x, y)
@@ -246,11 +295,7 @@ def normal(hull, center=None, cov=None, size=None):
 
 
 def cluster_poisson(
-    hull,
-    intensity=None,
-    size=None,
-    n_seeds=2,
-    cluster_radius=None,
+    hull, intensity=None, size=None, n_seeds=2, cluster_radius=None, rng=None
 ):
     """
     Simulate a cluster poisson random point process with a specified intensity & number of seeds.
@@ -283,6 +328,16 @@ def cluster_poisson(
         If an array, then there must be the same number of radii as clusters.
         If None, 50% of the minimum inter-point distance is used, which may fluctuate across
         replications.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
+
 
     Returns
     -------
@@ -312,8 +367,11 @@ def cluster_poisson(
 
     result = numpy.empty((n_simulations, n_observations, 2))
     hull_area = _area(hull)
+    rng = numpy.random.default_rng(rng)
+
+    center_seeds = rng.integers(100_000, size=n_simulations)
     for i_replication in range(n_simulations):
-        seeds = poisson(hull, size=(n_seeds, n_simulations))
+        seeds = poisson(hull, size=n_seeds, rng=[center_seeds[i_replication]])
         if cluster_radius is None:
             # default cluster radius is one half the minimum distance between seeds
             cluster_radii = [spatial.distance.pdist(seeds).min() * 0.5] * n_seeds
@@ -334,12 +392,12 @@ def cluster_poisson(
             candidates = _uniform_circle(
                 n_in_cluster - 1, radius=radius, center=seed, hull=hull
             )
-            clusters[i_cluster] = numpy.vstack((seed, candidates))
-        result[i_replication] = numpy.vstack(clusters)
+            clusters[i_cluster] = numpy.row_stack((seed, candidates))
+        result[i_replication] = numpy.row_stack(clusters)
     return result.squeeze()
 
 
-def cluster_normal(hull, cov=None, size=None, n_seeds=2):
+def cluster_normal(hull, cov=None, size=None, n_seeds=2, rng=None):
     """
     Simulate a cluster poisson random point process with a specified intensity & number of seeds.
     A cluster poisson process is a poisson process where the center of each "cluster" is
@@ -366,6 +424,16 @@ def cluster_normal(hull, cov=None, size=None, n_seeds=2):
         and the number of observations is computed from the intensity.
     n_seeds : int
         the number of sub-clusters to use.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
+
 
     Returns
     -------
@@ -382,16 +450,19 @@ def cluster_normal(hull, cov=None, size=None, n_seeds=2):
         hull, intensity=None, size=size
     )
     result = numpy.empty((n_simulations, n_observations, 2))
+    rng = numpy.random.default_rng(rng)
+    seeds = rng.integers(100_000, size=n_simulations)
     for i_replication in range(n_simulations):
-        seeds = poisson(hull, size=(n_seeds, n_simulations))
+        centers = poisson(hull, size=n_seeds, rng=seeds[i_replication])
         if cov is None:
-            cov = spatial.distance.pdist(seeds).mean() ** 2
+            cov = spatial.distance.pdist(centers).mean() ** 2
         clusters = numpy.array_split(result[i_replication], n_seeds)
-        for i_cluster, seed in enumerate(seeds):
+        candidate_seeds = rng.integers(100_000, size=n_seeds)
+        for i_cluster, center in enumerate(centers):
             cluster_points = clusters[i_cluster]
             n_in_cluster = len(cluster_points)
             if n_in_cluster == 1:
-                clusters[i_cluster] = seed
+                clusters[i_cluster] = center
                 continue
             if n_in_cluster < 1:
                 raise Exception(
@@ -399,13 +470,28 @@ def cluster_normal(hull, cov=None, size=None, n_seeds=2):
                     " inputted number of samples. Reduce `n_seeds` or"
                     " increase the number of sampled points."
                 )
-            candidates = normal(hull, center=seed, cov=cov, size=n_in_cluster - 1)
-            clusters[i_cluster] = numpy.vstack((seed, candidates))
-        result[i_replication] = numpy.vstack(clusters)
+            candidates = normal(
+                hull,
+                center=center,
+                cov=cov,
+                size=n_in_cluster - 1,
+                rng=candidate_seeds[i_cluster],
+            )
+            clusters[i_cluster] = numpy.row_stack((center, candidates))
+        result[i_replication] = numpy.row_stack(clusters)
     return result.squeeze()
 
 
-def _uniform_circle(n, radius=1.0, center=(0.0, 0.0), burn=2, verbose=False, hull=None):
+def _uniform_circle(
+    n,
+    radius=1.0,
+    center=(0.0, 0.0),
+    burn=2,
+    verbose=False,
+    hull=None,
+    seed=None,
+    rng=None,
+):
     """
     Generate n points within a circle of given radius.
 
@@ -420,6 +506,21 @@ def _uniform_circle(n, radius=1.0, center=(0.0, 0.0), burn=2, verbose=False, hul
     burn : int
         number of coordinates to simulate at a time. This is the "chunk"
         size sent to numpy.random.uniform each iteration of the rejection sampler
+    seed : int or None, optional
+        A seed to initialize the NumPy default random number generator (`numpy.random.default_rng`).
+        If `None` (the default), the generator is initialized with entropy from the operating system,
+        producing different sequences each time. Setting a specific integer seed ensures that the
+        sequence of random numbers is reproducible.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
+
 
     Returns
     -------
@@ -434,9 +535,11 @@ def _uniform_circle(n, radius=1.0, center=(0.0, 0.0), burn=2, verbose=False, hul
     r = radius
     r2 = r * r
     it = 0
+    if rng is None:
+        rng = numpy.random.default_rng(seed)
     while c < n:
-        x = numpy.random.uniform(-r, r, (burn * n, 1))
-        y = numpy.random.uniform(-r, r, (burn * n, 1))
+        x = rng.uniform(-r, r, (burn * n, 1))
+        y = rng.uniform(-r, r, (burn * n, 1))
         if hull is None:
             in_hull = True
         else:
@@ -459,3 +562,154 @@ def _uniform_circle(n, radius=1.0, center=(0.0, 0.0), burn=2, verbose=False, hul
     if verbose:
         print("Iterations: {}".format(it))
     return good + numpy.asarray(center)
+
+
+def _pairwise_count_kdtree(points, r):
+    """Count number of pairs within distance r using KDTree"""
+    tree = cKDTree(points)
+    pairs = tree.query_pairs(r)
+    return len(pairs)
+
+
+def strauss(
+    hull,
+    intensity=None,
+    size=None,
+    gamma=0.1,
+    r=0.05,
+    n_iter=5000,
+    rng=None,
+    max_iter=10,
+):
+    """
+    Simulate a realization of the Strauss spatial point process using
+    Metropolis-Hastings within a Gibbs sampler.
+
+    Parameters
+    ----------
+    hull : array-like or geometry-like
+        The spatial domain in which to simulate the point pattern. Supported
+        formats include:
+        - A bounding box as a NumPy array: np.array([xmin, ymin, xmax, ymax])
+        - An (N, 2) array of 2D points (bounding box is inferred)
+        - A Shapely Polygon or MultiPolygon
+        - A SciPy ConvexHull
+    intensity : float, optional
+        Target number of points per unit area. Used to derive the number of
+        points if `size` is not explicitly given. Default is 100.
+    size : int or tuple of (int, int), optional
+        Either the number of points to generate (if `intensity` is None), or a
+        tuple (n_observations, n_replications). If an integer and `intensity` is
+        provided, it is interpreted as the number of replications.
+    gamma : float, optional
+        Strauss interaction parameter:
+        - `gamma < 1`: inhibition (repulsion)
+        - `gamma = 1`: homogeneous Poisson process (no interaction)
+        - `gamma > 1`: clustering
+        Default is 0.1.
+    r : float, optional
+        Interaction radius. Pairs of points closer than this distance
+        contribute to the Strauss interaction term. Default is 0.05.
+    n_iter : int, optional
+        Number of iterations for the Metropolis-Hastings sampler per
+        replication. Default is 5000.
+    rng : int, numpy.random.Generator, or None, optional
+        A source of randomness. This can be:
+
+        - A `numpy.random.Generator` instance (recommended)
+        - An `int` seed, used to initialize a new Generator
+        - `None` (default), which uses a new `numpy.random.default_rng()` instance
+
+        This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
+        random number generation across libraries.
+    max_iter : int, optional
+        Maximum number of regeneration attempts per replication if a valid
+        point pattern of the desired size is not achieved. Default is 10.
+
+
+    Returns
+    -------
+    numpy.ndarray
+        A simulated realization of the Strauss point process:
+        - If `n_replications` > 1: shape (n_replications, n_observations, 2)
+        - If `n_replications` = 1: shape (n_observations, 2)
+
+    Raises
+    ------
+    RuntimeError
+        If a valid pattern with the desired number of points cannot be
+        generated within `max_iter` attempts. This may indicate that the
+        parameter combination (especially low `gamma` and large `r`) makes the
+        configuration too restrictive.
+
+    Notes
+    -----
+    The Strauss process models spatial inhibition or clustering via pairwise
+    interactions. This implementation uses a Metropolis-Hastings sampler with
+    biased birth-death moves to encourage convergence toward the desired number
+    of points.
+    """
+
+    if isinstance(hull, numpy.ndarray):
+        if hull.shape != (4,):
+            hull = _prepare_hull(hull)
+
+    n_observations, n_simulations, intensity = parse_size_and_intensity(
+        hull, intensity=intensity, size=size
+    )
+
+    result = numpy.empty((n_simulations, n_observations, 2))
+
+    rng = numpy.random.default_rng(rng)
+
+    for i_replication in range(n_simulations):
+        found = False
+        gen_iter = 0
+
+        while not found and gen_iter < max_iter:
+            # Over-sample initially to improve convergence
+            initial_n = int(n_observations * 1.5)
+            points = poisson(hull, intensity=initial_n, rng=rng)
+
+            for _ in range(n_iter):
+                if len(points) < n_observations or rng.random() < 0.5:
+                    new_point = poisson(hull, 1, rng=rng)
+                    trial_points = numpy.vstack([points, new_point])
+                    k_old = _pairwise_count_kdtree(points, r)
+                    k_new = _pairwise_count_kdtree(trial_points, r)
+                    ratio = n_observations * (gamma ** (k_new - k_old))
+                    ratio /= len(points) + 1
+                    if rng.random() < min(1, ratio):
+                        points = trial_points
+                else:  # death move
+                    if len(points) > n_observations:
+                        idx = rng.integers(0, len(points))
+                        trial_points = numpy.delete(points, idx, axis=0)
+                        k_old = _pairwise_count_kdtree(points, r)
+                        k_new = _pairwise_count_kdtree(trial_points, r)
+                        den = n_observations * (gamma ** (k_old - k_new))
+                        if den == 0:
+                            raise RuntimeError(
+                                "The number of points requested is too large for the specified "
+                                "values of gamma and radius. Try reducing `intensity` or increasing "
+                                "`gamma`, `radius`, or `max_iter`."
+                            )
+
+                        ratio = len(points) / den
+                        if rng.random() < min(1, ratio):
+                            points = trial_points
+
+            if points.shape[0] >= n_observations:
+                result[i_replication] = points[:n_observations]
+                found = True
+
+            gen_iter += 1
+
+        if not found:
+            raise RuntimeError(
+                "The number of points requested is too large for the specified "
+                "values of gamma and radius. Try reducing `intensity` or increasing "
+                "`gamma`, `radius`, or `max_iter`."
+            )
+
+    return result.squeeze()

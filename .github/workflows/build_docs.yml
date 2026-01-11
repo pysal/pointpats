@@ -28,7 +28,7 @@
      strategy:
        matrix:
          os: ['ubuntu-latest']
-         environment-file: [ci/envs/314-latest.yaml]
+         environment-file: [ci/envs/313-latest.yaml]
          experimental: [false]
      defaults:
        run:
