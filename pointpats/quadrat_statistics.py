@@ -173,14 +173,14 @@ class RectangleM:
 
     def __init__(
         self,
-        points,
+        pp,
         count_column=3,
         count_row=3,
         rectangle_width=0,
         rectangle_height=0,
         window=None,
     ):
-        self.points = _as_points_array(points)
+        self.points = _as_points_array(pp)
         self.mbb = _compute_mbb(self.points)
         self.window = _ensure_window(window, self.mbb)
 
@@ -306,8 +306,8 @@ class HexagonM:
     Hexagon grid structure for quadrat-based method.
     """
 
-    def __init__(self, points, lh, window=None):
-        self.points = _as_points_array(points)
+    def __init__(self, pp, lh, window=None):
+        self.points = _as_points_array(pp)
         self.h_length = float(lh)
         self.mbb = _compute_mbb(self.points)
         self.window = _ensure_window(window, self.mbb)
@@ -513,7 +513,7 @@ class QStatistic:
 
     Parameters
     ----------
-    points : :class: `.PointPattern` or array_like
+    pp : :class: `.PointPattern` or array_like
         Event coordinates as an (n, 2) array-like of floats (x, y).
     shape : {"rectangle", "hexagon"}, default="rectangle"
         Quadrat tessellation type.
@@ -604,7 +604,7 @@ class QStatistic:
 
     def __init__(
         self,
-        points,
+        pp,
         shape="rectangle",
         nx=3,
         ny=3,
@@ -615,7 +615,7 @@ class QStatistic:
         window=None,
         rng=None,
     ):
-        self.points = _as_points_array(points)
+        self.points = _as_points_array(pp)
         self.mbb = _compute_mbb(self.points)
         self.window = _ensure_window(window, self.mbb)
         self.shape = shape
