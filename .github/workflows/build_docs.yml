@@ -44,6 +44,11 @@
            environment-file: ${{ matrix.environment-file }}
            micromamba-version: 'latest'
 
+       - name: Install Dependencies
+         run: |
+           # Install ipykernel and jupyter into the 'test' environment
+           micromamba install -n test ipykernel jupyter -c conda-forge -y
+
        - name: Register Jupyter kernel "python3" (for nbsphinx)
          run: |
            python -m ipykernel install --sys-prefix --name python3 --display-name "Python 3"
