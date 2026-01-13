@@ -449,7 +449,19 @@ def k(
                 f" is {distances.shape}, but required shape is ({upper_tri_n},) or ({n},{n})"
             )
     else:
-        upper_tri_distances = spatial.distance.pdist(coordinates, metric=metric)
+    # Use distance backend if available, otherwise fall back to scipy
+        try:
+            D = getattr(coordinates, "distance_backend", None)
+            if D is not None:
+                full_distances = D.pairwise(coordinates)
+                upper_tri_distances = full_distances[
+                    numpy.triu_indices_from(full_distances, k=1)
+                ]
+            else:
+                upper_tri_distances = spatial.distance.pdist(coordinates, metric=metric)
+        except AttributeError:
+            upper_tri_distances = spatial.distance.pdist(coordinates, metric=metric)
+
     n_pairs_less_than_d = (upper_tri_distances < support.reshape(-1, 1)).sum(axis=1)
     intensity = n / _area(hull)
     k_estimate = ((n_pairs_less_than_d * 2) / n) / intensity
