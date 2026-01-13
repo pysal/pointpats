@@ -11,8 +11,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
     <script src="../_static/documentation_options.js?v=c3c8ae58"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="icon" href="../_static/pysal_favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -47,6 +48,7 @@
           <ul class="nav navbar-nav">
             
                 <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../user-guide/intro.html">User Guide</a></li>
                 <li><a href="../api.html">API</a></li>
                 <li><a href="../references.html">References</a></li>
             
@@ -59,7 +61,19 @@
      href="../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user-guide/intro.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/centrography.html">Centrography in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/sd_ellipse.html">Standard deviational ellipse in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/Quadrat_statistics.html">Quadrat-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/ripley.html">Distance-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/random.html">Simulating random point patterns with <code class="docutils literal notranslate"><span class="pre">pointpats.random</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/marks.html">Working with marks in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-released-version">Installing released version</a></li>
@@ -134,72 +148,117 @@
 <h1>pointpats.QStatistic<a class="headerlink" href="#pointpats-qstatistic" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pointpats.QStatistic">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">QStatistic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rectangle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rectangle_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rectangle_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realizations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/quadrat_statistics.html#QStatistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic" title="Link to this definition">¶</a></dt>
-<dd><p>Quadrat analysis of point pattern.</p>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">QStatistic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rectangle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rectangle_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rectangle_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realizations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/quadrat_statistics.html#QStatistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic" title="Link to this definition">¶</a></dt>
+<dd><p>Pearson chi-square quadrat test for complete spatial randomness (CSR).</p>
+<p>This class partitions the study region into quadrats (rectangles or hexagons),
+counts the number of events falling in each quadrat, and evaluates departure
+from CSR using a Pearson chi-square statistic under an equal-intensity CSR
+null model.</p>
+<p>The primary outputs are the observed chi-square statistic and its analytical
+p-value (from the chi-square distribution). Optionally, a simulation-based
+(Monte Carlo) p-value can be computed by generating CSR realizations within
+the study window and recomputing the chi-square statistic for each
+realization.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt><strong>pp</strong><span class="classifier"><a class="reference internal" href="pointpats.PointPattern.html#pointpats.PointPattern" title="pointpats.PointPattern"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointPattern</span></code></a> or numpy.ndarray</span></dt><dd><p>Point Pattern instance, or (n_observations, 2) array
-that can be used to construct a Point Pattern instance.</p>
+<dt><strong>pp</strong><span class="classifier">:class: <cite>.PointPattern</cite> or array_like</span></dt><dd><p>Event coordinates as an (n, 2) array-like of floats (x, y).</p>
 </dd>
-<dt><strong>shape</strong><span class="classifier">string</span></dt><dd><p>Grid structure. Either “rectangle” or “hexagon”.
-Default is “rectangle”.</p>
+<dt><strong>shape</strong><span class="classifier">{“rectangle”, “hexagon”}, default=”rectangle”</span></dt><dd><p>Quadrat tessellation type.</p>
 </dd>
-<dt><strong>nx</strong><span class="classifier">integer</span></dt><dd><p>Number of rectangles in the horizontal
-direction. Only when shape is specified as
-“rectangle” will nx be considered.</p>
+<dt><strong>nx</strong><span class="classifier">int, default=3</span></dt><dd><p>Number of columns when <cite>shape=”rectangle”</cite> and <cite>rectangle_width</cite> /
+<cite>rectangle_height</cite> are not provided.</p>
 </dd>
-<dt><strong>ny</strong><span class="classifier">integer</span></dt><dd><p>Number of rectangles in the vertical direction.
-Only when shape is specified as “rectangle”
-will ny be considered.</p>
+<dt><strong>ny</strong><span class="classifier">int, default=3</span></dt><dd><p>Number of rows when <cite>shape=”rectangle”</cite> and <cite>rectangle_width</cite> /
+<cite>rectangle_height</cite> are not provided.</p>
 </dd>
-<dt><strong>rectangle_width</strong><span class="classifier">float</span></dt><dd><p>Rectangle width. Use in pair with
-rectangle_height to fully specify a rectangle.
-Incompatible with nx &amp; ny.</p>
+<dt><strong>rectangle_width</strong><span class="classifier">float, default=0</span></dt><dd><p>Target rectangle width. Must be provided together with
+<cite>rectangle_height</cite>. When both are provided and non-zero, <cite>nx</cite> and <cite>ny</cite>
+are ignored and the grid dimensions are computed from the point-set MBB.</p>
 </dd>
-<dt><strong>rectangle_height</strong><span class="classifier">float</span></dt><dd><p>Rectangle height. Use in pair with
-rectangle_width to fully specify a rectangle.
-Incompatible with nx &amp; ny.</p>
+<dt><strong>rectangle_height</strong><span class="classifier">float, default=0</span></dt><dd><p>Target rectangle height. Must be provided together with
+<cite>rectangle_width</cite>. When both are provided and non-zero, <cite>nx</cite> and <cite>ny</cite>
+are ignored and the grid dimensions are computed from the point-set MBB.</p>
 </dd>
-<dt><strong>lh</strong><span class="classifier">float</span></dt><dd><p>Hexagon length (hexagon). Only when shape is
-specified as “hexagon” will lh be considered.
-Incompatible with nx &amp; ny.</p>
+<dt><strong>lh</strong><span class="classifier">float, default=10</span></dt><dd><p>Hexagon side length when <cite>shape=”hexagon”</cite>.</p>
 </dd>
-<dt><strong>realizations</strong><span class="classifier"><a class="reference internal" href="pointpats.PointProcess.html#pointpats.PointProcess" title="pointpats.PointProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointProcess</span></code></a></span></dt><dd><p>Point process instance with more than 1 point
-pattern realizations which would be used for
-simulation based inference. Default is 0
-where no simulation based inference is
-performed.</p>
+<dt><strong>realizations</strong><span class="classifier">int, default=0</span></dt><dd><p>Number of CSR simulations used to compute a Monte Carlo p-value.
+If 0, no simulation-based inference is performed.</p>
+</dd>
+<dt><strong>window</strong><span class="classifier">shapely geometry, optional</span></dt><dd><p>Study window (e.g., Polygon or MultiPolygon). If None, the window is
+taken to be the axis-aligned MBB rectangle of <cite>points</cite>.</p>
+</dd>
+<dt><strong>rng</strong><span class="classifier">None | int | numpy.random.Generator | numpy.random.RandomState, optional</span></dt><dd><p>Random number generator control for reproducible CSR simulations when
+<cite>realizations &gt; 0</cite>.</p>
+<ul class="simple">
+<li><p>None: create a new <code class="docutils literal notranslate"><span class="pre">numpy.random.default_rng()</span></code></p></li>
+<li><p>int: use as a seed for <code class="docutils literal notranslate"><span class="pre">numpy.random.default_rng(seed)</span></code></p></li>
+<li><p>Generator: used as-is</p></li>
+<li><p>RandomState: wrapped via <code class="docutils literal notranslate"><span class="pre">numpy.random.default_rng(RandomState)</span></code></p></li>
+</ul>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Attributes<span class="colon">:</span></dt>
-<dd class="field-even"><dl>
-<dt><strong>pp</strong><span class="classifier"><a class="reference internal" href="pointpats.PointPattern.html#pointpats.PointPattern" title="pointpats.PointPattern"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointPattern</span></code></a></span></dt><dd><p>Point Pattern instance.</p>
+<dd class="field-even"><dl class="simple">
+<dt><strong>points</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>(n, 2) array of event coordinates.</p>
 </dd>
-<dt><strong>mr</strong><span class="classifier"><a class="reference internal" href="pointpats.RectangleM.html#pointpats.RectangleM" title="pointpats.RectangleM"><code class="xref py py-class docutils literal notranslate"><span class="pre">RectangleM</span></code></a> or <a class="reference internal" href="pointpats.HexagonM.html#pointpats.HexagonM" title="pointpats.HexagonM"><code class="xref py py-class docutils literal notranslate"><span class="pre">HexagonM</span></code></a></span></dt><dd><p>RectangleM or HexagonM instance.</p>
+<dt><strong>mbb</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>Bounding box of <cite>points</cite> as <code class="docutils literal notranslate"><span class="pre">[xmin,</span> <span class="pre">ymin,</span> <span class="pre">xmax,</span> <span class="pre">ymax]</span></code>.</p>
 </dd>
-<dt><strong>chi2</strong><span class="classifier">float</span></dt><dd><p>Chi-squared test statistic for the observed
-point pattern pp.</p>
+<dt><strong>window</strong><span class="classifier">shapely geometry</span></dt><dd><p>Study window used for simulation and plotting.</p>
 </dd>
-<dt><strong>df</strong><span class="classifier">integer</span></dt><dd><p>Degree of freedom.</p>
+<dt><strong>shape</strong><span class="classifier">str</span></dt><dd><p>Quadrat tessellation type: “rectangle” or “hexagon”.</p>
 </dd>
-<dt><strong>chi2_pvalue</strong><span class="classifier">float</span></dt><dd><p>p-value based on analytical chi-squared
-distribution.</p>
+<dt><strong>rng</strong><span class="classifier">numpy.random.Generator</span></dt><dd><p>RNG used for CSR simulations (always stored as a Generator).</p>
 </dd>
-<dt><strong>chi2_r_pvalue</strong><span class="classifier">float</span></dt><dd><p>p-value based on simulated sampling
-distribution. Only available when
-realizations is correctly specified.</p>
+<dt><strong>mr</strong><span class="classifier">RectangleM or HexagonM</span></dt><dd><p>Tessellation manager instance.</p>
 </dd>
-<dt><strong>chi2_realizations</strong><span class="classifier">array</span></dt><dd><p>Chi-squared test statistics calculated for
-all the simulated csr point patterns.</p>
+<dt><strong>cell_ids</strong><span class="classifier">list of int</span></dt><dd><p>Cell identifiers included in the test statistic (all grid cells).</p>
+</dd>
+<dt><strong>chi2</strong><span class="classifier">float</span></dt><dd><p>Observed Pearson chi-square statistic.</p>
+</dd>
+<dt><strong>df</strong><span class="classifier">int</span></dt><dd><p>Degrees of freedom for the analytical chi-square reference distribution,
+equal to <code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">-</span> <span class="pre">1</span></code> where <code class="docutils literal notranslate"><span class="pre">k</span></code> is the number of included cells.</p>
+</dd>
+<dt><strong>chi2_pvalue</strong><span class="classifier">float</span></dt><dd><p>Analytical p-value from the chi-square distribution.</p>
+</dd>
+<dt><strong>chi2_contrib</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>Per-cell chi-square contributions aligned with <cite>cell_ids</cite>, computed as
+<code class="docutils literal notranslate"><span class="pre">(O</span> <span class="pre">-</span> <span class="pre">E)^2</span> <span class="pre">/</span> <span class="pre">E</span></code> with <code class="docutils literal notranslate"><span class="pre">E</span> <span class="pre">=</span> <span class="pre">mean(O)</span></code> over included cells.</p>
+</dd>
+<dt><strong>chi2_realizations</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>Simulated chi-square statistics for CSR realizations. Present only when
+<cite>realizations &gt; 0</cite>.</p>
+</dd>
+<dt><strong>chi2_r_pvalue</strong><span class="classifier">float</span></dt><dd><p>Monte Carlo p-value based on <cite>chi2_realizations</cite>, computed using the
+standard +1 correction:
+<code class="docutils literal notranslate"><span class="pre">(</span> <span class="pre">#{T_sim</span> <span class="pre">&gt;=</span> <span class="pre">T_obs}</span> <span class="pre">+</span> <span class="pre">1</span> <span class="pre">)</span> <span class="pre">/</span> <span class="pre">(realizations</span> <span class="pre">+</span> <span class="pre">1)</span></code>.
+Present only when <cite>realizations &gt; 0</cite>.</p>
 </dd>
 </dl>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="pointpats.RectangleM.html#pointpats.RectangleM" title="pointpats.RectangleM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RectangleM</span></code></a></dt><dd><p>Rectangular tessellation over the point-set MBB.</p>
+</dd>
+<dt><a class="reference internal" href="pointpats.HexagonM.html#pointpats.HexagonM" title="pointpats.HexagonM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HexagonM</span></code></a></dt><dd><p>Hexagonal tessellation over the point-set MBB.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The analytical test uses <code class="docutils literal notranslate"><span class="pre">scipy.stats.chisquare</span></code> with expected
+counts equal across cells (i.e., <code class="docutils literal notranslate"><span class="pre">E</span> <span class="pre">=</span> <span class="pre">mean(O)</span></code>). This
+corresponds to a homogeneous CSR null with equal-area cells. For
+irregular windows, a fully-correct analytical reference would
+area-weight expectations.</p></li>
+<li><p>The simulation-based null generates CSR realizations within <cite>window</cite> with
+intensity <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">/</span> <span class="pre">area(window)</span></code>. Reproducibility depends on passing <cite>rng</cite>
+through to the underlying CSR generator (<code class="docutils literal notranslate"><span class="pre">poisson(...,</span> <span class="pre">rng=...)</span></code>).</p></li>
+</ul>
 <dl class="py method">
 <dt class="sig sig-object py" id="pointpats.QStatistic.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rectangle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rectangle_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rectangle_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realizations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/quadrat_statistics.html#QStatistic.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rectangle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rectangle_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rectangle_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realizations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/quadrat_statistics.html#QStatistic.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.__init__" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods</p>
@@ -208,24 +267,15 @@ all the simulated csr point patterns.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.QStatistic.__init__" title="pointpats.QStatistic.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(pp[, shape, nx, ny, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.QStatistic.plot" title="pointpats.QStatistic.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([title])</p></td>
-<td><p>Plot quadrats as well as the number of points falling in each quadrat.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.QStatistic.plot" title="pointpats.QStatistic.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([title, show])</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="pointpats.QStatistic.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Quadrat</span> <span class="pre">Count'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/quadrat_statistics.html#QStatistic.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.plot" title="Link to this definition">¶</a></dt>
-<dd><p>Plot quadrats as well as the number of points falling in each quadrat.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>title:   str, optional</strong></dt><dd><p>Title of the plot. Default is “Quadrat Count”.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Quadrat</span> <span class="pre">Count'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'counts'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/quadrat_statistics.html#QStatistic.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.plot" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -251,7 +301,7 @@ all the simulated csr point patterns.</p>
     </p>
     <p>
         &copy; Copyright 2018-, pysal developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.3.0.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
     </p>
   </div>
 </footer>

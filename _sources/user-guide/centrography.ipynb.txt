@@ -1,0 +1,758 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Centrography in `pointpats`\n",
+    "\n",
+    "This notebook introduces **centrographic statistics** for planar point\n",
+    "patterns, focusing on:\n",
+    "\n",
+    "- Measures of **central tendency** (mean center, weighted mean center,\n",
+    "  Manhattan and Euclidean medians)\n",
+    "- Measures of **dispersion and orientation** (standard distance and\n",
+    "  the standard deviational ellipse)\n",
+    "- Basic **shape descriptors** (convex hull and minimum bounding rectangle)\n",
+    "\n",
+    "We will:\n",
+    "\n",
+    "1. Construct a simple example point pattern and compute its centrographic\n",
+    "   summaries using functions from `pointpats.centrography`.\n",
+    "2. Visualize central tendency, dispersion, and shape diagnostics to build\n",
+    "   intuition about how these measures behave.\n",
+    "3. Explore an additional example based on simulated point patterns within the\n",
+    "   Virginia state border under complete spatial randomness (CSR).\n",
+    "\n",
+    "This notebook is designed to live in the `docs/user-guide/` folder and be\n",
+    "executed automatically as part of the `pointpats` documentation build.\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The python file **centrography.py** contains several functions with which we can conduct centrography analysis.\n",
+    "* Central Tendency\n",
+    "    1. mean_center: calculate the mean center of the unmarked point pattern.\n",
+    "    2. weighted_mean_center: calculate the weighted mean center of the marked point pattern.\n",
+    "    3. manhattan_median: calculate the manhattan median\n",
+    "    4. euclidean_median: calculate the Euclidean median\n",
+    "* Dispersion and Orientation\n",
+    "    1. std_distance: calculate the standard distance\n",
+    "* Shape Analysis\n",
+    "    1. hull: calculate the convex hull of the point pattern\n",
+    "    2. mbr: calculate the minimum bounding box (rectangle)\n",
+    "    \n",
+    "All of the above functions operate on a series of coordinate pairs. That is, the data type of the first argument should be $(n,2)$ array_like. In case that you have a point pattern (PointPattern instance), you need to pass its attribute \"points\" instead of itself to these functions."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "from pointpats import PointPattern\n",
+    "%matplotlib inline\n",
+    "import matplotlib.pyplot as plt\n",
+    "points = [[66.22, 32.54], [22.52, 22.39], [31.01, 81.21],\n",
+    "          [9.47, 31.02],  [30.78, 60.10], [75.21, 58.93],\n",
+    "          [79.26,  7.68], [8.23, 39.93],  [98.73, 77.17],\n",
+    "          [89.78, 42.53], [65.19, 92.08], [54.46, 8.48]]\n",
+    "pp = PointPattern(points) #create a point pattern \"pp\" from list\n",
+    "pp.points "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "type(pp.points)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We can use PointPattern class method **plot** to visualize **pp**."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pp.plot()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#import centragraphy analysis functions \n",
+    "from pointpats.centrography import hull, mean_center, minimum_bounding_rectangle, weighted_mean_center, manhattan_median, std_distance,euclidean_median,ellipse"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 1. Central tendency\n",
+    "\n",
+    "Central Tendency concerns about the center point of the two-dimensional distribution. It is similar to the first moment of a one-dimensional distribution. There are several ways to measure central tendency, each having pros and cons. We need to carefully select the appropriate measure according to our objective and data status.\n",
+    "\n",
+    "### Mean Center $(x_{mc},y_{mc})$\n",
+    "\n",
+    "$$x_{mc}=\\frac{1}{n} \\sum^n_{i=1}x_i$$\n",
+    "$$y_{mc}=\\frac{1}{n} \\sum^n_{i=1}y_i$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "mc = mean_center(pp.points)\n",
+    "mc"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pp.plot()\n",
+    "plt.plot(mc[0], mc[1], 'b^', label='Mean Center')\n",
+    "plt.legend(numpoints=1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 1.1 Weighted mean center $(x_{wmc}, y_{wmc})$\n",
+    "\n",
+    "$$x_{wmc}=\\sum^n_{i=1} \\frac{w_i x_i}{\\sum^n_{i=1}w_i}$$\n",
+    "$$y_{wmc}=\\sum^n_{i=1} \\frac{w_i y_i}{\\sum^n_{i=1}w_i}$$\n",
+    "\n",
+    "Weighted mean center is meant for marked point patterns. Aside from the first argument which is a seris of $(x,y)$ coordinates in **weighted_mean_center** function, we need to specify its second argument which is the weight for each event point."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "weights = np.arange(12)\n",
+    "weights"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "wmc = weighted_mean_center(pp.points, weights)\n",
+    "wmc"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pp.plot() #use class method \"plot\" to visualize point pattern\n",
+    "plt.plot(mc[0], mc[1], 'b^', label='Mean Center') \n",
+    "plt.plot(wmc[0], wmc[1], 'gd', label='Weighted Mean Center')\n",
+    "plt.legend(numpoints=1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 1.2 Manhattan median $(x_{mm}, y_{mm})$\n",
+    "\n",
+    "$$min  f(x_{mm},y_{mm})= \\sum^n_{i=1}(|x_i-x_{mm}|+|y_i-y_{mm}|)$$\n",
+    "\n",
+    "The Manhattan median is the location which minimizes the absolute distance to all the event points. It is an extension of the median measure in one-dimensional space to two-dimensional space. Since in one-dimensional space, a median is the number separating the higher half of a dataset from the lower half, we define the Manhattan median as a tuple whose first element is the median of $x$ coordinates and second element is the median of $y$ coordinates.\n",
+    "\n",
+    "Though Manhattan median can be found very quickly, it is not unique if you have even number of points. In this case, pysal handles the Manhattan median the same way as numpy.median: return the average of the two middle values."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#get the number of points in point pattern \"pp\"\n",
+    "pp.n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Manhattan Median is not unique for \"pp\"\n",
+    "mm = manhattan_median(pp.points)\n",
+    "mm"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pp.plot()\n",
+    "plt.plot(mc[0], mc[1], 'b^', label='Mean Center')\n",
+    "plt.plot(wmc[0], wmc[1], 'gd', label='Weighted Mean Center')\n",
+    "plt.plot(mm[0], mm[1], 'rv', label='Manhattan Median')\n",
+    "plt.legend(numpoints=1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 1.3 Euclidean median $(x_{em}, y_{em})$\n",
+    "\n",
+    "$$min  f(x_{em},y_{em})= \\sum^n_{i=1} \\sqrt{(x_i-x_{em})^2+(y_i-y_{em})^2}$$\n",
+    "\n",
+    "The Euclidean Median is the location from which the sum of the Euclidean distances to all points in a distribution is a minimum. It is an optimization problem and very important for more general location allocation problems. There is no closed form solution. We can use first iterative algorithm (Kuhn and Kuenne, 1962) to approximate Euclidean Median. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Below, we define a function named median_center with the first argument **points** a series of $(x,y)$ coordinates and the second argument **crit** the convergence criterion."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def median_center(points, crit=0.0001):\n",
+    "    points = np.asarray(points)\n",
+    "    x0, y0 = points.mean(axis=0)\n",
+    "    dx = np.inf\n",
+    "    dy = np.inf\n",
+    "    iteration = 0\n",
+    "    while np.abs(dx) > crit or np.abs(dy) > crit:\n",
+    "        xd = points[:, 0] - x0\n",
+    "        yd = points[:, 1] - y0\n",
+    "        d = np.sqrt(xd*xd + yd*yd)\n",
+    "        w = 1./d\n",
+    "        w = w / w.sum()\n",
+    "        x1 = w * points[:, 0]\n",
+    "        x1 = x1.sum()\n",
+    "        y1 = w * points[:, 1]\n",
+    "        y1 = y1.sum()\n",
+    "        dx = x1 - x0\n",
+    "        dy = y1 - y0\n",
+    "        iteration +=1 \n",
+    "        print(x0, x1, dx, dy, d.sum(), iteration)\n",
+    "        x0 = x1\n",
+    "        y0 = y1\n",
+    "               \n",
+    "    return x1, y1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "median_center(pp.points, crit=.0001)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "After 18 iterations, the convergence criterion is reached. The Euclidean Median is $(54.167594287646125,44.424308658832047)$."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We can also call the function **euclidean_median** in pysal to calculate the Euclidean Median."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "em = euclidean_median(pp.points)\n",
+    "em"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The two results we get from **euclidean_median** function in pysal and the **median_center** function we define here are very much the same."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pp.plot()\n",
+    "plt.plot(mc[0], mc[1], 'b^', label='Mean Center')\n",
+    "plt.plot(wmc[0], wmc[1], 'gd', label='Weighted Mean Center')\n",
+    "plt.plot(mm[0], mm[1], 'rv', label='Manhattan Median')\n",
+    "plt.plot(em[0], em[1], 'm+', label='Euclidean Median')\n",
+    "plt.legend(numpoints=1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 2. Dispersion and orientation\n",
+    "\n",
+    "### Standard Distance & Standard Distance Circle\n",
+    "\n",
+    "$$SD = \\displaystyle \\sqrt{\\frac{\\sum^n_{i=1}(x_i-x_{m})^2}{n} + \\frac{\\sum^n_{i=1}(y_i-y_{m})^2}{n}}$$\n",
+    "\n",
+    "The Standard distance is  closely related to the usual definition of the standard deviation of a data set, and it provides a measure of how dispersed the events are around their mean center $(x_m,y_m)$.  Taken together, these measurements can be used to plot a summary circle (standard distance circle) for the point pattern, centered at $(x_m,y_m)$ with radius $SD$, as shown below."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "stdd = std_distance(pp.points)\n",
+    "stdd"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Plot mean center as well as the standard distance circle."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "circle1=plt.Circle((mc[0], mc[1]),stdd,color='r')\n",
+    "ax = pp.plot(get_ax=True, title='Standard Distance Circle')\n",
+    "ax.add_artist(circle1)\n",
+    "plt.plot(mc[0], mc[1], 'b^', label='Mean Center')\n",
+    "ax.set_aspect('equal')\n",
+    "plt.legend(numpoints=1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "From the above figure, we can observe that there are five points outside the standard distance circle which are potential outliers."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 3. Standard deviational ellipse\n",
+    "\n",
+    "Compared with standard distance circle which measures dispersion using a single parameter $SD$, standard deviational ellipse measures dispersion and trend in two dimensions through angle of rotation $\\theta$, dispersion along major axis $s_x$ and dispersion along minor axis $s_y$:\n",
+    "\n",
+    "* Major axis defines the direction of maximum spread in the distribution. $s_x$ is the semi-major axis (half the length of the major axis):\n",
+    "\n",
+    "$$ s_x = \\displaystyle \\sqrt{\\frac{2(\\sum_{i=1}^n (x_i-\\bar{x})\\cos(\\theta) - \\sum_{i=1}^n (y_i-\\bar{y})\\sin(\\theta))^2}{n-2}}$$\n",
+    "\n",
+    "* Minor axis defines the direction of minimum spread and is orthogonal to major axis. $s_y$ is the semi-minor axis (half the length of the minor axis):\n",
+    "\n",
+    "$$ s_y = \\displaystyle \\sqrt{\\frac{2(\\sum_{i=1}^n (x_i-\\bar{x})\\sin(\\theta) - \\sum_{i=1}^n (y_i-\\bar{y})\\cos(\\theta))^2}{n-2}}$$\n",
+    "\n",
+    "* The ellipse is rotated clockwise through an angle $\\theta$:\n",
+    "\n",
+    "$$\\theta = \\displaystyle \\arctan{\\{ (\\sum_i(x_i-\\bar{x})^2-\\sum_i(y_i-\\bar{y})^2) + \\frac{[(\\sum_i(x_i-\\bar{x})^2-\\sum_i(y_i-\\bar{y})^2)^2 + 4(\\sum_i(x-\\bar{x})(y_i-\\bar{y}))^2]^\\frac{1}{2}}{2\\sum_i(x-\\bar{x})(y_i-\\bar{y})}\\}}$$\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sx, sy, theta = ellipse(pp.points)\n",
+    "sx, sy, theta"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "theta_degree = np.degrees(theta) #need degree of rotation to plot the ellipse\n",
+    "theta_degree"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The Standard Deviational Ellipse for the point pattern is rotated clockwise by $63.25^{\\circ}$."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from matplotlib.patches import Ellipse\n",
+    "from pylab import figure, show,rand\n",
+    "fig = figure()\n",
+    "#ax = fig.add_subplot(111, aspect='equal')\n",
+    "e = Ellipse(xy=mean_center(pp.points), width=sx*2, height=sy*2, angle=-theta_degree) #angle is rotation in degrees (anti-clockwise)\n",
+    "ax = pp.plot(get_ax=True, title='Standard Deviational Ellipse')\n",
+    "ax.add_artist(e)\n",
+    "e.set_clip_box(ax.bbox)\n",
+    "e.set_facecolor([0.8,0,0])\n",
+    "e.set_edgecolor([1,0,0])\n",
+    "ax.set_xlim(0,100)\n",
+    "ax.set_ylim(0,100)\n",
+    "ax.set_aspect('equal')\n",
+    "plt.plot(mc[0], mc[1], 'b^', label='Mean Center')\n",
+    "plt.legend(numpoints=1)\n",
+    "show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 4. Shape analysis"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 4.1 Convex hull\n",
+    "\n",
+    "[Convex hull](https://en.wikipedia.org/wiki/Convex_hull)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "hull(pp.points)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "By specifying \"hull\" argument **True** in PointPattern class method **plot**, we can easily plot convex hull of the point pattern."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pp.plot(title='Centers', hull=True ) #plot point pattern \"pp\" as well as its convex hull\n",
+    "plt.plot(mc[0], mc[1], 'b^', label='Mean Center')\n",
+    "plt.plot(wmc[0], wmc[1], 'gd', label='Weighted Mean Center')\n",
+    "plt.plot(mm[0], mm[1], 'rv', label='Manhattan Median')\n",
+    "plt.plot(em[0], em[1], 'm+', label='Euclidean Median')\n",
+    "plt.legend(numpoints=1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 4.2 Minimum bounding rectangle\n",
+    "\n",
+    "[Minimum bounding rectangle](https://en.wikipedia.org/wiki/Minimum_bounding_rectangle)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "minimum_bounding_rectangle(pp.points)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Thus, four vertices of the  minimum bounding rectangle is $(8.23,7.68),(98.73,7.68),(98.73,92.08),(8.23,92.08)$."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pp.plot(title='Centers', window=True ) #plot point pattern \"pp\" as well as its Minimum Bounding Rectangle\n",
+    "plt.plot(mc[0], mc[1], 'b^', label='Mean Center')\n",
+    "plt.plot(wmc[0], wmc[1], 'gd', label='Weighted Mean Center')\n",
+    "plt.plot(mm[0], mm[1], 'rv', label='Manhattan Median')\n",
+    "plt.plot(em[0], em[1], 'm+', label='Euclidean Median')\n",
+    "plt.legend(numpoints=1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pp.plot(title='Centers',  hull=True , window=True )#plot point pattern \"pp\", convex hull, and Minimum Bounding Rectangle\n",
+    "plt.plot(mc[0], mc[1], 'b^', label='Mean Center')\n",
+    "plt.plot(wmc[0], wmc[1], 'gd', label='Weighted Mean Center')\n",
+    "plt.plot(mm[0], mm[1], 'rv', label='Manhattan Median')\n",
+    "plt.plot(em[0], em[1], 'm+', label='Euclidean Median')\n",
+    "plt.legend(numpoints=1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Plot Standard Distance Circle and Convex Hull."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "circle1=plt.Circle((mc[0], mc[1]),stdd,color='r',alpha=0.2)\n",
+    "ax = pp.plot(get_ax=True, title='Standard Distance Circle', hull=True)\n",
+    "ax.add_artist(circle1)\n",
+    "plt.plot(mc[0], mc[1], 'b^', label='Mean Center')\n",
+    "ax.set_aspect('equal')\n",
+    "plt.legend(numpoints=1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 5. Additional example: simulated patterns in Virginia\n",
+    "\n",
+    "We apply the  centrography statistics and visualization to 2 simulated random datasets."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#from pysal.contrib import shapely_ext\n",
+    "from libpysal.cg import shapely_ext\n",
+    "from pointpats import PoissonPointProcess as csr\n",
+    "import libpysal as ps\n",
+    "from pointpats import as_window\n",
+    "#import pysal_examples\n",
+    "\n",
+    "# open \"vautm17n\" polygon shapefile\n",
+    "va = ps.io.open(ps.examples.get_path(\"vautm17n.shp\"))\n",
+    "\n",
+    "# Create the exterior polygons for VA from the union of the county shapes\n",
+    "polys = [shp for shp in va]\n",
+    "state = shapely_ext.cascaded_union(polys)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 5.1 Simulate a 100-point dataset within the Virginia state border under CSR (complete spatial randomness)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pp = csr(as_window(state), 100, 1, asPP=True).realizations[0]\n",
+    "pp.plot(window=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pp.plot(window=True, hull=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "mc = mean_center(pp.points)\n",
+    "mm = manhattan_median(pp.points)\n",
+    "em = euclidean_median(pp.points)\n",
+    "pp.plot(title='Centers',  hull=True , window=True )#plot point pattern \"pp\", convex hull, and Minimum Bounding Rectangle\n",
+    "plt.plot(mc[0], mc[1], 'c^', label='Mean Center')\n",
+    "plt.plot(mm[0], mm[1], 'rv', label='Manhattan Median')\n",
+    "plt.plot(em[0], em[1], 'm+', label='Euclidean Median')\n",
+    "plt.legend(numpoints=1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 5.2 Simulate a 500-point dataset within the Virginia state border under CSR (complete spatial randomness)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pp = csr(as_window(state), 500, 1, asPP=True).realizations[0]\n",
+    "pp.plot(window=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pp.plot(window=True, hull=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "mc = mean_center(pp.points)\n",
+    "mm = manhattan_median(pp.points)\n",
+    "em = euclidean_median(pp.points)\n",
+    "pp.plot(title='Centers',  hull=True , window=True )#plot point pattern \"pp\", convex hull, and Minimum Bounding Rectangle\n",
+    "plt.plot(mc[0], mc[1], 'c^', label='Mean Center')\n",
+    "plt.plot(mm[0], mm[1], 'rv', label='Manhattan Median')\n",
+    "plt.plot(em[0], em[1], 'm+', label='Euclidean Median')\n",
+    "plt.legend(numpoints=1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "If we calculate the Euclidean distances between every event point and Mean Center (Euclidean Median), and sum them up, we can see that Euclidean Median is the optimal point in iterms of minimizing the Euclidean distances to all the event points."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from pointpats import dtot\n",
+    "\n",
+    "print(dtot(mc.tolist(), pp.points) > dtot(em.tolist(), pp.points))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 6. Recap\n",
+    "\n",
+    "In this notebook, we:\n",
+    "\n",
+    "- Reviewed a range of **centrographic statistics** for planar point patterns,\n",
+    "  including measures of central tendency, dispersion, and shape.\n",
+    "- Used functions in `pointpats.centrography` to compute and visualize\n",
+    "  the mean center, weighted mean center, Manhattan and Euclidean medians.\n",
+    "- Explored measures of spread and orientation via the **standard distance**\n",
+    "  and **standard deviational ellipse**.\n",
+    "- Illustrated basic **shape descriptors**, such as the convex hull and\n",
+    "  minimum bounding rectangle, and examined how these relate to dispersion.\n",
+    "- Worked through an additional example based on simulated point patterns\n",
+    "  within the Virginia state border under CSR.\n",
+    "\n",
+    "Together with the quadrat- and distance-based statistics notebooks, these\n",
+    "tools provide a complementary set of summaries for exploring spatial point\n",
+    "pattern structure in `pointpats`.\n"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.12.2"
+  },
+  "widgets": {
+   "state": {},
+   "version": "1.1.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

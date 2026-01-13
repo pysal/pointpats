@@ -3,8 +3,8 @@
 Installation
 ============
 
-From version 2.1.0, pointpats supports python `3.6`_ and `3.7`_ only.
-Please make sure that you are operating in a python 3 environment.
+Currently, pointpats supports Python >= `3.11`_.
+Please make sure that you are operating in a Python 3 environment.
 
 Installing released version
 ---------------------------
@@ -41,8 +41,7 @@ your fork. By making changes
 to your local clone and submitting a pull request to `pysal/pointpats`_, you can
 contribute to the pointpats development.
 
-.. _3.6: https://docs.python.org/3.6/
-.. _3.7: https://docs.python.org/3.7/
+.. _3.11: https://docs.python.org/3.11/
 .. _Python Package Index: https://pypi.org/project/pointpats/
 .. _pysal/pointpats: https://github.com/pysal/pointpats
 .. _fork: https://help.github.com/articles/fork-a-repo/

@@ -11,8 +11,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
     <script src="../_static/documentation_options.js?v=c3c8ae58"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="icon" href="../_static/pysal_favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -47,6 +48,7 @@
           <ul class="nav navbar-nav">
             
                 <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../user-guide/intro.html">User Guide</a></li>
                 <li><a href="../api.html">API</a></li>
                 <li><a href="../references.html">References</a></li>
             
@@ -59,7 +61,19 @@
      href="../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user-guide/intro.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/centrography.html">Centrography in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/sd_ellipse.html">Standard deviational ellipse in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/Quadrat_statistics.html">Quadrat-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/ripley.html">Distance-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/random.html">Simulating random point patterns with <code class="docutils literal notranslate"><span class="pre">pointpats.random</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/marks.html">Working with marks in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-released-version">Installing released version</a></li>
@@ -130,7 +144,7 @@
 <h1>pointpats.k_test<a class="headerlink" href="#pointpats-k-test" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="pointpats.k_test">
-<span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">k_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">support</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distances</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'euclidean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hull</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_correction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_simulations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_simulations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9999</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/distance_statistics.html#k_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.k_test" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">k_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">support</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distances</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'euclidean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hull</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_correction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_simulations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_simulations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/distance_statistics.html#k_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.k_test" title="Link to this definition">¶</a></dt>
 <dd><p>Ripley’s K function</p>
 <p>This function counts the number of pairs of points that are closer than a given distance.
 As d increases, K approaches the number of point pairs.</p>
@@ -158,6 +172,17 @@ will be returned as the result’s simulations attribute</p>
 </dd>
 <dt><strong>n_simulations: int</strong></dt><dd><p>how many simulations to conduct, assuming that the reference pattern
 has complete spatial randomness.</p>
+</dd>
+<dt><strong>n_jobs</strong><span class="classifier">int (default: -1)</span></dt><dd><p>The number of CPU cores to use for running the Monte Carlo simulations.
+Simulations are independent and can be run in parallel to significantly
+reduce execution time.</p>
+<ul class="simple">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">n_jobs</span> <span class="pre">=</span> <span class="pre">-1</span></code>, all available CPU cores will be used.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">n_jobs</span> <span class="pre">=</span> <span class="pre">1</span></code>, the execution will be forced to run sequentially (serially),
+disabling parallel processing. This is often useful for debugging or
+testing purposes.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">n_jobs</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>, that specific number of cores will be used.</p></li>
+</ul>
 </dd>
 </dl>
 </dd>
@@ -210,7 +235,7 @@ has complete spatial randomness.</p>
     </p>
     <p>
         &copy; Copyright 2018-, pysal developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.3.0.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
     </p>
   </div>
 </footer>

@@ -11,8 +11,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
     <script src="../_static/documentation_options.js?v=c3c8ae58"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="icon" href="../_static/pysal_favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -47,6 +48,7 @@
           <ul class="nav navbar-nav">
             
                 <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../user-guide/intro.html">User Guide</a></li>
                 <li><a href="../api.html">API</a></li>
                 <li><a href="../references.html">References</a></li>
             
@@ -59,7 +61,19 @@
      href="../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user-guide/intro.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/centrography.html">Centrography in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/sd_ellipse.html">Standard deviational ellipse in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/Quadrat_statistics.html">Quadrat-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/ripley.html">Distance-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/random.html">Simulating random point patterns with <code class="docutils literal notranslate"><span class="pre">pointpats.random</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/marks.html">Working with marks in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-released-version">Installing released version</a></li>
@@ -132,7 +146,7 @@
 <dt class="sig sig-object py" id="pointpats.std_distance">
 <span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">std_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float64</span></span></span><a class="reference internal" href="../_modules/pointpats/centrography.html#std_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.std_distance" title="Link to this definition">¶</a></dt>
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">std_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float64</span></span></span></dt>
+<span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">std_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float64</span></span></span></dt>
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">std_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoPandasBase</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float64</span></span></span></dt>
 <dd><p>Calculate standard distance of a point array.</p>
@@ -208,7 +222,7 @@
     </p>
     <p>
         &copy; Copyright 2018-, pysal developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.3.0.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
     </p>
   </div>
 </footer>

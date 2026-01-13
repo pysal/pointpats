@@ -11,12 +11,13 @@
     <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="_static/pysal-styles.css?v=f8dcc4ae" />
     <script src="_static/documentation_options.js?v=c3c8ae58"></script>
-    <script src="_static/doctools.js?v=9bcbadda"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="icon" href="_static/pysal_favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="next" title="User Guide" href="user-guide/intro.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -46,6 +47,7 @@
           <ul class="nav navbar-nav">
             
                 <li><a href="installation.html">Installation</a></li>
+                <li><a href="user-guide/intro.html">User Guide</a></li>
                 <li><a href="api.html">API</a></li>
                 <li><a href="references.html">References</a></li>
             
@@ -58,7 +60,19 @@
      href="#">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user-guide/intro.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user-guide/centrography.html">Centrography in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="user-guide/sd_ellipse.html">Standard deviational ellipse in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="user-guide/Quadrat_statistics.html">Quadrat-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="user-guide/ripley.html">Distance-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="user-guide/random.html">Simulating random point patterns with <code class="docutils literal notranslate"><span class="pre">pointpats.random</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="user-guide/marks.html">Working with marks in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#installing-released-version">Installing released version</a></li>
@@ -92,7 +106,17 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">Point Pattern Analysis (pointpats)</a></li>
+<li><a class="reference internal" href="#">Point Pattern Analysis (pointpats)</a><ul>
+<li><a class="reference internal" href="#key-workflows-notebooks">Key workflows (notebooks)</a></li>
+<li><a class="reference internal" href="#quickstart">Quickstart</a></li>
+<li><a class="reference internal" href="#what-you-can-do-with-pointpats">What you can do with <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li><a class="reference internal" href="#user-guide">User Guide</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#part-of-the-pysal-ecosystem">Part of the PySAL ecosystem</a></li>
+<li><a class="reference internal" href="#citation">Citation</a></li>
+</ul>
+</li>
 </ul>
 </ul>
 </li>
@@ -124,44 +148,128 @@
       
   <section id="point-pattern-analysis-pointpats">
 <h1>Point Pattern Analysis (pointpats)<a class="headerlink" href="#point-pattern-analysis-pointpats" title="Link to this heading">¶</a></h1>
-<p>pointpats is an open-source python library for the statistical analysis of planar point patterns.
-It is a subpackage of <a class="reference external" href="https://github.com/pysal/pysal">PySAL</a> (Python Spatial Analysis Library) and is under active development
-for the inclusion of many newly proposed analytics for point patterns.</p>
+<p>Statistical analysis of planar point patterns in Python.</p>
+<p><cite>pointpats</cite> is an open-source library for the analysis of planar point patterns
+and a subpackage of the Python Spatial Analysis Library, <a class="reference external" href="https://github.com/pysal/pysal">PySAL</a>.</p>
+<section id="key-workflows-notebooks">
+<h2>Key workflows (notebooks)<a class="headerlink" href="#key-workflows-notebooks" title="Link to this heading">¶</a></h2>
+<p>Explore the main workflows through executable notebooks:</p>
 <div class="container-fluid">
   <div class="row equal-height">
-    <div class="col-sm-1 col-xs-hidden">
-    </div>
+    <div class="col-sm-1 col-xs-hidden"></div>
+
+    <!-- Centrography -->
     <div class="col-md-3 col-xs-12">
-        <a href="https://nbviewer.org/github/pysal/pointpats/blob/main/notebooks/process.ipynb" class="thumbnail">
-            <img src="_static/images/point_process.png" class="img-responsive center-block">
-            <div class="caption text-center">
-            <h6>Simulating point processes</h6>
-            </div>
-        </a>
+      <a href="user-guide/centrography.html" class="thumbnail">
+        <img src="_static/images/centrography.png"
+             class="img-responsive center-block" alt="Centrography notebook">
+        <div class="caption text-center">
+          <h6>Centrography</h6>
+          <p>Centroids, dispersion measures, and visual summaries.</p>
+        </div>
+      </a>
     </div>
-    <div class="col-sm-3 col-xs-12">
-        <a href="https://nbviewer.org/github/pysal/pointpats/blob/main/notebooks/Quadrat_statistics.ipynb" class="thumbnail">
-            <img src="_static/images/quadrat.png" class="img-responsive center-block">
-            <div class="caption text-center">
-            <h6>Quadrat based statistics for point pattern analysis</h6>
-            </div>
-        </a>
+
+    <!-- Quadrat statistics -->
+    <div class="col-md-3 col-xs-12">
+      <a href="user-guide/Quadrat_statistics.html" class="thumbnail">
+        <img src="_static/images/quadrat.png"
+             class="img-responsive center-block" alt="Quadrat statistics notebook">
+        <div class="caption text-center">
+          <h6>Quadrat statistics</h6>
+          <p>Grid-based summaries and tests for spatial randomness.</p>
+        </div>
+      </a>
     </div>
-    <div class="col-sm-3 col-xs-12">
-        <a href="https://github.com/pysal/pointpats/blob/main/notebooks/distance_statistics-numpy-oriented.ipynb" class="thumbnail">
-            <img src="_static/images/G_sim_envelope.png"
-            class="img-responsive center-block">
-            <div class="caption text-center">
-            <h6>Distance based statistics for point pattern analysis
-            </h6>
-            </div>
-        </a>
+
+    <!-- Distance statistics -->
+    <div class="col-md-3 col-xs-12">
+      <a href="user-guide/ripley.html" class="thumbnail">
+        <img src="_static/images/ripleyg.png"
+             class="img-responsive center-block" alt="Distance statistics notebook">
+        <div class="caption text-center">
+          <h6>Distance-based statistics</h6>
+          <p>G, K, and L functions, envelopes, and interaction structure.</p>
+        </div>
+      </a>
     </div>
-    <div class="col-sm-2 col-xs-hidden">
-    </div>
+
+    <div class="col-sm-1 col-xs-hidden"></div>
   </div>
-</div><div class="toctree-wrapper compound">
+</div></section>
+<section id="quickstart">
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading">¶</a></h2>
+<p>Install the latest release:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pointpats
+</pre></div>
 </div>
+<p>or using conda-forge:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>pointpats
+</pre></div>
+</div>
+<p>A minimal example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointPattern</span>
+
+<span class="c1"># toy coordinates</span>
+<span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">pp</span> <span class="o">=</span> <span class="n">PointPattern</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;n:&quot;</span><span class="p">,</span> <span class="n">pp</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mean center:&quot;</span><span class="p">,</span> <span class="n">pp</span><span class="o">.</span><span class="n">mean_center</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;average nearest-neighbor distance:&quot;</span><span class="p">,</span> <span class="n">pp</span><span class="o">.</span><span class="n">nnd</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="what-you-can-do-with-pointpats">
+<h2>What you can do with <code class="docutils literal notranslate"><span class="pre">pointpats</span></code><a class="headerlink" href="#what-you-can-do-with-pointpats" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Build and summarize <strong>point pattern objects</strong> from coordinate data.</p></li>
+<li><p>Compute <strong>centrographic measures</strong> (mean center, standard distance, ellipses).</p></li>
+<li><p>Perform <strong>quadrat statistics</strong> for tests of complete spatial randomness.</p></li>
+<li><p>Use <strong>distance-based functions</strong> (G, K, L) and simulation envelopes.</p></li>
+<li><p>Work with <strong>marked patterns</strong> and <strong>simulated point processes</strong>.</p></li>
+</ul>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading">¶</a></h2>
+<p>The full user guide is organized around executable notebooks:</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user-guide/intro.html">User Guide</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="part-of-the-pysal-ecosystem">
+<h2>Part of the PySAL ecosystem<a class="headerlink" href="#part-of-the-pysal-ecosystem" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pointpats</span></code> is part of the <a class="reference external" href="https://github.com/pysal/pysal">PySAL</a> family of spatial analysis libraries,
+alongside components for spatial weights, regression, clustering, and more.</p>
+<ul class="simple">
+<li><p>Source code: <a class="reference external" href="https://github.com/pysal/pointpats">https://github.com/pysal/pointpats</a></p></li>
+<li><p>Bug reports and feature requests: <a class="reference external" href="https://github.com/pysal/pointpats/issues">https://github.com/pysal/pointpats/issues</a></p></li>
+</ul>
+</section>
+<section id="citation">
+<h2>Citation<a class="headerlink" href="#citation" title="Link to this heading">¶</a></h2>
+<p>If you use <code class="docutils literal notranslate"><span class="pre">pointpats</span></code> in your work, please cite the Zenodo record:</p>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@software</span><span class="p">{</span><span class="nl">wei_kang_2023_7706219</span><span class="p">,</span>
+<span class="w">  </span><span class="na">author</span><span class="w">    </span><span class="p">=</span><span class="w"> </span><span class="s">{Wei Kang and Levi John Wolf and Sergio Rey and Hu Shao</span>
+<span class="s">               and Mridul Seth and Martin Fleischmann and Sugam Srivastava</span>
+<span class="s">               and James Gaboardi and Giovanni Palla and Dani Arribas-Bel</span>
+<span class="s">               and Qiusheng Wu}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">title</span><span class="w">     </span><span class="p">=</span><span class="w"> </span><span class="s">{pysal/pointpats: pointpats 2.3.0}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">year</span><span class="w">      </span><span class="p">=</span><span class="w"> </span><span class="s">{2023}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">publisher</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Zenodo}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">version</span><span class="w">   </span><span class="p">=</span><span class="w"> </span><span class="s">{v2.3.0}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">doi</span><span class="w">       </span><span class="p">=</span><span class="w"> </span><span class="s">{10.5281/zenodo.7706219}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">url</span><span class="w">       </span><span class="p">=</span><span class="w"> </span><span class="s">{https://doi.org/10.5281/zenodo.7706219}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
 </section>
 
 
@@ -184,7 +292,7 @@ for the inclusion of many newly proposed analytics for point patterns.</p>
     </p>
     <p>
         &copy; Copyright 2018-, pysal developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.3.0.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
     </p>
   </div>
 </footer>

@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Working with marks in pointpats &#8212; pointpats v2.3.0 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <script src="../_static/documentation_options.js?v=c3c8ae58"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"TeX": {"equationNumbers": {"autoNumber": "AMS", "useLabelIds": true}}, "tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="icon" href="../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Installation" href="../installation.html" />
+    <link rel="prev" title="Simulating random point patterns with pointpats.random" href="random.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          pointpats</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.3.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="intro.html">User Guide</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="intro.html">User Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="centrography.html">Centrography in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="sd_ellipse.html">Standard deviational ellipse in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="Quadrat_statistics.html">Quadrat-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ripley.html">Distance-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html">Simulating random point patterns with <code class="docutils literal notranslate"><span class="pre">pointpats.random</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Working with marks in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-released-version">Installing released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-development-version">Installing development version</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#point-pattern">Point Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#point-processes">Point Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#centrography">Centrography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#density">Density</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#quadrat-based-statistics">Quadrat Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#distance-based-statistics">Distance Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#window-functions">Window functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#random-distributions">Random distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#space-time-interaction-tests">Space-Time Interaction Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Working with marks in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a><ul>
+<li><a class="reference internal" href="#Setup-and-imports">Setup and imports</a></li>
+<li><a class="reference internal" href="#1.-Create-an-unmarked-point-pattern">1. Create an unmarked point pattern</a></li>
+<li><a class="reference internal" href="#2.-Add-categorical-and-numeric-marks-with-add_marks">2. Add categorical and numeric marks with <code class="docutils literal notranslate"><span class="pre">add_marks</span></code></a></li>
+<li><a class="reference internal" href="#3.-Visualizing-a-marked-point-pattern">3. Visualizing a marked point pattern</a></li>
+<li><a class="reference internal" href="#4.-Splitting-a-marked-pattern-with-explode">4. Splitting a marked pattern with <code class="docutils literal notranslate"><span class="pre">explode</span></code></a></li>
+<li><a class="reference internal" href="#5.-Using-numeric-marks-as-weights:-weighted-mean-center">5. Using numeric marks as weights: weighted mean center</a></li>
+<li><a class="reference internal" href="#6.-Creating-a-marked-pattern-directly-from-an-array">6. Creating a marked pattern directly from an array</a></li>
+<li><a class="reference internal" href="#Recap">Recap</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="Working-with-marks-in-pointpats">
+<h1>Working with marks in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code><a class="headerlink" href="#Working-with-marks-in-pointpats" title="Link to this heading">¶</a></h1>
+<p>In addition to the <em>locations</em> of events, a point pattern can have extra attributes attached to each point: these are called <strong>marks</strong>.</p>
+<p>Examples of marks:</p>
+<ul class="simple">
+<li><p>species of a tree (categorical)</p></li>
+<li><p>crime type (categorical)</p></li>
+<li><p>tree diameter (continuous)</p></li>
+<li><p>number of injuries at an accident (count)</p></li>
+</ul>
+<p>In <code class="docutils literal notranslate"><span class="pre">pointpats</span></code>, a <strong>marked point pattern</strong> is represented by a <code class="docutils literal notranslate"><span class="pre">PointPattern</span></code> whose underlying data frame (<code class="docutils literal notranslate"><span class="pre">pp.df</span></code>) has extra columns beyond the coordinates, or by adding marks using the <code class="docutils literal notranslate"><span class="pre">add_marks</span></code> method. You can also split a marked pattern into separate unmarked patterns using <code class="docutils literal notranslate"><span class="pre">explode</span></code>.</p>
+<p>In this notebook we will:</p>
+<ol class="arabic simple">
+<li><p>Create an unmarked point pattern.</p></li>
+<li><p>Attach categorical and numeric marks with <code class="docutils literal notranslate"><span class="pre">add_marks</span></code>.</p></li>
+<li><p>Explore marks in the underlying pandas DataFrame.</p></li>
+<li><p>Visualize the pattern by mark category.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">explode</span></code> to split the pattern into one pattern per mark level.</p></li>
+<li><p>Compute a <strong>weighted mean center</strong> using a numeric mark as weights.</p></li>
+</ol>
+<section id="Setup-and-imports">
+<h2>Setup and imports<a class="headerlink" href="#Setup-and-imports" title="Link to this heading">¶</a></h2>
+<p>We will simulate points in the unit square <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span> <span class="pre">×</span> <span class="pre">[0,</span> <span class="pre">1]</span></code> using the random distributions in <code class="docutils literal notranslate"><span class="pre">pointpats.random</span></code> and then work with their marks.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointPattern</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">random</span> <span class="k">as</span> <span class="n">ppr</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">weighted_mean_center</span><span class="p">,</span> <span class="n">mean_center</span>  <span class="c1"># centrography functions</span>
+
+<span class="c1"># Make results reproducible</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Define a simple square hull as a bounding box: [xmin, ymin, xmax, ymax]</span>
+<span class="n">hull</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="n">hull</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([0., 0., 1., 1.])
+</pre></div></div>
+</div>
+</section>
+<section id="1.-Create-an-unmarked-point-pattern">
+<h2>1. Create an unmarked point pattern<a class="headerlink" href="#1.-Create-an-unmarked-point-pattern" title="Link to this heading">¶</a></h2>
+<p>First, we simulate 200 locations from a homogeneous Poisson point process in the unit square and construct a <code class="docutils literal notranslate"><span class="pre">PointPattern</span></code> from the coordinates.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Simulate 200 points in the unit square (unmarked pattern)</span>
+<span class="n">coords</span> <span class="o">=</span> <span class="n">ppr</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">coords</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(200, 2)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Build an unmarked PointPattern</span>
+<span class="n">pp</span> <span class="o">=</span> <span class="n">PointPattern</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+
+<span class="n">pp</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>  <span class="c1"># quick textual summary</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>  <span class="c1"># underlying DataFrame with coordinates only (x, y)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Point Pattern
+200 points
+Bounding rectangle [(0.000171181152699873,0.010338154916560871), (0.9942427152327866,0.9892658503605231)]
+Area of window: 0.9731241559634635
+Intensity estimate for window: 205.52362077784977
+          x         y
+0  0.552586  0.448690
+1  0.493656  0.826143
+2  0.023953  0.837835
+3  0.889946  0.989266
+4  0.250946  0.805441
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x</th>
+      <th>y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.552586</td>
+      <td>0.448690</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.493656</td>
+      <td>0.826143</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.023953</td>
+      <td>0.837835</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.889946</td>
+      <td>0.989266</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.250946</td>
+      <td>0.805441</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>At this stage, <code class="docutils literal notranslate"><span class="pre">pp</span></code> has only coordinates (<code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>) and <strong>no marks</strong>.</p>
+<p>Internally, <code class="docutils literal notranslate"><span class="pre">PointPattern</span></code> stores the data in a pandas DataFrame (<code class="docutils literal notranslate"><span class="pre">pp.df</span></code>). Any extra columns we add will be treated as marks (attributes) of the points.</p>
+</section>
+<section id="2.-Add-categorical-and-numeric-marks-with-add_marks">
+<h2>2. Add categorical and numeric marks with <code class="docutils literal notranslate"><span class="pre">add_marks</span></code><a class="headerlink" href="#2.-Add-categorical-and-numeric-marks-with-add_marks" title="Link to this heading">¶</a></h2>
+<p>We will assign two marks to each point:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: a <strong>categorical</strong> mark taking values <code class="docutils literal notranslate"><span class="pre">'A'</span></code> or <code class="docutils literal notranslate"><span class="pre">'B'</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code>: a <strong>continuous</strong> mark drawn from a normal distribution.</p></li>
+</ul>
+<p>We use the <code class="docutils literal notranslate"><span class="pre">add_marks(marks,</span> <span class="pre">mark_names=None)</span></code> method of <code class="docutils literal notranslate"><span class="pre">PointPattern</span></code> to attach these attributes.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">n</span>
+
+<span class="c1"># Categorical mark: two types, A and B</span>
+<span class="n">types</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">])</span>
+
+<span class="c1"># Numeric mark: e.g. &quot;intensity&quot; or &quot;size&quot; for each event</span>
+<span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+
+<span class="c1"># Attach both marks to the point pattern</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">add_marks</span><span class="p">([</span><span class="n">types</span><span class="p">,</span> <span class="n">values</span><span class="p">],</span> <span class="n">mark_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">])</span>
+
+<span class="n">pp</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x</th>
+      <th>y</th>
+      <th>type</th>
+      <th>value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.552586</td>
+      <td>0.448690</td>
+      <td>A</td>
+      <td>0.933881</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.493656</td>
+      <td>0.826143</td>
+      <td>B</td>
+      <td>1.984845</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.023953</td>
+      <td>0.837835</td>
+      <td>B</td>
+      <td>2.074374</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.889946</td>
+      <td>0.989266</td>
+      <td>A</td>
+      <td>0.904084</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.250946</td>
+      <td>0.805441</td>
+      <td>A</td>
+      <td>5.422076</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Now <code class="docutils literal notranslate"><span class="pre">pp</span></code> is a <strong>marked point pattern</strong>. The DataFrame has four columns: <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code> (coordinates) and <code class="docutils literal notranslate"><span class="pre">type</span></code>, <code class="docutils literal notranslate"><span class="pre">value</span></code> (marks).</p>
+<p>We can work with marks using standard pandas tools, for example to compute simple summaries by type:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Counts by categorical mark</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+type
+A    122
+B     78
+Name: count, dtype: int64
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Mean of the numeric mark by type</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+type
+A    2.080500
+B    2.019942
+Name: value, dtype: float64
+</pre></div></div>
+</div>
+</section>
+<section id="3.-Visualizing-a-marked-point-pattern">
+<h2>3. Visualizing a marked point pattern<a class="headerlink" href="#3.-Visualizing-a-marked-point-pattern" title="Link to this heading">¶</a></h2>
+<p>Let’s write a helper to plot points colored by a categorical mark, here <code class="docutils literal notranslate"><span class="pre">type</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_marked_pattern</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">mark_column</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot a marked point pattern, coloring by a categorical mark.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pp : pointpats.PointPattern</span>
+<span class="sd">        Marked point pattern.</span>
+<span class="sd">    mark_column : str</span>
+<span class="sd">        Column in `pp.df` containing categorical marks.</span>
+<span class="sd">    ax : matplotlib.axes.Axes, optional</span>
+<span class="sd">        Axis to plot on.</span>
+<span class="sd">    title : str, optional</span>
+<span class="sd">        Plot title.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">df</span>
+    <span class="n">categories</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">mark_column</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
+    <span class="n">cats</span> <span class="o">=</span> <span class="n">categories</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">categories</span>
+
+    <span class="c1"># Basic color cycle</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.prop_cycle&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">by_key</span><span class="p">()[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cat</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cats</span><span class="p">):</span>
+        <span class="n">sub</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">categories</span> <span class="o">==</span> <span class="n">cat</span><span class="p">]</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">sub</span><span class="p">[</span><span class="n">pp</span><span class="o">.</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">sub</span><span class="p">[</span><span class="n">pp</span><span class="o">.</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+                   <span class="n">s</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mark_column</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">cat</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                   <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+
+    <span class="c1"># Use the window of the pattern to set plot limits</span>
+    <span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">bbox</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">title</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ax</span>
+
+
+<span class="n">plot_marked_pattern</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">mark_column</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span>
+                    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Marked point pattern colored by type&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/user-guide_marks_13_0.svg" src="../_images/user-guide_marks_13_0.svg" />
+</div>
+</div>
+<p>The colors distinguish the mark categories (<code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">'A'</span></code> vs <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">'B'</span></code>). You can adapt the plotting function to map numeric marks to size or color gradients if desired.</p>
+</section>
+<section id="4.-Splitting-a-marked-pattern-with-explode">
+<h2>4. Splitting a marked pattern with <code class="docutils literal notranslate"><span class="pre">explode</span></code><a class="headerlink" href="#4.-Splitting-a-marked-pattern-with-explode" title="Link to this heading">¶</a></h2>
+<p>To analyze each mark category as its own point pattern, we can use the <code class="docutils literal notranslate"><span class="pre">explode(mark)</span></code> method of <code class="docutils literal notranslate"><span class="pre">PointPattern</span></code>. It returns a list of <code class="docutils literal notranslate"><span class="pre">PointPattern</span></code> objects, one per unique value of the mark.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Unique categories in the &quot;type&quot; mark</span>
+<span class="n">categories</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">categories</span>
+<span class="n">categories</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Index([&#39;A&#39;, &#39;B&#39;], dtype=&#39;object&#39;)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Explode into a list of unmarked patterns, one per category</span>
+<span class="n">pps_by_type</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">explode</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
+
+<span class="nb">len</span><span class="p">(</span><span class="n">pps_by_type</span><span class="p">)</span>  <span class="c1"># should match the number of unique categories</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">cat</span><span class="p">,</span> <span class="n">sub_pp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">categories</span><span class="p">,</span> <span class="n">pps_by_type</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Category </span><span class="si">{</span><span class="n">cat</span><span class="si">!r}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">sub_pp</span><span class="o">.</span><span class="n">n</span><span class="si">}</span><span class="s2"> points&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Category &#39;A&#39; -&gt; 122 points
+Category &#39;B&#39; -&gt; 78 points
+</pre></div></div>
+</div>
+<p>We can visualize each category in its own panel to compare their spatial distributions.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pps_by_type</span><span class="p">),</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">pps_by_type</span><span class="p">),</span> <span class="mi">4</span><span class="p">))</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pps_by_type</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">axes</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span> <span class="n">sub_pp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">categories</span><span class="p">,</span> <span class="n">pps_by_type</span><span class="p">):</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">sub_pp</span><span class="o">.</span><span class="n">df</span>
+    <span class="n">xname</span><span class="p">,</span> <span class="n">yname</span> <span class="o">=</span> <span class="n">sub_pp</span><span class="o">.</span><span class="n">coord_names</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">xname</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="n">yname</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+    <span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">sub_pp</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">bbox</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;type = </span><span class="si">{</span><span class="n">cat</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xname</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">yname</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/user-guide_marks_20_0.svg" src="../_images/user-guide_marks_20_0.svg" />
+</div>
+</div>
+<p>Each panel now shows the points belonging to a single mark category.</p>
+<p>This is useful when you want to treat each type as its <strong>own</strong> point pattern (e.g., trees of different species, crimes of different types) and compare their intensities, clustering, or nearest-neighbor behavior.</p>
+</section>
+<section id="5.-Using-numeric-marks-as-weights:-weighted-mean-center">
+<h2>5. Using numeric marks as weights: weighted mean center<a class="headerlink" href="#5.-Using-numeric-marks-as-weights:-weighted-mean-center" title="Link to this heading">¶</a></h2>
+<p>Numeric marks are often used as <strong>weights</strong> when summarizing the pattern. For example, you might weight accidents by the number of injuries or trees by their biomass.</p>
+<p>The function <code class="docutils literal notranslate"><span class="pre">weighted_mean_center(points,</span> <span class="pre">weights)</span></code> computes a weighted mean center, where each point contributes proportionally to its weight.</p>
+<p>Here we compare the (unweighted) mean center of the pattern to the weighted mean center using the <code class="docutils literal notranslate"><span class="pre">value</span></code> mark as weights.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Unweighted mean center</span>
+<span class="n">mc</span> <span class="o">=</span> <span class="n">mean_center</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+
+<span class="c1"># Weighted mean center using the numeric mark &quot;value&quot; as weights</span>
+<span class="n">wmc</span> <span class="o">=</span> <span class="n">weighted_mean_center</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">pp</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+<span class="n">mc</span><span class="p">,</span> <span class="n">wmc</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(array([0.4874871, 0.4928248]), array([0.50010306, 0.50329395]))
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="c1"># Plot marked pattern with small gray points</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">pp</span><span class="o">.</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">pp</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">pp</span><span class="o">.</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+           <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;events&quot;</span><span class="p">)</span>
+
+<span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">bbox</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">)</span>
+
+<span class="c1"># Add unweighted and weighted mean centers</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;b^&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;mean center&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;ro&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;weighted mean center&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Unweighted vs weighted mean center&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/user-guide_marks_24_0.svg" src="../_images/user-guide_marks_24_0.svg" />
+</div>
+</div>
+<p>The weighted mean center is pulled toward points with larger <code class="docutils literal notranslate"><span class="pre">value</span></code>. This is a simple example of how numeric marks can affect spatial summaries.</p>
+</section>
+<section id="6.-Creating-a-marked-pattern-directly-from-an-array">
+<h2>6. Creating a marked pattern directly from an array<a class="headerlink" href="#6.-Creating-a-marked-pattern-directly-from-an-array" title="Link to this heading">¶</a></h2>
+<p>Instead of starting with an unmarked pattern and calling <code class="docutils literal notranslate"><span class="pre">add_marks</span></code>, you can also pass a full <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">p)</span></code> array (coordinates + attributes) into <code class="docutils literal notranslate"><span class="pre">PointPattern</span></code> and specify <code class="docutils literal notranslate"><span class="pre">names</span></code> for the columns.</p>
+<p>In this example we build a second point pattern whose coordinates and marks are all stored in a single NumPy array:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Build a new (n, 4) array: x, y, type_code, value</span>
+<span class="n">type_code</span> <span class="o">=</span> <span class="p">(</span><span class="n">types</span> <span class="o">==</span> <span class="s2">&quot;B&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># 0 for A, 1 for B</span>
+<span class="n">points_with_marks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">type_code</span><span class="p">,</span> <span class="n">values</span><span class="p">])</span>
+
+<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;type_code&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">]</span>
+<span class="n">pp2</span> <span class="o">=</span> <span class="n">PointPattern</span><span class="p">(</span><span class="n">points_with_marks</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+
+<span class="n">pp2</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x</th>
+      <th>y</th>
+      <th>type_code</th>
+      <th>value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.552586</td>
+      <td>0.448690</td>
+      <td>0.0</td>
+      <td>0.933881</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.493656</td>
+      <td>0.826143</td>
+      <td>1.0</td>
+      <td>1.984845</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.023953</td>
+      <td>0.837835</td>
+      <td>1.0</td>
+      <td>2.074374</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.889946</td>
+      <td>0.989266</td>
+      <td>0.0</td>
+      <td>0.904084</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.250946</td>
+      <td>0.805441</td>
+      <td>0.0</td>
+      <td>5.422076</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">pp2</span></code> is also a marked point pattern: <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code> are coordinates, and <code class="docutils literal notranslate"><span class="pre">type_code</span></code>, <code class="docutils literal notranslate"><span class="pre">value</span></code> are marks.</p>
+<p>This pattern (constructing a full <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">p)</span></code> table and passing it to <code class="docutils literal notranslate"><span class="pre">PointPattern</span></code>) is convenient when your data already live in a DataFrame or when loading from a CSV or GIS table.</p>
+</section>
+<section id="Recap">
+<h2>Recap<a class="headerlink" href="#Recap" title="Link to this heading">¶</a></h2>
+<p>In this notebook, we have:</p>
+<ul class="simple">
+<li><p>Built an <strong>unmarked</strong> <code class="docutils literal notranslate"><span class="pre">PointPattern</span></code> from simulated coordinates.</p></li>
+<li><p>Attached <strong>categorical</strong> and <strong>numeric</strong> marks with <code class="docutils literal notranslate"><span class="pre">add_marks</span></code>.</p></li>
+<li><p>Used <code class="docutils literal notranslate"><span class="pre">pp.df</span></code> (a pandas DataFrame) to summarize marks by category.</p></li>
+<li><p>Visualized a marked point pattern with color by categorical mark.</p></li>
+<li><p>Applied <code class="docutils literal notranslate"><span class="pre">explode</span></code> to split a marked pattern into separate patterns, one per mark category.</p></li>
+<li><p>Computed a <strong>weighted mean center</strong> using a numeric mark as weights.</p></li>
+<li><p>Created a marked pattern directly from a full <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">p)</span></code> array with coordinate and mark columns.</p></li>
+</ul>
+<p>These tools form the core of working with <strong>marked point patterns</strong> in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code>. You can combine them with quadrat statistics, distance-based functions, and space–time tests for more advanced analyses.</p>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/user-guide/marks.ipynb.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

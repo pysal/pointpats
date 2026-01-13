@@ -11,9 +11,11 @@
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
     <script src="../_static/documentation_options.js?v=c3c8ae58"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"TeX": {"equationNumbers": {"autoNumber": "AMS", "useLabelIds": true}}, "tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <link rel="icon" href="../_static/pysal_favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -48,6 +50,7 @@
           <ul class="nav navbar-nav">
             
                 <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../user-guide/intro.html">User Guide</a></li>
                 <li><a href="../api.html">API</a></li>
                 <li><a href="../references.html">References</a></li>
             
@@ -60,7 +63,19 @@
      href="../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user-guide/intro.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/centrography.html">Centrography in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/sd_ellipse.html">Standard deviational ellipse in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/Quadrat_statistics.html">Quadrat-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/ripley.html">Distance-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/random.html">Simulating random point patterns with <code class="docutils literal notranslate"><span class="pre">pointpats.random</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/marks.html">Working with marks in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-released-version">Installing released version</a></li>
@@ -161,7 +176,7 @@
 <h1>pointpats.PointPattern<a class="headerlink" href="#pointpats-pointpattern" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pointpats.PointPattern">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">PointPattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/pointpattern.html#PointPattern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PointPattern" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">PointPattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/pointpattern.html#PointPattern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.PointPattern" title="Link to this definition">¶</a></dt>
 <dd><p>Planar Point Pattern Class 2-D.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -368,13 +383,13 @@ other</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pointpats.PointPattern.hull">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hull</span></span><a class="headerlink" href="#pointpats.PointPattern.hull" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">hull</span></span><a class="headerlink" href="#pointpats.PointPattern.hull" title="Link to this definition">¶</a></dt>
 <dd><p>Points defining convex hull in counterclockwise order</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pointpats.PointPattern.hull_area">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hull_area</span></span><a class="headerlink" href="#pointpats.PointPattern.hull_area" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">hull_area</span></span><a class="headerlink" href="#pointpats.PointPattern.hull_area" title="Link to this definition">¶</a></dt>
 <dd><p>Area of convex hull</p>
 </dd></dl>
 
@@ -428,19 +443,19 @@ nearest neighbor</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pointpats.PointPattern.lambda_hull">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lambda_hull</span></span><a class="headerlink" href="#pointpats.PointPattern.lambda_hull" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">lambda_hull</span></span><a class="headerlink" href="#pointpats.PointPattern.lambda_hull" title="Link to this definition">¶</a></dt>
 <dd><p>Intensity based on convex hull</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pointpats.PointPattern.lambda_mbb">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lambda_mbb</span></span><a class="headerlink" href="#pointpats.PointPattern.lambda_mbb" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">lambda_mbb</span></span><a class="headerlink" href="#pointpats.PointPattern.lambda_mbb" title="Link to this definition">¶</a></dt>
 <dd><p>Intensity based on minimum bounding box</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pointpats.PointPattern.lambda_window">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lambda_window</span></span><a class="headerlink" href="#pointpats.PointPattern.lambda_window" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">lambda_window</span></span><a class="headerlink" href="#pointpats.PointPattern.lambda_window" title="Link to this definition">¶</a></dt>
 <dd><p>Intensity estimate based on area of window</p>
 <p>The intensity of a point process at point <span class="math notranslate nohighlight">\(s_j\)</span> can be defined
 as:</p>
@@ -458,43 +473,43 @@ point <span class="math notranslate nohighlight">\(s_j\)</span>.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pointpats.PointPattern.max_nnd">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_nnd</span></span><a class="headerlink" href="#pointpats.PointPattern.max_nnd" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">max_nnd</span></span><a class="headerlink" href="#pointpats.PointPattern.max_nnd" title="Link to this definition">¶</a></dt>
 <dd><p>Max nearest neighbor distance</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pointpats.PointPattern.mbb">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mbb</span></span><a class="headerlink" href="#pointpats.PointPattern.mbb" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mbb</span></span><a class="headerlink" href="#pointpats.PointPattern.mbb" title="Link to this definition">¶</a></dt>
 <dd><p>Minimum bounding box</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pointpats.PointPattern.mbb_area">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mbb_area</span></span><a class="headerlink" href="#pointpats.PointPattern.mbb_area" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mbb_area</span></span><a class="headerlink" href="#pointpats.PointPattern.mbb_area" title="Link to this definition">¶</a></dt>
 <dd><p>Area of minimum bounding box</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pointpats.PointPattern.mean_nnd">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mean_nnd</span></span><a class="headerlink" href="#pointpats.PointPattern.mean_nnd" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mean_nnd</span></span><a class="headerlink" href="#pointpats.PointPattern.mean_nnd" title="Link to this definition">¶</a></dt>
 <dd><p>Mean nearest neighbor distance</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pointpats.PointPattern.min_nnd">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">min_nnd</span></span><a class="headerlink" href="#pointpats.PointPattern.min_nnd" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">min_nnd</span></span><a class="headerlink" href="#pointpats.PointPattern.min_nnd" title="Link to this definition">¶</a></dt>
 <dd><p>Min nearest neighbor distance</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pointpats.PointPattern.n">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n</span></span><a class="headerlink" href="#pointpats.PointPattern.n" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n</span></span><a class="headerlink" href="#pointpats.PointPattern.n" title="Link to this definition">¶</a></dt>
 <dd><p>Number of points</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pointpats.PointPattern.nnd">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nnd</span></span><a class="headerlink" href="#pointpats.PointPattern.nnd" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">nnd</span></span><a class="headerlink" href="#pointpats.PointPattern.nnd" title="Link to this definition">¶</a></dt>
 <dd><p>Nearest neighbor distances</p>
 </dd></dl>
 
@@ -528,7 +543,7 @@ pattern. If not, don’t plot convex hull.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pointpats.PointPattern.rot">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rot</span></span><a class="headerlink" href="#pointpats.PointPattern.rot" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rot</span></span><a class="headerlink" href="#pointpats.PointPattern.rot" title="Link to this definition">¶</a></dt>
 <dd><p>Ripley’s rule of thumb for distance range in plotting k and related functions</p>
 <p>One-quarter the smallest side of the mbb.</p>
 </dd></dl>
@@ -581,7 +596,7 @@ pattern. If not, don’t plot convex hull.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pointpats.PointPattern.tree">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tree</span></span><a class="headerlink" href="#pointpats.PointPattern.tree" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tree</span></span><a class="headerlink" href="#pointpats.PointPattern.tree" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -613,7 +628,7 @@ coordinates are the same, and their marks are the same (if any)</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pointpats.PointPattern.window">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">window</span></span><a class="headerlink" href="#pointpats.PointPattern.window" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">window</span></span><a class="headerlink" href="#pointpats.PointPattern.window" title="Link to this definition">¶</a></dt>
 <dd><p>Bounding geometry for the point pattern</p>
 <p><a class="reference internal" href="pointpats.Window.html#pointpats.Window" title="pointpats.window.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">window.Window</span></code></a></p>
 </dd></dl>
@@ -642,7 +657,7 @@ coordinates are the same, and their marks are the same (if any)</p>
     </p>
     <p>
         &copy; Copyright 2018-, pysal developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.3.0.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
     </p>
   </div>
 </footer>

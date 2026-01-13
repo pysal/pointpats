@@ -11,8 +11,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
     <script src="../_static/documentation_options.js?v=c3c8ae58"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="icon" href="../_static/pysal_favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -47,6 +48,7 @@
           <ul class="nav navbar-nav">
             
                 <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../user-guide/intro.html">User Guide</a></li>
                 <li><a href="../api.html">API</a></li>
                 <li><a href="../references.html">References</a></li>
             
@@ -59,7 +61,19 @@
      href="../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user-guide/intro.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/centrography.html">Centrography in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/sd_ellipse.html">Standard deviational ellipse in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/Quadrat_statistics.html">Quadrat-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/ripley.html">Distance-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/random.html">Simulating random point patterns with <code class="docutils literal notranslate"><span class="pre">pointpats.random</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/marks.html">Working with marks in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-released-version">Installing released version</a></li>
@@ -135,87 +149,36 @@
 <h1>pointpats.HexagonM<a class="headerlink" href="#pointpats-hexagonm" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pointpats.HexagonM">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">HexagonM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lh</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/quadrat_statistics.html#HexagonM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.HexagonM" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">HexagonM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/quadrat_statistics.html#HexagonM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.HexagonM" title="Link to this definition">¶</a></dt>
 <dd><p>Hexagon grid structure for quadrat-based method.</p>
-<dl class="field-list">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl>
-<dt><strong>pp</strong><span class="classifier"><a class="reference internal" href="pointpats.PointPattern.html#pointpats.PointPattern" title="pointpats.PointPattern"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointPattern</span></code></a></span></dt><dd><p>Point Pattern instance.</p>
-</dd>
-<dt><strong>lh</strong><span class="classifier">float</span></dt><dd><p>Hexagon length (hexagon).</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Attributes<span class="colon">:</span></dt>
-<dd class="field-even"><dl>
-<dt><strong>pp</strong><span class="classifier"><a class="reference internal" href="pointpats.PointPattern.html#pointpats.PointPattern" title="pointpats.PointPattern"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointPattern</span></code></a></span></dt><dd><p>Point Pattern instance.</p>
-</dd>
-<dt><strong>h_length</strong><span class="classifier">float</span></dt><dd><p>Hexagon length (hexagon).</p>
-</dd>
-<dt><strong>mbb</strong><span class="classifier">array</span></dt><dd><p>Minimum bounding box for the point pattern.</p>
-</dd>
-<dt><strong>points</strong><span class="classifier">array</span></dt><dd><p>x,y coordinates of the point points.</p>
-</dd>
-<dt><strong>h_length</strong><span class="classifier">float</span></dt><dd><p>Hexagon length (hexagon).</p>
-</dd>
-<dt><strong>count_row_even</strong><span class="classifier">integer</span></dt><dd><p>Number of even rows.</p>
-</dd>
-<dt><strong>count_row_odd</strong><span class="classifier">integer</span></dt><dd><p>Number of odd rows.</p>
-</dd>
-<dt><strong>count_column</strong><span class="classifier">integer</span></dt><dd><p>Number of columns.</p>
-</dd>
-<dt><strong>num</strong><span class="classifier">integer</span></dt><dd><p>Number of hexagonal quadrats.</p>
-</dd>
-</dl>
-</dd>
-</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pointpats.HexagonM.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lh</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/quadrat_statistics.html#HexagonM.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.HexagonM.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/quadrat_statistics.html#HexagonM.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.HexagonM.__init__" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.HexagonM.__init__" title="pointpats.HexagonM.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(pp, lh)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.HexagonM.__init__" title="pointpats.HexagonM.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(pp, lh[, window])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.HexagonM.plot" title="pointpats.HexagonM.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([title])</p></td>
-<td><p>Plot hexagon quadrats as well as the number of points falling in each quadrat.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.HexagonM.plot" title="pointpats.HexagonM.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([title, show, chi2_contrib])</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.HexagonM.point_location_sta" title="pointpats.HexagonM.point_location_sta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">point_location_sta</span></code></a>()</p></td>
-<td><p>Count the point events in each hexagon cell.</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="pointpats.HexagonM.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Quadrat</span> <span class="pre">Count'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/quadrat_statistics.html#HexagonM.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.HexagonM.plot" title="Link to this definition">¶</a></dt>
-<dd><p>Plot hexagon quadrats as well as the number of points falling in each quadrat.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>title:   str, optional</strong></dt><dd><p>Title of the plot. Default is “Quadrat Count”.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Quadrat</span> <span class="pre">Count'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'counts'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chi2_contrib</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/quadrat_statistics.html#HexagonM.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.HexagonM.plot" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pointpats.HexagonM.point_location_sta">
 <span class="sig-name descname"><span class="pre">point_location_sta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/quadrat_statistics.html#HexagonM.point_location_sta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.HexagonM.point_location_sta" title="Link to this definition">¶</a></dt>
-<dd><p>Count the point events in each hexagon cell.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>dict_id_count</strong><span class="classifier">dict</span></dt><dd><p>keys: rectangle id, values: number of point
-events in each hexagon cell.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -241,7 +204,7 @@ events in each hexagon cell.</p>
     </p>
     <p>
         &copy; Copyright 2018-, pysal developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.3.0.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
     </p>
   </div>
 </footer>

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Distance-based statistics in pointpats &#8212; pointpats v2.3.0 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <script src="../_static/documentation_options.js?v=c3c8ae58"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"TeX": {"equationNumbers": {"autoNumber": "AMS", "useLabelIds": true}}, "tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="icon" href="../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Simulating random point patterns with pointpats.random" href="random.html" />
+    <link rel="prev" title="Quadrat-based statistics in pointpats" href="Quadrat_statistics.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          pointpats</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.3.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="intro.html">User Guide</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="intro.html">User Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="centrography.html">Centrography in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="sd_ellipse.html">Standard deviational ellipse in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="Quadrat_statistics.html">Quadrat-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Distance-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html">Simulating random point patterns with <code class="docutils literal notranslate"><span class="pre">pointpats.random</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="marks.html">Working with marks in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-released-version">Installing released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-development-version">Installing development version</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#point-pattern">Point Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#point-processes">Point Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#centrography">Centrography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#density">Density</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#quadrat-based-statistics">Quadrat Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#distance-based-statistics">Distance Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#window-functions">Window functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#random-distributions">Random distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#space-time-interaction-tests">Space-Time Interaction Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Distance-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a><ul>
+<li><a class="reference internal" href="#1.-Setup-and-imports">1. Setup and imports</a></li>
+<li><a class="reference internal" href="#2.-Constructing-example-point-patterns">2. Constructing example point patterns</a><ul>
+<li><a class="reference internal" href="#Helper:-plotting-point-patterns">Helper: plotting point patterns</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#3.-Distance-based-summary-functions:-F,-G,-K,-L">3. Distance-based summary functions: F, G, K, L</a><ul>
+<li><a class="reference internal" href="#3.1-Comparing-G-and-F">3.1 Comparing G and F</a></li>
+<li><a class="reference internal" href="#3.2-Comparing-K-and-L">3.2 Comparing K and L</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#4.-Simulation-envelopes-with-g_test-and-k_test">4. Simulation envelopes with <code class="docutils literal notranslate"><span class="pre">g_test</span></code> and <code class="docutils literal notranslate"><span class="pre">k_test</span></code></a><ul>
+<li><a class="reference internal" href="#Helper:-plotting-simulation-envelopes">Helper: plotting simulation envelopes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#5.-Recap">5. Recap</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="Distance-based-statistics-in-pointpats">
+<h1>Distance-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code><a class="headerlink" href="#Distance-based-statistics-in-pointpats" title="Link to this heading">¶</a></h1>
+<p>This notebook provides an introduction to the <strong>distance-based statistics</strong> available in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code>, focusing on:</p>
+<ul class="simple">
+<li><p>Ripley’s <strong>G</strong> (nearest-neighbor) function</p></li>
+<li><p>Ripley’s <strong>F</strong> (empty-space) function</p></li>
+<li><p>Ripley’s <strong>K</strong> and <strong>L</strong> functions (inter-event distances)</p></li>
+<li><p>Simulation-based <strong>envelopes</strong> using <code class="docutils literal notranslate"><span class="pre">g_test</span></code> and <code class="docutils literal notranslate"><span class="pre">k_test</span></code></p></li>
+</ul>
+<p>We will:</p>
+<ol class="arabic simple">
+<li><p>Construct two toy point patterns in the unit square: one <strong>CSR</strong> (completely spatially random) and one <strong>clustered</strong>.</p></li>
+<li><p>Compare their distance-based statistics using the functional API: <code class="docutils literal notranslate"><span class="pre">f</span></code>, <code class="docutils literal notranslate"><span class="pre">g</span></code>, <code class="docutils literal notranslate"><span class="pre">k</span></code>, and <code class="docutils literal notranslate"><span class="pre">l</span></code>.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">g_test</span></code> and <code class="docutils literal notranslate"><span class="pre">k_test</span></code> to generate Monte Carlo simulation envelopes under CSR and visualize departures from complete spatial randomness.</p></li>
+</ol>
+<p>This notebook is designed to live in the <code class="docutils literal notranslate"><span class="pre">docs/user-guide/</span></code> folder and be executed automatically as part of the <code class="docutils literal notranslate"><span class="pre">pointpats</span></code> documentation build.</p>
+<section id="1.-Setup-and-imports">
+<h2>1. Setup and imports<a class="headerlink" href="#1.-Setup-and-imports" title="Link to this heading">¶</a></h2>
+<p>We work in the unit square <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span> <span class="pre">×</span> <span class="pre">[0,</span> <span class="pre">1]</span></code> and simulate patterns using the random distributions in <code class="docutils literal notranslate"><span class="pre">pointpats.random</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointPattern</span><span class="p">,</span> <span class="n">random</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">g_test</span><span class="p">,</span> <span class="n">k_test</span>
+
+<span class="c1"># Make results reproducible</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
+
+<span class="c1"># Unit square hull encoded as [xmin, ymin, xmax, ymax]</span>
+<span class="n">hull</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="n">hull</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([0., 0., 1., 1.])
+</pre></div></div>
+</div>
+</section>
+<section id="2.-Constructing-example-point-patterns">
+<h2>2. Constructing example point patterns<a class="headerlink" href="#2.-Constructing-example-point-patterns" title="Link to this heading">¶</a></h2>
+<p>We construct two patterns within the same hull:</p>
+<ul class="simple">
+<li><p>a <strong>CSR</strong> pattern from a homogeneous Poisson process; and</p></li>
+<li><p>a <strong>clustered</strong> pattern from a Poisson cluster process.</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_points</span> <span class="o">=</span> <span class="mi">200</span>
+
+<span class="c1"># CSR pattern: homogeneous Poisson process in the hull</span>
+<span class="n">coords_csr</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_points</span><span class="p">)</span>
+<span class="n">pp_csr</span> <span class="o">=</span> <span class="n">PointPattern</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">)</span>
+
+<span class="c1"># Clustered pattern: Poisson cluster process</span>
+<span class="n">coords_cluster</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">cluster_poisson</span><span class="p">(</span>
+    <span class="n">hull</span><span class="p">,</span>
+    <span class="n">size</span><span class="o">=</span><span class="n">n_points</span><span class="p">,</span>
+    <span class="n">n_seeds</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">pp_cluster</span> <span class="o">=</span> <span class="n">PointPattern</span><span class="p">(</span><span class="n">coords_cluster</span><span class="p">)</span>
+
+<span class="n">pp_csr</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">pp_cluster</span><span class="o">.</span><span class="n">n</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(200, 200)
+</pre></div></div>
+</div>
+<section id="Helper:-plotting-point-patterns">
+<h3>Helper: plotting point patterns<a class="headerlink" href="#Helper:-plotting-point-patterns" title="Link to this heading">¶</a></h3>
+<p>We will reuse a simple helper to visualize point patterns in their hull.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_pattern</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">hull</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot a 2D point pattern inside a rectangular hull.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points : array-like of shape (n, 2)</span>
+<span class="sd">        Point coordinates.</span>
+<span class="sd">    hull : array-like of length 4</span>
+<span class="sd">        Bounding box [xmin, ymin, xmax, ymax].</span>
+<span class="sd">    ax : matplotlib.axes.Axes, optional</span>
+<span class="sd">        Axis to plot on.</span>
+<span class="sd">    title : str, optional</span>
+<span class="sd">        Plot title.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+    <span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">hull</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">title</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ax</span>
+
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plot_pattern</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;CSR (Poisson)&quot;</span><span class="p">)</span>
+<span class="n">plot_pattern</span><span class="p">(</span><span class="n">coords_cluster</span><span class="p">,</span> <span class="n">hull</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Clustered&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/user-guide_ripley_6_0.svg" src="../_images/user-guide_ripley_6_0.svg" />
+</div>
+</div>
+</section>
+</section>
+<section id="3.-Distance-based-summary-functions:-F,-G,-K,-L">
+<h2>3. Distance-based summary functions: F, G, K, L<a class="headerlink" href="#3.-Distance-based-summary-functions:-F,-G,-K,-L" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pointpats</span></code> provides a functional API for distance-based statistics. Each function takes <code class="docutils literal notranslate"><span class="pre">coordinates</span></code> and returns a pair <code class="docutils literal notranslate"><span class="pre">(support,</span> <span class="pre">values)</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">support</span><span class="p">,</span> <span class="n">G_vals</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span>
+<span class="n">support</span><span class="p">,</span> <span class="n">F_vals</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">hull</span><span class="p">)</span>
+<span class="n">support</span><span class="p">,</span> <span class="n">K_vals</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span>
+<span class="n">support</span><span class="p">,</span> <span class="n">L_vals</span> <span class="o">=</span> <span class="n">l</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">linearized</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>G(d)</strong>: nearest-neighbor distribution from events to events.</p></li>
+<li><p><strong>F(d)</strong>: empty-space function from random locations to events (requires a hull when distances are not precomputed).</p></li>
+<li><p><strong>K(d)</strong>: cumulative inter-event distance function.</p></li>
+<li><p><strong>L(d)</strong>: scaled and shifted version of K; for CSR, linearized L should be close to zero across distances.</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># G: nearest-neighbor distribution</span>
+<span class="n">support_g_csr</span><span class="p">,</span> <span class="n">G_csr</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">)</span>
+<span class="n">support_g_cluster</span><span class="p">,</span> <span class="n">G_cluster</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">coords_cluster</span><span class="p">)</span>
+
+<span class="c1"># F: empty-space function (needs hull when distances=None)</span>
+<span class="n">support_f_csr</span><span class="p">,</span> <span class="n">F_csr</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">hull</span><span class="p">)</span>
+<span class="n">support_f_cluster</span><span class="p">,</span> <span class="n">F_cluster</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">coords_cluster</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">hull</span><span class="p">)</span>
+
+<span class="c1"># K: inter-event distance function</span>
+<span class="n">support_k_csr</span><span class="p">,</span> <span class="n">K_csr</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">)</span>
+<span class="n">support_k_cluster</span><span class="p">,</span> <span class="n">K_cluster</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">coords_cluster</span><span class="p">)</span>
+
+<span class="c1"># L: linearized version of K</span>
+<span class="n">support_l_csr</span><span class="p">,</span> <span class="n">L_csr</span> <span class="o">=</span> <span class="n">l</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">linearized</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">support_l_cluster</span><span class="p">,</span> <span class="n">L_cluster</span> <span class="o">=</span> <span class="n">l</span><span class="p">(</span><span class="n">coords_cluster</span><span class="p">,</span> <span class="n">linearized</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">support_g_csr</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">support_k_csr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+((20,), (20,))
+</pre></div></div>
+</div>
+<section id="3.1-Comparing-G-and-F">
+<h3>3.1 Comparing G and F<a class="headerlink" href="#3.1-Comparing-G-and-F" title="Link to this heading">¶</a></h3>
+<p>We first compare the G and F functions for the CSR and clustered patterns. Clustering tends to increase the probability of short distances, which is reflected differently in G and F.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="c1"># G function</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">support_g_csr</span><span class="p">,</span> <span class="n">G_csr</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;CSR&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">support_g_cluster</span><span class="p">,</span> <span class="n">G_cluster</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Clustered&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;distance&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;G(d)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Ripley&#39;s G function&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="c1"># F function</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">support_f_csr</span><span class="p">,</span> <span class="n">F_csr</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;CSR&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">support_f_cluster</span><span class="p">,</span> <span class="n">F_cluster</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Clustered&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;distance&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;F(d)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Ripley&#39;s F function&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/user-guide_ripley_10_0.svg" src="../_images/user-guide_ripley_10_0.svg" />
+</div>
+</div>
+</section>
+<section id="3.2-Comparing-K-and-L">
+<h3>3.2 Comparing K and L<a class="headerlink" href="#3.2-Comparing-K-and-L" title="Link to this heading">¶</a></h3>
+<p>Under complete spatial randomness (CSR) with intensity <code class="docutils literal notranslate"><span class="pre">lambda</span></code>, we expect:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">K(d)</span></code> to grow like <code class="docutils literal notranslate"><span class="pre">pi</span> <span class="pre">*</span> <span class="pre">d^2</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">L(d)</span></code> (linearized) to be close to zero.</p></li>
+</ul>
+<p>Departures above zero in L suggest clustering, while departures below zero suggest inhibition (regularity).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="c1"># K function</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">support_k_csr</span><span class="p">,</span> <span class="n">K_csr</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;CSR&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">support_k_cluster</span><span class="p">,</span> <span class="n">K_cluster</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Clustered&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;distance&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;K(d)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Ripley&#39;s K function&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="c1"># L function</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;CSR expectation&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">support_l_csr</span><span class="p">,</span> <span class="n">L_csr</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;CSR&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">support_l_cluster</span><span class="p">,</span> <span class="n">L_cluster</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Clustered&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;distance&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;L(d)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Ripley&#39;s L function (linearized)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/user-guide_ripley_12_0.svg" src="../_images/user-guide_ripley_12_0.svg" />
+</div>
+</div>
+</section>
+</section>
+<section id="4.-Simulation-envelopes-with-g_test-and-k_test">
+<h2>4. Simulation envelopes with <code class="docutils literal notranslate"><span class="pre">g_test</span></code> and <code class="docutils literal notranslate"><span class="pre">k_test</span></code><a class="headerlink" href="#4.-Simulation-envelopes-with-g_test-and-k_test" title="Link to this heading">¶</a></h2>
+<p>The functional API (<code class="docutils literal notranslate"><span class="pre">f</span></code>, <code class="docutils literal notranslate"><span class="pre">g</span></code>, <code class="docutils literal notranslate"><span class="pre">k</span></code>, <code class="docutils literal notranslate"><span class="pre">l</span></code>) gives a single curve for a given pattern. To assess whether this curve is consistent with CSR, <code class="docutils literal notranslate"><span class="pre">pointpats</span></code> provides test functions like <code class="docutils literal notranslate"><span class="pre">g_test</span></code> and <code class="docutils literal notranslate"><span class="pre">k_test</span></code> that:</p>
+<ol class="arabic simple">
+<li><p>Simulate many CSR patterns in the same hull.</p></li>
+<li><p>Compute the statistic for each simulation.</p></li>
+<li><p>Return the observed statistic, the simulated statistics, and Monte Carlo p-values at each distance.</p></li>
+</ol>
+<p>We will apply <code class="docutils literal notranslate"><span class="pre">g_test</span></code> and <code class="docutils literal notranslate"><span class="pre">k_test</span></code> to the <strong>clustered</strong> pattern and visualize the simulation envelopes.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_sims</span> <span class="o">=</span> <span class="mi">199</span>
+
+<span class="n">g_cluster</span> <span class="o">=</span> <span class="n">g_test</span><span class="p">(</span>
+    <span class="n">coords_cluster</span><span class="p">,</span>
+    <span class="n">hull</span><span class="o">=</span><span class="n">hull</span><span class="p">,</span>
+    <span class="n">keep_simulations</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">n_simulations</span><span class="o">=</span><span class="n">n_sims</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">k_cluster</span> <span class="o">=</span> <span class="n">k_test</span><span class="p">(</span>
+    <span class="n">coords_cluster</span><span class="p">,</span>
+    <span class="n">hull</span><span class="o">=</span><span class="n">hull</span><span class="p">,</span>
+    <span class="n">keep_simulations</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">n_simulations</span><span class="o">=</span><span class="n">n_sims</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">g_cluster</span><span class="o">.</span><span class="n">support</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">g_cluster</span><span class="o">.</span><span class="n">simulations</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">k_cluster</span><span class="o">.</span><span class="n">simulations</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+((20,), (199, 20), (199, 20))
+</pre></div></div>
+</div>
+<section id="Helper:-plotting-simulation-envelopes">
+<h3>Helper: plotting simulation envelopes<a class="headerlink" href="#Helper:-plotting-simulation-envelopes" title="Link to this heading">¶</a></h3>
+<p>We define a small helper that takes a test result and produces a two-panel plot showing:</p>
+<ul class="simple">
+<li><p>the observed function and a simulation envelope; and</p></li>
+<li><p>the point pattern used in the test.</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_envelope</span><span class="p">(</span><span class="n">test_result</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;G&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot simulation envelopes and the observed distance function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    test_result : namedtuple</span>
+<span class="sd">        Result from g_test, k_test, etc. Must have attributes</span>
+<span class="sd">        `support`, `statistic`, and `simulations`.</span>
+<span class="sd">    coordinates : array-like of shape (n, 2)</span>
+<span class="sd">        The point pattern being tested.</span>
+<span class="sd">    name : str, default &quot;G&quot;</span>
+<span class="sd">        Name of the statistic, used for labels and titles.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">support</span> <span class="o">=</span> <span class="n">test_result</span><span class="o">.</span><span class="n">support</span>
+    <span class="n">observed</span> <span class="o">=</span> <span class="n">test_result</span><span class="o">.</span><span class="n">statistic</span>
+    <span class="n">sims</span> <span class="o">=</span> <span class="n">test_result</span><span class="o">.</span><span class="n">simulations</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+        <span class="mi">1</span><span class="p">,</span>
+        <span class="mi">2</span><span class="p">,</span>
+        <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="n">gridspec_kw</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">width_ratios</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Left: simulation envelope + observed</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># All simulations as faint lines</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">support</span><span class="p">,</span> <span class="n">sims</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.8&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+    <span class="c1"># 95% envelope</span>
+    <span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">sims</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">sims</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+        <span class="n">support</span><span class="p">,</span>
+        <span class="n">lower</span><span class="p">,</span>
+        <span class="n">upper</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.9&quot;</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;95</span><span class="si">% e</span><span class="s2">nvelope&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Observed</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">support</span><span class="p">,</span> <span class="n">observed</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;observed&quot;</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;distance&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">(d)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ripley&#39;s </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> with CSR envelope&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+    <span class="c1"># Right: the pattern itself</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+    <span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">hull</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Pattern&quot;</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="n">plot_envelope</span><span class="p">(</span><span class="n">g_cluster</span><span class="p">,</span> <span class="n">coords_cluster</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;G&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/user-guide_ripley_16_0.svg" src="../_images/user-guide_ripley_16_0.svg" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_envelope</span><span class="p">(</span><span class="n">k_cluster</span><span class="p">,</span> <span class="n">coords_cluster</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;K&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/user-guide_ripley_17_0.svg" src="../_images/user-guide_ripley_17_0.svg" />
+</div>
+</div>
+<p>In these plots, departures of the observed curve outside the simulation envelope indicate scales (distances) where the clustered pattern is unlikely to have arisen under CSR.</p>
+<p>For example, if the observed G curve lies above the envelope at short distances, that suggests an excess of close neighbors, consistent with clustering. If it lies below, that suggests inhibition or regular spacing.</p>
+</section>
+</section>
+<section id="5.-Recap">
+<h2>5. Recap<a class="headerlink" href="#5.-Recap" title="Link to this heading">¶</a></h2>
+<p>In this notebook, we have:</p>
+<ul class="simple">
+<li><p>Constructed <strong>CSR</strong> and <strong>clustered</strong> point patterns in a simple rectangular window.</p></li>
+<li><p>Used the functional API (<code class="docutils literal notranslate"><span class="pre">f</span></code>, <code class="docutils literal notranslate"><span class="pre">g</span></code>, <code class="docutils literal notranslate"><span class="pre">k</span></code>, <code class="docutils literal notranslate"><span class="pre">l</span></code>) to compute distance-based statistics directly from coordinate arrays.</p></li>
+<li><p>Compared how <strong>G</strong>, <strong>F</strong>, <strong>K</strong>, and <strong>L</strong> respond to CSR vs clustering.</p></li>
+<li><p>Used <code class="docutils literal notranslate"><span class="pre">g_test</span></code> and <code class="docutils literal notranslate"><span class="pre">k_test</span></code> to generate <strong>simulation envelopes</strong> under CSR and visualize departures from complete spatial randomness.</p></li>
+</ul>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/user-guide/ripley.ipynb.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,457 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Quadrat-based statistics in `pointpats`\n",
+    "\n",
+    "This notebook demonstrates quadrat-based methods for analyzing planar point\n",
+    "patterns using the current `pointpats.quadrat_statistics` implementation.\n",
+    "\n",
+    "The workflow is:\n",
+    "\n",
+    "1. Represent the point pattern as a NumPy array of coordinates with shape `(n, 2)`.\n",
+    "2. Construct a rectangular or hexagonal quadrat tessellation over the **minimum\n",
+    "   bounding box (MBB)** of the points.\n",
+    "3. Compute a Pearson chi-square statistic from per-quadrat counts.\n",
+    "4. Optionally, obtain a **Monte Carlo p-value** by simulating CSR realizations\n",
+    "   within the same study window, with reproducibility controlled by `rng`.\n",
+    "\n",
+    "Key implementation facts (relevant for interpretation):\n",
+    "\n",
+    "- The default chi-square statistic uses **equal expected counts** across included cells.\n",
+    "- A `window` may be supplied; if omitted, the MBB rectangle is used.\n",
+    "- Monte Carlo inference makes the reference distribution window-aware, but it does not\n",
+    "  change how expected counts are defined.\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 1. Quadrat statistics and CSR\n",
+    "\n",
+    "Quadrat analysis partitions space into a set of non-overlapping cells and compares\n",
+    "the observed counts per cell to what is expected under **complete spatial randomness (CSR)**.\n",
+    "\n",
+    "Let $O_i$ be the count in cell \\(i\\), and let \\(k\\) be the number of cells\n",
+    "included in the analysis. The implemented test statistic is the Pearson chi-square\n",
+    "statistic with **equal expected counts** across included cells:\n",
+    "\n",
+    "$$\n",
+    "X^2 = \\sum_{i=1}^k \\frac{(O_i - \\bar{O})^2}{\\bar{O}},\n",
+    "\\qquad\n",
+    "\\bar{O} = \\frac{1}{k} \\sum_{i=1}^k O_i.\n",
+    "$$\n",
+    "\n",
+    "Analytical inference compares $X^2$  to a chi-square distribution with $(k-1)$\n",
+    "degrees of freedom. Simulation-based inference (Monte Carlo) instead compares the\n",
+    "observed $X^2$ to the sampling distribution obtained from CSR realizations\n",
+    "generated in the same window.\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 2. Example: the juvenile delinquency point pattern\n",
+    "\n",
+    "We will illustrate the quadrat workflow using the `juvenile.shp` example dataset.\n",
+    "The dataset is read as a GeoDataFrame and then converted to a NumPy coordinate array\n",
+    "`xy` with shape `(n, 2)`.\n",
+    "\n",
+    "These coordinates are passed directly to `QStatistic`.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import libpysal as ps\n",
+    "import numpy as np\n",
+    "import geopandas as gpd\n",
+    "%matplotlib inline\n",
+    "import matplotlib.pyplot as plt\n",
+    "import warnings\n",
+    "warnings.filterwarnings(\"ignore\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Import `pointpats.quadrat_statistics` and compute quadrat statistics.\n",
+    "\n",
+    "The main entry point is:\n",
+    "\n",
+    "```python\n",
+    "QStatistic(points, shape=\"rectangle\"|\"hexagon\", realizations=0, window=None,\n",
+    "           drop_nonintersecting=False, rng=None)\n",
+    "```\n",
+    "\n",
+    "- `points` is always a NumPy array of shape `(n, 2)`.\n",
+    "- `shape` selects the tessellation type.\n",
+    "- `realizations > 0` enables Monte Carlo inference.\n",
+    "- `rng` controls reproducibility of simulations.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from pointpats.quadrat_statistics import QStatistic"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Open the point shapefile and extract coordinates.\n",
+    "\n",
+    "Here we use `GeoDataFrame.get_coordinates()` to obtain an `(n, 2)` NumPy array,\n",
+    "which is the required input type for `QStatistic`.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "juv = gpd.read_file((ps.examples.get_path(\"juvenile.shp\")))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "juv.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "xy = juv.get_coordinates()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "xy"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "resRect = QStatistic(xy)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "resRect.chi2_pvalue"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "resRect.plot()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "resHex = QStatistic(xy, shape='hexagon')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "resHex.plot()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "resHex.chi2_pvalue"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 3. Simulation-based inference (Monte Carlo)\n",
+    "\n",
+    "When `realizations > 0`, CSR realizations are generated **within the same window**\n",
+    "and the chi-square statistic is recomputed for each realization. The Monte Carlo\n",
+    "p-value uses the standard +1 correction:\n",
+    "\n",
+    "$$\n",
+    "p = \\frac{\\#\\{X^2_{sim} \\ge X^2_{obs}\\} + 1}{R + 1},\n",
+    "$$\n",
+    "\n",
+    "where $R$ is the number of realizations.\n",
+    "\n",
+    "### Reproducibility\n",
+    "\n",
+    "All simulation-based results can be made reproducible by supplying `rng`:\n",
+    "\n",
+    "- `None` (default): create a new `numpy.random.default_rng()`\n",
+    "- integer seed\n",
+    "- `numpy.random.Generator`\n",
+    "- legacy `numpy.random.RandomState` (wrapped)\n",
+    "\n",
+    "The same generator is passed through the CSR simulation code, ensuring repeatable\n",
+    "Monte Carlo p-values.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from numpy.random import default_rng"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rng = default_rng(42)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "resHex_sim = QStatistic(xy, shape='hexagon', realizations=99, rng=rng)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "resHex_sim.chi2_r_pvalue\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "resHex_sim.chi2_realizations"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "resHex_sim.chi2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 4. Irregular windows\n",
+    "\n",
+    "Quadrat grids are constructed over the MBB of the points. If the study window is\n",
+    "irregular (e.g., a polygon), some grid cells may lie entirely outside the window.\n",
+    "\n",
+    "- If such outside cells are included, they contribute guaranteed zeros and can\n",
+    "  distort the test.\n",
+    "\n",
+    "\n",
+    "### How Monte Carlo interacts with this\n",
+    "\n",
+    "Comparing the observed chi-square statistic to simulated chi-square values is a\n",
+    "valid Monte Carlo test **for the statistic being used**, because the same grid,\n",
+    "window, and inclusion rule are applied to both observed and simulated patterns.\n",
+    "\n",
+    "Monte Carlo inference makes the *reference distribution* window-aware, but it does\n",
+    "not convert the test into an area-proportional quadrat test when the window is irregular.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from shapely.geometry import Polygon"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "window = Polygon([ [0, 0], [1, 0], [0, 1] ])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from pointpats.random import poisson"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pp = poisson(window, 100/1, rng=42)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pp"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "qs = QStatistic(pp, nx=5, ny=5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "qs.plot()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "qs.chi2_pvalue"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "qsw = QStatistic(pp, nx=5, ny=5, window=window, realizations=99, rng=42)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "qsw.chi2_r_pvalue"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "qsw.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 5. Recap\n",
+    "\n",
+    "In this notebook, we:\n",
+    "\n",
+    "- represented a point pattern as an `(n, 2)` NumPy coordinate array,\n",
+    "- computed quadrat counts using rectangular and hexagonal tessellations over the MBB,\n",
+    "- used a Pearson chi-square statistic with equal expected counts across included cells,\n",
+    "- obtained either an analytical p-value or a Monte Carlo p-value from CSR realizations,\n",
+    "- clarified the issues associated with irregular windows, and\n",
+    "- ensured reproducibility of simulations via an explicit `rng`."
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.14.2"
+  },
+  "widgets": {
+   "state": {},
+   "version": "1.1.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

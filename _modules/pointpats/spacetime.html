@@ -10,8 +10,9 @@
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/pysal-styles.css?v=f8dcc4ae" />
     <script src="../../_static/documentation_options.js?v=c3c8ae58"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="icon" href="../../_static/pysal_favicon.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -44,6 +45,7 @@
           <ul class="nav navbar-nav">
             
                 <li><a href="../../installation.html">Installation</a></li>
+                <li><a href="../../user-guide/intro.html">User Guide</a></li>
                 <li><a href="../../api.html">API</a></li>
                 <li><a href="../../references.html">References</a></li>
             
@@ -56,7 +58,19 @@
      href="../../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guide/intro.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/centrography.html">Centrography in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/sd_ellipse.html">Standard deviational ellipse in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/Quadrat_statistics.html">Quadrat-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/ripley.html">Distance-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/random.html">Simulating random point patterns with <code class="docutils literal notranslate"><span class="pre">pointpats.random</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/marks.html">Working with marks in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../installation.html#installing-released-version">Installing released version</a></li>
@@ -127,7 +141,7 @@
     <span class="s2">&quot;Eli Knaap &lt;eknaap@sdsu.edu&gt;&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Nicholas Malizia &lt;nmalizia@asu.edu&gt;&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Sergio J. Rey &lt;srey@sdsu.edu&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Philip Stephens &lt;philip.stephens@asu.edu&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Philip Stephens &lt;philip.stephens@asu.edu&gt;&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
@@ -817,16 +831,64 @@
 
 
 <span class="sd">    Returns</span>
-<span class="sd">    =======</span>
+<span class="sd">    -------</span>
+<span class="sd">    results : dict</span>
+<span class="sd">        Dictionary containing global counts, contingency tables, p-values, and</span>
+<span class="sd">        intermediate neighbor/pair structures. Keys include:</span>
 
-<span class="sd">    summary table observed</span>
-<span class="sd">    summary table h0</span>
+<span class="sd">        Counts (global)</span>
+<span class="sd">            - ``&quot;ns&quot;`` : float</span>
+<span class="sd">              Total number of spatial neighbor pairs, denoted ``NS``.</span>
+<span class="sd">            - ``&quot;nt&quot;`` : float</span>
+<span class="sd">              Total number of temporal neighbor pairs, denoted ``NT``.</span>
+<span class="sd">            - ``&quot;nst&quot;`` : float</span>
+<span class="sd">              Total number of space-time neighbor pairs, denoted ``NST``.</span>
+<span class="sd">            - ``&quot;pairs&quot;`` : float</span>
+<span class="sd">              Total number of unordered pairs, ``n * (n - 1) / 2``.</span>
 
-<span class="sd">    ns</span>
-<span class="sd">    nt</span>
-<span class="sd">    nst</span>
-<span class="sd">    n</span>
-<span class="sd">    p-value</span>
+<span class="sd">        Tables</span>
+<span class="sd">            - ``&quot;observed&quot;`` : ndarray of shape (2, 2)</span>
+<span class="sd">              Observed contingency table::</span>
+
+<span class="sd">                  [[NST,  NS - NST],</span>
+<span class="sd">                   [NT - NST,  pairs - (NS + NT - NST)]]</span>
+
+<span class="sd">            - ``&quot;expected&quot;`` : ndarray of shape (2, 2)</span>
+<span class="sd">              Expected contingency table under independence. The expected</span>
+<span class="sd">              space-time count is ``ENST = NS * NT / pairs``.</span>
+
+<span class="sd">        Inference</span>
+<span class="sd">            - ``&quot;p_value_poisson&quot;`` : float</span>
+<span class="sd">              One-sided analytic p-value using a Poisson model for ``NST`` with</span>
+<span class="sd">              mean equal to the expected space-time count.</span>
+<span class="sd">            - ``&quot;p_value_sim&quot;`` : float, optional</span>
+<span class="sd">              One-sided permutation p-value (present when ``permutations &gt; 0``).</span>
+<span class="sd">            - ``&quot;exceedence&quot;`` : int, optional</span>
+<span class="sd">              Number of permutations with statistic &gt;= observed (present when</span>
+<span class="sd">              ``permutations &gt; 0``).</span>
+<span class="sd">            - ``&quot;st_perm&quot;`` : ndarray of shape (permutations,), optional</span>
+<span class="sd">              Permutation distribution of the statistic (present when</span>
+<span class="sd">              ``permutations &gt; 0`` and ``keep=True``).</span>
+
+<span class="sd">        Neighbor and pair structures</span>
+<span class="sd">            - ``&quot;sneighbors&quot;`` : list of sets</span>
+<span class="sd">              Spatial neighbors for each event index.</span>
+<span class="sd">            - ``&quot;tneighbors&quot;`` : list of sets</span>
+<span class="sd">              Temporal neighbors for each event index.</span>
+<span class="sd">            - ``&quot;stneighbors&quot;`` : list of sets</span>
+<span class="sd">              Intersection of spatial and temporal neighbors for each index.</span>
+<span class="sd">            - ``&quot;st_pairs&quot;`` : set of tuple(int, int)</span>
+<span class="sd">              Set of unordered index pairs that are neighbors in both space and</span>
+<span class="sd">              time.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - All pair counts are **unordered** (i.e., each pair is counted once), hence</span>
+<span class="sd">      the division by 2 after summing directed neighbor counts.</span>
+<span class="sd">    - The permutation procedure randomly reassigns temporal neighbor labels to</span>
+<span class="sd">      spatial neighborhoods via index permutations, generating a null</span>
+<span class="sd">      distribution for the global space-time neighbor count.</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">n</span> <span class="o">=</span> <span class="n">s_coords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -938,7 +1000,7 @@
 <div class="viewcode-block" id="Knox">
 <a class="viewcode-back" href="../../generated/pointpats.Knox.html#pointpats.Knox">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Knox</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Global Knox statistic for space-time interactions</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Global Knox statistic for space-time interactions.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -982,10 +1044,10 @@
 <span class="sd">        Pseudo p-value based on random permutations</span>
 <span class="sd">    expected: array</span>
 <span class="sd">        Two-by-two array with expected counts under the null of no space-time</span>
-<span class="sd">        interactions. [[NST, NS_], [NT_, N__]] where NST is the expected number</span>
-<span class="sd">        of space-time pairs, NS_ is the expected number of spatial (but not also</span>
-<span class="sd">        temporal) pairs, NT_ is the number of expected temporal (but not also</span>
-<span class="sd">        spatial pairs), N__ is the number of pairs that are neighor spatial or</span>
+<span class="sd">        interactions. ``[[NST, NS_], [NT_, N__]]`` where ``NST`` is the expected number</span>
+<span class="sd">        of space-time pairs, ``NS_`` is the expected number of spatial (but not also</span>
+<span class="sd">        temporal) pairs, ``NT_`` is the number of expected temporal (but not also</span>
+<span class="sd">        spatial pairs), ``N__`` is the number of pairs that are neighor spatial or</span>
 <span class="sd">        temporal neighbors.</span>
 <span class="sd">    observed: array</span>
 <span class="sd">        Same structure as expected with the observed pair classifications</span>
@@ -1215,7 +1277,7 @@
 <div class="viewcode-block" id="KnoxLocal">
 <a class="viewcode-back" href="../../generated/pointpats.KnoxLocal.html#pointpats.KnoxLocal">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">KnoxLocal</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Local Knox statistics for space-time interactions</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Local Knox statistics for space-time interactions.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1264,10 +1326,10 @@
 <span class="sd">        Pseudo p-value based on random permutations (global)</span>
 <span class="sd">    expected: array</span>
 <span class="sd">        Two-by-two array with expected counts under the null of no space-time</span>
-<span class="sd">        interactions. [[NST, NS_], [NT_, N__]] where NST is the expected number</span>
-<span class="sd">        of space-time pairs, NS_ is the expected number of spatial (but not also</span>
-<span class="sd">        temporal) pairs, NT_ is the number of expected temporal (but not also</span>
-<span class="sd">        spatial pairs), N__ is the number of pairs that are neighor spatial or</span>
+<span class="sd">        interactions. ``[[NST, NS_], [NT_, N__]]`` where ``NST`` is the expected number</span>
+<span class="sd">        of space-time pairs, ``NS_`` is the expected number of spatial (but not also</span>
+<span class="sd">        temporal) pairs, ``NT_`` is the number of expected temporal (but not also</span>
+<span class="sd">        spatial pairs), ``N__`` is the number of pairs that are neighor spatial or</span>
 <span class="sd">        temporal neighbors. (global)</span>
 <span class="sd">    observed: array</span>
 <span class="sd">        Same structure as expected with the observed pair classifications (global)</span>
@@ -1289,7 +1351,7 @@
 <span class="sd">    permutation inference is unique to pysal.pointpats.</span>
 
 <span class="sd">    Examples</span>
-<span class="sd">    -------</span>
+<span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; import libpysal</span>
 <span class="sd">    &gt;&gt;&gt; path = libpysal.examples.get_path(&#39;burkitt.shp&#39;)</span>
 <span class="sd">    &gt;&gt;&gt; import geopandas</span>
@@ -1797,7 +1859,7 @@
     </p>
     <p>
         &copy; Copyright 2018-, pysal developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.3.0.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
     </p>
   </div>
 </footer>

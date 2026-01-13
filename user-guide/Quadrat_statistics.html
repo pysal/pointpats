@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Quadrat-based statistics in pointpats &#8212; pointpats v2.3.0 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <script src="../_static/documentation_options.js?v=c3c8ae58"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"TeX": {"equationNumbers": {"autoNumber": "AMS", "useLabelIds": true}}, "tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="icon" href="../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Distance-based statistics in pointpats" href="ripley.html" />
+    <link rel="prev" title="Standard deviational ellipse in pointpats" href="sd_ellipse.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          pointpats</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.3.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="intro.html">User Guide</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="intro.html">User Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="centrography.html">Centrography in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="sd_ellipse.html">Standard deviational ellipse in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Quadrat-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="ripley.html">Distance-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html">Simulating random point patterns with <code class="docutils literal notranslate"><span class="pre">pointpats.random</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="marks.html">Working with marks in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-released-version">Installing released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-development-version">Installing development version</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#point-pattern">Point Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#point-processes">Point Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#centrography">Centrography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#density">Density</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#quadrat-based-statistics">Quadrat Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#distance-based-statistics">Distance Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#window-functions">Window functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#random-distributions">Random distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#space-time-interaction-tests">Space-Time Interaction Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Quadrat-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a><ul>
+<li><a class="reference internal" href="#1.-Quadrat-statistics-and-CSR">1. Quadrat statistics and CSR</a></li>
+<li><a class="reference internal" href="#2.-Example:-the-juvenile-delinquency-point-pattern">2. Example: the juvenile delinquency point pattern</a></li>
+<li><a class="reference internal" href="#3.-Simulation-based-inference-(Monte-Carlo)">3. Simulation-based inference (Monte Carlo)</a><ul>
+<li><a class="reference internal" href="#Reproducibility">Reproducibility</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#4.-Irregular-windows">4. Irregular windows</a><ul>
+<li><a class="reference internal" href="#How-Monte-Carlo-interacts-with-this">How Monte Carlo interacts with this</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#5.-Recap">5. Recap</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="Quadrat-based-statistics-in-pointpats">
+<h1>Quadrat-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code><a class="headerlink" href="#Quadrat-based-statistics-in-pointpats" title="Link to this heading">¶</a></h1>
+<p>This notebook demonstrates quadrat-based methods for analyzing planar point patterns using the current <code class="docutils literal notranslate"><span class="pre">pointpats.quadrat_statistics</span></code> implementation.</p>
+<p>The workflow is:</p>
+<ol class="arabic simple">
+<li><p>Represent the point pattern as a NumPy array of coordinates with shape <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">2)</span></code>.</p></li>
+<li><p>Construct a rectangular or hexagonal quadrat tessellation over the <strong>minimum bounding box (MBB)</strong> of the points.</p></li>
+<li><p>Compute a Pearson chi-square statistic from per-quadrat counts.</p></li>
+<li><p>Optionally, obtain a <strong>Monte Carlo p-value</strong> by simulating CSR realizations within the same study window, with reproducibility controlled by <code class="docutils literal notranslate"><span class="pre">rng</span></code>.</p></li>
+</ol>
+<p>Key implementation facts (relevant for interpretation):</p>
+<ul class="simple">
+<li><p>The default chi-square statistic uses <strong>equal expected counts</strong> across included cells.</p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">window</span></code> may be supplied; if omitted, the MBB rectangle is used.</p></li>
+<li><p>Monte Carlo inference makes the reference distribution window-aware, but it does not change how expected counts are defined.</p></li>
+</ul>
+<section id="1.-Quadrat-statistics-and-CSR">
+<h2>1. Quadrat statistics and CSR<a class="headerlink" href="#1.-Quadrat-statistics-and-CSR" title="Link to this heading">¶</a></h2>
+<p>Quadrat analysis partitions space into a set of non-overlapping cells and compares the observed counts per cell to what is expected under <strong>complete spatial randomness (CSR)</strong>.</p>
+<p>Let <span class="math notranslate nohighlight">\(O_i\)</span> be the count in cell (i), and let (k) be the number of cells included in the analysis. The implemented test statistic is the Pearson chi-square statistic with <strong>equal expected counts</strong> across included cells:</p>
+<div class="math notranslate nohighlight">
+\[X^2 = \sum_{i=1}^k \frac{(O_i - \bar{O})^2}{\bar{O}},
+\qquad
+\bar{O} = \frac{1}{k} \sum_{i=1}^k O_i.\]</div>
+<p>Analytical inference compares <span class="math notranslate nohighlight">\(X^2\)</span> to a chi-square distribution with <span class="math notranslate nohighlight">\((k-1)\)</span> degrees of freedom. Simulation-based inference (Monte Carlo) instead compares the observed <span class="math notranslate nohighlight">\(X^2\)</span> to the sampling distribution obtained from CSR realizations generated in the same window.</p>
+</section>
+<section id="2.-Example:-the-juvenile-delinquency-point-pattern">
+<h2>2. Example: the juvenile delinquency point pattern<a class="headerlink" href="#2.-Example:-the-juvenile-delinquency-point-pattern" title="Link to this heading">¶</a></h2>
+<p>We will illustrate the quadrat workflow using the <code class="docutils literal notranslate"><span class="pre">juvenile.shp</span></code> example dataset. The dataset is read as a GeoDataFrame and then converted to a NumPy coordinate array <code class="docutils literal notranslate"><span class="pre">xy</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">2)</span></code>.</p>
+<p>These coordinates are passed directly to <code class="docutils literal notranslate"><span class="pre">QStatistic</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">libpysal</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ps</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Import <code class="docutils literal notranslate"><span class="pre">pointpats.quadrat_statistics</span></code> and compute quadrat statistics.</p>
+<p>The main entry point is:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">QStatistic</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="s2">&quot;rectangle&quot;</span><span class="o">|</span><span class="s2">&quot;hexagon&quot;</span><span class="p">,</span> <span class="n">realizations</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+           <span class="n">drop_nonintersecting</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">points</span></code> is always a NumPy array of shape <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">2)</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shape</span></code> selects the tessellation type.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">realizations</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> enables Monte Carlo inference.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rng</span></code> controls reproducibility of simulations.</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pointpats.quadrat_statistics</span><span class="w"> </span><span class="kn">import</span> <span class="n">QStatistic</span>
+</pre></div>
+</div>
+</div>
+<p>Open the point shapefile and extract coordinates.</p>
+<p>Here we use <code class="docutils literal notranslate"><span class="pre">GeoDataFrame.get_coordinates()</span></code> to obtain an <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">2)</span></code> NumPy array, which is the required input type for <code class="docutils literal notranslate"><span class="pre">QStatistic</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">juv</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">((</span><span class="n">ps</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">&quot;juvenile.shp&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">juv</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(168, 4)
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xy</span> <span class="o">=</span> <span class="n">juv</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xy</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x</th>
+      <th>y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>94.0</td>
+      <td>93.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>80.0</td>
+      <td>95.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>79.0</td>
+      <td>90.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>78.0</td>
+      <td>92.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>76.0</td>
+      <td>92.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>163</th>
+      <td>45.0</td>
+      <td>14.0</td>
+    </tr>
+    <tr>
+      <th>164</th>
+      <td>33.0</td>
+      <td>8.0</td>
+    </tr>
+    <tr>
+      <th>165</th>
+      <td>31.0</td>
+      <td>7.0</td>
+    </tr>
+    <tr>
+      <th>166</th>
+      <td>32.0</td>
+      <td>6.0</td>
+    </tr>
+    <tr>
+      <th>167</th>
+      <td>31.0</td>
+      <td>8.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>168 rows × 2 columns</p>
+</div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resRect</span> <span class="o">=</span> <span class="n">QStatistic</span><span class="p">(</span><span class="n">xy</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resRect</span><span class="o">.</span><span class="n">chi2_pvalue</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+np.float64(5.890978545159614e-05)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resRect</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Axes: title={&#39;center&#39;: &#39;Quadrat Count&#39;}&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/user-guide_Quadrat_statistics_13_1.svg" src="../_images/user-guide_Quadrat_statistics_13_1.svg" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resHex</span> <span class="o">=</span> <span class="n">QStatistic</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;hexagon&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resHex</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Axes: title={&#39;center&#39;: &#39;Quadrat Count&#39;}&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/user-guide_Quadrat_statistics_15_1.svg" src="../_images/user-guide_Quadrat_statistics_15_1.svg" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resHex</span><span class="o">.</span><span class="n">chi2_pvalue</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+np.float64(6.375950695202749e-22)
+</pre></div></div>
+</div>
+</section>
+<section id="3.-Simulation-based-inference-(Monte-Carlo)">
+<h2>3. Simulation-based inference (Monte Carlo)<a class="headerlink" href="#3.-Simulation-based-inference-(Monte-Carlo)" title="Link to this heading">¶</a></h2>
+<p>When <code class="docutils literal notranslate"><span class="pre">realizations</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>, CSR realizations are generated <strong>within the same window</strong> and the chi-square statistic is recomputed for each realization. The Monte Carlo p-value uses the standard +1 correction:</p>
+<div class="math notranslate nohighlight">
+\[p = \frac{\#\{X^2_{sim} \ge X^2_{obs}\} + 1}{R + 1},\]</div>
+<p>where <span class="math notranslate nohighlight">\(R\)</span> is the number of realizations.</p>
+<section id="Reproducibility">
+<h3>Reproducibility<a class="headerlink" href="#Reproducibility" title="Link to this heading">¶</a></h3>
+<p>All simulation-based results can be made reproducible by supplying <code class="docutils literal notranslate"><span class="pre">rng</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> (default): create a new <code class="docutils literal notranslate"><span class="pre">numpy.random.default_rng()</span></code></p></li>
+<li><p>integer seed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></p></li>
+<li><p>legacy <code class="docutils literal notranslate"><span class="pre">numpy.random.RandomState</span></code> (wrapped)</p></li>
+</ul>
+<p>The same generator is passed through the CSR simulation code, ensuring repeatable Monte Carlo p-values.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">numpy.random</span><span class="w"> </span><span class="kn">import</span> <span class="n">default_rng</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rng</span> <span class="o">=</span> <span class="n">default_rng</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resHex_sim</span> <span class="o">=</span> <span class="n">QStatistic</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;hexagon&#39;</span><span class="p">,</span> <span class="n">realizations</span><span class="o">=</span><span class="mi">99</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resHex_sim</span><span class="o">.</span><span class="n">chi2_r_pvalue</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+np.float64(0.01)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resHex_sim</span><span class="o">.</span><span class="n">chi2_realizations</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([ 97.5       ,  59.        ,  69.        ,  67.5       ,
+        70.        ,  58.5       ,  60.5       ,  78.        ,
+        60.        ,  54.5       ,  65.5       ,  72.5       ,
+        83.        ,  92.5       ,  98.5       ,  90.5       ,
+        62.        ,  83.        ,  74.        ,  68.        ,
+        79.5       ,  64.5       ,  52.5       ,  59.        ,
+        63.5       ,  59.        ,  70.        , 101.5       ,
+        66.5       ,  76.        ,  49.5       ,  39.07142857,
+        70.5       ,  89.5       ,  88.5       ,  62.5       ,
+        72.        ,  76.5       ,  55.        ,  62.        ,
+        63.21428571,  88.        ,  52.5       ,  65.        ,
+        91.        ,  54.85714286,  61.        ,  45.5       ,
+        61.        ,  67.5       ,  64.        ,  59.5       ,
+        72.5       ,  58.        ,  68.5       ,  62.5       ,
+        84.5       ,  74.5       ,  69.5       ,  51.        ,
+        65.        ,  39.5       ,  80.        ,  70.        ,
+        83.5       ,  73.5       ,  98.        ,  95.5       ,
+        83.5       ,  50.5       ,  51.        ,  65.        ,
+        69.5       ,  66.5       ,  59.        ,  62.        ,
+        70.5       , 109.5       ,  68.        ,  68.5       ,
+        67.5       ,  61.5       ,  63.5       ,  91.        ,
+        82.5       ,  61.5       ,  64.        ,  78.        ,
+        67.        ,  65.5       ,  63.5       ,  49.5       ,
+        57.5       ,  79.5       ,  58.        ,  90.        ,
+        72.        ,  91.5       ,  76.        ])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resHex_sim</span><span class="o">.</span><span class="n">chi2</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+np.float64(195.0)
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="4.-Irregular-windows">
+<h2>4. Irregular windows<a class="headerlink" href="#4.-Irregular-windows" title="Link to this heading">¶</a></h2>
+<p>Quadrat grids are constructed over the MBB of the points. If the study window is irregular (e.g., a polygon), some grid cells may lie entirely outside the window.</p>
+<ul class="simple">
+<li><p>If such outside cells are included, they contribute guaranteed zeros and can distort the test.</p></li>
+</ul>
+<section id="How-Monte-Carlo-interacts-with-this">
+<h3>How Monte Carlo interacts with this<a class="headerlink" href="#How-Monte-Carlo-interacts-with-this" title="Link to this heading">¶</a></h3>
+<p>Comparing the observed chi-square statistic to simulated chi-square values is a valid Monte Carlo test <strong>for the statistic being used</strong>, because the same grid, window, and inclusion rule are applied to both observed and simulated patterns.</p>
+<p>Monte Carlo inference makes the <em>reference distribution</em> window-aware, but it does not convert the test into an area-proportional quadrat test when the window is irregular.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">shapely.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polygon</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">window</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">([</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pointpats.random</span><span class="w"> </span><span class="kn">import</span> <span class="n">poisson</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="mi">100</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([[0.12811363, 0.45038594],
+       [0.4434142 , 0.22723872],
+       [0.55458479, 0.06381726],
+       [0.7783835 , 0.19463871],
+       [0.466721  , 0.04380377],
+       [0.15428949, 0.68304895],
+       [0.32582536, 0.37045971],
+       [0.46955581, 0.18947136],
+       [0.12992151, 0.47570493],
+       [0.22690935, 0.66981399],
+       [0.38747838, 0.2883281 ],
+       [0.6824955 , 0.13975248],
+       [0.1999082 , 0.00736227],
+       [0.139797  , 0.11453007],
+       [0.55920716, 0.3039501 ],
+       [0.03081783, 0.43671739],
+       [0.21458467, 0.40852864],
+       [0.05830274, 0.28138389],
+       [0.29359376, 0.66191651],
+       [0.81402038, 0.16697292],
+       [0.02271207, 0.09004786],
+       [0.16127178, 0.50104478],
+       [0.1523121 , 0.69632038],
+       [0.44615628, 0.38102123],
+       [0.30151209, 0.63028259],
+       [0.36181261, 0.08764992],
+       [0.4493615 , 0.27224156],
+       [0.09639096, 0.9026024 ],
+       [0.45577629, 0.20236336],
+       [0.30595662, 0.57921957],
+       [0.08444432, 0.4158074 ],
+       [0.04161417, 0.49399082],
+       [0.32986121, 0.14452419],
+       [0.10340297, 0.58764457],
+       [0.58106114, 0.3468698 ],
+       [0.59091549, 0.02280387],
+       [0.78273523, 0.08273   ],
+       [0.48665833, 0.49070699],
+       [0.4734894 , 0.26697566],
+       [0.331569  , 0.5206724 ],
+       [0.43891146, 0.02161208],
+       [0.14024909, 0.55403614],
+       [0.10857574, 0.67224009],
+       [0.28123378, 0.65942263],
+       [0.23021399, 0.03741256],
+       [0.55485247, 0.37092228],
+       [0.29091784, 0.51505713],
+       [0.16460782, 0.04491062],
+       [0.51885836, 0.31592905],
+       [0.37365773, 0.09446667]])
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">qs</span> <span class="o">=</span> <span class="n">QStatistic</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">nx</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">ny</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">qs</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Axes: title={&#39;center&#39;: &#39;Quadrat Count&#39;}&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/user-guide_Quadrat_statistics_31_1.svg" src="../_images/user-guide_Quadrat_statistics_31_1.svg" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">qs</span><span class="o">.</span><span class="n">chi2_pvalue</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+np.float64(0.0010544670440019426)
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">qsw</span> <span class="o">=</span> <span class="n">QStatistic</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">nx</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">ny</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">realizations</span><span class="o">=</span><span class="mi">99</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">qsw</span><span class="o">.</span><span class="n">chi2_r_pvalue</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+np.float64(0.37)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">qsw</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Axes: title={&#39;center&#39;: &#39;Quadrat Count&#39;}&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/user-guide_Quadrat_statistics_35_1.svg" src="../_images/user-guide_Quadrat_statistics_35_1.svg" />
+</div>
+</div>
+</section>
+</section>
+<section id="5.-Recap">
+<h2>5. Recap<a class="headerlink" href="#5.-Recap" title="Link to this heading">¶</a></h2>
+<p>In this notebook, we:</p>
+<ul class="simple">
+<li><p>represented a point pattern as an <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">2)</span></code> NumPy coordinate array,</p></li>
+<li><p>computed quadrat counts using rectangular and hexagonal tessellations over the MBB,</p></li>
+<li><p>used a Pearson chi-square statistic with equal expected counts across included cells,</p></li>
+<li><p>obtained either an analytical p-value or a Monte Carlo p-value from CSR realizations,</p></li>
+<li><p>clarified the issues associated with irregular windows, and</p></li>
+<li><p>ensured reproducibility of simulations via an explicit <code class="docutils literal notranslate"><span class="pre">rng</span></code>.</p></li>
+</ul>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/user-guide/Quadrat_statistics.ipynb.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

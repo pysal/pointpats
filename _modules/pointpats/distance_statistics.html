@@ -10,8 +10,9 @@
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/pysal-styles.css?v=f8dcc4ae" />
     <script src="../../_static/documentation_options.js?v=c3c8ae58"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="icon" href="../../_static/pysal_favicon.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -44,6 +45,7 @@
           <ul class="nav navbar-nav">
             
                 <li><a href="../../installation.html">Installation</a></li>
+                <li><a href="../../user-guide/intro.html">User Guide</a></li>
                 <li><a href="../../api.html">API</a></li>
                 <li><a href="../../references.html">References</a></li>
             
@@ -56,7 +58,19 @@
      href="../../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guide/intro.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/centrography.html">Centrography in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/sd_ellipse.html">Standard deviational ellipse in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/Quadrat_statistics.html">Quadrat-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/ripley.html">Distance-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/random.html">Simulating random point patterns with <code class="docutils literal notranslate"><span class="pre">pointpats.random</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/marks.html">Working with marks in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../installation.html#installing-released-version">Installing released version</a></li>
@@ -125,6 +139,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shapely</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">spatial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">joblib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">TREE_TYPES</span><span class="p">,</span>
@@ -349,7 +364,7 @@
 <span class="sd">    distances between points in the pattern.</span>
 
 <span class="sd">    Parameters</span>
-<span class="sd">    -----------</span>
+<span class="sd">    ----------</span>
 <span class="sd">    coordinates : geopandas object | numpy.ndarray of shape (n,2)</span>
 <span class="sd">        input coordinates to function</span>
 <span class="sd">    support : tuple of length 1, 2, or 3, int, or numpy.ndarray</span>
@@ -442,7 +457,7 @@
 <span class="sd">    The so-called &quot;spatial hazard&quot; function, this is a function relating the F and G functions.</span>
 
 <span class="sd">    Parameters</span>
-<span class="sd">    -----------</span>
+<span class="sd">    ----------</span>
 <span class="sd">    coordinates : geopandas object | numpy.ndarray, (n,2)</span>
 <span class="sd">        input coordinates to function</span>
 <span class="sd">    support : tuple of length 1, 2, or 3, int, or numpy.ndarray</span>
@@ -688,6 +703,7 @@
     <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">keep_simulations</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">n_simulations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">GeoDataFrame</span> <span class="o">|</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">GeoSeries</span><span class="p">):</span>
@@ -701,12 +717,18 @@
     <span class="p">)</span>
     <span class="n">tree</span> <span class="o">=</span> <span class="n">_build_best_tree</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
     <span class="n">hull</span> <span class="o">=</span> <span class="n">_prepare_hull</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">hull</span><span class="p">)</span>
+    <span class="n">empty_space_points</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="k">if</span> <span class="n">calltype</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="s2">&quot;J&quot;</span><span class="p">):</span>  <span class="c1"># these require simulations</span>
         <span class="n">core_kwargs</span><span class="p">[</span><span class="s2">&quot;hull&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hull</span>
         <span class="c1"># amortize to avoid doing this every time</span>
         <span class="n">empty_space_points</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
         <span class="k">if</span> <span class="n">distances</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Note: We now use the original coordinates&#39; tree to calculate the observed distance</span>
+            <span class="c1"># for the first time, as per the original logic flow.</span>
             <span class="n">empty_space_distances</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_k_neighbors</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">empty_space_points</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
             <span class="k">if</span> <span class="n">calltype</span> <span class="o">==</span> <span class="s2">&quot;F&quot;</span><span class="p">:</span>
                 <span class="n">distances</span> <span class="o">=</span> <span class="n">empty_space_distances</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># calltype == &#39;J&#39;:</span>
@@ -717,38 +739,52 @@
     <span class="n">core_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="n">observed_support</span><span class="p">,</span> <span class="n">observed_statistic</span> <span class="o">=</span> <span class="n">stat_function</span><span class="p">(</span>
-        <span class="n">tree</span><span class="p">,</span> <span class="n">distances</span><span class="o">=</span><span class="n">distances</span><span class="p">,</span> <span class="o">**</span><span class="n">core_kwargs</span>
+        <span class="n">coordinates</span><span class="p">,</span> <span class="n">distances</span><span class="o">=</span><span class="n">distances</span><span class="p">,</span> <span class="o">**</span><span class="n">core_kwargs</span>
     <span class="p">)</span>
+    <span class="c1"># The original function passed the tree, but the wrapper functions expect coordinates</span>
+    <span class="c1"># Corrected to pass coordinates, relying on stat_function to manage the tree internally.</span>
+
     <span class="n">core_kwargs</span><span class="p">[</span><span class="s2">&quot;support&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">observed_support</span>
     <span class="n">n_observations</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="k">if</span> <span class="n">keep_simulations</span><span class="p">:</span>
-        <span class="n">simulations</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">observed_support</span><span class="p">),</span> <span class="n">n_simulations</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
-    <span class="n">pvalues</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">observed_support</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i_replication</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_simulations</span><span class="p">):</span>
-        <span class="n">random_i</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_observations</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">calltype</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="s2">&quot;J&quot;</span><span class="p">):</span>
-            <span class="n">random_tree</span> <span class="o">=</span> <span class="n">_build_best_tree</span><span class="p">(</span><span class="n">random_i</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
-            <span class="n">empty_distances</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">random_tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">empty_space_points</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">calltype</span> <span class="o">==</span> <span class="s2">&quot;F&quot;</span><span class="p">:</span>
-                <span class="n">core_kwargs</span><span class="p">[</span><span class="s2">&quot;distances&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">empty_distances</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>  <span class="c1"># calltype == &#39;J&#39;:</span>
-                <span class="n">n_distances</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_k_neighbors</span><span class="p">(</span><span class="n">random_tree</span><span class="p">,</span> <span class="n">random_i</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-                <span class="n">core_kwargs</span><span class="p">[</span><span class="s2">&quot;distances&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">n_distances</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-                    <span class="n">empty_distances</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-                <span class="p">)</span>
-        <span class="n">rep_support</span><span class="p">,</span> <span class="n">simulations_i</span> <span class="o">=</span> <span class="n">stat_function</span><span class="p">(</span><span class="n">random_i</span><span class="p">,</span> <span class="o">**</span><span class="n">core_kwargs</span><span class="p">)</span>
-        <span class="n">pvalues</span> <span class="o">+=</span> <span class="n">simulations_i</span> <span class="o">&gt;=</span> <span class="n">observed_statistic</span>
-        <span class="k">if</span> <span class="n">keep_simulations</span><span class="p">:</span>
-            <span class="n">simulations</span><span class="p">[</span><span class="n">i_replication</span><span class="p">]</span> <span class="o">=</span> <span class="n">simulations_i</span>
-    <span class="n">pvalues</span> <span class="o">/=</span> <span class="n">n_simulations</span> <span class="o">+</span> <span class="mi">1</span>
-    <span class="n">pvalues</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">pvalues</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">pvalues</span><span class="p">)</span>
+    <span class="c1"># --- PARALLEL SIMULATION BLOCK ---</span>
+    <span class="k">if</span> <span class="n">n_simulations</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;n_simulations must be positive. No simulations performed.&quot;</span><span class="p">)</span>
+        <span class="n">simulations_array</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">observed_support</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">simulations_list</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)(</span>
+            <span class="n">delayed</span><span class="p">(</span><span class="n">_run_one_ripley_simulation</span><span class="p">)(</span>
+                <span class="n">calltype</span><span class="p">,</span>
+                <span class="n">n_observations</span><span class="p">,</span>
+                <span class="n">hull</span><span class="p">,</span>
+                <span class="n">stat_function</span><span class="p">,</span>
+                <span class="n">metric</span><span class="p">,</span>
+                <span class="n">empty_space_points</span><span class="p">,</span>
+                <span class="n">core_kwargs</span><span class="p">,</span>
+                <span class="n">observed_support</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_simulations</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">simulations_array</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">simulations_list</span><span class="p">)</span>
+    <span class="c1"># --- END PARALLEL SIMULATION BLOCK ---</span>
+
+    <span class="c1"># --- VECTORIZED P-VALUE CALCULATION ---</span>
+    <span class="k">if</span> <span class="n">simulations_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">pvalues</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">observed_support</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Calculate how many simulations are as extreme as the observed statistic</span>
+        <span class="n">pvalues_count</span> <span class="o">=</span> <span class="p">(</span><span class="n">simulations_array</span> <span class="o">&gt;=</span> <span class="n">observed_statistic</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Conservative p-value calculation</span>
+        <span class="n">pvalues</span> <span class="o">=</span> <span class="p">(</span><span class="n">pvalues_count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_simulations</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">pvalues</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">pvalues</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">pvalues</span><span class="p">)</span>
+    <span class="c1"># --- END P-VALUE CALCULATION ---</span>
+
     <span class="k">return</span> <span class="n">result_container</span><span class="p">(</span>
         <span class="n">observed_support</span><span class="p">,</span>
         <span class="n">observed_statistic</span><span class="p">,</span>
         <span class="n">pvalues</span><span class="p">,</span>
-        <span class="n">simulations</span> <span class="k">if</span> <span class="n">keep_simulations</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">simulations_array</span> <span class="k">if</span> <span class="n">keep_simulations</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span>
 
 
@@ -763,6 +799,7 @@
     <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">keep_simulations</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">n_simulations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Ripley&#39;s F function</span>
@@ -774,7 +811,7 @@
 <span class="sd">    the pattern is considered &quot;dispersed&quot; or &quot;regular&quot;</span>
 
 <span class="sd">    Parameters</span>
-<span class="sd">    -----------</span>
+<span class="sd">    ----------</span>
 <span class="sd">    coordinates : geopandas object | numpy.ndarray, (n,2)</span>
 <span class="sd">        input coordinates to function</span>
 <span class="sd">    support : tuple of length 1, 2, or 3, int, or numpy.ndarray</span>
@@ -796,6 +833,16 @@
 <span class="sd">    n_simulations: int</span>
 <span class="sd">        how many simulations to conduct, assuming that the reference pattern</span>
 <span class="sd">        has complete spatial randomness.</span>
+<span class="sd">    n_jobs : int (default: -1)</span>
+<span class="sd">        The number of CPU cores to use for running the Monte Carlo simulations.</span>
+<span class="sd">        Simulations are independent and can be run in parallel to significantly</span>
+<span class="sd">        reduce execution time.</span>
+
+<span class="sd">        * If ``n_jobs = -1``, all available CPU cores will be used.</span>
+<span class="sd">        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),</span>
+<span class="sd">          disabling parallel processing. This is often useful for debugging or</span>
+<span class="sd">          testing purposes.</span>
+<span class="sd">        * If ``n_jobs &gt; 1``, that specific number of cores will be used.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -817,6 +864,7 @@
         <span class="n">edge_correction</span><span class="o">=</span><span class="n">edge_correction</span><span class="p">,</span>
         <span class="n">keep_simulations</span><span class="o">=</span><span class="n">keep_simulations</span><span class="p">,</span>
         <span class="n">n_simulations</span><span class="o">=</span><span class="n">n_simulations</span><span class="p">,</span>
+        <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -832,6 +880,7 @@
     <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">keep_simulations</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">n_simulations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Ripley&#39;s G function</span>
@@ -864,6 +913,17 @@
 <span class="sd">    n_simulations: int</span>
 <span class="sd">        how many simulations to conduct, assuming that the reference pattern</span>
 <span class="sd">        has complete spatial randomness.</span>
+<span class="sd">    n_jobs : int (default: -1)</span>
+<span class="sd">        The number of CPU cores to use for running the Monte Carlo simulations.</span>
+<span class="sd">        Simulations are independent and can be run in parallel to significantly</span>
+<span class="sd">        reduce execution time.</span>
+
+<span class="sd">        * If ``n_jobs = -1``, all available CPU cores will be used.</span>
+<span class="sd">        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),</span>
+<span class="sd">          disabling parallel processing. This is often useful for debugging or</span>
+<span class="sd">          testing purposes.</span>
+<span class="sd">        * If ``n_jobs &gt; 1``, that specific number of cores will be used.</span>
+
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -884,6 +944,7 @@
         <span class="n">edge_correction</span><span class="o">=</span><span class="n">edge_correction</span><span class="p">,</span>
         <span class="n">keep_simulations</span><span class="o">=</span><span class="n">keep_simulations</span><span class="p">,</span>
         <span class="n">n_simulations</span><span class="o">=</span><span class="n">n_simulations</span><span class="p">,</span>
+        <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -900,6 +961,7 @@
     <span class="n">truncate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">keep_simulations</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">n_simulations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Ripley&#39;s J function</span>
@@ -930,6 +992,17 @@
 <span class="sd">    n_simulations: int</span>
 <span class="sd">        how many simulations to conduct, assuming that the reference pattern</span>
 <span class="sd">        has complete spatial randomness.</span>
+<span class="sd">    n_jobs : int (default: -1)</span>
+<span class="sd">        The number of CPU cores to use for running the Monte Carlo simulations.</span>
+<span class="sd">        Simulations are independent and can be run in parallel to significantly</span>
+<span class="sd">        reduce execution time.</span>
+
+<span class="sd">        * If ``n_jobs = -1``, all available CPU cores will be used.</span>
+<span class="sd">        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),</span>
+<span class="sd">          disabling parallel processing. This is often useful for debugging or</span>
+<span class="sd">          testing purposes.</span>
+<span class="sd">        * If ``n_jobs &gt; 1``, that specific number of cores will be used.</span>
+
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -950,6 +1023,7 @@
         <span class="n">edge_correction</span><span class="o">=</span><span class="n">edge_correction</span><span class="p">,</span>
         <span class="n">keep_simulations</span><span class="o">=</span><span class="n">keep_simulations</span><span class="p">,</span>
         <span class="n">n_simulations</span><span class="o">=</span><span class="n">n_simulations</span><span class="p">,</span>
+        <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
         <span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">truncate</span><span class="p">:</span>
@@ -980,6 +1054,7 @@
     <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">keep_simulations</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">n_simulations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Ripley&#39;s K function</span>
@@ -1012,6 +1087,17 @@
 <span class="sd">    n_simulations: int</span>
 <span class="sd">        how many simulations to conduct, assuming that the reference pattern</span>
 <span class="sd">        has complete spatial randomness.</span>
+<span class="sd">    n_jobs : int (default: -1)</span>
+<span class="sd">        The number of CPU cores to use for running the Monte Carlo simulations.</span>
+<span class="sd">        Simulations are independent and can be run in parallel to significantly</span>
+<span class="sd">        reduce execution time.</span>
+
+<span class="sd">        * If ``n_jobs = -1``, all available CPU cores will be used.</span>
+<span class="sd">        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),</span>
+<span class="sd">          disabling parallel processing. This is often useful for debugging or</span>
+<span class="sd">          testing purposes.</span>
+<span class="sd">        * If ``n_jobs &gt; 1``, that specific number of cores will be used.</span>
+
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1032,6 +1118,7 @@
         <span class="n">edge_correction</span><span class="o">=</span><span class="n">edge_correction</span><span class="p">,</span>
         <span class="n">keep_simulations</span><span class="o">=</span><span class="n">keep_simulations</span><span class="p">,</span>
         <span class="n">n_simulations</span><span class="o">=</span><span class="n">n_simulations</span><span class="p">,</span>
+        <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -1048,6 +1135,7 @@
     <span class="n">linearized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">keep_simulations</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">n_simulations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Ripley&#39;s L function</span>
@@ -1081,6 +1169,16 @@
 <span class="sd">    n_simulations: int</span>
 <span class="sd">        how many simulations to conduct, assuming that the reference pattern</span>
 <span class="sd">        has complete spatial randomness.</span>
+<span class="sd">    n_jobs : int (default: -1)</span>
+<span class="sd">        The number of CPU cores to use for running the Monte Carlo simulations.</span>
+<span class="sd">        Simulations are independent and can be run in parallel to significantly</span>
+<span class="sd">        reduce execution time.</span>
+
+<span class="sd">        * If ``n_jobs = -1``, all available CPU cores will be used.</span>
+<span class="sd">        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),</span>
+<span class="sd">          disabling parallel processing. This is often useful for debugging or</span>
+<span class="sd">          testing purposes.</span>
+<span class="sd">        * If ``n_jobs &gt; 1``, that specific number of cores will be used.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1099,11 +1197,50 @@
         <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
         <span class="n">hull</span><span class="o">=</span><span class="n">hull</span><span class="p">,</span>
         <span class="n">edge_correction</span><span class="o">=</span><span class="n">edge_correction</span><span class="p">,</span>
-        <span class="n">linearized</span><span class="o">=</span><span class="n">linearized</span><span class="p">,</span>
         <span class="n">keep_simulations</span><span class="o">=</span><span class="n">keep_simulations</span><span class="p">,</span>
         <span class="n">n_simulations</span><span class="o">=</span><span class="n">n_simulations</span><span class="p">,</span>
+        <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
+        <span class="n">linearized</span><span class="o">=</span><span class="n">linearized</span><span class="p">,</span>
     <span class="p">)</span></div>
 
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_run_one_ripley_simulation</span><span class="p">(</span>
+    <span class="n">calltype</span><span class="p">,</span>
+    <span class="n">n_observations</span><span class="p">,</span>
+    <span class="n">hull</span><span class="p">,</span>
+    <span class="n">stat_function</span><span class="p">,</span>
+    <span class="n">metric</span><span class="p">,</span>
+    <span class="n">empty_space_points</span><span class="p">,</span>
+    <span class="n">core_kwargs</span><span class="p">,</span>
+    <span class="n">observed_support</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run a single Monte Carlo simulation for a Ripley function test.&quot;&quot;&quot;</span>
+
+    <span class="c1"># 1. Generate a random point pattern (CSR)</span>
+    <span class="n">random_i</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_observations</span><span class="p">)</span>
+    <span class="n">current_kwargs</span> <span class="o">=</span> <span class="n">core_kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">current_kwargs</span><span class="p">[</span><span class="s2">&quot;support&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">observed_support</span>
+
+    <span class="c1"># 2. Prepare distances for F/J tests</span>
+    <span class="k">if</span> <span class="n">calltype</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="s2">&quot;J&quot;</span><span class="p">):</span>
+        <span class="n">random_tree</span> <span class="o">=</span> <span class="n">_build_best_tree</span><span class="p">(</span><span class="n">random_i</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
+        <span class="n">empty_distances</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">random_tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">empty_space_points</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">calltype</span> <span class="o">==</span> <span class="s2">&quot;F&quot;</span><span class="p">:</span>
+            <span class="n">current_kwargs</span><span class="p">[</span><span class="s2">&quot;distances&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">empty_distances</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># calltype == &#39;J&#39;:</span>
+            <span class="n">n_distances</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_k_neighbors</span><span class="p">(</span><span class="n">random_tree</span><span class="p">,</span> <span class="n">random_i</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">current_kwargs</span><span class="p">[</span><span class="s2">&quot;distances&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">n_distances</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
+                <span class="n">empty_distances</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
+            <span class="p">)</span>
+
+    <span class="c1"># 3. Calculate the Ripley statistic for the simulated pattern</span>
+    <span class="c1"># rep_support is ignored as we rely on observed_support</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">simulations_i</span> <span class="o">=</span> <span class="n">stat_function</span><span class="p">(</span><span class="n">random_i</span><span class="p">,</span> <span class="o">**</span><span class="n">current_kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">simulations_i</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_truncate</span><span class="p">(</span><span class="n">support</span><span class="p">,</span> <span class="n">realizations</span><span class="p">,</span> <span class="o">*</span><span class="n">rest</span><span class="p">):</span>
@@ -1134,7 +1271,7 @@
     </p>
     <p>
         &copy; Copyright 2018-, pysal developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.3.0.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
     </p>
   </div>
 </footer>
