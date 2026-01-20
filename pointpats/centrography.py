@@ -5,7 +5,10 @@ Centrographic measures for point patterns
 
 """
 
-__author__ = "Serge Rey sjsrey@gmail.com"
+__author__ = [
+    "Serge Rey sjsrey@gmail.com",
+    "Levi John Wolf levi.john.wolf@gmail.com"
+]
 
 __all__ = [
     "hull",
@@ -33,8 +36,10 @@ from functools import singledispatch
 import numpy as np
 import shapely
 from geopandas.base import GeoPandasBase
+from geopandas import GeoDataFrame, GeoSeries, points_from_xy
 from libpysal.cg import is_clockwise
 from numpy.typing import NDArray
+from esda import shape
 from scipy.optimize import minimize
 from scipy.spatial import ConvexHull
 
@@ -900,6 +905,159 @@ def _(points: np.ndarray) -> NDArray[np.float64]:
     res = minimize(dtot, start, args=(points,))
     return res["x"]
 
+### ROBUST CENTROGRAPHY STATISTICS
+
+def trim_pointset(points, p=1, peeling=True, hull='convex', **hull_args):
+    """
+    Pare a spatial point set down to some minimal pointset using a
+    onion peeling/potato paring heuristic.
+
+    Parameters
+    ----------
+    points : numpy.ndarray or geopandas.GeoSeries
+        input points intended to be pared
+    p : float
+        value between 0 and 1 indicating how much of the point set should be left
+        after paring. Values closer to 1 indicate more points will be retained,
+        while values closer to 0 indicate more points will be removed. Note that
+        in the worst case, slightly less than p will be returned.
+    peeling: bool
+        whether to use the peeling heuristic. By default, the peeling heuristic is used.
+            - For the default peeling heuristic, we build a hull for the candidate point set,
+            then remove *all points on the hull*.
+            - For the alternative paring heuristic, we build a hull for the candidate point
+            set, then remove the point on the hull that is at the center of the smallest angle.
+    hull: str or callable
+        algorithm to use for the hull in each iteration. If "convex" (default), the
+        convex hull will be used in each iteration. If 'concave', then the concave
+        hull will be used. If a function is provided, then it must take a shapely
+        multipoint object and return a polygon whose boundary intersects the input
+        points.
+    **hull_args: arguments passed straight to the hulling function.
+    Returns
+    -------
+    a numpy array aligned with the input points that is "True" when a point remains
+    in the dataset, and "False" when the point has been pared.
+
+    Notes
+    -----
+    If convex=False, the concave hull algorithm provided by geopandas is used by default.
+    If you use convex=False, you should also provide a "ratio" argument, which controls
+    the percentage of the input dataset that is contained within the concave hull in
+    each iteration. Generally, ratio should be larger than p if peeling=True.
+    """
+    if isinstance(points, GeoSeries):
+        pass
+    elif isinstance(points, GeoDataFrame):
+        points = points.geometry
+    else:
+        if points.shape[1] == 2:
+            points = GeoSeries(points_from_xy(*points.T))
+        else:
+            points = GeoSeries(points)
+    n_points = len(points)
+    trimmed = pandas.Series(np.zeros(n_points), index=points.index).astype(bool)
+    if hull=='convex':
+        huller = lambda x: x.convex_hull
+    elif hull == 'concave':
+        huller = lambda x: GeoSeries(x).concave_hull(**hull_args).item()
+    elif callable(hull):
+        huller = lambda x: hull(x, **hull_args)
+    else:
+        raise ValueError("hull argument must be either `concave', `convex', or callable.")
+    while True:
+        pointset = points[~trimmed].union_all()
+        hull_ = huller(pointset)
+        on_hull = hull_.boundary.intersects(points)
+        if not on_hull.any():
+            raise ValueError("Hull algorithm must return shape that intersects at least some of the input points.")
+        if peeling:
+            q = (trimmed | on_hull).mean()
+        else:
+            q = ((trimmed).sum() + 1)/n_points
+        if (1 - q) < p:
+            break
+        if peeling:
+            trimmed[on_hull] = True
+        else:
+            # roll the angles by 1 because the angles are aligned on the LEFT EDGE. So, the first
+            # element of get_angles() is the angle centered on 2, with 1 as its left edge.
+            angles = np.roll(shape.get_angles(hull_.boundary), 1)
+            if (angles < 0).any() | (angles > np.pi).any():
+                raise NotImplementedError("negative angle or reflexive angle encountered. Your polygon likely has an incorrect winding direction.")
+            # ring is always closed at the same point as it starts
+            ordered_hull_points = GeoSeries(points_from_xy(*hull_.boundary.xy)[:-1])
+            hull_locs, points_hull_locs = points[on_hull.values].sindex.query(ordered_hull_points, predicate='intersects')
+            points_hull_ixs = points[on_hull.values].index[points_hull_locs]
+            current_knob_on_hull = angles.argmin()
+            current_knob_ix = points_hull_ixs[current_knob_on_hull]
+            # for the points on the hull, get the ith observation's full dataset index
+            trimmed.loc[current_knob_ix] = True
+    return ~trimmed
+
+def trimmed_hull(points, p=1, peeling=True, hull='convex', **hull_args):
+    """
+    Calculate the trimmed hull of an input point set that covers at least p% of the
+    input pointset.
+
+    Parameters
+    ----------
+    points : numpy.ndarray or GeoSeries
+        input points intended to be pared
+    p : float
+        value between 0 and 1 indicating how much of the point set should be left
+        after paring. Values closer to 1 indicate more points will be retained,
+        while values closer to 0 indicate more points will be removed. Note that
+        in the worst case, slightly less than p will be returned.
+    peeling: bool
+        whether to use the peeling heuristic. By default, the peeling heuristic is used.
+            - For the default peeling heuristic, we build a hull for the candidate point set,
+            then remove *all points on the hull*.
+            - For the alternative paring heuristic, we build a hull for the candidate point
+            set, then remove the point on the hull that is at the center of the smallest angle.
+    hull: str or callable
+        algorithm to use for the hull in each iteration. If "convex" (default), the
+        convex hull will be used in each iteration. If 'concave', then the concave
+        hull will be used. If a function is provided, then it must take a shapely
+        multipoint object and return a polygon whose boundary intersects the input
+        points.
+    **hull_args: arguments passed straight to the hulling function.
+    Returns
+    -------
+    a numpy array aligned with the input points that is "True" when a point remains
+    in the dataset, and "False" when the point has been pared.
+
+    Notes
+    -----
+    If convex=False, the concave hull algorithm provided by geopandas is used by default.
+    If you use convex=False, you should also provide a "ratio" argument, which controls
+    the percentage of the input dataset that is contained within the concave hull in
+    each iteration. Generally, ratio should be larger than p if peeling=True.
+
+    The peeling heuristic tends to maintain the shape of the original pointcloud, while the
+    paring heuristic tends to return central coverage areas that are more circular.
+    """
+    if isinstance(points, GeoSeries):
+        pass
+    elif isinstance(points, GeoDataFrame):
+        points = points.geometry
+    else:
+        if points.shape[1] == 2:
+            points = GeoSeries(points_from_xy(*points.T))
+        else:
+            points = GeoSeries(points)
+    mask = trim_pointset(points, p=p, peeling=peeling, hull=hull, hull_args=hull_args)
+    if hull == 'convex':
+        return points[mask.values].union_all().convex_hull
+    elif hull == 'concave':
+        return GeoSeries(points[mask.values].union_all()).concave_hull(**hull_args).item()
+    elif callable(hull):
+        return hull(points[mask.values], **hull_args)
+    else:
+        raise ValueError(f"hull must be either `convex', `concave', or a callable function. Recieved {hull}")
+
+
+### SKYUM's ALGORITHM (DEPRECATED)
 
 @euclidean_median.register
 def _(points: GeoPandasBase) -> shapely.Point:
