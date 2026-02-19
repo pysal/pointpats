@@ -5,13 +5,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Working with marks in pointpats &#8212; pointpats v2.3.0 Manual</title>
+    <title>Working with marks in pointpats &#8212; pointpats v2.5.3 Manual</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
     <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
-    <script src="../_static/documentation_options.js?v=c3c8ae58"></script>
+    <script src="../_static/documentation_options.js?v=0bbe9fa5"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -44,7 +44,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           pointpats</a>
-        <span class="navbar-text navbar-version pull-left"><b>2.3.0</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>2.5.3</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -245,15 +245,15 @@ array([0., 0., 1., 1.])
 <div class="highlight"><pre>
 Point Pattern
 200 points
-Bounding rectangle [(0.000171181152699873,0.010338154916560871), (0.9942427152327866,0.9892658503605231)]
-Area of window: 0.9731241559634635
-Intensity estimate for window: 205.52362077784977
+Bounding rectangle [(0.005253661956256095,0.007608910116769119), (0.9970396121397082,0.9993536299882864)]
+Area of window: 0.9835984793371942
+Intensity estimate for window: 203.3350032573979
           x         y
-0  0.552586  0.448690
-1  0.493656  0.826143
-2  0.023953  0.837835
-3  0.889946  0.989266
-4  0.250946  0.805441
+0  0.669783  0.701022
+1  0.033785  0.832910
+2  0.901241  0.474861
+3  0.519614  0.070694
+4  0.368661  0.074125
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -286,28 +286,28 @@ Intensity estimate for window: 205.52362077784977
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.552586</td>
-      <td>0.448690</td>
+      <td>0.669783</td>
+      <td>0.701022</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.493656</td>
-      <td>0.826143</td>
+      <td>0.033785</td>
+      <td>0.832910</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.023953</td>
-      <td>0.837835</td>
+      <td>0.901241</td>
+      <td>0.474861</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.889946</td>
-      <td>0.989266</td>
+      <td>0.519614</td>
+      <td>0.070694</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.250946</td>
-      <td>0.805441</td>
+      <td>0.368661</td>
+      <td>0.074125</td>
     </tr>
   </tbody>
 </table>
@@ -375,36 +375,36 @@ Intensity estimate for window: 205.52362077784977
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.552586</td>
-      <td>0.448690</td>
+      <td>0.669783</td>
+      <td>0.701022</td>
       <td>A</td>
       <td>0.933881</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.493656</td>
-      <td>0.826143</td>
+      <td>0.033785</td>
+      <td>0.832910</td>
       <td>B</td>
       <td>1.984845</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.023953</td>
-      <td>0.837835</td>
+      <td>0.901241</td>
+      <td>0.474861</td>
       <td>B</td>
       <td>2.074374</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.889946</td>
-      <td>0.989266</td>
+      <td>0.519614</td>
+      <td>0.070694</td>
       <td>A</td>
       <td>0.904084</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.250946</td>
-      <td>0.805441</td>
+      <td>0.368661</td>
+      <td>0.074125</td>
       <td>A</td>
       <td>5.422076</td>
     </tr>
@@ -542,7 +542,7 @@ Name: value, dtype: float64
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Index([&#39;A&#39;, &#39;B&#39;], dtype=&#39;object&#39;)
+Index([&#39;A&#39;, &#39;B&#39;], dtype=&#39;str&#39;)
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -645,7 +645,7 @@ Category &#39;B&#39; -&gt; 78 points
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-(array([0.4874871, 0.4928248]), array([0.50010306, 0.50329395]))
+(array([0.49742868, 0.49068408]), array([0.4819288 , 0.51818768]))
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -736,36 +736,36 @@ Category &#39;B&#39; -&gt; 78 points
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.552586</td>
-      <td>0.448690</td>
+      <td>0.669783</td>
+      <td>0.701022</td>
       <td>0.0</td>
       <td>0.933881</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.493656</td>
-      <td>0.826143</td>
+      <td>0.033785</td>
+      <td>0.832910</td>
       <td>1.0</td>
       <td>1.984845</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.023953</td>
-      <td>0.837835</td>
+      <td>0.901241</td>
+      <td>0.474861</td>
       <td>1.0</td>
       <td>2.074374</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.889946</td>
-      <td>0.989266</td>
+      <td>0.519614</td>
+      <td>0.070694</td>
       <td>0.0</td>
       <td>0.904084</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.250946</td>
-      <td>0.805441</td>
+      <td>0.368661</td>
+      <td>0.074125</td>
       <td>0.0</td>
       <td>5.422076</td>
     </tr>
