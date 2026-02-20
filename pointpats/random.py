@@ -390,7 +390,7 @@ def cluster_poisson(
                     " increase the number of sampled points."
                 )
             candidates = _uniform_circle(
-                n_in_cluster - 1, radius=radius, center=seed, hull=hull
+                n_in_cluster - 1, radius=radius, center=seed, hull=hull, rng=rng,
             )
             clusters[i_cluster] = numpy.row_stack((seed, candidates))
         result[i_replication] = numpy.row_stack(clusters)
