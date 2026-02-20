@@ -42,7 +42,7 @@ def test_all_points_within_hull_poisson():
             assert 0 <= x <= 10 and 0 <= y <= 10
 
 
-def test_seed_consistency():
+def test_poisson_seed_consistency():
     a = poisson(square_hull, intensity=1, size=2, rng=42)
     b = poisson(square_hull, intensity=1, size=2, rng=42)
     np.testing.assert_allclose(a, b)
@@ -51,6 +51,12 @@ def test_seed_consistency():
 def test_cluster_poisson_shapes():
     result = cluster_poisson(square_hull, size=(20, 2), n_seeds=4, rng=123)
     assert result.shape == (2, 20, 2)
+
+
+def test_cluster_poisson_seed_consistency():
+    a = cluster_poisson(square_hull, size=(20, 2), n_seeds=4, rng=123)
+    b = cluster_poisson(square_hull, size=(20, 2), n_seeds=4, rng=123)
+    np.testing.assert_allclose(a, b)
 
 
 def test_value_error_on_conflicting_inputs():
