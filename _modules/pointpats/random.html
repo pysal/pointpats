@@ -4,12 +4,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pointpats.random &#8212; pointpats v2.5.3 Manual</title>
+    <title>pointpats.random &#8212; pointpats v2.5.4 Manual</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css?v=9afac83c" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/pysal-styles.css?v=f8dcc4ae" />
-    <script src="../../_static/documentation_options.js?v=0bbe9fa5"></script>
+    <script src="../../_static/documentation_options.js?v=c0370f68"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -38,7 +38,7 @@
         </button>
         <a class="navbar-brand" href="../../index.html">
           pointpats</a>
-        <span class="navbar-text navbar-version pull-left"><b>2.5.3</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>2.5.4</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -532,7 +532,7 @@
                     <span class="s2">&quot; increase the number of sampled points.&quot;</span>
                 <span class="p">)</span>
             <span class="n">candidates</span> <span class="o">=</span> <span class="n">_uniform_circle</span><span class="p">(</span>
-                <span class="n">n_in_cluster</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">hull</span>
+                <span class="n">n_in_cluster</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">hull</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">clusters</span><span class="p">[</span><span class="n">i_cluster</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">row_stack</span><span class="p">((</span><span class="n">seed</span><span class="p">,</span> <span class="n">candidates</span><span class="p">))</span>
         <span class="n">result</span><span class="p">[</span><span class="n">i_replication</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">row_stack</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
