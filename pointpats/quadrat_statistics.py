@@ -46,6 +46,8 @@ def _as_points_array(points) -> np.ndarray:
       - ValueError for empty inputs or non-2D coordinate inputs
       - TypeError for unsupported geometry types
     """
+    if isinstance(points, gpd.GeoDataFrame):
+        points = points.geometry
     if isinstance(points, gpd.GeoSeries):
         points = points.dropna()
         if not points.geom_type.isin(["Point", "MultiPoint"]).all():

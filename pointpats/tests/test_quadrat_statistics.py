@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 import scipy.stats
 from shapely.geometry import Point, MultiPoint, Polygon, MultiPolygon, box
-
+import geopandas as gpd
 
 import pointpats.quadrat_statistics as m
 import pointpats
@@ -361,6 +361,21 @@ def test_qstatistic_contrib_formula(pts_simple):
     )
     assert np.allclose(qs.chi2_contrib, contrib_ref, equal_nan=True)
 
+def test_qstatistics_geopandas_input(pts_simple):
+    gs = gpd.GeoSeries.from_xy(pts_simple[:, 0], pts_simple[:, 1])
+    gdf = gs.to_frame("geometry")
+    qs_gs = m.QStatistic(gs, shape="rectangle", nx=2, ny=2, realizations=0)
+    qs_gdf = m.QStatistic(gdf, shape="rectangle", nx=2, ny=2, realizations=0)
+
+    for qs in [qs_gs, qs_gdf]:
+        d = qs.mr.point_location_sta()
+        obs = np.asarray(list(d.values()), dtype=float)
+
+        chi2_ref, p_ref = scipy.stats.chisquare(obs)
+        assert math.isclose(qs.chi2, chi2_ref, rel_tol=1e-12, abs_tol=0.0)
+        assert math.isclose(qs.chi2_pvalue, p_ref, rel_tol=1e-12, abs_tol=0.0)
+        assert qs.df == obs.size - 1
+        assert len(qs.cell_ids) == obs.size
 
 def test_qstatistic_invalid_shape_raises(pts_simple):
     with pytest.raises(
