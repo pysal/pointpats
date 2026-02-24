@@ -1,12 +1,12 @@
-import unittest
 import numpy as np
-
-from ..pointpattern import PointPattern
+import pytest
 from libpysal.common import RTOL
 
+from ..pointpattern import PointPattern
 
-class TestPointPattern(unittest.TestCase):
-    def setUp(self):
+
+class TestPointPattern:
+    def setup_method(self):
         self.points = [
             [66.22, 32.54],
             [22.52, 22.39],
@@ -22,11 +22,11 @@ class TestPointPattern(unittest.TestCase):
             [54.46, 8.48],
         ]
         self.pp = PointPattern(self.points)
-        self.assertEqual(len(self.pp), 12)
-        self.assertTrue([66.22, 32.54] in self.pp)
+        assert len(self.pp) == 12
+        assert [66.22, 32.54] in self.pp
 
     def test_point_pattern_n(self):
-        self.assertEqual(self.pp.n, 12)
+        assert self.pp.n == 12
 
     def test_point_pattern_mean_nnd(self):
         np.testing.assert_allclose(self.pp.mean_nnd, 21.612139802089246, RTOL)
@@ -50,8 +50,8 @@ class TestPointPattern(unittest.TestCase):
         np.testing.assert_allclose(self.pp.max_nnd, 34.63124167568931, RTOL)
 
     def test_point_pattern_find_pairs(self):
-        self.assertEqual(self.pp.find_pairs(10), {(3, 7)})
-        self.assertEqual(self.pp.find_pairs(20), {(3, 7), (1, 3)})
+        assert self.pp.find_pairs(10) == {(3, 7)}
+        assert self.pp.find_pairs(20) == {(3, 7), (1, 3)}
 
     def test_point_pattern_knn(self):
         knn = self.pp.knn(1)
@@ -76,7 +76,8 @@ class TestPointPattern(unittest.TestCase):
         np.testing.assert_array_almost_equal(knn[1], nnd)
 
     def test_point_pattern_knn_error(self):
-        self.assertRaises(ValueError, self.pp.knn, k=0)
+        with pytest.raises(ValueError, match="k must be at least 1"):
+            self.pp.knn(k=0)
 
     def test_point_pattern_knn_other(self):
         knn = self.pp.knn_other(self.pp)
@@ -108,7 +109,9 @@ class TestPointPattern(unittest.TestCase):
 
     def test_point_pattern_knn_other_error(self):
         knn_other = self.pp.knn_other
-        self.assertRaises(ValueError, knn_other, self.pp, k=0)
+
+        with pytest.raises(ValueError, match="k must be at least 1"):
+            knn_other(self.pp, k=0)
 
     def test_point_pattern_explode(self):
         explosion = self.pp.explode("x")
@@ -128,15 +131,15 @@ class TestPointPattern(unittest.TestCase):
 
         coord_flipped = pp_flip.coord_names
         x_coord_flipped, y_coord_flipped = pp_flip._x, pp_flip._y
-        self.assertEqual(x_coord, y_coord_flipped)
-        self.assertEqual(y_coord, x_coord_flipped)
-        self.assertEqual(coord, coord_flipped)
+        assert x_coord == y_coord_flipped
+        assert y_coord == x_coord_flipped
+        assert coord == coord_flipped
 
         # Flip the coordinates again, they should return to the intial values.
         pp_flip.flip_coordinates()
 
         coord_again = pp_flip.coord_names
         x_coord_again, y_coord_again = pp_flip._x, pp_flip._y
-        self.assertEqual(x_coord, x_coord_again)
-        self.assertEqual(y_coord, y_coord_again)
-        self.assertEqual(coord, coord_again)
+        assert x_coord == x_coord_again
+        assert y_coord == y_coord_again
+        assert coord == coord_again
