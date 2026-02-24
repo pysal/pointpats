@@ -1,3 +1,5 @@
+import platform
+
 import geopandas as gpd
 import numpy as np
 import pytest
@@ -5,6 +7,8 @@ import shapely
 from libpysal.common import RTOL
 
 from pointpats import centrography
+
+ON_MAC = platform.system() == "Darwin"
 
 # points from Ebdon, D. (1985) Statistics for Geographers.  Second Edition
 points = np.array([(1, 2), (2, 3), (2, 2), (2, 1), (3, 4), (3, 3), (3, 1), (4, 4)])
@@ -29,7 +33,10 @@ dispatch_types = pytest.mark.parametrize(
 )
 @dispatch_types
 def test_minimum_rotated_rectangle(points):
-    with warn_invalid_envelope:
+    if ON_MAC:
+        with warn_invalid_envelope:
+            mrr = centrography.minimum_rotated_rectangle(points)
+    else:
         mrr = centrography.minimum_rotated_rectangle(points)
     known = np.array([[2.5, 0.5], [5.0, 3.0], [3.5, 4.5], [1.0, 2.0]])
 
@@ -54,7 +61,10 @@ def test_minimum_rotated_rectangle(points):
 )
 @dispatch_types
 def test_minimum_rotated_rectangle_angle(points):
-    with warn_invalid_envelope:
+    if ON_MAC:
+        with warn_invalid_envelope:
+            _, angle = centrography.minimum_rotated_rectangle(points, return_angle=True)
+    else:
         _, angle = centrography.minimum_rotated_rectangle(points, return_angle=True)
     np.testing.assert_allclose(angle, 45.0, RTOL)
 
