@@ -1,11 +1,9 @@
-from warnings import warn
-
 import geopandas as gpd
 import libpysal as lps
-import numpy
-from pytest import approx
-import pytest
 import matplotlib.pyplot as plt
+import numpy
+import pytest
+from pytest import approx
 
 from pointpats import (
     Knox,
@@ -27,7 +25,7 @@ class TestKnox:
         global_knox = Knox(self.gdf[["X", "Y"]], self.gdf[["T"]], delta=20, tau=5)
         assert global_knox.statistic_ == 13
         assert global_knox.p_poisson == 0.14624558197140414
-        assert hasattr(global_knox, "sim") == False
+        assert not hasattr(global_knox, "sim")
         numpy.testing.assert_array_equal(
             global_knox.observed, [[1.300e01, 3.416e03], [3.900e01, 1.411e04]]
         )
@@ -43,17 +41,17 @@ class TestKnox:
             self.gdf[["X", "Y"]], self.gdf[["T"]], delta=20, tau=5, keep=True
         )
         assert global_knox.statistic_ == 13
-        assert hasattr(global_knox, "sim") == True
+        assert hasattr(global_knox, "sim")
         assert global_knox.p_sim == 0.21
 
     def test_knox_from_gdf(self):
         gdf = self.gdf.copy()
         # not technically the correct CRS...
-        gdf.crs = 21096
+        gdf = gdf.set_crs(21096)
         global_knox = Knox.from_dataframe(gdf, time_col="T", delta=20, tau=5)
         assert global_knox.statistic_ == 13
         assert global_knox.p_poisson == 0.14624558197140414
-        assert hasattr(global_knox, "sim") == False
+        assert not hasattr(global_knox, "sim")
         numpy.testing.assert_array_equal(
             global_knox.observed, [[1.300e01, 3.416e03], [3.900e01, 1.411e04]]
         )
@@ -65,36 +63,37 @@ class TestKnox:
         )
 
         # no CRS should raise a warning
-        global_knox = Knox.from_dataframe(self.gdf, time_col="T", delta=20, tau=5)
-        numpy.testing.assert_allclose(
-            global_knox.expected,
-            [[1.01438161e01, 3.41885618e03], [4.1856139e01, 1.41071438e04]],
-            rtol=1e-5,
-            atol=0,
-        )
+        with pytest.warns(UserWarning, match="There is no CRS set on the dataframe"):
+            global_knox = Knox.from_dataframe(self.gdf, time_col="T", delta=20, tau=5)
+            numpy.testing.assert_allclose(
+                global_knox.expected,
+                [[1.01438161e01, 3.41885618e03], [4.1856139e01, 1.41071438e04]],
+                rtol=1e-5,
+                atol=0,
+            )
 
         # unprojected coords
-        try:
-            gdf.crs = 4326
-            global_knox = Knox.from_dataframe(gdf, time_col="T", delta=20, tau=5)
-        except ValueError:
-            warn("successfully caught crs error")
-            pass
+        with pytest.raises(
+            ValueError,
+            match="The input dataframe must be in a projected coordinate system",
+        ):
+            _gdf = gdf.copy().to_crs(4326)
+            Knox.from_dataframe(_gdf, time_col="T", delta=20, tau=5)
 
         # non-numeric type for time
-        try:
-            gdf["T"] = gdf["T"].astype("O")
-            global_knox = Knox.from_dataframe(gdf, time_col="T", delta=20, tau=5)
-        except ValueError:
-            warn("successfully caught dtype error")
-            pass
+        with pytest.raises(
+            ValueError,
+            match="The time values must be stored as a numeric dtype",
+        ):
+            gdf["T"] = gdf["T"].astype(str)
+            Knox.from_dataframe(gdf, time_col="T", delta=20, tau=5)
 
         numpy.random.seed(12345)
         global_knox = Knox(
             self.gdf[["X", "Y"]], self.gdf[["T"]], delta=20, tau=5, keep=True
         )
         assert global_knox.statistic_ == 13
-        assert hasattr(global_knox, "sim") == True
+        assert hasattr(global_knox, "sim")
         assert global_knox.p_sim == 0.21
 
 
@@ -215,7 +214,7 @@ class TestKnoxLocal:
 
     def test_knox_local_from_gdf(self):
         gdf = self.gdf
-        gdf.crs = 21096
+        gdf = gdf.set_crs(21096)
         numpy.random.seed(12345)
         local_knox = KnoxLocal.from_dataframe(
             gdf, time_col="T", delta=20, tau=5, keep=True
@@ -323,11 +322,20 @@ class TestKnoxLocal:
 
     def test_explore(self):
         gdf = self.gdf.copy()
-        gdf.crs = 21096
+        gdf = gdf.set_crs(21096)
         numpy.random.seed(12345)
-        m = KnoxLocal.from_dataframe(
-            gdf, time_col="T", delta=20, tau=5, keep=True
-        ).explore()
+
+        warn_empty_set = pytest.warns(UserWarning, match="empty neighbor set.")
+        warn_empty_geoms = pytest.warns(
+            UserWarning,
+            match="The GeoSeries you are attempting to plot",
+        )
+
+        with warn_empty_set, warn_empty_geoms:
+            m = KnoxLocal.from_dataframe(
+                gdf, time_col="T", delta=20, tau=5, keep=True
+            ).explore()
+
         numpy.testing.assert_array_almost_equal(
             m.get_bounds(),
             [
@@ -338,37 +346,37 @@ class TestKnoxLocal:
         # old folium returns 5, new folium returns 3
         assert len(m.to_dict()["children"]) >= 3
 
-
     def test_hotspots_without_neighbors(self):
         gdf = self.gdf.copy()
         gdf = gdf.set_crs(21096)
         numpy.random.seed(1)
         knox = KnoxLocal.from_dataframe(
-            gdf, time_col="T", delta=20, tau=5,
-        ).hotspots(keep_neighbors=False, inference='analytic')
-        assert knox.shape == (3,7)
+            gdf,
+            time_col="T",
+            delta=20,
+            tau=5,
+        ).hotspots(keep_neighbors=False, inference="analytic")
+        assert knox.shape == (3, 7)
 
     def test_hotspots_with_neighbors(self):
         gdf = self.gdf.copy()
         gdf = gdf.set_crs(21096)
         knox = KnoxLocal.from_dataframe(
-            gdf, time_col="T", delta=20, tau=5,
-        ).hotspots(keep_neighbors=True, inference='analytic')
-        assert knox.shape == (4,7)
+            gdf,
+            time_col="T",
+            delta=20,
+            tau=5,
+        ).hotspots(keep_neighbors=True, inference="analytic")
+        assert knox.shape == (4, 7)
 
     @pytest.mark.mpl_image_compare
     def test_plot(self):
         gdf = self.gdf.copy()
-        gdf.crs = 21096
-        fig, ax2 = plt.subplots(figsize=(30,18))
-        lk = KnoxLocal.from_dataframe(
-            gdf, time_col="T", delta=20, tau=5, keep=True)
-        lk.plot(inference='analytic', ax=ax2)
+        gdf = gdf.set_crs(21096)
+        fig, ax2 = plt.subplots(figsize=(30, 18))
+        lk = KnoxLocal.from_dataframe(gdf, time_col="T", delta=20, tau=5, keep=True)
+        lk.plot(inference="analytic", ax=ax2)
         assert fig
-
-
-
-# old tests refactored to pytest
 
 
 class TestSpaceTimeEvents:
@@ -397,7 +405,11 @@ class TestSpaceTimeEvents:
         assert result["stat"] == approx(0.014154, rel=1e-4)
 
     def test_jacquez(self):
-        result = jacquez(self.events.space, self.events.t, k=3, permutations=1)
+        with pytest.warns(
+            UserWarning,
+            match="The weights matrix is not fully connected",
+        ):
+            result = jacquez(self.events.space, self.events.t, k=3, permutations=1)
 
         assert result["stat"] == 12
 

@@ -156,5 +156,3 @@ def test_dtot(points):
         coord = shapely.Point(*coord)
     res = centrography.dtot(coord, points)
     np.testing.assert_allclose(res, 260.8212494704881, RTOL)
-
-

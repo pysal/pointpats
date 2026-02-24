@@ -41,7 +41,10 @@ Home = "https://github.com/pysal/pointpats/"
 Repository = "https://github.com/pysal/pointpats"
 
 [project.optional-dependencies]
-dev = ["pre-commit"]
+dev = [
+    "pre-commit",
+    "ruff",
+]
 docs = [
     "nbsphinx",
     "numpydoc",
@@ -69,27 +72,23 @@ tests = [
 [tool.setuptools.packages.find]
 include = ["pointpats", "pointpats.*"]
 
-[tool.black]
-line-length = 88
-
 [tool.ruff]
 line-length = 88
-select = ["E", "F", "W", "I", "UP", "N", "B", "A", "C4", "SIM", "ARG"]
-ignore = [
+lint.select = ["E", "F", "W", "I", "UP", "N", "B", "A", "C4", "SIM", "ARG"]
+lint.ignore = [
     "B006",
     "B008",
     "B009",
     "B010",
     "C408",
     "E731",
-    "F401",
     "F403",
     "N803",
     "N806",
     "N999",
     "UP007"
 ]
-exclude = ["pointpats/tests/*", "docs/*"]
+exclude = ["docs/*"]
 
 [tool.coverage.run]
 source = ["./pointpats"]

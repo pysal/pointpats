@@ -361,6 +361,7 @@ def test_qstatistic_contrib_formula(pts_simple):
     )
     assert np.allclose(qs.chi2_contrib, contrib_ref, equal_nan=True)
 
+
 def test_qstatistics_geopandas_input(pts_simple):
     gs = gpd.GeoSeries.from_xy(pts_simple[:, 0], pts_simple[:, 1])
     gdf = gs.to_frame("geometry")
@@ -376,6 +377,7 @@ def test_qstatistics_geopandas_input(pts_simple):
         assert math.isclose(qs.chi2_pvalue, p_ref, rel_tol=1e-12, abs_tol=0.0)
         assert qs.df == obs.size - 1
         assert len(qs.cell_ids) == obs.size
+
 
 def test_qstatistic_invalid_shape_raises(pts_simple):
     with pytest.raises(
