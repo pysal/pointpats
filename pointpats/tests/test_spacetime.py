@@ -63,13 +63,14 @@ class TestKnox:
         )
 
         # no CRS should raise a warning
-        global_knox = Knox.from_dataframe(self.gdf, time_col="T", delta=20, tau=5)
-        numpy.testing.assert_allclose(
-            global_knox.expected,
-            [[1.01438161e01, 3.41885618e03], [4.1856139e01, 1.41071438e04]],
-            rtol=1e-5,
-            atol=0,
-        )
+        with pytest.warns(UserWarning, match="There is no CRS set on the dataframe"):
+            global_knox = Knox.from_dataframe(self.gdf, time_col="T", delta=20, tau=5)
+            numpy.testing.assert_allclose(
+                global_knox.expected,
+                [[1.01438161e01, 3.41885618e03], [4.1856139e01, 1.41071438e04]],
+                rtol=1e-5,
+                atol=0,
+            )
 
         # unprojected coords
         with pytest.raises(
@@ -213,7 +214,7 @@ class TestKnoxLocal:
 
     def test_knox_local_from_gdf(self):
         gdf = self.gdf
-        gdf.crs = 21096
+        gdf = gdf.set_crs(21096)
         numpy.random.seed(12345)
         local_knox = KnoxLocal.from_dataframe(
             gdf, time_col="T", delta=20, tau=5, keep=True
@@ -321,11 +322,20 @@ class TestKnoxLocal:
 
     def test_explore(self):
         gdf = self.gdf.copy()
-        gdf.crs = 21096
+        gdf = gdf.set_crs(21096)
         numpy.random.seed(12345)
-        m = KnoxLocal.from_dataframe(
-            gdf, time_col="T", delta=20, tau=5, keep=True
-        ).explore()
+
+        warn_empty_set = pytest.warns(UserWarning, match="empty neighbor set.")
+        warn_empty_geoms = pytest.warns(
+            UserWarning,
+            match="The GeoSeries you are attempting to plot",
+        )
+
+        with warn_empty_set, warn_empty_geoms:
+            m = KnoxLocal.from_dataframe(
+                gdf, time_col="T", delta=20, tau=5, keep=True
+            ).explore()
+
         numpy.testing.assert_array_almost_equal(
             m.get_bounds(),
             [
@@ -362,14 +372,11 @@ class TestKnoxLocal:
     @pytest.mark.mpl_image_compare
     def test_plot(self):
         gdf = self.gdf.copy()
-        gdf.crs = 21096
+        gdf = gdf.set_crs(21096)
         fig, ax2 = plt.subplots(figsize=(30, 18))
         lk = KnoxLocal.from_dataframe(gdf, time_col="T", delta=20, tau=5, keep=True)
         lk.plot(inference="analytic", ax=ax2)
         assert fig
-
-
-# old tests refactored to pytest
 
 
 class TestSpaceTimeEvents:
@@ -398,7 +405,11 @@ class TestSpaceTimeEvents:
         assert result["stat"] == approx(0.014154, rel=1e-4)
 
     def test_jacquez(self):
-        result = jacquez(self.events.space, self.events.t, k=3, permutations=1)
+        with pytest.warns(
+            UserWarning,
+            match="The weights matrix is not fully connected",
+        ):
+            result = jacquez(self.events.space, self.events.t, k=3, permutations=1)
 
         assert result["stat"] == 12
 
