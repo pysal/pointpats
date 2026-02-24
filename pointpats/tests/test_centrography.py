@@ -8,7 +8,7 @@ from libpysal.common import RTOL
 
 from pointpats import centrography
 
-ON_MAC = platform.system() == "Darwin"
+ON_MAC_ARM = platform.system() == "Darwin" and platform.machine() == "arm64"
 
 # points from Ebdon, D. (1985) Statistics for Geographers.  Second Edition
 points = np.array([(1, 2), (2, 3), (2, 2), (2, 1), (3, 4), (3, 3), (3, 1), (4, 4)])
@@ -33,7 +33,7 @@ dispatch_types = pytest.mark.parametrize(
 )
 @dispatch_types
 def test_minimum_rotated_rectangle(points):
-    if ON_MAC:
+    if ON_MAC_ARM:
         with warn_invalid_envelope:
             mrr = centrography.minimum_rotated_rectangle(points)
     else:
@@ -61,7 +61,7 @@ def test_minimum_rotated_rectangle(points):
 )
 @dispatch_types
 def test_minimum_rotated_rectangle_angle(points):
-    if ON_MAC:
+    if ON_MAC_ARM:
         with warn_invalid_envelope:
             _, angle = centrography.minimum_rotated_rectangle(points, return_angle=True)
     else:
