@@ -739,7 +739,7 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
     - The permutation procedure randomly reassigns temporal neighbor labels to
       spatial neighborhoods via index permutations, generating a null
       distribution for the global space-time neighbor count.
-    
+
     """
 
     n = s_coords.shape[0]
@@ -1401,23 +1401,24 @@ class KnoxLocal:
             (self.adjlist.focal.isin(pdf_sig.index.values))
             | self.adjlist.neighbor.isin(pdf_sig.index.values)
         ]
-        pdf_sig = pd.concat([pdf_sig,
-            self._gdf[self._gdf.index.isin(temp_neighbors.neighbor.values)
-
-                ][[col, "time"]].rename(
-                columns={col: "pvalue", "time": "focal_time"}
-            )
-        ])
+        pdf_sig = pd.concat(
+            [
+                pdf_sig,
+                self._gdf[self._gdf.index.isin(temp_neighbors.neighbor.values)][
+                    [col, "time"]
+                ].rename(columns={col: "pvalue", "time": "focal_time"}),
+            ]
+        )
 
         pdf_sig = pdf_sig.merge(
-            temp_neighbors, how='outer', left_index=True, right_on="focal"
+            temp_neighbors, how="outer", left_index=True, right_on="focal"
         ).reset_index(drop=True)
         # significant focals can be neighbors of others (dupes)
         pdf_sig = pdf_sig.groupby("focal").first().reset_index()
         graph = Graph.from_adjacency(pdf_sig.assign(weight=1))
         pdf_sig["cluster"] = graph.component_labels.values
-        if not keep_neighbors :
-            pdf_sig = pdf_sig[pdf_sig.pvalue<=crit]
+        if not keep_neighbors:
+            pdf_sig = pdf_sig[pdf_sig.pvalue <= crit]
 
         return self._gdf[["geometry"]].merge(
             pdf_sig.copy(), left_index=True, right_on="focal"
@@ -1650,9 +1651,9 @@ def _spacetime_points_to_arrays(dataframe, time_col):
                 "The input dataframe must be in a projected coordinate system."
             )
 
-    assert dataframe.geom_type.unique().tolist() == [
-        "Point"
-    ], "The Knox statistic is only defined for Point geometries"
+    assert dataframe.geom_type.unique().tolist() == ["Point"], (
+        "The Knox statistic is only defined for Point geometries"
+    )
 
     # kdtree wont operate on datetime
     if is_numeric_dtype(dataframe[time_col].dtype) is False:
