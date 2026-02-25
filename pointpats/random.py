@@ -262,9 +262,9 @@ def normal(hull, center=None, cov=None, size=None, rng=None):
                 2,
                 2,
             ), "3-dimensional covariance matrices must have shape (n_simulations, 2,2)"
-            assert (
-                cov.shape[0] == n_simulations
-            ), "3-dimensional covariance matrices must have shape (n_simulations, 2,2)"
+            assert cov.shape[0] == n_simulations, (
+                "3-dimensional covariance matrices must have shape (n_simulations, 2,2)"
+            )
     else:
         raise ValueError(
             "`cov` argument must be a float (signifying a standard deviation)"
@@ -390,7 +390,11 @@ def cluster_poisson(
                     " increase the number of sampled points."
                 )
             candidates = _uniform_circle(
-                n_in_cluster - 1, radius=radius, center=seed, hull=hull, rng=rng,
+                n_in_cluster - 1,
+                radius=radius,
+                center=seed,
+                hull=hull,
+                rng=rng,
             )
             clusters[i_cluster] = numpy.row_stack((seed, candidates))
         result[i_replication] = numpy.row_stack(clusters)
