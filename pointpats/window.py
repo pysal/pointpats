@@ -71,9 +71,9 @@ class Window(ps.cg.Polygon):
 
     def __init__(self, parts, holes=[]):
         if holes:
-            super(Window, self).__init__(parts, holes)
+            super().__init__(parts, holes)
         else:
-            super(Window, self).__init__(parts)
+            super().__init__(parts)
 
     def filter_contained(self, points):
         return [np.asarray(pnt) for pnt in points if self.contains_point(pnt)]
