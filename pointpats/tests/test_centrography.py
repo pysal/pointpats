@@ -1,11 +1,10 @@
-import numpy as np
-import shapely
-import pytest
 import geopandas as gpd
+import numpy as np
+import pytest
+import shapely
+from libpysal.common import RTOL
 
 from pointpats import centrography
-
-from libpysal.common import RTOL
 
 # points from Ebdon, D. (1985) Statistics for Geographers.  Second Edition
 points = np.array([(1, 2), (2, 3), (2, 2), (2, 1), (3, 4), (3, 3), (3, 1), (4, 4)])

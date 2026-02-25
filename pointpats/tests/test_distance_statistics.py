@@ -1,12 +1,13 @@
 import numpy as np
 import pytest
 from shapely.geometry import box
+
 from pointpats.random import (
-    poisson,
-    normal,
-    cluster_poisson,
-    cluster_normal,
     _pairwise_count_kdtree,
+    cluster_normal,
+    cluster_poisson,
+    normal,
+    poisson,
 )
 
 
@@ -31,7 +32,11 @@ def test_poisson_output_shape():
 
 def test_normal_output_with_custom_cov():
     cov = np.array([[1, 0.5], [0.5, 2]])
-    result = normal(square_hull, cov=cov, size=(20, 3), rng=42)
+    with pytest.warns(
+        RuntimeWarning,
+        match="covariance is not symmetric positive-semidefinite.",
+    ):
+        result = normal(square_hull, cov=cov, size=(20, 3), rng=42)
     assert result.shape == (3, 20, 2)
 
 
@@ -60,7 +65,7 @@ def test_cluster_poisson_seed_consistency():
 
 
 def test_value_error_on_conflicting_inputs():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Either intensity or size as"):
         poisson(square_hull, intensity=1.0, size=(10, 2))
 
 

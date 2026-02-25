@@ -1,14 +1,13 @@
-import importlib
 import math
 
+import geopandas as gpd
 import numpy as np
 import pytest
 import scipy.stats
-from shapely.geometry import Point, MultiPoint, Polygon, MultiPolygon, box
-import geopandas as gpd
+from shapely.geometry import MultiPoint, MultiPolygon, Point, Polygon, box
 
-import pointpats.quadrat_statistics as m
 import pointpats
+import pointpats.quadrat_statistics as m
 
 
 # -----------------------------------------------------------------------------
@@ -415,7 +414,7 @@ class _PoissonReturn:
 
 
 def test_qstatistic_simulation_branch_calls_poisson_and_sets_outputs(
-    monkeypatch, pts_simple, window_poly
+    monkeypatch, window_poly
 ):
     # Make points fit inside the window for clarity
     pts = np.array([[1.0, 1.0], [2.0, 1.0], [3.0, 2.0], [4.0, 4.0]], dtype=float)
@@ -461,11 +460,11 @@ def test_qstatistic_simulation_branch_calls_poisson_and_sets_outputs(
 
 
 def test_qstatistic_simulation_accepts_realizations_object_without_points_attr(
-    monkeypatch, pts_simple, window_poly
+    monkeypatch, window_poly
 ):
     pts = np.array([[1.0, 1.0], [2.0, 1.0], [3.0, 2.0], [4.0, 4.0]], dtype=float)
 
-    def poisson_stub(window, intensity, realizations, rng=None):
+    def poisson_stub(window, intensity, realizations, rng=None):  # noqa: ARG001
         # Return raw arrays (code path uses getattr(ri, "points", ri))
         return [pts.copy() for _ in range(realizations)]
 

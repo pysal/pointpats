@@ -1,7 +1,8 @@
-import numpy as np
 import geopandas as gpd
+import numpy as np
 import pytest
 from shapely.geometry import Point
+
 from pointpats import ellipse
 
 
@@ -97,7 +98,7 @@ def test_invalid_method(sample_coords):
 
 def test_weights_length_mismatch(sample_coords):
     wrong_weights = np.arange(5)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="weights must have same length as points"):
         ellipse(sample_coords, weights=wrong_weights)
 
 
@@ -110,7 +111,7 @@ def test_unweighted(sample_points):
     )
     assert isinstance(result, tuple)
     assert len(result) == 3
-    for r, e in zip(result, expected):
+    for r, e in zip(result, expected, strict=True):
         assert isinstance(r, np.float64)
         np.testing.assert_almost_equal(r, e, decimal=8)
 
@@ -135,7 +136,7 @@ def test_params(sample_points):
     )
     assert isinstance(result, tuple)
     assert len(result) == 3
-    for r, e in zip(result, expected):
+    for r, e in zip(result, expected, strict=True):
         assert isinstance(r, np.float64)
         np.testing.assert_almost_equal(r, e, decimal=8)
 
@@ -147,7 +148,7 @@ def test_params(sample_points):
     )
     assert isinstance(result, tuple)
     assert len(result) == 3
-    for r, e in zip(result, expected):
+    for r, e in zip(result, expected, strict=True):
         assert isinstance(r, np.float64)
         np.testing.assert_almost_equal(r, e, decimal=8)
 
@@ -158,7 +159,7 @@ def test_params(sample_points):
         np.float64(-0.9362557045365753),
     )
     assert len(result) == 3
-    for r, e in zip(result, expected):
+    for r, e in zip(result, expected, strict=True):
         assert isinstance(r, np.float64)
         np.testing.assert_almost_equal(r, e, decimal=8)
 
@@ -169,7 +170,7 @@ def test_params(sample_points):
         np.float64(-0.9362557045365753),
     )
     assert len(result) == 3
-    for r, e in zip(result, expected):
+    for r, e in zip(result, expected, strict=True):
         assert isinstance(r, np.float64)
         np.testing.assert_almost_equal(r, e, decimal=8)
 
@@ -182,6 +183,6 @@ def test_params(sample_points):
         np.float64(-0.9362557045365753),
     )
     assert len(result) == 3
-    for r, e in zip(result, expected):
+    for r, e in zip(result, expected, strict=True):
         assert isinstance(r, np.float64)
         np.testing.assert_almost_equal(r, e, decimal=8)
