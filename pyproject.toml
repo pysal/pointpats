@@ -103,3 +103,8 @@ exclude_lines = [
 ]
 ignore_errors = true
 omit = ["pointpats/tests/*", "docs/conf.py"]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore:invalid value encountered in oriented_envelope:RuntimeWarning"  # macOS Apple Silicon issue
+]
