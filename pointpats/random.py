@@ -26,24 +26,12 @@ spatial hulls and containment logic.
 import numpy
 from scipy.spatial import cKDTree
 
-from .geometry import (
-    area as _area,
-)
-from .geometry import (
-    bbox as _bbox,
-)
-from .geometry import (
-    centroid as _centroid,
-)
-from .geometry import (
-    contains as _contains,
-)
-from .geometry import (
-    prepare_hull as _prepare_hull,
-)
-from .geometry import (
-    spatial,
-)
+from .geometry import area as _area
+from .geometry import bbox as _bbox
+from .geometry import centroid as _centroid
+from .geometry import contains as _contains
+from .geometry import prepare_hull as _prepare_hull
+from .geometry import spatial
 
 # ------------------------------------------------------------ #
 # Utilities                                                    #
