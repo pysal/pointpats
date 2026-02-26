@@ -188,7 +188,6 @@ def poisson(hull, intensity=None, size=None, rng=None):
     bbox = _bbox(hull)
     rng = numpy.random.default_rng(rng)
     for i_replication in range(n_simulations):
-        # generating = True  # noqa: F841 - `generating` is assigned to but never used
         i_observation = 0
         while i_observation < n_observations:
             x, y = (
@@ -282,7 +281,6 @@ def normal(hull, center=None, cov=None, size=None, rng=None):
 
     rng = numpy.random.default_rng(rng)
     for i_replication in range(n_simulations):
-        # generating = True  # noqa: F841 - `generating` is assigned to but never used
         i_observation = 0
         replication_cov = cov[i_replication] if cov.ndim == 3 else cov
         replication_sd = numpy.diagonal(replication_cov) ** 0.5
@@ -367,7 +365,6 @@ def cluster_poisson(
     )
 
     result = numpy.empty((n_simulations, n_observations, 2))
-    # hull_area = _area(hull)  # noqa: F841 - `hull_area` is assigned to but never used
     rng = numpy.random.default_rng(rng)
 
     center_seeds = rng.integers(100_000, size=n_simulations)
