@@ -1,4 +1,4 @@
-__all__ = ['cached_property']
+__all__ = ["cached_property"]
 import functools
 
 
@@ -7,6 +7,7 @@ def cached_property(fun):
 
     Adapted from: http://code.activestate.com/recipes/576563-cached-property/
     """
+
     @functools.wraps(fun)
     def get(self):
         try:
@@ -17,4 +18,5 @@ def cached_property(fun):
             pass
         ret = self._cache[fun] = fun(self)
         return ret
+
     return property(get)
