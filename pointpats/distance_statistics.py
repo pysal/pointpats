@@ -4,24 +4,14 @@ from collections import namedtuple
 import geopandas
 import numpy
 import shapely
-from scipy import interpolate, spatial
 from joblib import Parallel, delayed
+from scipy import interpolate, spatial
 
-from .geometry import (
-    TREE_TYPES,
-)
-from .geometry import (
-    area as _area,
-)
-from .geometry import (
-    build_best_tree as _build_best_tree,
-)
-from .geometry import (
-    k_neighbors as _k_neighbors,
-)
-from .geometry import (
-    prepare_hull as _prepare_hull,
-)
+from .geometry import TREE_TYPES
+from .geometry import area as _area
+from .geometry import build_best_tree as _build_best_tree
+from .geometry import k_neighbors as _k_neighbors
+from .geometry import prepare_hull as _prepare_hull
 from .random import poisson
 
 __all__ = [
@@ -110,13 +100,13 @@ def _prepare(coordinates, support, distances, metric, hull, edge_correction):
     else:  # try to use it as is
         try:
             support = numpy.asarray(support)
-        except:
+        except:  # noqa: E722 - bare `except`
             raise TypeError(
-                "`support` must be a tuple (either (start, stop, step), (start, stop) or (stop,)),"
-                " an int describing the number of breaks to use to evalute the function,"
-                " or an iterable containing the breaks to use to evaluate the function."
-                " Recieved object of type {}: {}".format(type(support), support)
-            )
+                "`support` must be a tuple (either (start, stop, step), (start, stop) "
+                "or (stop,)), an int describing the number of breaks to use to evalute "
+                "the function, or an iterable containing the breaks to use to evaluate "
+                f"the function. Received object of type {type(support)}: {support}"
+            ) from None
 
     return coordinates, support, distances, metric, hull, edge_correction
 
@@ -134,8 +124,7 @@ def f(
     hull=None,
     edge_correction=None,
 ):
-    """
-    Ripley's F function
+    """Ripley's F function
 
     The so-called "empty space" function, this is the cumulative density function of
     the distances from a random set of points to the known points in the pattern.
@@ -198,7 +187,7 @@ def f(
 
         randoms = poisson(hull=hull, size=(n_empty_points, 1))
         try:
-            tree
+            tree  # noqa: B018
         except NameError:
             tree = _build_best_tree(coordinates, metric)
         finally:
@@ -218,11 +207,10 @@ def g(
     metric="euclidean",
     edge_correction=None,
 ):
-    """
-    Ripley's G function
+    """Ripley's G function
 
-    The G function is computed from the cumulative density function of the nearest neighbor
-    distances between points in the pattern.
+    The G function is computed from the cumulative density function of the
+    nearest neighbor distances between points in the pattern.
 
     Parameters
     ----------
@@ -243,7 +231,6 @@ def g(
     -------
     a tuple containing the support values used to evalute the function
     and the values of the function at each distance value in the support.
-
     """
 
     coordinates, support, distances, metric, *_ = _prepare(
@@ -266,15 +253,15 @@ def g(
                     " Input distance matrix has an invalid shape: {k},{p}."
                     " Distances supplied can either be 2 dimensional"
                     " square matrices with the same number of rows"
-                    " as `coordinates` ({n}) or 1 dimensional and contain"
+                    f" as `coordinates` ({n}) or 1 dimensional and contain"
                     " the shortest distance from each point in "
                     " `coordinates` to some other point in coordinates."
                 )
         elif distances.ndim == 1:
             if distances.shape[0] != coordinates.shape[0]:
                 raise ValueError(
-                    f"Distances are not aligned with coordinates! Distance"
-                    f" matrix must be (n_coordinates, n_coordinates), but recieved"
+                    "Distances are not aligned with coordinates! Distance"
+                    " matrix must be (n_coordinates, n_coordinates), but recieved"
                     f" {distances.shape} instead of ({coordinates.shape[0]},)"
                 )
         else:
@@ -284,11 +271,11 @@ def g(
                 " as `coordinates` or 1 dimensional and contain"
                 " the shortest distance from each point in "
                 " `coordinates` to some other point in coordinates."
-                " Input matrix was {distances.ndim} dimensioanl"
+                f" Input matrix was {distances.ndim} dimensional"
             )
     else:
         try:
-            tree
+            tree  # noqa: B018
         except NameError:
             tree = _build_best_tree(coordinates, metric)
         finally:
@@ -309,10 +296,10 @@ def j(
     edge_correction=None,
     truncate=True,
 ):
-    """
-    Ripely's J function
+    """Ripely's J function
 
-    The so-called "spatial hazard" function, this is a function relating the F and G functions.
+    The so-called "spatial hazard" function, this is a function relating the
+    F and G functions.
 
     Parameters
     ----------
@@ -364,11 +351,10 @@ def j(
         edge_correction=edge_correction,
     )
 
-    if isinstance(support, numpy.ndarray):
-        if not numpy.allclose(gsupport, support):
-            gfunction = interpolate.interp1d(gsupport, gstats, fill_value=1)
-            gstats = gfunction(support)
-            gsupport = support
+    if isinstance(support, numpy.ndarray) and not numpy.allclose(gsupport, support):
+        gfunction = interpolate.interp1d(gsupport, gstats, fill_value=1)
+        gstats = gfunction(support)
+        gsupport = support
     if not (numpy.allclose(gsupport, fsupport)):
         ffunction = interpolate.interp1d(fsupport, fstats, fill_value=1)
         fstats = ffunction(gsupport)
@@ -399,12 +385,13 @@ def k(
     metric="euclidean",
     edge_correction=None,
 ):
-    """
-    Ripley's K function
+    """Ripley's K function
 
-    This function counts the number of pairs of points that are closer than a given distance.
-    As d increases, K approaches the number of point pairs.
+    This function counts the number of pairs of points that are closer than a given
+    distance. As d increases, K approaches the number of point pairs.
 
+    Parameters
+    ----------
     coordinates : geopandas object | numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
@@ -435,18 +422,20 @@ def k(
         if distances.ndim == 1:
             if distances.shape[0] != upper_tri_n:
                 raise ValueError(
-                    f"Shape of inputted distances is not square, nor is the upper triangular"
-                    f" matrix matching the number of input points. The shape of the input matrix"
-                    f" is {distances.shape}, but required shape is ({upper_tri_n},) or ({n},{n})"
+                    f"Shape of inputted distances is not square, nor is the upper "
+                    "triangular matrix matching the number of input points. The shape "
+                    f"of the input matrix is {distances.shape}, but required shape "
+                    f"is ({upper_tri_n},) or ({n},{n})"
                 )
             upper_tri_distances = distances
         elif distances.shape[0] == distances.shape[1] == n:
             upper_tri_distances = distances[numpy.triu_indices_from(distances, k=1)]
         else:
             raise ValueError(
-                f"Shape of inputted distances is not square, nor is the upper triangular"
-                f" matrix matching the number of input points. The shape of the input matrix"
-                f" is {distances.shape}, but required shape is ({upper_tri_n},) or ({n},{n})"
+                f"Shape of inputted distances is not square, nor is the upper "
+                "triangular matrix matching the number of input points. The shape "
+                f"of the input matrix is {distances.shape}, but required shape "
+                f"is ({upper_tri_n},) or ({n},{n})"
             )
     else:
         upper_tri_distances = spatial.distance.pdist(coordinates, metric=metric)
@@ -456,21 +445,21 @@ def k(
     return support, k_estimate
 
 
-def l(
+def l(  # noqa: E743 - Ambiguous function name
     coordinates,
     support=None,
-    permutations=9999,
+    permutations=9999,  # noqa: ARG001  -- Unused function argument
     distances=None,
     metric="euclidean",
     edge_correction=None,
     linearized=False,
 ):
-    """
-    Ripley's L function
+    """Ripley's L function
 
-    This is a scaled and shifted version of the K function that accounts for the K function's
-    increasing expected value as distances increase. This means that the L function, for a
-    completely random pattern, should be close to zero at all distance values in the support.
+    This is a scaled and shifted version of the K function that accounts for the K
+    function's increasing expected value as distances increase. This means that the
+    L function, for a completely random pattern, should be close to zero at all
+    distance values in the support.
 
     Parameters
     ----------
@@ -508,11 +497,11 @@ def l(
         edge_correction=edge_correction,
     )
 
-    l = numpy.sqrt(k_estimate / numpy.pi)
+    _l = numpy.sqrt(k_estimate / numpy.pi)
 
     if linearized:
-        return support, l - support
-    return support, l
+        return support, _l - support
+    return support, _l
 
 
 # ------------------------------------------------------------#
@@ -561,11 +550,11 @@ def _ripley_test(
         coordinates = shapely.get_coordinates(coordinates.geometry)
 
     stat_function, result_container = _ripley_dispatch.get(calltype)
-    core_kwargs = dict(
-        support=support,
-        metric=metric,
-        edge_correction=edge_correction,
-    )
+    core_kwargs = {
+        "support": support,
+        "metric": metric,
+        "edge_correction": edge_correction,
+    }
     tree = _build_best_tree(coordinates, metric=metric)
     hull = _prepare_hull(coordinates, hull)
     empty_space_points = None
@@ -576,8 +565,8 @@ def _ripley_test(
         empty_space_points = poisson(coordinates, size=(1000, 1))
 
         if distances is None:
-            # Note: We now use the original coordinates' tree to calculate the observed distance
-            # for the first time, as per the original logic flow.
+            # Note: We now use the original coordinates' tree to calculate the observed
+            # distance for the first time, as per the original logic flow.
             empty_space_distances, _ = _k_neighbors(tree, empty_space_points, k=1)
 
             if calltype == "F":
@@ -592,15 +581,19 @@ def _ripley_test(
     observed_support, observed_statistic = stat_function(
         coordinates, distances=distances, **core_kwargs
     )
-    # The original function passed the tree, but the wrapper functions expect coordinates
-    # Corrected to pass coordinates, relying on stat_function to manage the tree internally.
+    # The original function passed the tree, but the wrapper functions expect
+    # coordinates. Corrected to pass coordinates, relying on stat_function to
+    # manage the tree internally.
 
     core_kwargs["support"] = observed_support
     n_observations = coordinates.shape[0]
 
     # --- PARALLEL SIMULATION BLOCK ---
     if n_simulations <= 0:
-        warnings.warn("n_simulations must be positive. No simulations performed.")
+        warnings.warn(
+            "n_simulations must be positive. No simulations performed.",
+            stacklevel=2,
+        )
         simulations_array = numpy.empty((0, len(observed_support)))
     else:
         simulations_list = Parallel(n_jobs=n_jobs)(
@@ -650,13 +643,11 @@ def f_test(
     n_simulations=9999,
     n_jobs=-1,
 ):
-    """
-    Ripley's F function
+    """Ripley's F function
 
     The so-called "empty space" function, this is the cumulative density function of
-    the distances from a random set of points to the known points in the pattern.
-
-    When the estimated statistic is larger than simulated values at a given distance, then
+    the distances from a random set of points to the known points in the pattern. When
+    the estimated statistic is larger than simulated values at a given distance, then
     the pattern is considered "dispersed" or "regular"
 
     Parameters
@@ -687,11 +678,11 @@ def f_test(
         Simulations are independent and can be run in parallel to significantly
         reduce execution time.
 
-        * If ``n_jobs = -1``, all available CPU cores will be used.
-        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),
+        * If ``n_jobs=-1``, all available CPU cores will be used.
+        * If ``n_jobs=1``, the execution will be forced to run sequentially (serially),
           disabling parallel processing. This is often useful for debugging or
           testing purposes.
-        * If ``n_jobs > 1``, that specific number of cores will be used.
+        * If ``n_jobs>1``, that specific number of cores will be used.
 
     Returns
     -------
@@ -699,7 +690,8 @@ def f_test(
     - support, the exact distance values used to evalute the statistic
     - statistic, the values of the statistic at each distance
     - pvalue, the percent of simulations that were as extreme as the observed value
-    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))
+    - simulations, the distribution of simulated statistics
+        (shaped (n_simulations, n_support_points))
         or None if keep_simulations=False (which is the default)
     """
 
@@ -728,13 +720,11 @@ def g_test(
     n_simulations=9999,
     n_jobs=-1,
 ):
-    """
-    Ripley's G function
+    """Ripley's G function
 
-    The G function is computed from the cumulative density function of the nearest neighbor
-    distances between points in the pattern.
-
-    When the G function is below the simulated values, it suggests dispersion.
+    The G function is computed from the cumulative density function of the nearest
+    neighbor distances between points in the pattern. When the G function is below
+    the simulated values, it suggests dispersion.
 
     Parameters
     ----------
@@ -764,12 +754,11 @@ def g_test(
         Simulations are independent and can be run in parallel to significantly
         reduce execution time.
 
-        * If ``n_jobs = -1``, all available CPU cores will be used.
-        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),
+        * If ``n_jobs=-1``, all available CPU cores will be used.
+        * If ``n_jobs=1``, the execution will be forced to run sequentially (serially),
           disabling parallel processing. This is often useful for debugging or
           testing purposes.
-        * If ``n_jobs > 1``, that specific number of cores will be used.
-
+        * If ``n_jobs>1``, that specific number of cores will be used.
 
     Returns
     -------
@@ -777,7 +766,8 @@ def g_test(
     - support, the exact distance values used to evalute the statistic
     - statistic, the values of the statistic at each distance
     - pvalue, the percent of simulations that were as extreme as the observed value
-    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))
+    - simulations, the distribution of simulated statistics
+        (shaped (n_simulations, n_support_points))
         or None if keep_simulations=False (which is the default)
     """
     return _ripley_test(
@@ -806,14 +796,14 @@ def j_test(
     n_simulations=9999,
     n_jobs=-1,
 ):
-    """
-    Ripley's J function
+    """Ripley's J function
 
-    The so-called "spatial hazard" function, this is a function relating the F and G functions.
+    The so-called "spatial hazard" function, this is a function relating the F and
+    G functions. When the J function is consistently below 1, then it indicates
+    clustering. When consistently above 1, it suggests dispersion.
 
-    When the J function is consistently below 1, then it indicates clustering.
-    When consistently above 1, it suggests dispersion.
-
+    Parameters
+    ----------
     coordinates : geopandas object | numpy.ndarray, (n,2)
         input coordinates to function
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
@@ -840,12 +830,11 @@ def j_test(
         Simulations are independent and can be run in parallel to significantly
         reduce execution time.
 
-        * If ``n_jobs = -1``, all available CPU cores will be used.
-        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),
+        * If ``n_jobs=-1``, all available CPU cores will be used.
+        * If ``n_jobs=1``, the execution will be forced to run sequentially (serially),
           disabling parallel processing. This is often useful for debugging or
           testing purposes.
-        * If ``n_jobs > 1``, that specific number of cores will be used.
-
+        * If ``n_jobs>1``, that specific number of cores will be used.
 
     Returns
     -------
@@ -853,7 +842,8 @@ def j_test(
     - support, the exact distance values used to evalute the statistic
     - statistic, the values of the statistic at each distance
     - pvalue, the percent of simulations that were as extreme as the observed value
-    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))
+    - simulations, the distribution of simulated statistics
+        (shaped (n_simulations, n_support_points))
         or None if keep_simulations=False (which is the default)
     """
     result = _ripley_test(
@@ -896,13 +886,11 @@ def k_test(
     n_simulations=9999,
     n_jobs=-1,
 ):
-    """
-    Ripley's K function
+    """Ripley's K function
 
-    This function counts the number of pairs of points that are closer than a given distance.
-    As d increases, K approaches the number of point pairs.
-
-    When the K function is below simulated values, it suggests that the pattern is dispersed.
+    This function counts the number of pairs of points that are closer than a given
+    distance. As d increases, K approaches the number of point pairs. When the K
+    function is below simulated values, it suggests that the pattern is dispersed.
 
     Parameters
     ----------
@@ -932,12 +920,11 @@ def k_test(
         Simulations are independent and can be run in parallel to significantly
         reduce execution time.
 
-        * If ``n_jobs = -1``, all available CPU cores will be used.
-        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),
+        * If ``n_jobs=-1``, all available CPU cores will be used.
+        * If ``n_jobs=1``, the execution will be forced to run sequentially (serially),
           disabling parallel processing. This is often useful for debugging or
           testing purposes.
-        * If ``n_jobs > 1``, that specific number of cores will be used.
-
+        * If ``n_jobs>1``, that specific number of cores will be used.
 
     Returns
     -------
@@ -945,7 +932,8 @@ def k_test(
     - support, the exact distance values used to evalute the statistic
     - statistic, the values of the statistic at each distance
     - pvalue, the percent of simulations that were as extreme as the observed value
-    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))
+    - simulations, the distribution of simulated statistics
+        (shaped (n_simulations, n_support_points))
         or None if keep_simulations=False (which is the default)
     """
     return _ripley_test(
@@ -974,14 +962,12 @@ def l_test(
     n_simulations=9999,
     n_jobs=-1,
 ):
-    """
-    Ripley's L function
+    """Ripley's L function
 
-    This is a scaled and shifted version of the K function that accounts for the K function's
-    increasing expected value as distances increase. This means that the L function, for a
-    completely random pattern, should be close to zero at all distance values in the support.
-
-    When the L function is negative, this suggests dispersion.
+    This is a scaled and shifted version of the K function that accounts for the K
+    function's increasing expected value as distances increase. This means that the L
+    function, for a completely random pattern, should be close to zero at all distance
+    values in the support. When the L function is negative, this suggests dispersion.
 
     Parameters
     ----------
@@ -1011,11 +997,11 @@ def l_test(
         Simulations are independent and can be run in parallel to significantly
         reduce execution time.
 
-        * If ``n_jobs = -1``, all available CPU cores will be used.
-        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),
+        * If ``n_jobs=-1``, all available CPU cores will be used.
+        * If ``n_jobs=1``, the execution will be forced to run sequentially (serially),
           disabling parallel processing. This is often useful for debugging or
           testing purposes.
-        * If ``n_jobs > 1``, that specific number of cores will be used.
+        * If ``n_jobs>1``, that specific number of cores will be used.
 
     Returns
     -------
@@ -1023,8 +1009,9 @@ def l_test(
     - support, the exact distance values used to evalute the statistic
     - statistic, the values of the statistic at each distance
     - pvalue, the percent of simulations that were as extreme as the observed value
-    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))
-        or None if keep_simulations=False (which is the default)
+    - simulations, the distribution of simulated statistics
+        (shaped (n_simulations, n_support_points)) or None if
+        keep_simulations=False (which is the default)
     """
     return _ripley_test(
         "L",
