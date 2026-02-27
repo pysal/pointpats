@@ -4,24 +4,21 @@ Planar Point Pattern Class
 """
 
 import numpy as np
-import sys
-from libpysal.cg import KDTree
-from .centrography import hull
-from .window import as_window, poly_from_bbox
-from .util import cached_property
 import pandas as pd
+from libpysal.cg import KDTree
 from matplotlib import pyplot as plt
 from matplotlib.collections import PatchCollection
 from matplotlib.patches import Polygon
 
+from .centrography import hull
+from .util import cached_property
+from .window import as_window, poly_from_bbox
+
 __author__ = "Serge Rey sjsrey@gmail.com"
 __all__ = ["PointPattern"]
 
-if sys.version_info[0] > 2:
-    xrange = range
 
-
-class PointPattern(object):
+class PointPattern:
     """
     Planar Point Pattern Class 2-D.
 
@@ -73,15 +70,12 @@ class PointPattern(object):
         n, p = self.df.shape
         self._n_marks = p - 2
         if coord_names is None:
-            if names is not None:
-                coord_names = names[:2]
-            else:
-                coord_names = ["x", "y"]
+            coord_names = names[:2] if names is not None else ["x", "y"]
         if names is None:
             col_names = coord_names
             if p > 2:
                 for m in range(2, p):
-                    col_names.append("mark_{}".format(m - 2))
+                    col_names.append(f"mark_{m - 2}")
             coord_names = coord_names[:2]
         else:
             col_names = names
@@ -135,7 +129,7 @@ class PointPattern(object):
     def set_window(self, window):
         try:
             self._window = window
-        except:
+        except:  # noqa: E722 - Do not use bare `except`
             print("not a valid Window object")
 
     def get_window(self):
@@ -157,17 +151,17 @@ class PointPattern(object):
         """
 
         print("Point Pattern")
-        print("{} points".format(self.n))
+        print(f"{self.n} points".format())
         print("Bounding rectangle [({},{}), ({},{})]".format(*self.mbb))
-        print("Area of window: {}".format(self.window.area))
-        print("Intensity estimate for window: {}".format(self.lambda_window))
+        print(f"Area of window: {self.window.area}")
+        print(f"Intensity estimate for window: {self.lambda_window}")
         print(self.head())
 
     def add_marks(self, marks, mark_names=None):
         if mark_names is None:
             nm = range(len(marks))
-            mark_names = ["mark_{}".format(self._n_marks + 1 + j) for j in nm]
-        for name, mark in zip(mark_names, marks):
+            mark_names = [f"mark_{self._n_marks + 1 + j}" for j in nm]
+        for name, mark in zip(mark_names, marks, strict=True):
             self.df[name] = mark
             self._n_marks += 1
 
@@ -423,8 +417,11 @@ class PointPattern(object):
             raise ValueError("k must be at least 1")
         try:
             nn = self.tree.query(np.asarray(other.points), k=k)
-        except:
-            nn = self.tree.query(np.asarray(other), k=k)
+        except AttributeError as e:
+            if str(e) == "'list' object has no attribute 'points'":
+                nn = self.tree.query(np.asarray(other), k=k)
+            else:
+                raise e
         return nn[1], nn[0]
 
     def explode(self, mark):
