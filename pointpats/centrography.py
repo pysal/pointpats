@@ -38,7 +38,7 @@ from numpy.typing import NDArray
 from scipy.optimize import minimize
 from scipy.spatial import ConvexHull
 
-not_clockwise = lambda x: not is_clockwise(x)
+not_clockwise = lambda x: not is_clockwise(x)  # noqa: E731
 
 MAXD = sys.float_info.max
 MIND = sys.float_info.min
@@ -593,7 +593,11 @@ def _(points: GeoPandasBase) -> np.float64:
 
 @singledispatch
 def ellipse(
-    points, weights=None, method="crimestat", crimestatCorr=True, degfreedCorr=True
+    points,
+    weights=None,
+    method="crimestat",
+    crimestatCorr=True,  # noqa: N803 should be lowercase
+    degfreedCorr=True,  # noqa: N803 should be lowercase
 ):
     """
     Computes a weighted standard deviational ellipse for a set of point geometries.
@@ -656,12 +660,12 @@ def ellipse(
     >>> geoms = gpd.GeoSeries.from_xy(*coords.T)
     >>> ellipse(geoms)
     <POLYGON ((99.55 66.626, 100.586 63.045, 101.159 59.334, 101.262 55.53, 100....>
-    """
+    """  # noqa: E501
     try:
         points = np.asarray(points)
         return ellipse(points, weights, method, crimestatCorr, degfreedCorr)
-    except AttributeError as e:
-        raise NotImplementedError
+    except AttributeError:
+        raise NotImplementedError from None
 
 
 @ellipse.register
@@ -669,8 +673,8 @@ def _(
     points: np.ndarray,
     weights=None,
     method="crimestat",
-    crimestatCorr=True,
-    degfreedCorr=True,
+    crimestatCorr=True,  # noqa: N803 should be lowercase
+    degfreedCorr=True,  # noqa: N803 should be lowercase
 ) -> tuple[float, float, float]:
     method = method.lower()
     if method not in ("crimestat", "yuill"):
@@ -743,8 +747,8 @@ def _(
     points: GeoPandasBase,
     weights=None,
     method="crimestat",
-    crimestatCorr=True,
-    degfreedCorr=True,
+    crimestatCorr=True,  # noqa: N803 should be lowercase
+    degfreedCorr=True,  # noqa: N803 should be lowercase
 ) -> shapely.Polygon:
     coords = shapely.get_coordinates(points.geometry)
     major, minor, rotation = ellipse(
@@ -980,21 +984,21 @@ def minimum_bounding_circle(points):
 @minimum_bounding_circle.register
 def _(points: np.ndarray) -> tuple[tuple[float, float], float]:
     try:
-        from numba import njit
+        from numba import njit  # noqa: F401 `numba.njit` imported but unused
 
-        HAS_NUMBA = True
+        has_numba = True
     except ImportError:
-        HAS_NUMBA = False
+        has_numba = False
     points = hull(points)
     if not_clockwise(points):
         points = points[::-1]
         if not_clockwise(points):
             raise Exception("Points are neither clockwise nor counterclockwise")
-    POINTS = copy.deepcopy(points)
-    if HAS_NUMBA:  # noqa: SIM108
-        circ = _skyum_numba(POINTS)[0]
+    _points = copy.deepcopy(points)
+    if has_numba:  # noqa: SIM108
+        circ = _skyum_numba(_points)[0]
     else:
-        circ = _skyum_lists(POINTS)[0]
+        circ = _skyum_lists(_points)[0]
     return (circ[1], circ[2]), circ[0]
 
 
@@ -1041,7 +1045,9 @@ def _skyum_lists(points):
             try:
                 removed.append((points.pop(lexmax), i))
             except IndexError:
-                raise Exception("Construction of Minimum Bounding Circle failed!")
+                raise Exception(
+                    "Construction of Minimum Bounding Circle failed!"
+                ) from None
         i += 1
 
 
@@ -1052,7 +1058,6 @@ try:
 
     @njit(fastmath=True)
     def _skyum_numba(points):
-        i = 0
         complete = False
         while not complete:
             complete, points, candidate, circle = _skyum_iteration(points)
@@ -1089,7 +1094,7 @@ try:
 
 except ModuleNotFoundError:
 
-    def njit(func, **kwargs):
+    def njit(func, **kwargs):  # noqa: ARG001 - Unused `kwargs`
         return func
 
 
@@ -1104,26 +1109,26 @@ def _angle(p, q, r):
     return np.abs(np.arccos(np.dot(pq, rq) / magnitudes))
 
 
-def _prec(p, l):
+def _prec(p, _l):
     """
-    retrieve the predecessor of p in list l
+    retrieve the predecessor of p in list _l
     """
-    pos = l.index(p)
+    pos = _l.index(p)
     if pos - 1 < 0:
-        return l[-1]
+        return _l[-1]
     else:
-        return l[pos - 1]
+        return _l[pos - 1]
 
 
-def _succ(p, l):
+def _succ(p, _l):
     """
-    retrieve the successor of p in list l
+    retrieve the successor of p in list _l
     """
-    pos = l.index(p)
-    if pos + 1 >= len(l):
-        return l[0]
+    pos = _l.index(p)
+    if pos + 1 >= len(_l):
+        return _l[0]
     else:
-        return l[pos + 1]
+        return _l[pos + 1]
 
 
 @njit
@@ -1132,7 +1137,7 @@ def _euclidean_distance(px, py, qx, qy):
 
 
 @njit
-def _circle(p, q, r, dmetric=_euclidean_distance):
+def _circle(p, q, r, dmetric=_euclidean_distance):  # noqa: ARG001 - Unused `dmetric`
     """
     Returns (radius, (center_x, center_y)) of the circumscribed circle by the
     triangle pqr.
@@ -1152,16 +1157,16 @@ def _circle(p, q, r, dmetric=_euclidean_distance):
         center_x = (px + qx) / 2.0
         center_y = (py + qy) / 2.0
     else:
-        D = 2 * (px * (qy - ry) + qx * (ry - py) + rx * (py - qy))
+        d = 2 * (px * (qy - ry) + qx * (ry - py) + rx * (py - qy))
         center_x = (
             (px**2 + py**2) * (qy - ry)
             + (qx**2 + qy**2) * (ry - py)
             + (rx**2 + ry**2) * (py - qy)
-        ) / float(D)
+        ) / float(d)
         center_y = (
             (px**2 + py**2) * (rx - qx)
             + (qx**2 + qy**2) * (px - rx)
             + (rx**2 + ry**2) * (qx - px)
-        ) / float(D)
+        ) / float(d)
         radius = _euclidean_distance(center_x, center_y, px, py)
     return radius, center_x, center_y

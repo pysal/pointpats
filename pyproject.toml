@@ -75,19 +75,6 @@ include = ["pointpats", "pointpats.*"]
 [tool.ruff]
 line-length = 88
 lint.select = ["E", "F", "W", "I", "UP", "N", "B", "A", "C4", "SIM", "ARG"]
-lint.ignore = [
-    "B006",
-    "B008",
-    "B009",
-    "B010",
-    "C408",
-    "E731",
-    "F403",
-    "N803",
-    "N806",
-    "N999",
-    "UP007"
-]
 exclude = ["docs/*"]
 
 [tool.coverage.run]
