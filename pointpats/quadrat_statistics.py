@@ -9,7 +9,7 @@ Quadrat statistics for planar point patterns
 - Plotting is self-contained (matplotlib only): scatters points, draws window, draws grid,
   annotates counts, and optionally annotates per-cell chi-square contributions.
 
-"""
+"""  # noqa: E501
 
 __author__ = "Serge Rey, Wei Kang, Hu Shao"
 __all__ = ["RectangleM", "HexagonM", "QStatistic"]
@@ -53,7 +53,8 @@ def _as_points_array(points) -> np.ndarray:
         if not points.geom_type.isin(["Point", "MultiPoint"]).all():
             raise TypeError(
                 "GeoSeries must contain Point geometries (optionally MultiPoint). "
-                f"Got geometry type: {getattr(points, 'geom_type', type(points).__name__)}"
+                "Got geometry type: "
+                f"{getattr(points, 'geom_type', type(points).__name__)}"
             )
 
         coords = points.get_coordinates()
@@ -101,7 +102,7 @@ def _coerce_rng(rng):
     Returns
     -------
     numpy.random.Generator
-    """
+    """  # noqa: E501
     if rng is None:
         return np.random.default_rng()
 
@@ -270,7 +271,7 @@ class RectangleM:
         ax.add_collection(pc)
 
         if show == "counts":
-            for (cx, cy), cell_id in zip(ann_xy, cell_ids):
+            for (cx, cy), cell_id in zip(ann_xy, cell_ids, strict=True):
                 ax.text(
                     cx, cy, str(dict_id_count.get(cell_id, 0)), ha="center", va="center"
                 )
@@ -289,7 +290,7 @@ class RectangleM:
             pc.set_facecolor(None)
             plt.colorbar(pc, ax=ax, label="Chi-square contribution")
 
-            for (cx, cy), v in zip(ann_xy, chi2_contrib):
+            for (cx, cy), v in zip(ann_xy, chi2_contrib, strict=True):
                 ax.text(cx, cy, f"{v:.2f}", ha="center", va="center")
 
         else:
@@ -425,7 +426,7 @@ class HexagonM:
         x_min = self.mbb[0]
         y_min = self.mbb[1]
 
-        for cell_id in dict_id_count.keys():
+        for cell_id in dict_id_count:
             ix = cell_id % self.count_column
             iy = cell_id // self.count_column
 
@@ -466,7 +467,7 @@ class HexagonM:
         ax.add_collection(pc)
 
         if show == "counts":
-            for (cx, cy), cell_id in zip(ann_xy, cell_ids):
+            for (cx, cy), cell_id in zip(ann_xy, cell_ids, strict=True):
                 ax.text(
                     cx, cy, str(dict_id_count.get(cell_id, 0)), ha="center", va="center"
                 )
@@ -485,7 +486,7 @@ class HexagonM:
             pc.set_facecolor(None)
             plt.colorbar(pc, ax=ax, label="Chi-square contribution")
 
-            for (cx, cy), v in zip(ann_xy, chi2_contrib):
+            for (cx, cy), v in zip(ann_xy, chi2_contrib, strict=True):
                 ax.text(cx, cy, f"{v:.2f}", ha="center", va="center")
 
         else:
@@ -693,7 +694,7 @@ class QStatistic:
             _, plotted_ids = self.mr.plot(title=title, show="counts")
             plt.close()
 
-            contrib_map = {cid: v for cid, v in zip(self.cell_ids, self.chi2_contrib)}
+            contrib_map = dict(zip(self.cell_ids, self.chi2_contrib, strict=True))
             plotted_contrib = np.asarray(
                 [contrib_map.get(cid, np.nan) for cid in plotted_ids], dtype=float
             )
