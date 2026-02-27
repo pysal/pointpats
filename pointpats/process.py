@@ -11,11 +11,13 @@ TODO
 __author__ = "Serge Rey sjsrey@gmail.com"
 __all__ = ["PointProcess", "PoissonPointProcess", "PoissonClusterPointProcess"]
 
-import numpy as np
-import libpysal as ps
-from numpy.random import poisson
-from .pointpattern import PointPattern as PP
 import warnings
+
+import libpysal as ps
+import numpy as np
+from numpy.random import poisson
+
+from .pointpattern import PointPattern
 
 warnings.filterwarnings(
     "ignore", "Objects based on the `Geometry` class will", FutureWarning
@@ -62,11 +64,11 @@ def runif_in_circle(n, radius=1.0, center=(0.0, 0.0), burn=2, verbose=False):
         c += nc
         it += 1
     if verbose:
-        print("Iterations: {}".format(it))
+        print(f"Iterations: {it}")
     return good + np.asarray(center)
 
 
-class PointProcess(object):
+class PointProcess:
     """
     Point Process base class.
 
@@ -101,7 +103,7 @@ class PointProcess(object):
     """
 
     def __init__(self, window, n, samples, asPP=False, **args):
-        super(PointProcess, self).__init__()
+        super().__init__()
         self.window = window
         self.n = n
         self.samples = samples
@@ -113,7 +115,7 @@ class PointProcess(object):
         if asPP:
             for sample in self.realizations:
                 points = self.realizations[sample]
-                self.realizations[sample] = PP(points, window=self.window)
+                self.realizations[sample] = PointPattern(points, window=self.window)
         warnings.warn(
             "These point pattern simulators are deprecated! Please replace them"
             " with equivalent functions in pointpats.random",
@@ -249,7 +251,7 @@ class PoissonPointProcess(PointProcess):
 
     def __init__(self, window, n, samples, conditioning=False, asPP=False):
         self.conditioning = conditioning
-        super(PoissonPointProcess, self).__init__(window, n, samples, asPP)
+        super().__init__(window, n, samples, asPP)
 
     def setup(self):
         """
@@ -263,8 +265,8 @@ class PoissonPointProcess(PointProcess):
         self.parameters = {}
         if self.conditioning:
             lambdas = poisson(self.n, self.samples)
-            for i, l in enumerate(lambdas):
-                self.parameters[i] = {"n": l}
+            for i, _l in enumerate(lambdas):
+                self.parameters[i] = {"n": _l}
         else:
             for i in range(self.samples):
                 self.parameters[i] = {"n": self.n}
@@ -286,10 +288,10 @@ class PoissonPointProcess(PointProcess):
 
         """
 
-        l, b, r, t = self.window.bbox
-        xs = np.random.uniform(l, r, (n, 1))
+        _l, b, r, t = self.window.bbox
+        xs = np.random.uniform(_l, r, (n, 1))
         ys = np.random.uniform(b, t, (n, 1))
-        return zip(xs, ys)
+        return zip(xs, ys, strict=True)
 
 
 class PoissonClusterPointProcess(PointProcess):
@@ -378,7 +380,9 @@ class PoissonClusterPointProcess(PointProcess):
     (parent events:  :math:`N`-conditioned CSR)
 
     >>> np.random.seed(10)
-    >>> samples1 = PoissonClusterPointProcess(window, 200, 10, 0.5, 1, asPP=True, conditioning=False)
+    >>> samples1 = PoissonClusterPointProcess(
+    ...     window, 200, 10, 0.5, 1, asPP=True, conditioning=False
+    ... )
     >>> samples1.parameters # number of events for the realization
     {0: {'n': 200}}
     >>> samples1.num_parents #number of parent events for each realization
@@ -391,10 +395,12 @@ class PoissonClusterPointProcess(PointProcess):
     (parent events:  :math:`\\lambda`-conditioned CSR)
 
     >>> np.random.seed(10)
-    >>> samples2 = PoissonClusterPointProcess(window, 200, 10, 0.5, 1, asPP=True, conditioning=True)
-    >>> samples2.parameters # number of events for the realization might not be equal to 200
+    >>> samples2 = PoissonClusterPointProcess(
+    ...     window, 200, 10, 0.5, 1, asPP=True, conditioning=True
+    ... )
+    >>> samples2.parameters # number of events for the realization might not equal 200
     {0: {'n': 260}}
-    >>> samples2.num_parents #number of parent events for each realization
+    >>> samples2.num_parents # number of parent events for each realization
     {0: 13}
     >>> samples2.children # number of children events centered on each parent event
     20
@@ -417,7 +423,7 @@ class PoissonClusterPointProcess(PointProcess):
         self.children = int(np.ceil(n * 1.0 / parents))
         self.radius = radius
         self.keep = keep
-        super(PoissonClusterPointProcess, self).__init__(window, n, samples, asPP)
+        super().__init__(window, n, samples, asPP)
 
     def setup(self):
         """
@@ -433,10 +439,10 @@ class PoissonClusterPointProcess(PointProcess):
         self.num_parents = {}
         if self.conditioning:
             lambdas = poisson(self.parents, self.samples)
-            for i, l in enumerate(lambdas):
-                num = l * self.children
+            for i, _l in enumerate(lambdas):
+                num = _l * self.children
                 self.parameters[i] = {"n": num}
-                self.num_parents[i] = l
+                self.num_parents[i] = _l
         else:
             for i in range(self.samples):
                 self.parameters[i] = {"n": self.n}
@@ -458,10 +464,10 @@ class PoissonClusterPointProcess(PointProcess):
                         (n,2), n point coordinates.
 
         """
-        l, b, r, t = self.window.bbox
+        _l, b, r, t = self.window.bbox
         d = self.radius
         # get parent points
-        pxs = np.random.uniform(l, r, (int(n / self.children), 1))
+        pxs = np.random.uniform(_l, r, (int(n / self.children), 1))
         pys = np.random.uniform(b, t, (int(n / self.children), 1))
         cents = np.hstack((pxs, pys))
         # generate children points
