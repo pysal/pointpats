@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy
 import pytest
 from pytest import approx
+from shapely import LineString
 
 from pointpats import (
     Knox,
@@ -14,6 +15,7 @@ from pointpats import (
     mantel,
     modified_knox,
 )
+from pointpats.spacetime import _spacetime_points_to_arrays
 
 
 class TestKnox:
@@ -419,3 +421,13 @@ class TestSpaceTimeEvents:
         )
 
         assert result["stat"] == approx(2.810160, rel=1e-4)
+
+
+def _spacetime_points_to_arrays_non_points():
+    with pytest.raises(
+        ValueError, match="The Knox statistic is only defined for Point geometries"
+    ):
+        _spacetime_points_to_arrays(
+            gpd.GeoDataFrame(geometry=[LineString(((0, 0), (1, 1)))]),
+            None,
+        )
