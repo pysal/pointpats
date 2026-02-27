@@ -1660,9 +1660,8 @@ def _spacetime_points_to_arrays(dataframe, time_col):
                 "The input dataframe must be in a projected coordinate system."
             )
 
-    assert dataframe.geom_type.unique().tolist() == ["Point"], (
-        "The Knox statistic is only defined for Point geometries"
-    )
+    if not (dataframe.geom_type == "Point").all():
+        raise ValueError("The Knox statistic is only defined for Point geometries")
 
     # kdtree wont operate on datetime
     if is_numeric_dtype(dataframe[time_col].dtype) is False:
