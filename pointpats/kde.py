@@ -100,15 +100,14 @@ def plot_density(
     if ax is None:
         _, ax = plt.subplots(figsize=figsize)
 
-    ax.set_aspect("equal") # bandwidth is fixed, hence aspect shall be equal
+    ax.set_aspect("equal")  # bandwidth is fixed, hence aspect shall be equal
 
     if isinstance(data, np.ndarray):
         pass
     else:  # geopandas
         if not data.geom_type.str.contains("Point").all():
             raise ValueError(
-                "data contain non-point geometries. "
-                "Only (Multi)Points are supported."
+                "data contain non-point geometries. Only (Multi)Points are supported."
             )
         data = data.get_coordinates().values
 
