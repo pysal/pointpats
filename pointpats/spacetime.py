@@ -250,7 +250,7 @@ def knox(s_coords, t_coords, delta, tau, permutations=99, debug=False):  # noqa:
     >>> print("%2.2f"%result['pvalue'])
     0.17
     """
-    warn("This function is deprecated. Use Knox", DeprecationWarning, stacklevel=2)
+    warn("This function is deprecated. Use Knox", FutureWarning, stacklevel=2)
 
     # Do a kdtree on space first as the number of ties (identical points) is
     # likely to be lower for space than time.
@@ -1660,9 +1660,8 @@ def _spacetime_points_to_arrays(dataframe, time_col):
                 "The input dataframe must be in a projected coordinate system."
             )
 
-    assert dataframe.geom_type.unique().tolist() == ["Point"], (
-        "The Knox statistic is only defined for Point geometries"
-    )
+    if not (dataframe.geom_type == "Point").all():
+        raise ValueError("The Knox statistic is only defined for Point geometries")
 
     # kdtree wont operate on datetime
     if is_numeric_dtype(dataframe[time_col].dtype) is False:
