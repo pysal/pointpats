@@ -382,8 +382,8 @@ def cluster_poisson(
                 hull=hull,
                 rng=rng,
             )
-            clusters[i_cluster] = numpy.row_stack((seed, candidates))
-        result[i_replication] = numpy.row_stack(clusters)
+            clusters[i_cluster] = numpy.vstack((seed, candidates))
+        result[i_replication] = numpy.vstack(clusters)
     return result.squeeze()
 
 
@@ -463,8 +463,8 @@ def cluster_normal(hull, cov=None, size=None, n_seeds=2, rng=None):
                 size=n_in_cluster - 1,
                 rng=candidate_seeds[i_cluster],
             )
-            clusters[i_cluster] = numpy.row_stack((center, candidates))
-        result[i_replication] = numpy.row_stack(clusters)
+            clusters[i_cluster] = numpy.vstack((center, candidates))
+        result[i_replication] = numpy.vstack(clusters)
     return result.squeeze()
 
 
