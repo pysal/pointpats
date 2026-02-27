@@ -644,13 +644,13 @@ def modified_knox(s_coords, t_coords, delta, tau, permutations=99):
     return modknox_result
 
 
-def _shuffle_matrix(X, ids):
+def _shuffle_matrix(x, ids):
     """
     Random permutation of rows and columns of a matrix
 
     Parameters
     ----------
-    X   : array
+    x   : array
           (k, k), array to be permuted.
     ids : array
           range (k, ).
@@ -661,7 +661,7 @@ def _shuffle_matrix(X, ids):
           (k, k) with rows and columns randomly shuffled.
     """
     np.random.shuffle(ids)
-    return X[ids, :][:, ids]
+    return x[ids, :][:, ids]
 
 
 def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
@@ -760,11 +760,11 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
     # number of spatial neighbor pairs
     ns = np.array([len(neighbors) for neighbors in sneighbors])  # by i
 
-    NS = ns.sum() / 2  # total
+    ns_tot = ns.sum() / 2  # total
 
     # number of temporal neigbor pairs
     nt = np.array([len(neighbors) for neighbors in tneighbors])
-    NT = nt.sum() / 2
+    nt_tot = nt.sum() / 2
 
     # s-t neighbors (list of lists)
     stneighbors = [
@@ -774,7 +774,7 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
 
     # number of spatio-temporal neigbor pairs
     nst = np.array([len(neighbors) for neighbors in stneighbors])
-    NST = nst.sum() / 2
+    nst_tot = nst.sum() / 2
 
     all_pairs = []
     pairs = {}
@@ -785,28 +785,28 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
 
     # ENST: expected number of spatio-temporal neighbors under HO
     pairs = n * (n - 1) / 2
-    ENST = NS * NT / pairs
+    enst_tot = ns_tot * nt_tot / pairs
 
     # observed table
     observed = np.zeros((2, 2))
 
-    NS_ = NS - NST  # spatial only
-    NT_ = NT - NST  # temporal only
+    ns_tot_ = ns_tot - nst_tot  # spatial only
+    nt_tot_ = nt_tot - nst_tot  # temporal only
 
-    observed[0, 0] = NST
-    observed[0, 1] = NS_
-    observed[1, 0] = NT_
-    observed[1, 1] = pairs - NST - NS_ - NT_
+    observed[0, 0] = nst_tot
+    observed[0, 1] = ns_tot_
+    observed[1, 0] = nt_tot_
+    observed[1, 1] = pairs - nst_tot - ns_tot_ - nt_tot_
 
     # expected table
 
     expected = np.zeros((2, 2))
-    expected[0, 0] = ENST
-    expected[0, 1] = NS - expected[0, 0]
-    expected[1, 0] = NT - expected[0, 0]
+    expected[0, 0] = enst_tot
+    expected[0, 1] = ns_tot - expected[0, 0]
+    expected[1, 0] = nt_tot - expected[0, 0]
     expected[1, 1] = pairs - expected.sum()
 
-    p_value_poisson = 1 - poisson.cdf(NST, expected[0, 0])
+    p_value_poisson = 1 - poisson.cdf(nst_tot, expected[0, 0])
 
     results = {}
     results["ns"] = ns.sum() / 2
@@ -826,7 +826,7 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
         n = len(sneighbors)
         ids = np.arange(n)
         if keep:
-            ST = np.zeros(permutations)
+            st_store = np.zeros(permutations)
 
         for perm in range(permutations):
             st = 0
@@ -841,11 +841,11 @@ def _knox(s_coords, t_coords, delta, tau, permutations=99, keep=False):
             if st >= results["nst"]:
                 exceedence += 1
             if keep:
-                ST[perm] = st
+                st_store[perm] = st
         results["p_value_sim"] = (exceedence + 1) / (permutations + 1)
         results["exceedence"] = exceedence
         if keep:
-            results["st_perm"] = ST
+            results["st_perm"] = st_store
 
     return results
 
@@ -1049,7 +1049,7 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
     if permutations > 0:
         exceedence = np.zeros(n)
         if keep:
-            STI = np.zeros((n, permutations))
+            sti_store = np.zeros((n, permutations))
         for perm in range(permutations):
             rids = np.random.permutation(ids)
             for i in range(n):
@@ -1077,10 +1077,10 @@ def _knox_local(s_coords, t_coords, delta, tau, permutations=99, keep=False):
                 if count >= res["nsti"][i]:
                     exceedence[i] += 1
                 if keep:
-                    STI[i, perm] = count
+                    sti_store[i, perm] = count
 
         if keep:
-            res["sti_perm"] = STI
+            res["sti_perm"] = sti_store
         res["exceedence_pvalue"] = (exceedence + 1) / (permutations + 1)
         res["exceedences"] = exceedence
 
@@ -1430,7 +1430,7 @@ class KnoxLocal:
 
     def plot(
         self,
-        colors: dict = {"focal": "red", "neighbor": "yellow", "nonsig": "grey"},
+        colors: dict = {"focal": "red", "neighbor": "yellow", "nonsig": "grey"},  # noqa: B006 - mutable data structure
         crit: float = 0.05,
         inference: str = "permutation",
         point_kwargs: dict = None,
@@ -1469,9 +1469,9 @@ class KnoxLocal:
         """
 
         if point_kwargs is None:
-            point_kwargs = dict()
+            point_kwargs = {}
         if edge_kwargs is None:
-            edge_kwargs = dict()
+            edge_kwargs = {}
         g = self._gdf.copy()
 
         g["color"] = colors["nonsig"]
@@ -1527,7 +1527,7 @@ class KnoxLocal:
         plot_edges: bool = True,
         edge_weight: int = 2,
         edge_color: str = "black",
-        colors: dict = {"focal": "red", "neighbor": "yellow", "nonsig": "grey"},
+        colors: dict = {"focal": "red", "neighbor": "yellow", "nonsig": "grey"},  # noqa: B006 - mutable data structure
     ):
         """Interactive plotting for space-time hotspots.
 
