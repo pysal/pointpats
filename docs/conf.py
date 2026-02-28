@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # pointpats documentation build configuration file, created by
 # sphinx-quickstart on Nov 12 16:37:22 2018.
@@ -16,14 +15,14 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import sys, os
-import sphinx_bootstrap_theme
+import os
+import sys
 
+import sphinx_bootstrap_theme
 
 sys.path.insert(0, os.path.abspath("../"))
 
 import pointpats
-
 
 # -- General configuration ------------------------------------------------
 
@@ -70,7 +69,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "pointpats"
-copyright = "2018-, pysal developers"
+copyright = "2018-, pysal developers"  # noqa: A001
 author = "pysal developers"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -109,7 +108,7 @@ bibtex_bibfiles = ["_static/references.bib"]
 # html_theme = 'alabaster'
 html_theme = "bootstrap"
 html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
-html_title = "%s v%s Manual" % (project, version)
+html_title = f"{project} v{version} Manual"
 
 # (Optional) Logo. Should be small enough to fit the navbar (ideally 24x24).
 # Path should be relative to the ``_static`` files directory.
