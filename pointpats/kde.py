@@ -64,6 +64,7 @@ def plot_density(
     return_contourset : bool (default False)
         Returns ``matplotlib.contour.ContourSet`` object along with
         ``matplotlib.axes.Axes`` if set to True.
+        This can be useful if you want to add labels, for example.
     **kwargs
         Keyword arguments passed to :meth:`~matplotlib.pyplot.contour` or
         :meth:`~matplotlib.pyplot.contourf` used for further
