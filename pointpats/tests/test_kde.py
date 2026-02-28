@@ -98,3 +98,14 @@ class TestDensity:
             contourset.get_edgecolor()[5],
             np.array([0.639216, 0.189921, 0.49415, 1.0]),
         )
+
+    def test_return_contourset(self):
+        # check default behaviour
+        ax = plot_density(self.points, 10)
+        assert isinstance(ax, matplotlib.axes.Axes)
+
+        # check tuple return
+        ax, cs = plot_density(self.points, 10, return_contourset=True)
+        assert isinstance(ax, matplotlib.axes.Axes)
+        assert isinstance(cs, matplotlib.contour.ContourSet)
+        assert len(cs.get_paths()) == 12

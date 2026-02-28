@@ -11,6 +11,7 @@ def plot_density(
     margin=0.1,
     ax=None,
     figsize=None,
+    return_contourset=False,
     **kwargs,
 ):
     """Plot kernel density of a given point pattern
@@ -60,6 +61,10 @@ def plot_density(
     figsize : tuple of integers (default None)
         Size of the resulting ``matplotlib.figure.Figure``. If the argument
         ``ax`` is given explicitly, ``figsize`` is ignored.
+    return_contourset : bool (default False)
+        Returns ``matplotlib.contour.ContourSet`` object along with
+        ``matplotlib.axes.Axes`` if set to True.
+        This can be useful if you want to add labels, for example.
     **kwargs
         Keyword arguments passed to :meth:`~matplotlib.pyplot.contour` or
         :meth:`~matplotlib.pyplot.contourf` used for further
@@ -69,8 +74,9 @@ def plot_density(
 
     Returns
     -------
-    matplotlib.axes.Axes
-        matplotlib axes instance with the contour plot
+    matplotlib.axes.Axes | (matplotlib.axes.Axes, matplotlib.contour.ContourSet)
+        matplotlib Axes instance with the contour plot or tuple of matplotlib Axes
+        instance and ContourSet object if return_contourset is set to True.
     """
     if kernel is None:
         try:
@@ -155,8 +161,10 @@ def plot_density(
         z = points.reshape(resolution, resolution).T
 
     if fill:
-        ax.contourf(x_mesh, y_mesh, z, levels=levels, **kwargs)
+        cs = ax.contourf(x_mesh, y_mesh, z, levels=levels, **kwargs)
     else:
-        ax.contour(x_mesh, y_mesh, z, levels=levels, **kwargs)
+        cs = ax.contour(x_mesh, y_mesh, z, levels=levels, **kwargs)
 
+    if return_contourset:
+        return ax, cs
     return ax
