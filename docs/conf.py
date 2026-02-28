@@ -275,15 +275,16 @@ def setup(app):
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {"python": ('https://docs.python.org/3', None),
-                       'numpy': ('https://numpy.org/doc/stable', None),
-                       'scipy': ('https://docs.scipy.org/doc/scipy', None),
-                       'libpysal': ('https://pysal.org/libpysal/', None),
-                       'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
-                       'matplotlib':("https://matplotlib.org/stable/", None),
-                       'KDEpy':("https://kdepy.readthedocs.io/en/latest/", None),
-                       'statsmodels':("https://www.statsmodels.org/stable/", None),
-                       }
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+    "numpy": ("https://numpy.org/doc/stable", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy", None),
+    "libpysal": ("https://pysal.org/libpysal/", None),
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
+    "matplotlib": ("https://matplotlib.org/stable/", None),
+    "KDEpy": ("https://kdepy.readthedocs.io/en/latest/", None),
+    "statsmodels": ("https://www.statsmodels.org/stable/", None),
+}
 
 # List of arguments to be passed to the kernel that executes the notebooks:
 nbsphinx_execute_arguments = [
