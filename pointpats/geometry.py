@@ -1,4 +1,5 @@
-# ruff:noqa:E402 - Module level import not at top of file
+# ruff:noqa:E402, E731
+
 
 import warnings
 from functools import singledispatch

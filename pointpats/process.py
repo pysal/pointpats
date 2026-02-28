@@ -102,7 +102,7 @@ class PointProcess:
 
     """
 
-    def __init__(self, window, n, samples, asPP=False, **args):
+    def __init__(self, window, n, samples, asPP=False, **args):  # noqa: N803 - should be lowercase
         super().__init__()
         self.window = window
         self.n = n
@@ -249,7 +249,7 @@ class PoissonPointProcess(PointProcess):
 
     """
 
-    def __init__(self, window, n, samples, conditioning=False, asPP=False):
+    def __init__(self, window, n, samples, conditioning=False, asPP=False):  # noqa: N803 - should be lowercase
         self.conditioning = conditioning
         super().__init__(window, n, samples, asPP)
 
@@ -415,7 +415,7 @@ class PoissonClusterPointProcess(PointProcess):
         radius,
         samples,
         keep=False,
-        asPP=False,
+        asPP=False,  # noqa: N803 - should be lowercase
         conditioning=False,
     ):
         self.conditioning = conditioning
