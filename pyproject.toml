@@ -75,7 +75,6 @@ include = ["pointpats", "pointpats.*"]
 [tool.ruff]
 line-length = 88
 lint.select = ["E", "F", "W", "I", "UP", "N", "B", "A", "C4", "SIM", "ARG"]
-exclude = ["docs/*"]
 
 [tool.coverage.run]
 source = ["./pointpats"]
