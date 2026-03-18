@@ -1,7 +1,6 @@
 name: pointpats
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - python
   - geopandas
@@ -10,4 +9,4 @@ dependencies:
   - numpy
   - pandas
   - scipy
-  - shapley
+  - shapely
