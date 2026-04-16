@@ -12,19 +12,15 @@ This package is part of [PySAL](https://pysal.org): The Python Spatial Analysis 
 
 ## Introduction
 
-This [pointpats](https://github.com/pysal/pointpats) package is intended
-to support the statistical analysis of planar point patterns.
+This [pointpats](https://github.com/pysal/pointpats) package is intended to support the statistical analysis of planar point patterns.
 
-It currently works on cartesian coordinates. Users with data in
-geographic coordinates need to project their data prior to using this
-module.
+It currently works on cartesian coordinates. Users with data in geographic coordinates need to project their data prior to using this module.
 
 ## Documentation
 
-Online documentation is available
-[here](http://pysal.org/pointpats/).
+Online documentation is available [here](http://pysal.org/pointpats/).
 
-##  Installation
+## Installation
 
 Install pointpats by running:
 
@@ -32,18 +28,15 @@ Install pointpats by running:
 
 ## Development
 
-pointpats development is hosted on
-[github](https://github.com/pysal/pointpats).
+pointpats development is hosted on [github](https://github.com/pysal/pointpats).
 
-As part of the PySAL project, pointpats development follows 
-[PySAL's documentation for developers](https://pysal.org/docs/devs/) and the PySAL [development guidelines](https://github.com/pysal/pysal/wiki).
+As part of the PySAL project, pointpats development follows  [PySAL's documentation for developers](https://pysal.org/docs/devs/) and the PySAL [development guidelines](https://github.com/pysal/pysal/wiki).
 
-##  Bug reports
+## Bug reports
 
-To search for or report bugs, please see pointpats'
-[issues](https://github.com/pysal/pointpats/issues).
+To search for or report bugs, please see pointpats' [issues](https://github.com/pysal/pointpats/issues).
 
-##  BibTeX Citation
+## BibTeX Citation
 
 ```
 @software{wei_kang_2023_7706219,

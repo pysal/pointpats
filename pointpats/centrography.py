@@ -1052,7 +1052,7 @@ def _skyum_lists(points):
 
 
 try:
-    from numba import njit, boolean
+    from numba import boolean, njit
 
     HAS_NUMBA = True
 

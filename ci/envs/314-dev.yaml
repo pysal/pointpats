@@ -4,12 +4,6 @@ channels:
 dependencies:
   - python=3.14
   - folium
-  - libpysal
-  - mapclassify
-  - matplotlib
-  - numpy
-  - pandas
-  - shapely
   # tests
   - codecov
   - pytest
@@ -22,8 +16,13 @@ dependencies:
         --index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple \
         --extra-index-url https://pypi.org/simple
       - KDEpy
+      - matplotlib
+      - numpy
+      - pandas
       - scipy
       - scikit-learn
+      - shapely
       - statsmodels
       - git+https://github.com/pysal/libpysal.git
+      - git+https://github.com/pysal/mapclassify.git
       - git+https://github.com/geopandas/geopandas.git

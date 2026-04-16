@@ -8,10 +8,10 @@ dependencies:
   - matplotlib
   - numpy
   - pandas
+  - scikit-learn
   - scipy
   - shapely
   # tests
-  - scikit-learn
   - statsmodels
   - pytest
   - pytest-cov
