@@ -6,7 +6,7 @@ dependencies:
   - geopandas
   - libpysal
   - matplotlib
-  - numba
+  # - numba  -- leave off for now; numba-izde code seems broken
   - numpy
   - pandas
   - scikit-learn
