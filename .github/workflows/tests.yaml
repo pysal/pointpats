@@ -29,7 +29,7 @@ jobs:
           - ci/envs/312-latest.yaml
           - ci/envs/313-latest.yaml
           - ci/envs/314-latest.yaml
-          # - ci/envs/314-numba-latest.yaml  -- leave off for now; numba-izde code seems broken
+          - ci/envs/314-numba-latest.yaml
           - ci/envs/314-dev.yaml
         include:
           # no numba
@@ -39,13 +39,13 @@ jobs:
             os: macos-latest # Apple Silicon
           - environment-file: ci/envs/314-latest.yaml
             os: windows-latest
-          # # with numba  -- leave off for now; numba-izde code seems broken
-          # - environment-file: ci/envs/314-numba-latest.yaml
-          #   os: macos-15-intel # Intel
-          # - environment-file: ci/envs/314-numba-latest.yaml
-          #   os: macos-latest # Apple Silicon
-          # - environment-file: ci/envs/314-numba-latest.yaml
-          #   os: windows-latest
+          # with numba
+          - environment-file: ci/envs/314-numba-latest.yaml
+            os: macos-15-intel # Intel
+          - environment-file: ci/envs/314-numba-latest.yaml
+            os: macos-latest # Apple Silicon
+          - environment-file: ci/envs/314-numba-latest.yaml
+            os: windows-latest
 
     defaults:
       run:

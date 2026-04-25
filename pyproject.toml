@@ -42,7 +42,7 @@ Repository = "https://github.com/pysal/pointpats"
 
 [project.optional-dependencies]
 plus = [
-    # "numba>=0.60",  -- leave off for now; numba-izde code seems broken
+    "numba>=0.60",
     "scikit-learn>=1.5.0",
 ]
 dev = [

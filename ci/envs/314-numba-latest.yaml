@@ -1,8 +1,9 @@
-name: pointpats
+name: test
 channels:
   - conda-forge
+
 dependencies:
-  - python
+  - python=3.14
   - geopandas
   - libpysal
   - matplotlib
@@ -12,3 +13,14 @@ dependencies:
   - scikit-learn
   - scipy
   - shapely
+
+  # tests
+  - statsmodels
+  - pytest
+  - pytest-cov
+  - pytest-xdist
+  - codecov
+
+  - pip
+  - pip:
+      - KDEpy
