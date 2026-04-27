@@ -1,4 +1,5 @@
-name: Tests
+---
+name: Continuous Integration
 
 on:
   push:
@@ -24,28 +25,37 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         environment-file:
-          - ci/envs/311-oldest.yaml
-          - ci/envs/311-latest.yaml
+          - ci/envs/312-oldest.yaml
           - ci/envs/312-latest.yaml
           - ci/envs/313-latest.yaml
           - ci/envs/314-latest.yaml
+          - ci/envs/314-numba-latest.yaml
           - ci/envs/314-dev.yaml
         include:
+          # no numba
           - environment-file: ci/envs/314-latest.yaml
             os: macos-15-intel # Intel
           - environment-file: ci/envs/314-latest.yaml
             os: macos-latest # Apple Silicon
           - environment-file: ci/envs/314-latest.yaml
             os: windows-latest
+          # with numba
+          - environment-file: ci/envs/314-numba-latest.yaml
+            os: macos-15-intel # Intel
+          - environment-file: ci/envs/314-numba-latest.yaml
+            os: macos-latest # Apple Silicon
+          - environment-file: ci/envs/314-numba-latest.yaml
+            os: windows-latest
+
     defaults:
       run:
         shell: bash -l {0}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: setup micromamba
-        uses: mamba-org/setup-micromamba@v2
+        uses: mamba-org/setup-micromamba@v3
         with:
           environment-file: ${{ matrix.environment-file }}
           micromamba-version: "latest"
@@ -64,4 +74,4 @@ jobs:
           --cov-report term-missing \
           --cov-report xml .
 
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v6

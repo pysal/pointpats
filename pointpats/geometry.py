@@ -205,6 +205,7 @@ def _(shape: _BaseGeometry, x: float, y: float):
     """
     return shape.contains(_ShapelyPoint((x, y)))
 
+
 @bbox.register
 def _(shape: _BaseGeometry):
     """
@@ -212,6 +213,7 @@ def _(shape: _BaseGeometry):
     or let it pass through if it's 1 dimensional & length 4
     """
     return numpy.asarray(list(shape.bounds))
+
 
 @centroid.register
 def _(shape: _BaseGeometry):
@@ -221,10 +223,10 @@ def _(shape: _BaseGeometry):
     return numpy.asarray(list(shape.centroid.coords)).squeeze()
 
 
-
 import shapely
 
 HULL_TYPES = (*HULL_TYPES, shapely.Geometry)
+
 
 @area.register
 def _(shape: shapely.Geometry):
@@ -234,6 +236,7 @@ def _(shape: shapely.Geometry):
     """
     return shapely.area(shape)
 
+
 @contains.register
 def _(shape: shapely.Geometry, x: float, y: float):
     """
@@ -242,6 +245,7 @@ def _(shape: shapely.Geometry, x: float, y: float):
     """
     return shapely.within(shapely.points((x, y)), shape)
 
+
 @bbox.register
 def _(shape: shapely.Geometry):
     """
@@ -249,6 +253,7 @@ def _(shape: shapely.Geometry):
     then use shapely.bounds
     """
     return shapely.bounds(shape)
+
 
 @centroid.register
 def _(shape: shapely.Geometry):
@@ -299,20 +304,11 @@ def build_best_tree(coordinates, metric):
     coordinates = numpy.asarray(coordinates)
     tree = spatial.KDTree
     try:
-        import sklearn
-        from packaging.version import Version
         from sklearn.neighbors import BallTree, KDTree
 
-        if Version(sklearn.__version__) == Version("1.3.0"):
-            kdtree_valid_metrics = KDTree.valid_metrics()
-            balltree_valid_metrics = BallTree.valid_metrics()
-        else:
-            kdtree_valid_metrics = KDTree.valid_metrics
-            balltree_valid_metrics = BallTree.valid_metrics
-
-        if metric in kdtree_valid_metrics:
+        if metric in KDTree.valid_metrics:
             tree = lambda coordinates: KDTree(coordinates, metric=metric)
-        elif metric in balltree_valid_metrics:
+        elif metric in BallTree.valid_metrics:
             tree = lambda coordinates: BallTree(coordinates, metric=metric)
         elif callable(metric):
             warnings.warn(
@@ -324,8 +320,8 @@ def build_best_tree(coordinates, metric):
         else:
             raise KeyError(
                 f"Metric {metric} not found in set of available types."
-                f"BallTree metrics: {balltree_valid_metrics}, and"
-                f"scikit KDTree metrics: {kdtree_valid_metrics}."
+                f"BallTree metrics: {BallTree.valid_metrics}, and"
+                f"scikit KDTree metrics: {KDTree.valid_metrics}."
             )
     except ModuleNotFoundError:
         if metric not in ("l2", "euclidean"):

@@ -1,67 +1,59 @@
-# Building and hosting documentation for PACKAGE_NAME
-#
-# Notes:
-#   - After the first run of this workflow:
-#       - Within the project repo, navigate to Setting/Github Pages
-#       - set `the source branch to `gh-pages/(root))`.
-#   - Uncomment everything below the following line to enable the workflow.
-#---------------------------------------------------------------------------
+---
+name: Build Docs
 
- name: Build Docs
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Manual Doc Build
+        default: test
+        required: false
+jobs:
+  docs:
+    name: build & push docs
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    strategy:
+      matrix:
+        os: ['ubuntu-latest']
+        environment-file: [ci/envs/314-latest.yaml]
+        experimental: [false]
+    defaults:
+      run:
+        shell: bash -l {0}
 
- on:
-   push:
-     # Sequence of patterns matched against refs/tags
-     tags:
-       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
-   workflow_dispatch:
-     inputs:
-       version:
-         description: Manual Doc Build
-         default: test
-         required: false
- jobs:
-   docs:
-     name: build & push docs
-     runs-on: ${{ matrix.os }}
-     timeout-minutes: 90
-     strategy:
-       matrix:
-         os: ['ubuntu-latest']
-         environment-file: [ci/envs/314-latest.yaml]
-         experimental: [false]
-     defaults:
-       run:
-         shell: bash -l {0}
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v6
 
-     steps:
-       - name: checkout repo
-         uses: actions/checkout@v4
+      - name: setup micromamba
+        uses: mamba-org/setup-micromamba@v3
+        with:
+          environment-file: ${{ matrix.environment-file }}
+          micromamba-version: 'latest'
 
-       - name: setup micromamba
-         uses: mamba-org/setup-micromamba@v2
-         with:
-           environment-file: ${{ matrix.environment-file }}
-           micromamba-version: 'latest'
+      - name: Install Dependencies
+        run: |
+          # Install ipykernel and jupyter into the 'test' environment
+          micromamba install -n test ipykernel jupyter -c conda-forge -y
 
-       - name: Install Dependencies
-         run: |
-           # Install ipykernel and jupyter into the 'test' environment
-           micromamba install -n test ipykernel jupyter -c conda-forge -y
+      - name: Register Jupyter kernel "python3" (for nbsphinx)
+        run: |
+          python -m ipykernel install --sys-prefix --name python3 --display-name "Python 3"
+          jupyter kernelspec list
 
-       - name: Register Jupyter kernel "python3" (for nbsphinx)
-         run: |
-           python -m ipykernel install --sys-prefix --name python3 --display-name "Python 3"
-           jupyter kernelspec list
+      - name: make docs
+        run: |
+          pip install -e . --no-deps --force-reinstall
+          cd docs; make html
 
-       - name: make docs
-         run: |
-           pip install -e . --no-deps --force-reinstall
-           cd docs; make html
-
-       - name: Publish to Github Pages
-         uses: peaceiris/actions-gh-pages@v4
-         with:
-           github_token: ${{ secrets.GITHUB_TOKEN }}
-           publish_dir: docs/build/html/
-           keep_files: false
+      - name: Publish to Github Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/build/html/
+          keep_files: false

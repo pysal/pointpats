@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-from packaging.version import Version
 
 from pointpats import plot_density
 
@@ -8,10 +7,7 @@ matplotlib = pytest.importorskip("matplotlib")
 statsmodels = pytest.importorskip("statsmodels")
 KDEpy = pytest.importorskip("KDEpy")
 
-MPL_310 = Version(matplotlib.__version__) >= Version("3.10.0")
 
-
-@pytest.mark.skipif(not MPL_310, reason="ContourSet is composed differently in < 3.10")
 class TestDensity:
     def setup_method(self):
         self.points = np.array(
