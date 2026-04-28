@@ -917,7 +917,7 @@ def _(points: GeoPandasBase) -> shapely.Point:
 
 
 @singledispatch
-def minimum_bounding_circle(points):
+def minimum_bounding_circle(points, **buffer_kw):
     """
     Implements Skyum (1990)'s algorithm for the minimum bounding circle in R^2.
 
@@ -934,6 +934,9 @@ def minimum_bounding_circle(points):
     ----------
     points  : arraylike
         array representing a point pattern
+    buffer_kw : dict
+        arguments passed to shapely.buffer() to construct an output geometry.
+        Ignored if the input is not a geopandas.GeoSeries.
 
     Returns
     -------
@@ -975,14 +978,14 @@ def minimum_bounding_circle(points):
     <POLYGON ((105.549 51.881, 105.306 46.951, 104.582 42.068, 103.383 37.279, 1...>
     """
     try:
-        points = np.asarray(points)
+        points = np.asarray(points).astype(float)
         return minimum_bounding_circle(points)
     except AttributeError as e:
         raise NotImplementedError from e
 
 
 @minimum_bounding_circle.register
-def _(points: np.ndarray) -> tuple[tuple[float, float], float]:
+def _(points: np.ndarray, **buffer_kw) -> tuple[tuple[float, float], float]:
     try:
         from numba import njit  # noqa: F401 `numba.njit` imported but unused
 
@@ -994,7 +997,7 @@ def _(points: np.ndarray) -> tuple[tuple[float, float], float]:
         points = points[::-1]
         if not_clockwise(points):
             raise Exception("Points are neither clockwise nor counterclockwise")
-    _points = copy.deepcopy(points)
+    _points = copy.deepcopy(points).astype(float)
     if has_numba:  # noqa: SIM108
         circ = _skyum_numba(_points)[0]
     else:
@@ -1003,10 +1006,10 @@ def _(points: np.ndarray) -> tuple[tuple[float, float], float]:
 
 
 @minimum_bounding_circle.register
-def _(points: GeoPandasBase) -> shapely.Polygon:
+def _(points: GeoPandasBase, **buffer_kw) -> shapely.Polygon:
     coords = shapely.get_coordinates(points.geometry)
     (x, y), r = minimum_bounding_circle(coords)
-    return shapely.Point(x, y).buffer(r)
+    return shapely.Point(x, y).buffer(r, **buffer_kw)
 
 
 def _skyum_lists(points):
@@ -1031,7 +1034,7 @@ def _skyum_lists(points):
             for p in points
         ]
         radii = [c[0] for c in circles]
-        lexord = np.lexsort((radii, angles))  # confusing as hell defaults...
+        lexord = np.lexsort((angles, radii))
         lexmax = lexord[-1]
         candidate = (
             _prec(points[lexmax], points),
@@ -1078,10 +1081,10 @@ try:
             circles[i] = _circle(p, q, r)
         radii = circles[:, 0]
         # workaround for no lexsort in numba
-        angle_argmax = angles.argmax()
-        angle_max = angles[angle_argmax]
-        # the maximum radius for the largest angle
-        lexmax = (radii * (angles == angle_max)).argmax()
+        radius_argmax = radii.argmax()
+        radius_max = radii[radius_argmax]
+        # the maximum angle for the largest radius
+        lexmax = (angles * (radii == radius_max)).argmax()
 
         if angles[lexmax] <= (np.pi / 2.0):
             return True, points, lexmax, circles[lexmax]
