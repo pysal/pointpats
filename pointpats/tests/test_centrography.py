@@ -113,16 +113,24 @@ def test_euclidean_median(points):
 @dispatch_types
 def test_minimum_bounding_circle(points):
     res = centrography.minimum_bounding_circle(points)
-    x = 2.642857142857143
-    y = 2.7857142857142856
-    r = 1.821078397711709
+    n, _ = points.shape
+    x = 2.7
+    y = 2.7
+    r = 1.8384776310850237
     if isinstance(points, gpd.GeoSeries):
+        # lower accuracy here due to construction of circle
+        x_ = res.centroid.x
+        y_ = res.centroid.y
+        r_ = np.sqrt(res.area / np.pi)
         assert shapely.Point(x, y).equals_exact(res.centroid, 1e-5)
         np.testing.assert_allclose(np.sqrt(res.area / np.pi), r, 0.1)
     else:
+        (x_, y_), r_ = res
         np.testing.assert_allclose(res[0][0], x, RTOL)
         np.testing.assert_allclose(res[0][1], y, RTOL)
         np.testing.assert_allclose(res[1], r, RTOL)
+    d = numpy.sqrt(((np.array([x_, y_]) - points) ** 2).sum(axis=1))
+    assert (d <= r).all(), "some point is not within the minimum bounding circle!"
 
 
 @dispatch_types
