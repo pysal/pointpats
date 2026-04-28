@@ -917,7 +917,7 @@ def _(points: GeoPandasBase) -> shapely.Point:
 
 
 @singledispatch
-def minimum_bounding_circle(points):
+def minimum_bounding_circle(points, **buffer_kw):
     """
     Implements Skyum (1990)'s algorithm for the minimum bounding circle in R^2.
 
@@ -934,6 +934,9 @@ def minimum_bounding_circle(points):
     ----------
     points  : arraylike
         array representing a point pattern
+    buffer_kw : dict
+        arguments passed to shapely.buffer() to construct an output geometry.
+        Ignored if the input is not a geopandas.GeoSeries.
 
     Returns
     -------
@@ -982,7 +985,7 @@ def minimum_bounding_circle(points):
 
 
 @minimum_bounding_circle.register
-def _(points: np.ndarray) -> tuple[tuple[float, float], float]:
+def _(points: np.ndarray, **buffer_kw) -> tuple[tuple[float, float], float]:
     try:
         from numba import njit  # noqa: F401 `numba.njit` imported but unused
 
@@ -1003,10 +1006,10 @@ def _(points: np.ndarray) -> tuple[tuple[float, float], float]:
 
 
 @minimum_bounding_circle.register
-def _(points: GeoPandasBase) -> shapely.Polygon:
+def _(points: GeoPandasBase, **buffer_kw) -> shapely.Polygon:
     coords = shapely.get_coordinates(points.geometry)
     (x, y), r = minimum_bounding_circle(coords)
-    return shapely.Point(x, y).buffer(r)
+    return shapely.Point(x, y).buffer(r, **buffer_kw)
 
 
 def _skyum_lists(points):
