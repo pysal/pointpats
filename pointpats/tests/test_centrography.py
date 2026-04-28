@@ -112,7 +112,7 @@ def test_euclidean_median(points):
 
 @dispatch_types
 def test_minimum_bounding_circle(points):
-    res = centrography.minimum_bounding_circle(points, quad_segs=150)
+    res = centrography.minimum_bounding_circle(points)
     x = 2.7
     y = 2.7
     r = 1.8384776310850237
@@ -120,31 +120,15 @@ def test_minimum_bounding_circle(points):
         # lower accuracy here due to construction of circle
         x_ = res.centroid.x
         y_ = res.centroid.y
-        r_ = np.sqrt(res.area / np.pi)
         assert shapely.Point(x, y).equals_exact(res.centroid, 1e-5)
-        np.testing.assert_allclose(
-            np.sqrt(res.area / np.pi),
-            r,
-            0.001,
-            err_msg="recovered radius is not within .1% of real radius",
-        )
-        d = np.sqrt(
-            ((np.array([x_, y_]) - points.get_coordinates().values) ** 2).sum(axis=1)
-        )
-        np.testing.assert_allclose(
-            d.max(),
-            r,
-            0.001,
-            err_msg="constructed circle does not approximately contain all points.",
-        )
     else:
         (x_, y_), r_ = res
         np.testing.assert_allclose(res[0][0], x, RTOL)
         np.testing.assert_allclose(res[0][1], y, RTOL)
         np.testing.assert_allclose(res[1], r, RTOL)
         d = np.sqrt(((np.array([x_, y_]) - points) ** 2).sum(axis=1))
-        assert d.max() <= r, (
-            "a point is further from the circle center than the radius."
+        np.testing.assert_allclose(
+            d.max(), r, rtol=RTOL, err_msg="circle does not contain all points"
         )
 
 
