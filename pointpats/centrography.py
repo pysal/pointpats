@@ -1031,7 +1031,7 @@ def _skyum_lists(points):
             for p in points
         ]
         radii = [c[0] for c in circles]
-        lexord = np.lexsort((angles, radii))  # confusing as hell defaults...
+        lexord = np.lexsort((angles, radii))
         lexmax = lexord[-1]
         candidate = (
             _prec(points[lexmax], points),
@@ -1080,9 +1080,7 @@ try:
         # workaround for no lexsort in numba
         radius_argmax = radii.argmax()
         radius_max = radii[radius_argmax]
-        # angle_argmax = angles.argmax()
-        # angle_max = angles[angle_argmax]
-        # the maximum radius for the largest angle
+        # the maximum angle for the largest radius
         lexmax = (angles * (radii == radius_max)).argmax()
 
         if angles[lexmax] <= (np.pi / 2.0):
