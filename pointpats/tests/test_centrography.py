@@ -113,7 +113,6 @@ def test_euclidean_median(points):
 @dispatch_types
 def test_minimum_bounding_circle(points):
     res = centrography.minimum_bounding_circle(points)
-    n, _ = points.shape
     x = 2.7
     y = 2.7
     r = 1.8384776310850237
@@ -129,7 +128,7 @@ def test_minimum_bounding_circle(points):
         np.testing.assert_allclose(res[0][0], x, RTOL)
         np.testing.assert_allclose(res[0][1], y, RTOL)
         np.testing.assert_allclose(res[1], r, RTOL)
-    d = numpy.sqrt(((np.array([x_, y_]) - points) ** 2).sum(axis=1))
+    d = np.sqrt(((np.array([x_, y_]) - points) ** 2).sum(axis=1))
     assert (d <= r).all(), "some point is not within the minimum bounding circle!"
 
 
