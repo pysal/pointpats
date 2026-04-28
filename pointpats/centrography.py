@@ -918,7 +918,7 @@ def _(points: GeoPandasBase) -> shapely.Point:
 @singledispatch
 def minimum_bounding_circle(points):
     try:
-        multipoint = shapely.union_all(shapely.points(points))
+        multipoint = shapely.multipoints(points)
         circ = shapely.minimum_bounding_circle(multipoint)
         r = shapely.minimum_bounding_radius(multipoint)
         center = circ.centroid.x, circ.centroid.y
