@@ -994,7 +994,7 @@ def _(points: np.ndarray) -> tuple[tuple[float, float], float]:
         points = points[::-1]
         if not_clockwise(points):
             raise Exception("Points are neither clockwise nor counterclockwise")
-    _points = copy.deepcopy(points)
+    _points = copy.deepcopy(points).astype(float)
     if has_numba:  # noqa: SIM108
         circ = _skyum_numba(_points)[0]
     else:
