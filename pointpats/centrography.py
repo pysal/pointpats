@@ -975,7 +975,7 @@ def minimum_bounding_circle(points):
     <POLYGON ((105.549 51.881, 105.306 46.951, 104.582 42.068, 103.383 37.279, 1...>
     """
     try:
-        points = np.asarray(points)
+        points = np.asarray(points).astype(float)
         return minimum_bounding_circle(points)
     except AttributeError as e:
         raise NotImplementedError from e
