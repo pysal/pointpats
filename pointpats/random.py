@@ -25,6 +25,7 @@ spatial hulls and containment logic.
 
 import numpy
 from scipy.spatial import cKDTree
+from scipy.stats import qmc
 
 from .geometry import area as _area
 from .geometry import bbox as _bbox
@@ -698,5 +699,100 @@ def strauss(
                 "values of gamma and radius. Try reducing `intensity` or increasing "
                 "`gamma`, `radius`, or `max_iter`."
             )
+
+    return result.squeeze()
+
+def sobol(
+        hull,
+        intensity=None,
+        size=None,
+        scramble=True,
+        seed=None):
+    """
+    todo
+    """
+    if isinstance(hull, numpy.ndarray):
+        hull = hull if hull.shape == (4,) else _prepare_hull(hull)
+    
+    n_observations, n_simulations, intensity = parse_size_and_intensity(
+        hull, intensity=intensity, size=size
+    )
+
+    result = numpy.empty((n_simulations, n_observations, 2))
+
+    bbox = _bbox
+
+    for i_replication in range(n_simulations):
+        sbl = qmc.Sobol(
+            d=2,
+            scramble=scramble,
+            seed=None if seed is None else seed + i_replication,
+        )
+
+        accepted = []
+
+        while len(accepted) < n_observations:
+            
+            remaining = n_observations - len(accepted)
+
+            m = int(numpy.ceil(numpy.log2(max(remaining, 1))))
+            candidates = sbl.random_base2(m=m)
+
+            xs = bbox[0] + candidates[:, 0] * (bbox[2] - bbox[0])
+            ys = bbox[1] + candidates[:, 1] * (bbox[3] - bbox[1])
+
+            for x, y in zip(xs, ys):
+                if _contains(hull, x, y):
+                    accepted.append((x, y))
+                if len(accepted) == n_observations:
+                    break
+        
+        result[i_replication] = numpy.asarray(accepted)
+    
+    return result.squeeze()
+
+def halton(
+        hull,
+        intensity=None,
+        size=None,
+        scramble=True,
+        seed=None):
+    """
+    todo
+    """
+    if isinstance(hull, numpy.ndarray):
+        hull = hull if hull.shape == (4,) else _prepare_hull(hull)
+    
+    n_observations, n_simulations, intensity = parse_size_and_intensity(
+        hull, intensity=intensity, size=size
+    )
+
+    result = numpy.empty((n_simulations, n_observations, 2))
+
+    bbox = _bbox
+
+    for i_replication in range(n_simulations):
+        hltn = qmc.Halton(
+            d=2,
+            scramble=scramble,
+            seed=None if seed is None else seed + i_replication,
+        )
+    
+    accepted = []
+
+    while len(accepted) < n_observations:
+
+        remaining = n_observations - len(accepted)
+
+        candidates = hltn.random(remaining)
+
+        xs = bbox[0] + candidates[:, 0] * (bbox[2] - bbox[0])
+        ys = bbox[1] + candidates[:, 1] * (bbox[3] - bbox[1])
+
+        for x, y in zip(xs, ys):
+            if _contains(hull, x, y):
+                accepted.append((x, y))
+
+        result[i_replication] = numpy.asarray(accepted)
 
     return result.squeeze()
