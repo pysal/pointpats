@@ -886,20 +886,20 @@ def halton(
             seed=None if seed is None else seed + i_replication,
         )
 
-    accepted = []
+        accepted = []
 
-    while len(accepted) < n_observations:
+        while len(accepted) < n_observations:
 
-        remaining = n_observations - len(accepted)
+            remaining = n_observations - len(accepted)
 
-        candidates = hltn.random(remaining)
+            candidates = hltn.random(remaining)
 
-        xs = bbox[0] + candidates[:, 0] * (bbox[2] - bbox[0])
-        ys = bbox[1] + candidates[:, 1] * (bbox[3] - bbox[1])
+            xs = bbox[0] + candidates[:, 0] * (bbox[2] - bbox[0])
+            ys = bbox[1] + candidates[:, 1] * (bbox[3] - bbox[1])
 
-        for x, y in zip(xs, ys, strict=True):
-            if _contains(hull, x, y):
-                accepted.append((x, y))
+            for x, y in zip(xs, ys, strict=True):
+                if _contains(hull, x, y):
+                    accepted.append((x, y))
 
         result[i_replication] = numpy.asarray(accepted)
 
