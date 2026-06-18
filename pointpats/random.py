@@ -709,18 +709,72 @@ def sobol(
         scramble=True,
         seed=None):
     """
-    todo
+    Simulate a point pattern using a Sobol low-discrepancy sequence.
+
+    Parameters
+    ----------
+    hull : A geometry-like object
+        This encodes the "space" in which to simulate the pattern.
+        All points will lie within this hull. Supported values are:
+
+        - a bounding box encoded as ``numpy.array([xmin, ymin, xmax, ymax])``
+        - an (N,2) array of points for which the bounding box will be computed & used
+        - a shapely polygon/multipolygon
+        - a scipy convex hull
+
+    intensity : float
+        The number of observations per unit area in the hull to use. If
+        provided, then ``size`` must be an integer describing the number of
+        replications to generate.
+
+    size : tuple or int
+        A tuple of ``(n_observations, n_replications)``, where the first
+        number is the number of points to simulate in each replication and
+        the second number is the number of replications. If an integer is
+        provided and ``intensity`` is None, one replication is generated.
+        If an integer is provided and ``intensity`` is also supplied, the
+        integer specifies the number of replications and the number of
+        observations is computed from the intensity.
+
+    scramble : bool, default True
+        If True, apply Owen scrambling to the Sobol sequence. Scrambling
+        preserves the low-discrepancy properties while allowing independent
+        realizations to be generated using different seeds.
+
+    seed : int or None, optional
+        Seed used to initialize the scrambled Sobol sequence. Ignored when
+        ``scramble=False``.
+
+    Returns
+    -------
+    numpy.ndarray
+        Either an ``(n_replications, n_observations, 2)`` array or an
+        ``(n_observations, 2)`` array containing the simulated realizations.
+
+    Examples
+    --------
+    Generate 100 Sobol points in the unit square.
+
+    >>> points = sobol([0, 0, 1, 1], size=100, seed=123)
+    >>> points.shape
+    (100, 2)
+
+    Generate 3 independent replications.
+
+    >>> points = sobol([0, 0, 1, 1], size=(100, 3), seed=123)
+    >>> points.shape
+    (3, 100, 2)
     """
     if isinstance(hull, numpy.ndarray):
         hull = hull if hull.shape == (4,) else _prepare_hull(hull)
-    
+
     n_observations, n_simulations, intensity = parse_size_and_intensity(
         hull, intensity=intensity, size=size
     )
 
     result = numpy.empty((n_simulations, n_observations, 2))
 
-    bbox = _bbox
+    bbox = _bbox(hull)
 
     for i_replication in range(n_simulations):
         sbl = qmc.Sobol(
@@ -732,7 +786,7 @@ def sobol(
         accepted = []
 
         while len(accepted) < n_observations:
-            
+
             remaining = n_observations - len(accepted)
 
             m = int(numpy.ceil(numpy.log2(max(remaining, 1))))
@@ -741,14 +795,14 @@ def sobol(
             xs = bbox[0] + candidates[:, 0] * (bbox[2] - bbox[0])
             ys = bbox[1] + candidates[:, 1] * (bbox[3] - bbox[1])
 
-            for x, y in zip(xs, ys):
+            for x, y in zip(xs, ys, strict=True):
                 if _contains(hull, x, y):
                     accepted.append((x, y))
                 if len(accepted) == n_observations:
                     break
-        
+
         result[i_replication] = numpy.asarray(accepted)
-    
+
     return result.squeeze()
 
 def halton(
@@ -758,18 +812,72 @@ def halton(
         scramble=True,
         seed=None):
     """
-    todo
+    Simulate a point pattern using a Halton low-discrepancy sequence.
+
+    Parameters
+    ----------
+    hull : A geometry-like object
+        This encodes the "space" in which to simulate the pattern.
+        All points will lie within this hull. Supported values are:
+
+        - a bounding box encoded as ``numpy.array([xmin, ymin, xmax, ymax])``
+        - an (N,2) array of points for which the bounding box will be computed & used
+        - a shapely polygon/multipolygon
+        - a scipy convex hull
+
+    intensity : float
+        The number of observations per unit area in the hull to use. If
+        provided, then ``size`` must be an integer describing the number of
+        replications to generate.
+
+    size : tuple or int
+        A tuple of ``(n_observations, n_replications)``, where the first
+        number is the number of points to simulate in each replication and
+        the second number is the number of replications. If an integer is
+        provided and ``intensity`` is None, one replication is generated.
+        If an integer is provided and ``intensity`` is also supplied, the
+        integer specifies the number of replications and the number of
+        observations is computed from the intensity.
+
+    scramble : bool, default True
+        If True, apply scrambling to the Halton sequence. Scrambling reduces
+        correlation artifacts and allows independent realizations to be
+        generated using different seeds.
+
+    seed : int or None, optional
+        Seed used to initialize the scrambled Halton sequence. Ignored when
+        ``scramble=False``.
+
+    Returns
+    -------
+    numpy.ndarray
+        Either an ``(n_replications, n_observations, 2)`` array or an
+        ``(n_observations, 2)`` array containing the simulated realizations.
+
+    Examples
+    --------
+    Generate 100 Halton points in the unit square.
+
+    >>> points = halton([0, 0, 1, 1], size=100, seed=123)
+    >>> points.shape
+    (100, 2)
+
+    Generate 3 independent replications.
+
+    >>> points = halton([0, 0, 1, 1], size=(100, 3), seed=123)
+    >>> points.shape
+    (3, 100, 2)
     """
     if isinstance(hull, numpy.ndarray):
         hull = hull if hull.shape == (4,) else _prepare_hull(hull)
-    
+
     n_observations, n_simulations, intensity = parse_size_and_intensity(
         hull, intensity=intensity, size=size
     )
 
     result = numpy.empty((n_simulations, n_observations, 2))
 
-    bbox = _bbox
+    bbox = _bbox(hull)
 
     for i_replication in range(n_simulations):
         hltn = qmc.Halton(
@@ -777,7 +885,7 @@ def halton(
             scramble=scramble,
             seed=None if seed is None else seed + i_replication,
         )
-    
+
     accepted = []
 
     while len(accepted) < n_observations:
@@ -789,7 +897,7 @@ def halton(
         xs = bbox[0] + candidates[:, 0] * (bbox[2] - bbox[0])
         ys = bbox[1] + candidates[:, 1] * (bbox[3] - bbox[1])
 
-        for x, y in zip(xs, ys):
+        for x, y in zip(xs, ys, strict=True):
             if _contains(hull, x, y):
                 accepted.append((x, y))
 
