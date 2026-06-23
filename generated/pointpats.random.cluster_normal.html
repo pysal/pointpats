@@ -5,12 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pointpats.random.cluster_normal &#8212; pointpats v2.5.5 Manual</title>
+    <title>pointpats.random.cluster_normal &#8212; pointpats v2.6.0 Manual</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
-    <script src="../_static/documentation_options.js?v=644f8b71"></script>
+    <script src="../_static/documentation_options.js?v=ae39cb24"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -41,7 +41,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           pointpats</a>
-        <span class="navbar-text navbar-version pull-left"><b>2.5.5</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>2.6.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -145,28 +145,28 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="pointpats.random.cluster_normal">
 <span class="sig-prename descclassname"><span class="pre">pointpats.random.</span></span><span class="sig-name descname"><span class="pre">cluster_normal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hull</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cov</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_seeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/random.html#cluster_normal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.random.cluster_normal" title="Link to this definition">¶</a></dt>
-<dd><p>Simulate a cluster poisson random point process with a specified intensity &amp; number of seeds.
-A cluster poisson process is a poisson process where the center of each “cluster” is
-itself distributed according to a spatial poisson process.</p>
+<dd><p>Simulate a cluster multivariate normal random point process with
+a specified number of seeds. A cluster poisson normal is a normal
+process where the center of each “cluster” is itself distributed
+according to a spatial multivariate normal process.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt><strong>hull</strong><span class="classifier">A geometry-like object</span></dt><dd><p>This encodes the “space” in which to simulate the normal pattern. All points will
-lie within this hull. Supported values are:
-- a bounding box encoded in a numpy array as numpy.array([xmin, ymin, xmax, ymax])
+<dt><strong>hull</strong><span class="classifier">A geometry-like object</span></dt><dd><p>This encodes the “space” in which to simulate the normal pattern.
+All points will lie within this hull. Supported values are:
+- a bounding box encoded as <code class="docutils literal notranslate"><span class="pre">numpy.array([xmin,</span> <span class="pre">ymin,</span> <span class="pre">xmax,</span> <span class="pre">ymax])</span></code>
 - an (N,2) array of points for which the bounding box will be computed &amp; used
 - a shapely polygon/multipolygon
-- a scipy convexh hull</p>
+- a scipy convex hull</p>
 </dd>
 <dt><strong>cov</strong><span class="classifier">float, int, or numpy.ndarray of shape (2,2)</span></dt><dd><p>The covariance structure for clusters. By default, this is the squared
 average distance between cluster seeds.</p>
 </dd>
-<dt><strong>size</strong><span class="classifier">tuple or int</span></dt><dd><p>a tuple of (n_observations, n_replications), where the first number is the number
-of points to simulate in each replication and the second number is the number of
-total replications. So, (10, 4) indicates 10 points, 4 times.
-If an integer is provided and intensity is None, n_replications is assumed to be 1.
-If size is an integer and intensity is also provided, then size indicates n_replications,
-and the number of observations is computed from the intensity.</p>
+<dt><strong>size</strong><span class="classifier">tuple or int</span></dt><dd><p>a tuple of (n_observations, n_replications), where the first number is the
+number of points to simulate in each replication and the second number is
+the number of total replications. So, (10, 4) indicates 10 points, 4 times.
+If an integer is provided and intensity is None, n_replications is assumed
+to be 1.</p>
 </dd>
 <dt><strong>n_seeds</strong><span class="classifier">int</span></dt><dd><p>the number of sub-clusters to use.</p>
 </dd>
@@ -176,16 +176,16 @@ and the number of observations is computed from the intensity.</p>
 <li><p>An <cite>int</cite> seed, used to initialize a new Generator</p></li>
 <li><p><cite>None</cite> (default), which uses a new <cite>numpy.random.default_rng()</cite> instance</p></li>
 </ul>
-<p>This interface follows Scientific Python SPEC 7, ensuring consistent and reproducible
-random number generation across libraries.</p>
+<p>This interface follows Scientific Python SPEC 7, ensuring consistent
+and reproducible random number generation across libraries.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>:   numpy.ndarray</dt><dd></dd>
-<dt>either an (n_replications, n_observations, 2) or (n_observations,2) array containing</dt><dd></dd>
-<dt>the simulated realizations.</dt><dd></dd>
+<dt>numpy.ndarray</dt><dd><p>either an (n_replications, n_observations, 2) or (n_observations,2)
+array containing the simulated realizations.</p>
+</dd>
 </dl>
 </dd>
 </dl>

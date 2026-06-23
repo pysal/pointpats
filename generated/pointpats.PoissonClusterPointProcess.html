@@ -5,12 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pointpats.PoissonClusterPointProcess &#8212; pointpats v2.5.5 Manual</title>
+    <title>pointpats.PoissonClusterPointProcess &#8212; pointpats v2.6.0 Manual</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
-    <script src="../_static/documentation_options.js?v=644f8b71"></script>
+    <script src="../_static/documentation_options.js?v=ae39cb24"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -43,7 +43,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           pointpats</a>
-        <span class="navbar-text navbar-version pull-left"><b>2.5.5</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>2.6.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -239,7 +239,9 @@ For example, {0:{‘n’:97},1:{‘n’:100},2:{‘n’:98}}</p>
 and 20 children within 0.5 units of each parent
 (parent events:  <span class="math notranslate nohighlight">\(N\)</span>-conditioned CSR)</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">samples1</span> <span class="o">=</span> <span class="n">PoissonClusterPointProcess</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">asPP</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">conditioning</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples1</span> <span class="o">=</span> <span class="n">PoissonClusterPointProcess</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">window</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">asPP</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">conditioning</span><span class="o">=</span><span class="kc">False</span>
+<span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">samples1</span><span class="o">.</span><span class="n">parameters</span> <span class="c1"># number of events for the realization</span>
 <span class="go">{0: {&#39;n&#39;: 200}}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">samples1</span><span class="o">.</span><span class="n">num_parents</span> <span class="c1">#number of parent events for each realization</span>
@@ -252,10 +254,12 @@ and 20 children within 0.5 units of each parent
 and 20 children within 0.5 units of each parent
 (parent events:  <span class="math notranslate nohighlight">\(\lambda\)</span>-conditioned CSR)</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">samples2</span> <span class="o">=</span> <span class="n">PoissonClusterPointProcess</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">asPP</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">conditioning</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">samples2</span><span class="o">.</span><span class="n">parameters</span> <span class="c1"># number of events for the realization might not be equal to 200</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples2</span> <span class="o">=</span> <span class="n">PoissonClusterPointProcess</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">window</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">asPP</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">conditioning</span><span class="o">=</span><span class="kc">True</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples2</span><span class="o">.</span><span class="n">parameters</span> <span class="c1"># number of events for the realization might not equal 200</span>
 <span class="go">{0: {&#39;n&#39;: 260}}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">samples2</span><span class="o">.</span><span class="n">num_parents</span> <span class="c1">#number of parent events for each realization</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples2</span><span class="o">.</span><span class="n">num_parents</span> <span class="c1"># number of parent events for each realization</span>
 <span class="go">{0: 13}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">samples2</span><span class="o">.</span><span class="n">children</span> <span class="c1"># number of children events centered on each parent event</span>
 <span class="go">20</span>

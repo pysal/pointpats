@@ -5,13 +5,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Quadrat-based statistics in pointpats &#8212; pointpats v2.5.5 Manual</title>
+    <title>Quadrat-based statistics in pointpats &#8212; pointpats v2.6.0 Manual</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
     <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
-    <script src="../_static/documentation_options.js?v=644f8b71"></script>
+    <script src="../_static/documentation_options.js?v=ae39cb24"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -44,7 +44,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           pointpats</a>
-        <span class="navbar-text navbar-version pull-left"><b>2.5.5</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>2.6.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -187,12 +187,12 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">libpysal</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ps</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">libpysal</span>
+
 <span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -223,7 +223,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">juv</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">((</span><span class="n">ps</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">&quot;juvenile.shp&quot;</span><span class="p">)))</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">juv</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">libpysal</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">&quot;juvenile.shp&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -352,7 +352,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resRect</span> <span class="o">=</span> <span class="n">QStatistic</span><span class="p">(</span><span class="n">xy</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">res_rect</span> <span class="o">=</span> <span class="n">QStatistic</span><span class="p">(</span><span class="n">xy</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -360,7 +360,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resRect</span><span class="o">.</span><span class="n">chi2_pvalue</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">res_rect</span><span class="o">.</span><span class="n">chi2_pvalue</span>
 </pre></div>
 </div>
 </div>
@@ -377,7 +377,7 @@ np.float64(5.890978545159614e-05)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resRect</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">res_rect</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -394,14 +394,14 @@ np.float64(5.890978545159614e-05)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_Quadrat_statistics_13_1.svg" src="../_images/user-guide_Quadrat_statistics_13_1.svg" />
+<img alt="../_images/user-guide_Quadrat_statistics_11_1.svg" src="../_images/user-guide_Quadrat_statistics_11_1.svg" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resHex</span> <span class="o">=</span> <span class="n">QStatistic</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;hexagon&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">res_hex</span> <span class="o">=</span> <span class="n">QStatistic</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="s2">&quot;hexagon&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -409,7 +409,7 @@ np.float64(5.890978545159614e-05)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resHex</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">res_hex</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -426,14 +426,14 @@ np.float64(5.890978545159614e-05)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_Quadrat_statistics_15_1.svg" src="../_images/user-guide_Quadrat_statistics_15_1.svg" />
+<img alt="../_images/user-guide_Quadrat_statistics_13_1.svg" src="../_images/user-guide_Quadrat_statistics_13_1.svg" />
 </div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resHex</span><span class="o">.</span><span class="n">chi2_pvalue</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">res_hex</span><span class="o">.</span><span class="n">chi2_pvalue</span>
 </pre></div>
 </div>
 </div>
@@ -483,7 +483,7 @@ np.float64(6.375950695202749e-22)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resHex_sim</span> <span class="o">=</span> <span class="n">QStatistic</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;hexagon&#39;</span><span class="p">,</span> <span class="n">realizations</span><span class="o">=</span><span class="mi">99</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">res_hex_sim</span> <span class="o">=</span> <span class="n">QStatistic</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="s2">&quot;hexagon&quot;</span><span class="p">,</span> <span class="n">realizations</span><span class="o">=</span><span class="mi">99</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -491,8 +491,8 @@ np.float64(6.375950695202749e-22)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resHex_sim</span><span class="o">.</span><span class="n">chi2_r_pvalue</span>
-<br/></pre></div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">res_hex_sim</span><span class="o">.</span><span class="n">chi2_r_pvalue</span>
+</pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -508,7 +508,7 @@ np.float64(0.01)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resHex_sim</span><span class="o">.</span><span class="n">chi2_realizations</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">res_hex_sim</span><span class="o">.</span><span class="n">chi2_realizations</span>
 </pre></div>
 </div>
 </div>
@@ -549,7 +549,7 @@ array([ 97.5       ,  59.        ,  69.        ,  67.5       ,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resHex_sim</span><span class="o">.</span><span class="n">chi2</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">res_hex_sim</span><span class="o">.</span><span class="n">chi2</span>
 </pre></div>
 </div>
 </div>
@@ -586,7 +586,7 @@ np.float64(195.0)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">window</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">([</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="p">])</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">window</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
 </pre></div>
 </div>
 </div>
@@ -602,7 +602,7 @@ np.float64(195.0)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="mi">100</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="mi">100</span> <span class="o">/</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -701,7 +701,7 @@ array([[0.12811363, 0.45038594],
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_Quadrat_statistics_31_1.svg" src="../_images/user-guide_Quadrat_statistics_31_1.svg" />
+<img alt="../_images/user-guide_Quadrat_statistics_29_1.svg" src="../_images/user-guide_Quadrat_statistics_29_1.svg" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -767,7 +767,7 @@ np.float64(0.37)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_Quadrat_statistics_35_1.svg" src="../_images/user-guide_Quadrat_statistics_35_1.svg" />
+<img alt="../_images/user-guide_Quadrat_statistics_33_1.svg" src="../_images/user-guide_Quadrat_statistics_33_1.svg" />
 </div>
 </div>
 </section>

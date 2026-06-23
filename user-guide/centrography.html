@@ -5,13 +5,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Centrography in pointpats &#8212; pointpats v2.5.5 Manual</title>
+    <title>Centrography in pointpats &#8212; pointpats v2.6.0 Manual</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
     <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
-    <script src="../_static/documentation_options.js?v=644f8b71"></script>
+    <script src="../_static/documentation_options.js?v=ae39cb24"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -44,7 +44,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           pointpats</a>
-        <span class="navbar-text navbar-version pull-left"><b>2.5.5</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>2.6.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -208,14 +208,27 @@
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointPattern</span>
+
 <span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="n">points</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">66.22</span><span class="p">,</span> <span class="mf">32.54</span><span class="p">],</span> <span class="p">[</span><span class="mf">22.52</span><span class="p">,</span> <span class="mf">22.39</span><span class="p">],</span> <span class="p">[</span><span class="mf">31.01</span><span class="p">,</span> <span class="mf">81.21</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">9.47</span><span class="p">,</span> <span class="mf">31.02</span><span class="p">],</span>  <span class="p">[</span><span class="mf">30.78</span><span class="p">,</span> <span class="mf">60.10</span><span class="p">],</span> <span class="p">[</span><span class="mf">75.21</span><span class="p">,</span> <span class="mf">58.93</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">79.26</span><span class="p">,</span>  <span class="mf">7.68</span><span class="p">],</span> <span class="p">[</span><span class="mf">8.23</span><span class="p">,</span> <span class="mf">39.93</span><span class="p">],</span>  <span class="p">[</span><span class="mf">98.73</span><span class="p">,</span> <span class="mf">77.17</span><span class="p">],</span>
-          <span class="p">[</span><span class="mf">89.78</span><span class="p">,</span> <span class="mf">42.53</span><span class="p">],</span> <span class="p">[</span><span class="mf">65.19</span><span class="p">,</span> <span class="mf">92.08</span><span class="p">],</span> <span class="p">[</span><span class="mf">54.46</span><span class="p">,</span> <span class="mf">8.48</span><span class="p">]]</span>
-<span class="n">pp</span> <span class="o">=</span> <span class="n">PointPattern</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="c1">#create a point pattern &quot;pp&quot; from list</span>
+
+<span class="n">points</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="mf">66.22</span><span class="p">,</span> <span class="mf">32.54</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">22.52</span><span class="p">,</span> <span class="mf">22.39</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">31.01</span><span class="p">,</span> <span class="mf">81.21</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">9.47</span><span class="p">,</span> <span class="mf">31.02</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">30.78</span><span class="p">,</span> <span class="mf">60.10</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">75.21</span><span class="p">,</span> <span class="mf">58.93</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">79.26</span><span class="p">,</span> <span class="mf">7.68</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">8.23</span><span class="p">,</span> <span class="mf">39.93</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">98.73</span><span class="p">,</span> <span class="mf">77.17</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">89.78</span><span class="p">,</span> <span class="mf">42.53</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">65.19</span><span class="p">,</span> <span class="mf">92.08</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">54.46</span><span class="p">,</span> <span class="mf">8.48</span><span class="p">],</span>
+<span class="p">]</span>
+<span class="n">pp</span> <span class="o">=</span> <span class="n">PointPattern</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>  <span class="c1"># create a point pattern &quot;pp&quot; from list</span>
 <span class="n">pp</span><span class="o">.</span><span class="n">points</span>
 </pre></div>
 </div>
@@ -342,15 +355,24 @@ pandas.DataFrame
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_centrography_5_0.svg" src="../_images/user-guide_centrography_5_0.svg" />
+<img alt="../_images/user-guide_centrography_4_0.svg" src="../_images/user-guide_centrography_4_0.svg" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#import centragraphy analysis functions</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats.centrography</span><span class="w"> </span><span class="kn">import</span> <span class="n">hull</span><span class="p">,</span> <span class="n">mean_center</span><span class="p">,</span> <span class="n">minimum_bounding_rectangle</span><span class="p">,</span> <span class="n">weighted_mean_center</span><span class="p">,</span> <span class="n">manhattan_median</span><span class="p">,</span> <span class="n">std_distance</span><span class="p">,</span><span class="n">euclidean_median</span><span class="p">,</span><span class="n">ellipse</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import centragraphy analysis functions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats.centrography</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ellipse</span><span class="p">,</span>
+    <span class="n">euclidean_median</span><span class="p">,</span>
+    <span class="n">hull</span><span class="p">,</span>
+    <span class="n">manhattan_median</span><span class="p">,</span>
+    <span class="n">mean_center</span><span class="p">,</span>
+    <span class="n">minimum_bounding_rectangle</span><span class="p">,</span>
+    <span class="n">std_distance</span><span class="p">,</span>
+    <span class="n">weighted_mean_center</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -386,7 +408,7 @@ array([52.57166667, 46.17166667])
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;b^&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Mean Center&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;b^&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean Center&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -397,14 +419,14 @@ array([52.57166667, 46.17166667])
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.legend.Legend at 0x7f761911a7b0&gt;
+&lt;matplotlib.legend.Legend at 0x7f16657ecc20&gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_centrography_9_1.svg" src="../_images/user-guide_centrography_9_1.svg" />
+<img alt="../_images/user-guide_centrography_8_1.svg" src="../_images/user-guide_centrography_8_1.svg" />
 </div>
 </div>
 </section>
@@ -455,9 +477,9 @@ array([60.51681818, 47.76848485])
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span> <span class="c1">#use class method &quot;plot&quot; to visualize point pattern</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;b^&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Mean Center&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;gd&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Weighted Mean Center&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>  <span class="c1"># use class method &quot;plot&quot; to visualize point pattern</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;b^&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean Center&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;gd&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Weighted Mean Center&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -468,14 +490,14 @@ array([60.51681818, 47.76848485])
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.legend.Legend at 0x7f7618ff7230&gt;
+&lt;matplotlib.legend.Legend at 0x7f16654f96a0&gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_centrography_13_1.svg" src="../_images/user-guide_centrography_13_1.svg" />
+<img alt="../_images/user-guide_centrography_12_1.svg" src="../_images/user-guide_centrography_12_1.svg" />
 </div>
 </div>
 </section>
@@ -489,7 +511,7 @@ array([60.51681818, 47.76848485])
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#get the number of points in point pattern &quot;pp&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># get the number of points in point pattern &quot;pp&quot;</span>
 <span class="n">pp</span><span class="o">.</span><span class="n">n</span>
 </pre></div>
 </div>
@@ -507,7 +529,7 @@ array([60.51681818, 47.76848485])
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Manhattan Median is not unique for &quot;pp&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Manhattan Median is not unique for &quot;pp&quot;</span>
 <span class="n">mm</span> <span class="o">=</span> <span class="n">manhattan_median</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
 <span class="n">mm</span>
 </pre></div>
@@ -536,9 +558,9 @@ array([59.825, 41.23 ])
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;b^&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Mean Center&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;gd&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Weighted Mean Center&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;rv&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Manhattan Median&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;b^&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean Center&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;gd&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Weighted Mean Center&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;rv&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Manhattan Median&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -549,14 +571,14 @@ array([59.825, 41.23 ])
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.legend.Legend at 0x7f7619037770&gt;
+&lt;matplotlib.legend.Legend at 0x7f1665581be0&gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_centrography_17_1.svg" src="../_images/user-guide_centrography_17_1.svg" />
+<img alt="../_images/user-guide_centrography_16_1.svg" src="../_images/user-guide_centrography_16_1.svg" />
 </div>
 </div>
 </section>
@@ -579,8 +601,8 @@ array([59.825, 41.23 ])
     <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">crit</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dy</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">crit</span><span class="p">:</span>
         <span class="n">xd</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x0</span>
         <span class="n">yd</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y0</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xd</span><span class="o">*</span><span class="n">xd</span> <span class="o">+</span> <span class="n">yd</span><span class="o">*</span><span class="n">yd</span><span class="p">)</span>
-        <span class="n">w</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">d</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xd</span> <span class="o">*</span> <span class="n">xd</span> <span class="o">+</span> <span class="n">yd</span> <span class="o">*</span> <span class="n">yd</span><span class="p">)</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">d</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">/</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="n">x1</span> <span class="o">=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
         <span class="n">x1</span> <span class="o">=</span> <span class="n">x1</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
@@ -588,7 +610,7 @@ array([59.825, 41.23 ])
         <span class="n">y1</span> <span class="o">=</span> <span class="n">y1</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="n">dx</span> <span class="o">=</span> <span class="n">x1</span> <span class="o">-</span> <span class="n">x0</span>
         <span class="n">dy</span> <span class="o">=</span> <span class="n">y1</span> <span class="o">-</span> <span class="n">y0</span>
-        <span class="n">iteration</span> <span class="o">+=</span><span class="mi">1</span>
+        <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">iteration</span><span class="p">)</span>
         <span class="n">x0</span> <span class="o">=</span> <span class="n">x1</span>
         <span class="n">y0</span> <span class="o">=</span> <span class="n">y1</span>
@@ -601,7 +623,7 @@ array([59.825, 41.23 ])
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">median_center</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">crit</span><span class="o">=</span><span class="mf">.0001</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">median_center</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">crit</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -665,10 +687,10 @@ array([54.16773427, 44.42425854])
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;b^&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Mean Center&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;gd&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Weighted Mean Center&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;rv&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Manhattan Median&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;m+&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Euclidean Median&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;b^&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean Center&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;gd&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Weighted Mean Center&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;rv&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Manhattan Median&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;m+&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Euclidean Median&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -679,14 +701,14 @@ array([54.16773427, 44.42425854])
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.legend.Legend at 0x7f7618f8c2f0&gt;
+&lt;matplotlib.legend.Legend at 0x7f16654063c0&gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_centrography_26_1.svg" src="../_images/user-guide_centrography_26_1.svg" />
+<img alt="../_images/user-guide_centrography_23_1.svg" src="../_images/user-guide_centrography_23_1.svg" />
 </div>
 </div>
 </section>
@@ -721,11 +743,11 @@ np.float64(40.14980648908671)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">circle1</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="n">stdd</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">get_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Standard Distance Circle&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">circle1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">stdd</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">get_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Standard Distance Circle&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">circle1</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;b^&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Mean Center&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;b^&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean Center&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -736,14 +758,14 @@ np.float64(40.14980648908671)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.legend.Legend at 0x7f7618e3cec0&gt;
+&lt;matplotlib.legend.Legend at 0x7f166548af90&gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_centrography_30_1.svg" src="../_images/user-guide_centrography_30_1.svg" />
+<img alt="../_images/user-guide_centrography_27_1.svg" src="../_images/user-guide_centrography_27_1.svg" />
 </div>
 </div>
 <p>From the above figure, we can observe that there are five points outside the standard distance circle which are potential outliers.</p>
@@ -791,7 +813,7 @@ np.float64(40.14980648908671)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">theta_degree</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="c1">#need degree of rotation to plot the ellipse</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">theta_degree</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>  <span class="c1"># need degree of rotation to plot the ellipse</span>
 <span class="n">theta_degree</span>
 </pre></div>
 </div>
@@ -811,19 +833,20 @@ np.float64(26.749651012628693)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ellipse</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pylab</span><span class="w"> </span><span class="kn">import</span> <span class="n">figure</span><span class="p">,</span> <span class="n">show</span><span class="p">,</span><span class="n">rand</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylab</span><span class="w"> </span><span class="kn">import</span> <span class="n">figure</span><span class="p">,</span> <span class="n">show</span>
+
 <span class="n">fig</span> <span class="o">=</span> <span class="n">figure</span><span class="p">()</span>
-<span class="c1">#ax = fig.add_subplot(111, aspect=&#39;equal&#39;)</span>
-<span class="n">e</span> <span class="o">=</span> <span class="n">Ellipse</span><span class="p">(</span><span class="n">xy</span><span class="o">=</span><span class="n">mean_center</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="n">sx</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">sy</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">angle</span><span class="o">=-</span><span class="n">theta_degree</span><span class="p">)</span> <span class="c1">#angle is rotation in degrees (anti-clockwise)</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">get_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Standard Deviational Ellipse&#39;</span><span class="p">)</span>
+<span class="c1"># angle is rotation in degrees (anti-clockwise)</span>
+<span class="n">e</span> <span class="o">=</span> <span class="n">Ellipse</span><span class="p">(</span><span class="n">xy</span><span class="o">=</span><span class="n">mean_center</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="n">sx</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">sy</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">angle</span><span class="o">=-</span><span class="n">theta_degree</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">get_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Standard Deviational Ellipse&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 <span class="n">e</span><span class="o">.</span><span class="n">set_clip_box</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">bbox</span><span class="p">)</span>
-<span class="n">e</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">e</span><span class="o">.</span><span class="n">set_edgecolor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;b^&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Mean Center&#39;</span><span class="p">)</span>
+<span class="n">e</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">e</span><span class="o">.</span><span class="n">set_edgecolor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;b^&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean Center&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">show</span><span class="p">()</span>
 </pre></div>
@@ -841,7 +864,7 @@ np.float64(26.749651012628693)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_centrography_36_1.svg" src="../_images/user-guide_centrography_36_1.svg" />
+<img alt="../_images/user-guide_centrography_32_1.svg" src="../_images/user-guide_centrography_32_1.svg" />
 </div>
 </div>
 </section>
@@ -880,11 +903,12 @@ array([[31.01, 81.21],
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Centers&#39;</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="kc">True</span> <span class="p">)</span> <span class="c1">#plot point pattern &quot;pp&quot; as well as its convex hull</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;b^&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Mean Center&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;gd&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Weighted Mean Center&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;rv&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Manhattan Median&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;m+&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Euclidean Median&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># plot point pattern &quot;pp&quot; as well as its convex hull</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Centers&quot;</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;b^&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean Center&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;gd&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Weighted Mean Center&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;rv&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Manhattan Median&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;m+&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Euclidean Median&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -895,14 +919,14 @@ array([[31.01, 81.21],
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.legend.Legend at 0x7f7618d11160&gt;
+&lt;matplotlib.legend.Legend at 0x7f166536f230&gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_centrography_41_1.svg" src="../_images/user-guide_centrography_41_1.svg" />
+<img alt="../_images/user-guide_centrography_36_1.svg" src="../_images/user-guide_centrography_36_1.svg" />
 </div>
 </div>
 </section>
@@ -931,11 +955,13 @@ array([[31.01, 81.21],
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Centers&#39;</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">True</span> <span class="p">)</span> <span class="c1">#plot point pattern &quot;pp&quot; as well as its Minimum Bounding Rectangle</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;b^&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Mean Center&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;gd&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Weighted Mean Center&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;rv&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Manhattan Median&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;m+&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Euclidean Median&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Centers&quot;</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>  <span class="c1"># plot point pattern &quot;pp&quot; as well as its Minimum Bounding Rectangle</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;b^&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean Center&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;gd&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Weighted Mean Center&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;rv&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Manhattan Median&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;m+&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Euclidean Median&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -946,25 +972,27 @@ array([[31.01, 81.21],
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.legend.Legend at 0x7f7618d81fd0&gt;
+&lt;matplotlib.legend.Legend at 0x7f166dd78ad0&gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_centrography_45_1.svg" src="../_images/user-guide_centrography_45_1.svg" />
+<img alt="../_images/user-guide_centrography_40_1.svg" src="../_images/user-guide_centrography_40_1.svg" />
 </div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Centers&#39;</span><span class="p">,</span>  <span class="n">hull</span><span class="o">=</span><span class="kc">True</span> <span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">True</span> <span class="p">)</span><span class="c1">#plot point pattern &quot;pp&quot;, convex hull, and Minimum Bounding Rectangle</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;b^&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Mean Center&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;gd&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Weighted Mean Center&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;rv&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Manhattan Median&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;m+&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Euclidean Median&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Centers&quot;</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>  <span class="c1"># plot point pattern &quot;pp&quot;, convex hull, and Minimum Bounding Rectangle</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;b^&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean Center&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;gd&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Weighted Mean Center&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;rv&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Manhattan Median&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;m+&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Euclidean Median&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -975,14 +1003,14 @@ array([[31.01, 81.21],
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.legend.Legend at 0x7f7618c16a50&gt;
+&lt;matplotlib.legend.Legend at 0x7f166dd2e270&gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_centrography_46_1.svg" src="../_images/user-guide_centrography_46_1.svg" />
+<img alt="../_images/user-guide_centrography_41_1.svg" src="../_images/user-guide_centrography_41_1.svg" />
 </div>
 </div>
 <p>Plot Standard Distance Circle and Convex Hull.</p>
@@ -990,11 +1018,11 @@ array([[31.01, 81.21],
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">circle1</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="n">stdd</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">get_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Standard Distance Circle&#39;</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">circle1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">stdd</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">get_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Standard Distance Circle&quot;</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">circle1</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;b^&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Mean Center&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;b^&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean Center&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1005,14 +1033,14 @@ array([[31.01, 81.21],
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.legend.Legend at 0x7f7618ca7620&gt;
+&lt;matplotlib.legend.Legend at 0x7f16650b2510&gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_centrography_48_1.svg" src="../_images/user-guide_centrography_48_1.svg" />
+<img alt="../_images/user-guide_centrography_43_1.svg" src="../_images/user-guide_centrography_43_1.svg" />
 </div>
 </div>
 </section>
@@ -1024,18 +1052,19 @@ array([[31.01, 81.21],
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#from pysal.contrib import shapely_ext</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">libpysal</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">libpysal.cg</span><span class="w"> </span><span class="kn">import</span> <span class="n">shapely_ext</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">PoissonPointProcess</span> <span class="k">as</span> <span class="n">csr</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">libpysal</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ps</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">as_window</span>
-<span class="c1">#import pysal_examples</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PoissonPointProcess</span><span class="p">,</span>  <span class="c1"># complete spatial randomness</span>
+    <span class="n">as_window</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="c1"># open &quot;vautm17n&quot; polygon shapefile</span>
-<span class="n">va</span> <span class="o">=</span> <span class="n">ps</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">ps</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">&quot;vautm17n.shp&quot;</span><span class="p">))</span>
+<span class="n">va</span> <span class="o">=</span> <span class="n">libpysal</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">libpysal</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">&quot;vautm17n.shp&quot;</span><span class="p">))</span>
 
 <span class="c1"># Create the exterior polygons for VA from the union of the county shapes</span>
-<span class="n">polys</span> <span class="o">=</span> <span class="p">[</span><span class="n">shp</span> <span class="k">for</span> <span class="n">shp</span> <span class="ow">in</span> <span class="n">va</span><span class="p">]</span>
+<span class="n">polys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">va</span><span class="p">)</span>
 <span class="n">state</span> <span class="o">=</span> <span class="n">shapely_ext</span><span class="o">.</span><span class="n">cascaded_union</span><span class="p">(</span><span class="n">polys</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1046,7 +1075,7 @@ array([[31.01, 81.21],
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span> <span class="o">=</span> <span class="n">csr</span><span class="p">(</span><span class="n">as_window</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">asPP</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">realizations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span> <span class="o">=</span> <span class="n">PoissonPointProcess</span><span class="p">(</span><span class="n">as_window</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">asPP</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">realizations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1055,7 +1084,7 @@ array([[31.01, 81.21],
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_centrography_52_0.svg" src="../_images/user-guide_centrography_52_0.svg" />
+<img alt="../_images/user-guide_centrography_47_0.svg" src="../_images/user-guide_centrography_47_0.svg" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1070,7 +1099,7 @@ array([[31.01, 81.21],
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_centrography_53_0.svg" src="../_images/user-guide_centrography_53_0.svg" />
+<img alt="../_images/user-guide_centrography_48_0.svg" src="../_images/user-guide_centrography_48_0.svg" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1080,10 +1109,12 @@ array([[31.01, 81.21],
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mc</span> <span class="o">=</span> <span class="n">mean_center</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
 <span class="n">mm</span> <span class="o">=</span> <span class="n">manhattan_median</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
 <span class="n">em</span> <span class="o">=</span> <span class="n">euclidean_median</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Centers&#39;</span><span class="p">,</span>  <span class="n">hull</span><span class="o">=</span><span class="kc">True</span> <span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">True</span> <span class="p">)</span><span class="c1">#plot point pattern &quot;pp&quot;, convex hull, and Minimum Bounding Rectangle</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;c^&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Mean Center&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;rv&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Manhattan Median&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;m+&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Euclidean Median&#39;</span><span class="p">)</span>
+
+<span class="c1"># plot point pattern &quot;pp&quot;, convex hull, and Minimum Bounding Rectangle</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Centers&quot;</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;c^&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean Center&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;rv&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Manhattan Median&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;m+&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Euclidean Median&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1103,14 +1134,14 @@ array([[31.01, 81.21],
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.legend.Legend at 0x7f7618939e80&gt;
+&lt;matplotlib.legend.Legend at 0x7f1665053a10&gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_centrography_54_2.svg" src="../_images/user-guide_centrography_54_2.svg" />
+<img alt="../_images/user-guide_centrography_49_2.svg" src="../_images/user-guide_centrography_49_2.svg" />
 </div>
 </div>
 </section>
@@ -1120,7 +1151,7 @@ array([[31.01, 81.21],
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span> <span class="o">=</span> <span class="n">csr</span><span class="p">(</span><span class="n">as_window</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">asPP</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">realizations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span> <span class="o">=</span> <span class="n">PoissonPointProcess</span><span class="p">(</span><span class="n">as_window</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">asPP</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">realizations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1129,7 +1160,7 @@ array([[31.01, 81.21],
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_centrography_56_0.svg" src="../_images/user-guide_centrography_56_0.svg" />
+<img alt="../_images/user-guide_centrography_51_0.svg" src="../_images/user-guide_centrography_51_0.svg" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1144,7 +1175,7 @@ array([[31.01, 81.21],
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_centrography_57_0.svg" src="../_images/user-guide_centrography_57_0.svg" />
+<img alt="../_images/user-guide_centrography_52_0.svg" src="../_images/user-guide_centrography_52_0.svg" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1154,10 +1185,12 @@ array([[31.01, 81.21],
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mc</span> <span class="o">=</span> <span class="n">mean_center</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
 <span class="n">mm</span> <span class="o">=</span> <span class="n">manhattan_median</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
 <span class="n">em</span> <span class="o">=</span> <span class="n">euclidean_median</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Centers&#39;</span><span class="p">,</span>  <span class="n">hull</span><span class="o">=</span><span class="kc">True</span> <span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">True</span> <span class="p">)</span><span class="c1">#plot point pattern &quot;pp&quot;, convex hull, and Minimum Bounding Rectangle</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;c^&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Mean Center&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;rv&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Manhattan Median&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;m+&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Euclidean Median&#39;</span><span class="p">)</span>
+
+<span class="c1"># plot point pattern &quot;pp&quot;, convex hull, and Minimum Bounding Rectangle</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Centers&quot;</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;c^&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean Center&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;rv&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Manhattan Median&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;m+&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Euclidean Median&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1177,14 +1210,14 @@ array([[31.01, 81.21],
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.legend.Legend at 0x7f76157117f0&gt;
+&lt;matplotlib.legend.Legend at 0x7f1661de9940&gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_centrography_58_2.svg" src="../_images/user-guide_centrography_58_2.svg" />
+<img alt="../_images/user-guide_centrography_53_2.svg" src="../_images/user-guide_centrography_53_2.svg" />
 </div>
 </div>
 <p>If we calculate the Euclidean distances between every event point and Mean Center (Euclidean Median), and sum them up, we can see that Euclidean Median is the optimal point in iterms of minimizing the Euclidean distances to all the event points.</p>

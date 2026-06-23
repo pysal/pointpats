@@ -4,12 +4,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pointpats.kde &#8212; pointpats v2.5.5 Manual</title>
+    <title>pointpats.kde &#8212; pointpats v2.6.0 Manual</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css?v=9afac83c" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/pysal-styles.css?v=f8dcc4ae" />
-    <script src="../../_static/documentation_options.js?v=644f8b71"></script>
+    <script src="../../_static/documentation_options.js?v=ae39cb24"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -38,7 +38,7 @@
         </button>
         <a class="navbar-brand" href="../../index.html">
           pointpats</a>
-        <span class="navbar-text navbar-version pull-left"><b>2.5.5</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>2.6.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -147,6 +147,7 @@
     <span class="n">margin</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
     <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">figsize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">return_contourset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot kernel density of a given point pattern</span>
@@ -196,6 +197,10 @@
 <span class="sd">    figsize : tuple of integers (default None)</span>
 <span class="sd">        Size of the resulting ``matplotlib.figure.Figure``. If the argument</span>
 <span class="sd">        ``ax`` is given explicitly, ``figsize`` is ignored.</span>
+<span class="sd">    return_contourset : bool (default False)</span>
+<span class="sd">        Returns ``matplotlib.contour.ContourSet`` object along with</span>
+<span class="sd">        ``matplotlib.axes.Axes`` if set to True.</span>
+<span class="sd">        This can be useful if you want to add labels, for example.</span>
 <span class="sd">    **kwargs</span>
 <span class="sd">        Keyword arguments passed to :meth:`~matplotlib.pyplot.contour` or</span>
 <span class="sd">        :meth:`~matplotlib.pyplot.contourf` used for further</span>
@@ -205,8 +210,9 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    matplotlib.axes.Axes</span>
-<span class="sd">        matplotlib axes instance with the contour plot</span>
+<span class="sd">    matplotlib.axes.Axes | (matplotlib.axes.Axes, matplotlib.contour.ContourSet)</span>
+<span class="sd">        matplotlib Axes instance with the contour plot or tuple of matplotlib Axes</span>
+<span class="sd">        instance and ContourSet object if return_contourset is set to True.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">kernel</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
@@ -236,15 +242,14 @@
     <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
 
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span> <span class="c1"># bandwidth is fixed, hence aspect shall be equal</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>  <span class="c1"># bandwidth is fixed, hence aspect shall be equal</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="k">pass</span>
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># geopandas</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">geom_type</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s2">&quot;Point&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;data contain non-point geometries. &quot;</span>
-                <span class="s2">&quot;Only (Multi)Points are supported.&quot;</span>
+                <span class="s2">&quot;data contain non-point geometries. Only (Multi)Points are supported.&quot;</span>
             <span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
 
@@ -292,10 +297,12 @@
         <span class="n">z</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">resolution</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
 
     <span class="k">if</span> <span class="n">fill</span><span class="p">:</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x_mesh</span><span class="p">,</span> <span class="n">y_mesh</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">cs</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x_mesh</span><span class="p">,</span> <span class="n">y_mesh</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">x_mesh</span><span class="p">,</span> <span class="n">y_mesh</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">cs</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">x_mesh</span><span class="p">,</span> <span class="n">y_mesh</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">return_contourset</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ax</span><span class="p">,</span> <span class="n">cs</span>
     <span class="k">return</span> <span class="n">ax</span></div>
 
 </pre></div>

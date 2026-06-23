@@ -5,13 +5,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Working with marks in pointpats &#8212; pointpats v2.5.5 Manual</title>
+    <title>Working with marks in pointpats &#8212; pointpats v2.6.0 Manual</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
     <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
-    <script src="../_static/documentation_options.js?v=644f8b71"></script>
+    <script src="../_static/documentation_options.js?v=ae39cb24"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -44,7 +44,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           pointpats</a>
-        <span class="navbar-text navbar-version pull-left"><b>2.5.5</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>2.6.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -177,13 +177,15 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointPattern</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># centrography functions</span>
+    <span class="n">PointPattern</span><span class="p">,</span>
+    <span class="n">mean_center</span><span class="p">,</span>
+    <span class="n">weighted_mean_center</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">random</span> <span class="k">as</span> <span class="n">ppr</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">weighted_mean_center</span><span class="p">,</span> <span class="n">mean_center</span>  <span class="c1"># centrography functions</span>
 
 <span class="c1"># Make results reproducible</span>
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
@@ -245,15 +247,15 @@ array([0., 0., 1., 1.])
 <div class="highlight"><pre>
 Point Pattern
 200 points
-Bounding rectangle [(0.0018527559214779332,0.0031010182698787414), (0.9933556627887424,0.998903403515332)]
-Area of window: 0.9873409596362225
-Intensity estimate for window: 202.56426926083196
+Bounding rectangle [(0.005046893068218372,0.0005511250345767715), (0.99180375621735,0.998081133331292)]
+Area of window: 0.9843195818839939
+Intensity estimate for window: 203.18604209539217
           x         y
-0  0.296306  0.631746
-1  0.904018  0.509016
-2  0.074941  0.040613
-3  0.414541  0.122369
-4  0.704179  0.135504
+0  0.382743  0.790298
+1  0.536189  0.136487
+2  0.425149  0.456333
+3  0.014799  0.729175
+4  0.224035  0.495924
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -286,28 +288,28 @@ Intensity estimate for window: 202.56426926083196
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.296306</td>
-      <td>0.631746</td>
+      <td>0.382743</td>
+      <td>0.790298</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.904018</td>
-      <td>0.509016</td>
+      <td>0.536189</td>
+      <td>0.136487</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.074941</td>
-      <td>0.040613</td>
+      <td>0.425149</td>
+      <td>0.456333</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.414541</td>
-      <td>0.122369</td>
+      <td>0.014799</td>
+      <td>0.729175</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.704179</td>
-      <td>0.135504</td>
+      <td>0.224035</td>
+      <td>0.495924</td>
     </tr>
   </tbody>
 </table>
@@ -375,36 +377,36 @@ Intensity estimate for window: 202.56426926083196
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.296306</td>
-      <td>0.631746</td>
+      <td>0.382743</td>
+      <td>0.790298</td>
       <td>A</td>
       <td>0.933881</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.904018</td>
-      <td>0.509016</td>
+      <td>0.536189</td>
+      <td>0.136487</td>
       <td>B</td>
       <td>1.984845</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.074941</td>
-      <td>0.040613</td>
+      <td>0.425149</td>
+      <td>0.456333</td>
       <td>B</td>
       <td>2.074374</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.414541</td>
-      <td>0.122369</td>
+      <td>0.014799</td>
+      <td>0.729175</td>
       <td>A</td>
       <td>0.904084</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.704179</td>
-      <td>0.135504</td>
+      <td>0.224035</td>
+      <td>0.495924</td>
       <td>A</td>
       <td>5.422076</td>
     </tr>
@@ -490,9 +492,14 @@ Name: value, dtype: float64
 
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cat</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cats</span><span class="p">):</span>
         <span class="n">sub</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">categories</span> <span class="o">==</span> <span class="n">cat</span><span class="p">]</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">sub</span><span class="p">[</span><span class="n">pp</span><span class="o">.</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">sub</span><span class="p">[</span><span class="n">pp</span><span class="o">.</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
-                   <span class="n">s</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mark_column</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">cat</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                   <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+            <span class="n">sub</span><span class="p">[</span><span class="n">pp</span><span class="o">.</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+            <span class="n">sub</span><span class="p">[</span><span class="n">pp</span><span class="o">.</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+            <span class="n">s</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mark_column</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">cat</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)],</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="c1"># Use the window of the pattern to set plot limits</span>
     <span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">bbox</span>
@@ -508,8 +515,9 @@ Name: value, dtype: float64
     <span class="k">return</span> <span class="n">ax</span>
 
 
-<span class="n">plot_marked_pattern</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">mark_column</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span>
-                    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Marked point pattern colored by type&quot;</span><span class="p">)</span>
+<span class="n">plot_marked_pattern</span><span class="p">(</span>
+    <span class="n">pp</span><span class="p">,</span> <span class="n">mark_column</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Marked point pattern colored by type&quot;</span>
+<span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -518,7 +526,7 @@ Name: value, dtype: float64
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_marks_13_0.svg" src="../_images/user-guide_marks_13_0.svg" />
+<img alt="../_images/user-guide_marks_11_0.svg" src="../_images/user-guide_marks_11_0.svg" />
 </div>
 </div>
 <p>The colors distinguish the mark categories (<code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">'A'</span></code> vs <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">'B'</span></code>). You can adapt the plotting function to map numeric marks to size or color gradients if desired.</p>
@@ -569,7 +577,7 @@ Index([&#39;A&#39;, &#39;B&#39;], dtype=&#39;str&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">cat</span><span class="p">,</span> <span class="n">sub_pp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">categories</span><span class="p">,</span> <span class="n">pps_by_type</span><span class="p">):</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">cat</span><span class="p">,</span> <span class="n">sub_pp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">categories</span><span class="p">,</span> <span class="n">pps_by_type</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Category </span><span class="si">{</span><span class="n">cat</span><span class="si">!r}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">sub_pp</span><span class="o">.</span><span class="n">n</span><span class="si">}</span><span class="s2"> points&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -592,7 +600,7 @@ Category &#39;B&#39; -&gt; 78 points
 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pps_by_type</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
     <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">axes</span><span class="p">]</span>
 
-<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span> <span class="n">sub_pp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">categories</span><span class="p">,</span> <span class="n">pps_by_type</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span> <span class="n">sub_pp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">categories</span><span class="p">,</span> <span class="n">pps_by_type</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">sub_pp</span><span class="o">.</span><span class="n">df</span>
     <span class="n">xname</span><span class="p">,</span> <span class="n">yname</span> <span class="o">=</span> <span class="n">sub_pp</span><span class="o">.</span><span class="n">coord_names</span>
 
@@ -607,14 +615,14 @@ Category &#39;B&#39; -&gt; 78 points
 
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<br/></pre></div>
+</pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_marks_20_0.svg" src="../_images/user-guide_marks_20_0.svg" />
+<img alt="../_images/user-guide_marks_17_0.svg" src="../_images/user-guide_marks_17_0.svg" />
 </div>
 </div>
 <p>Each panel now shows the points belonging to a single mark category.</p>
@@ -645,7 +653,7 @@ Category &#39;B&#39; -&gt; 78 points
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-(array([0.48573948, 0.47561548]), array([0.48619851, 0.4604635 ]))
+(array([0.48734687, 0.49391049]), array([0.48176703, 0.49139844]))
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -655,8 +663,9 @@ Category &#39;B&#39; -&gt; 78 points
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 
 <span class="c1"># Plot marked pattern with small gray points</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">pp</span><span class="o">.</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">pp</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">pp</span><span class="o">.</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
-           <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;events&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">pp</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">pp</span><span class="o">.</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">pp</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">pp</span><span class="o">.</span><span class="n">coord_names</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;events&quot;</span>
+<span class="p">)</span>
 
 <span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">bbox</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span>
@@ -680,7 +689,7 @@ Category &#39;B&#39; -&gt; 78 points
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_marks_24_0.svg" src="../_images/user-guide_marks_24_0.svg" />
+<img alt="../_images/user-guide_marks_20_0.svg" src="../_images/user-guide_marks_20_0.svg" />
 </div>
 </div>
 <p>The weighted mean center is pulled toward points with larger <code class="docutils literal notranslate"><span class="pre">value</span></code>. This is a simple example of how numeric marks can affect spatial summaries.</p>
@@ -736,36 +745,36 @@ Category &#39;B&#39; -&gt; 78 points
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.296306</td>
-      <td>0.631746</td>
+      <td>0.382743</td>
+      <td>0.790298</td>
       <td>0.0</td>
       <td>0.933881</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.904018</td>
-      <td>0.509016</td>
+      <td>0.536189</td>
+      <td>0.136487</td>
       <td>1.0</td>
       <td>1.984845</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.074941</td>
-      <td>0.040613</td>
+      <td>0.425149</td>
+      <td>0.456333</td>
       <td>1.0</td>
       <td>2.074374</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.414541</td>
-      <td>0.122369</td>
+      <td>0.014799</td>
+      <td>0.729175</td>
       <td>0.0</td>
       <td>0.904084</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.704179</td>
-      <td>0.135504</td>
+      <td>0.224035</td>
+      <td>0.495924</td>
       <td>0.0</td>
       <td>5.422076</td>
     </tr>

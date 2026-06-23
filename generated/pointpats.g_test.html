@@ -5,12 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pointpats.g_test &#8212; pointpats v2.5.5 Manual</title>
+    <title>pointpats.g_test &#8212; pointpats v2.6.0 Manual</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
-    <script src="../_static/documentation_options.js?v=644f8b71"></script>
+    <script src="../_static/documentation_options.js?v=ae39cb24"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -41,7 +41,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           pointpats</a>
-        <span class="navbar-text navbar-version pull-left"><b>2.5.5</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>2.6.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -146,9 +146,9 @@
 <dt class="sig sig-object py" id="pointpats.g_test">
 <span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">g_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">support</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distances</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'euclidean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hull</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_correction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_simulations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_simulations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/distance_statistics.html#g_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.g_test" title="Link to this definition">¶</a></dt>
 <dd><p>Ripley’s G function</p>
-<p>The G function is computed from the cumulative density function of the nearest neighbor
-distances between points in the pattern.</p>
-<p>When the G function is below the simulated values, it suggests dispersion.</p>
+<p>The G function is computed from the cumulative density function of the nearest
+neighbor distances between points in the pattern. When the G function is below
+the simulated values, it suggests dispersion.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -177,11 +177,11 @@ has complete spatial randomness.</p>
 Simulations are independent and can be run in parallel to significantly
 reduce execution time.</p>
 <ul class="simple">
-<li><p>If <code class="docutils literal notranslate"><span class="pre">n_jobs</span> <span class="pre">=</span> <span class="pre">-1</span></code>, all available CPU cores will be used.</p></li>
-<li><p>If <code class="docutils literal notranslate"><span class="pre">n_jobs</span> <span class="pre">=</span> <span class="pre">1</span></code>, the execution will be forced to run sequentially (serially),
+<li><p>If <code class="docutils literal notranslate"><span class="pre">n_jobs=-1</span></code>, all available CPU cores will be used.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">n_jobs=1</span></code>, the execution will be forced to run sequentially (serially),
 disabling parallel processing. This is often useful for debugging or
 testing purposes.</p></li>
-<li><p>If <code class="docutils literal notranslate"><span class="pre">n_jobs</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>, that specific number of cores will be used.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">n_jobs&gt;1</span></code>, that specific number of cores will be used.</p></li>
 </ul>
 </dd>
 </dl>
@@ -204,7 +204,8 @@ testing purposes.</p></li>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))</dt><dd><p>or None if keep_simulations=False (which is the default)</p>
+<dt>simulations, the distribution of simulated statistics</dt><dd><p>(shaped (n_simulations, n_support_points))
+or None if keep_simulations=False (which is the default)</p>
 </dd>
 </dl>
 </li>

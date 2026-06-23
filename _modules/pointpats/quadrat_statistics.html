@@ -4,12 +4,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pointpats.quadrat_statistics &#8212; pointpats v2.5.5 Manual</title>
+    <title>pointpats.quadrat_statistics &#8212; pointpats v2.6.0 Manual</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css?v=9afac83c" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/pysal-styles.css?v=f8dcc4ae" />
-    <script src="../../_static/documentation_options.js?v=644f8b71"></script>
+    <script src="../../_static/documentation_options.js?v=ae39cb24"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -38,7 +38,7 @@
         </button>
         <a class="navbar-brand" href="../../index.html">
           pointpats</a>
-        <span class="navbar-text navbar-version pull-left"><b>2.5.5</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>2.6.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -143,7 +143,7 @@
 <span class="sd">- Plotting is self-contained (matplotlib only): scatters points, draws window, draws grid,</span>
 <span class="sd">  annotates counts, and optionally annotates per-cell chi-square contributions.</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Serge Rey, Wei Kang, Hu Shao&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;RectangleM&quot;</span><span class="p">,</span> <span class="s2">&quot;HexagonM&quot;</span><span class="p">,</span> <span class="s2">&quot;QStatistic&quot;</span><span class="p">]</span>
@@ -187,7 +187,8 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">points</span><span class="o">.</span><span class="n">geom_type</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s2">&quot;Point&quot;</span><span class="p">,</span> <span class="s2">&quot;MultiPoint&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="s2">&quot;GeoSeries must contain Point geometries (optionally MultiPoint). &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Got geometry type: </span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;geom_type&#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">type</span><span class="p">(</span><span class="n">points</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;Got geometry type: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;geom_type&#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">type</span><span class="p">(</span><span class="n">points</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
         <span class="n">coords</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">()</span>
@@ -235,7 +236,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    numpy.random.Generator</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
     <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
 
@@ -414,7 +415,7 @@
         <span class="n">ax</span><span class="o">.</span><span class="n">add_collection</span><span class="p">(</span><span class="n">pc</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="s2">&quot;counts&quot;</span><span class="p">:</span>
-            <span class="k">for</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">),</span> <span class="n">cell_id</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ann_xy</span><span class="p">,</span> <span class="n">cell_ids</span><span class="p">):</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">),</span> <span class="n">cell_id</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ann_xy</span><span class="p">,</span> <span class="n">cell_ids</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
                     <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">dict_id_count</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cell_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span>
                 <span class="p">)</span>
@@ -433,7 +434,7 @@
             <span class="n">pc</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">pc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Chi-square contribution&quot;</span><span class="p">)</span>
 
-            <span class="k">for</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">),</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ann_xy</span><span class="p">,</span> <span class="n">chi2_contrib</span><span class="p">):</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">),</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ann_xy</span><span class="p">,</span> <span class="n">chi2_contrib</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -579,7 +580,7 @@
         <span class="n">x_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">y_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="k">for</span> <span class="n">cell_id</span> <span class="ow">in</span> <span class="n">dict_id_count</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">cell_id</span> <span class="ow">in</span> <span class="n">dict_id_count</span><span class="p">:</span>
             <span class="n">ix</span> <span class="o">=</span> <span class="n">cell_id</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_column</span>
             <span class="n">iy</span> <span class="o">=</span> <span class="n">cell_id</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_column</span>
 
@@ -622,7 +623,7 @@
         <span class="n">ax</span><span class="o">.</span><span class="n">add_collection</span><span class="p">(</span><span class="n">pc</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="s2">&quot;counts&quot;</span><span class="p">:</span>
-            <span class="k">for</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">),</span> <span class="n">cell_id</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ann_xy</span><span class="p">,</span> <span class="n">cell_ids</span><span class="p">):</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">),</span> <span class="n">cell_id</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ann_xy</span><span class="p">,</span> <span class="n">cell_ids</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
                     <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">dict_id_count</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cell_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span>
                 <span class="p">)</span>
@@ -641,7 +642,7 @@
             <span class="n">pc</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">pc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Chi-square contribution&quot;</span><span class="p">)</span>
 
-            <span class="k">for</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">),</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ann_xy</span><span class="p">,</span> <span class="n">chi2_contrib</span><span class="p">):</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">),</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ann_xy</span><span class="p">,</span> <span class="n">chi2_contrib</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -858,7 +859,7 @@
             <span class="n">_</span><span class="p">,</span> <span class="n">plotted_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mr</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="s2">&quot;counts&quot;</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-            <span class="n">contrib_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">cid</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">cid</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cell_ids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chi2_contrib</span><span class="p">)}</span>
+            <span class="n">contrib_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cell_ids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chi2_contrib</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
             <span class="n">plotted_contrib</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
                 <span class="p">[</span><span class="n">contrib_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cid</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="k">for</span> <span class="n">cid</span> <span class="ow">in</span> <span class="n">plotted_ids</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span>
             <span class="p">)</span>

@@ -5,12 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pointpats.plot_density &#8212; pointpats v2.5.5 Manual</title>
+    <title>pointpats.plot_density &#8212; pointpats v2.6.0 Manual</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
-    <script src="../_static/documentation_options.js?v=644f8b71"></script>
+    <script src="../_static/documentation_options.js?v=ae39cb24"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -41,7 +41,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           pointpats</a>
-        <span class="navbar-text navbar-version pull-left"><b>2.5.5</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>2.6.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -144,7 +144,7 @@
 <h1>pointpats.plot_density<a class="headerlink" href="#pointpats-plot-density" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="pointpats.plot_density">
-<span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">plot_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bandwidth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">levels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/kde.html#plot_density"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.plot_density" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">plot_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bandwidth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">levels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_contourset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pointpats/kde.html#plot_density"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.plot_density" title="Link to this definition">¶</a></dt>
 <dd><p>Plot kernel density of a given point pattern</p>
 <p>The KDE can be done either using <code class="xref py py-class docutils literal notranslate"><span class="pre">statsmodels.nonparametric.KDEMultivariate</span></code>,
 which is used when <code class="docutils literal notranslate"><span class="pre">kernel=None</span></code>, or using <code class="xref py py-class docutils literal notranslate"><span class="pre">KDEpy.FFTKDE</span></code> when kernel is
@@ -189,6 +189,10 @@ with the <code class="docutils literal notranslate"><span class="pre">statsmodel
 <dt><strong>figsize</strong><span class="classifier">tuple of integers (default None)</span></dt><dd><p>Size of the resulting <code class="docutils literal notranslate"><span class="pre">matplotlib.figure.Figure</span></code>. If the argument
 <code class="docutils literal notranslate"><span class="pre">ax</span></code> is given explicitly, <code class="docutils literal notranslate"><span class="pre">figsize</span></code> is ignored.</p>
 </dd>
+<dt><strong>return_contourset</strong><span class="classifier">bool (default False)</span></dt><dd><p>Returns <code class="docutils literal notranslate"><span class="pre">matplotlib.contour.ContourSet</span></code> object along with
+<code class="docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code> if set to True.
+This can be useful if you want to add labels, for example.</p>
+</dd>
 <dt><strong>**kwargs</strong></dt><dd><p>Keyword arguments passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">contour()</span></code> or
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">contourf()</span></code> used for further
 styling of the plot, for example <code class="docutils literal notranslate"><span class="pre">cmap</span></code>, <code class="docutils literal notranslate"><span class="pre">linewidths</span></code>, <code class="docutils literal notranslate"><span class="pre">linestyles</span></code>,
@@ -199,7 +203,8 @@ details.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>matplotlib.axes.Axes</dt><dd><p>matplotlib axes instance with the contour plot</p>
+<dt>matplotlib.axes.Axes | (matplotlib.axes.Axes, matplotlib.contour.ContourSet)</dt><dd><p>matplotlib Axes instance with the contour plot or tuple of matplotlib Axes
+instance and ContourSet object if return_contourset is set to True.</p>
 </dd>
 </dl>
 </dd>

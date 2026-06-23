@@ -4,12 +4,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pointpats.distance_statistics &#8212; pointpats v2.5.5 Manual</title>
+    <title>pointpats.distance_statistics &#8212; pointpats v2.6.0 Manual</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css?v=9afac83c" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/pysal-styles.css?v=f8dcc4ae" />
-    <script src="../../_static/documentation_options.js?v=644f8b71"></script>
+    <script src="../../_static/documentation_options.js?v=ae39cb24"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -38,7 +38,7 @@
         </button>
         <a class="navbar-brand" href="../../index.html">
           pointpats</a>
-        <span class="navbar-text navbar-version pull-left"><b>2.5.5</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>2.6.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -138,24 +138,14 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shapely</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">spatial</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">joblib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">spatial</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">TREE_TYPES</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">area</span> <span class="k">as</span> <span class="n">_area</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">build_best_tree</span> <span class="k">as</span> <span class="n">_build_best_tree</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">k_neighbors</span> <span class="k">as</span> <span class="n">_k_neighbors</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">prepare_hull</span> <span class="k">as</span> <span class="n">_prepare_hull</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">TREE_TYPES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">area</span> <span class="k">as</span> <span class="n">_area</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_best_tree</span> <span class="k">as</span> <span class="n">_build_best_tree</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">k_neighbors</span> <span class="k">as</span> <span class="n">_k_neighbors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">prepare_hull</span> <span class="k">as</span> <span class="n">_prepare_hull</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.random</span><span class="w"> </span><span class="kn">import</span> <span class="n">poisson</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
@@ -244,13 +234,13 @@
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># try to use it as is</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">support</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">support</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722 - bare `except`</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="s2">&quot;`support` must be a tuple (either (start, stop, step), (start, stop) or (stop,)),&quot;</span>
-                <span class="s2">&quot; an int describing the number of breaks to use to evalute the function,&quot;</span>
-                <span class="s2">&quot; or an iterable containing the breaks to use to evaluate the function.&quot;</span>
-                <span class="s2">&quot; Recieved object of type </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">support</span><span class="p">),</span> <span class="n">support</span><span class="p">)</span>
-            <span class="p">)</span>
+                <span class="s2">&quot;`support` must be a tuple (either (start, stop, step), (start, stop) &quot;</span>
+                <span class="s2">&quot;or (stop,)), an int describing the number of breaks to use to evalute &quot;</span>
+                <span class="s2">&quot;the function, or an iterable containing the breaks to use to evaluate &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;the function. Received object of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">support</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">support</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
     <span class="k">return</span> <span class="n">coordinates</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">distances</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">hull</span><span class="p">,</span> <span class="n">edge_correction</span>
 
@@ -270,8 +260,7 @@
     <span class="n">hull</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Ripley&#39;s F function</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ripley&#39;s F function</span>
 
 <span class="sd">    The so-called &quot;empty space&quot; function, this is the cumulative density function of</span>
 <span class="sd">    the distances from a random set of points to the known points in the pattern.</span>
@@ -334,7 +323,7 @@
 
         <span class="n">randoms</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">(</span><span class="n">hull</span><span class="o">=</span><span class="n">hull</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_empty_points</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">tree</span>
+            <span class="n">tree</span>  <span class="c1"># noqa: B018</span>
         <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
             <span class="n">tree</span> <span class="o">=</span> <span class="n">_build_best_tree</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
         <span class="k">finally</span><span class="p">:</span>
@@ -357,11 +346,10 @@
     <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span>
     <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Ripley&#39;s G function</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ripley&#39;s G function</span>
 
-<span class="sd">    The G function is computed from the cumulative density function of the nearest neighbor</span>
-<span class="sd">    distances between points in the pattern.</span>
+<span class="sd">    The G function is computed from the cumulative density function of the</span>
+<span class="sd">    nearest neighbor distances between points in the pattern.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -382,7 +370,6 @@
 <span class="sd">    -------</span>
 <span class="sd">    a tuple containing the support values used to evalute the function</span>
 <span class="sd">    and the values of the function at each distance value in the support.</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">coordinates</span><span class="p">,</span> <span class="n">support</span><span class="p">,</span> <span class="n">distances</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">_prepare</span><span class="p">(</span>
@@ -405,15 +392,15 @@
                     <span class="s2">&quot; Input distance matrix has an invalid shape: </span><span class="si">{k}</span><span class="s2">,</span><span class="si">{p}</span><span class="s2">.&quot;</span>
                     <span class="s2">&quot; Distances supplied can either be 2 dimensional&quot;</span>
                     <span class="s2">&quot; square matrices with the same number of rows&quot;</span>
-                    <span class="s2">&quot; as `coordinates` (</span><span class="si">{n}</span><span class="s2">) or 1 dimensional and contain&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; as `coordinates` (</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">) or 1 dimensional and contain&quot;</span>
                     <span class="s2">&quot; the shortest distance from each point in &quot;</span>
                     <span class="s2">&quot; `coordinates` to some other point in coordinates.&quot;</span>
                 <span class="p">)</span>
         <span class="k">elif</span> <span class="n">distances</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Distances are not aligned with coordinates! Distance&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot; matrix must be (n_coordinates, n_coordinates), but recieved&quot;</span>
+                    <span class="s2">&quot;Distances are not aligned with coordinates! Distance&quot;</span>
+                    <span class="s2">&quot; matrix must be (n_coordinates, n_coordinates), but recieved&quot;</span>
                     <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> instead of (</span><span class="si">{</span><span class="n">coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">,)&quot;</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -423,11 +410,11 @@
                 <span class="s2">&quot; as `coordinates` or 1 dimensional and contain&quot;</span>
                 <span class="s2">&quot; the shortest distance from each point in &quot;</span>
                 <span class="s2">&quot; `coordinates` to some other point in coordinates.&quot;</span>
-                <span class="s2">&quot; Input matrix was </span><span class="si">{distances.ndim}</span><span class="s2"> dimensioanl&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; Input matrix was </span><span class="si">{</span><span class="n">distances</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2"> dimensional&quot;</span>
             <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">tree</span>
+            <span class="n">tree</span>  <span class="c1"># noqa: B018</span>
         <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
             <span class="n">tree</span> <span class="o">=</span> <span class="n">_build_best_tree</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
         <span class="k">finally</span><span class="p">:</span>
@@ -451,10 +438,10 @@
     <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">truncate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Ripely&#39;s J function</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ripely&#39;s J function</span>
 
-<span class="sd">    The so-called &quot;spatial hazard&quot; function, this is a function relating the F and G functions.</span>
+<span class="sd">    The so-called &quot;spatial hazard&quot; function, this is a function relating the</span>
+<span class="sd">    F and G functions.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -506,11 +493,10 @@
         <span class="n">edge_correction</span><span class="o">=</span><span class="n">edge_correction</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">support</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">gsupport</span><span class="p">,</span> <span class="n">support</span><span class="p">):</span>
-            <span class="n">gfunction</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">gsupport</span><span class="p">,</span> <span class="n">gstats</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">gstats</span> <span class="o">=</span> <span class="n">gfunction</span><span class="p">(</span><span class="n">support</span><span class="p">)</span>
-            <span class="n">gsupport</span> <span class="o">=</span> <span class="n">support</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">support</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">gsupport</span><span class="p">,</span> <span class="n">support</span><span class="p">):</span>
+        <span class="n">gfunction</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">gsupport</span><span class="p">,</span> <span class="n">gstats</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">gstats</span> <span class="o">=</span> <span class="n">gfunction</span><span class="p">(</span><span class="n">support</span><span class="p">)</span>
+        <span class="n">gsupport</span> <span class="o">=</span> <span class="n">support</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">gsupport</span><span class="p">,</span> <span class="n">fsupport</span><span class="p">)):</span>
         <span class="n">ffunction</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">fsupport</span><span class="p">,</span> <span class="n">fstats</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">fstats</span> <span class="o">=</span> <span class="n">ffunction</span><span class="p">(</span><span class="n">gsupport</span><span class="p">)</span>
@@ -544,12 +530,13 @@
     <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span>
     <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Ripley&#39;s K function</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ripley&#39;s K function</span>
 
-<span class="sd">    This function counts the number of pairs of points that are closer than a given distance.</span>
-<span class="sd">    As d increases, K approaches the number of point pairs.</span>
+<span class="sd">    This function counts the number of pairs of points that are closer than a given</span>
+<span class="sd">    distance. As d increases, K approaches the number of point pairs.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
 <span class="sd">    coordinates : geopandas object | numpy.ndarray, (n,2)</span>
 <span class="sd">        input coordinates to function</span>
 <span class="sd">    support : tuple of length 1, 2, or 3, int, or numpy.ndarray</span>
@@ -580,18 +567,20 @@
         <span class="k">if</span> <span class="n">distances</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">upper_tri_n</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Shape of inputted distances is not square, nor is the upper triangular&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot; matrix matching the number of input points. The shape of the input matrix&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot; is </span><span class="si">{</span><span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, but required shape is (</span><span class="si">{</span><span class="n">upper_tri_n</span><span class="si">}</span><span class="s2">,) or (</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">)&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Shape of inputted distances is not square, nor is the upper &quot;</span>
+                    <span class="s2">&quot;triangular matrix matching the number of input points. The shape &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;of the input matrix is </span><span class="si">{</span><span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, but required shape &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;is (</span><span class="si">{</span><span class="n">upper_tri_n</span><span class="si">}</span><span class="s2">,) or (</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">)&quot;</span>
                 <span class="p">)</span>
             <span class="n">upper_tri_distances</span> <span class="o">=</span> <span class="n">distances</span>
         <span class="k">elif</span> <span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">n</span><span class="p">:</span>
             <span class="n">upper_tri_distances</span> <span class="o">=</span> <span class="n">distances</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">triu_indices_from</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Shape of inputted distances is not square, nor is the upper triangular&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; matrix matching the number of input points. The shape of the input matrix&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; is </span><span class="si">{</span><span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, but required shape is (</span><span class="si">{</span><span class="n">upper_tri_n</span><span class="si">}</span><span class="s2">,) or (</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Shape of inputted distances is not square, nor is the upper &quot;</span>
+                <span class="s2">&quot;triangular matrix matching the number of input points. The shape &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;of the input matrix is </span><span class="si">{</span><span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, but required shape &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;is (</span><span class="si">{</span><span class="n">upper_tri_n</span><span class="si">}</span><span class="s2">,) or (</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">)&quot;</span>
             <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">upper_tri_distances</span> <span class="o">=</span> <span class="n">spatial</span><span class="o">.</span><span class="n">distance</span><span class="o">.</span><span class="n">pdist</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
@@ -604,21 +593,21 @@
 
 <div class="viewcode-block" id="l">
 <a class="viewcode-back" href="../../generated/pointpats.l.html#pointpats.l">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">l</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">l</span><span class="p">(</span>  <span class="c1"># noqa: E743 - Ambiguous function name</span>
     <span class="n">coordinates</span><span class="p">,</span>
     <span class="n">support</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">permutations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
+    <span class="n">permutations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>  <span class="c1"># noqa: ARG001  -- Unused function argument</span>
     <span class="n">distances</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span>
     <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">linearized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Ripley&#39;s L function</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ripley&#39;s L function</span>
 
-<span class="sd">    This is a scaled and shifted version of the K function that accounts for the K function&#39;s</span>
-<span class="sd">    increasing expected value as distances increase. This means that the L function, for a</span>
-<span class="sd">    completely random pattern, should be close to zero at all distance values in the support.</span>
+<span class="sd">    This is a scaled and shifted version of the K function that accounts for the K</span>
+<span class="sd">    function&#39;s increasing expected value as distances increase. This means that the</span>
+<span class="sd">    L function, for a completely random pattern, should be close to zero at all</span>
+<span class="sd">    distance values in the support.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -656,11 +645,11 @@
         <span class="n">edge_correction</span><span class="o">=</span><span class="n">edge_correction</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">l</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">k_estimate</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="n">_l</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">k_estimate</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">linearized</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">support</span><span class="p">,</span> <span class="n">l</span> <span class="o">-</span> <span class="n">support</span>
-    <span class="k">return</span> <span class="n">support</span><span class="p">,</span> <span class="n">l</span></div>
+        <span class="k">return</span> <span class="n">support</span><span class="p">,</span> <span class="n">_l</span> <span class="o">-</span> <span class="n">support</span>
+    <span class="k">return</span> <span class="n">support</span><span class="p">,</span> <span class="n">_l</span></div>
 
 
 
@@ -710,11 +699,11 @@
         <span class="n">coordinates</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">(</span><span class="n">coordinates</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
 
     <span class="n">stat_function</span><span class="p">,</span> <span class="n">result_container</span> <span class="o">=</span> <span class="n">_ripley_dispatch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">calltype</span><span class="p">)</span>
-    <span class="n">core_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-        <span class="n">support</span><span class="o">=</span><span class="n">support</span><span class="p">,</span>
-        <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
-        <span class="n">edge_correction</span><span class="o">=</span><span class="n">edge_correction</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="n">core_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;support&quot;</span><span class="p">:</span> <span class="n">support</span><span class="p">,</span>
+        <span class="s2">&quot;metric&quot;</span><span class="p">:</span> <span class="n">metric</span><span class="p">,</span>
+        <span class="s2">&quot;edge_correction&quot;</span><span class="p">:</span> <span class="n">edge_correction</span><span class="p">,</span>
+    <span class="p">}</span>
     <span class="n">tree</span> <span class="o">=</span> <span class="n">_build_best_tree</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
     <span class="n">hull</span> <span class="o">=</span> <span class="n">_prepare_hull</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">hull</span><span class="p">)</span>
     <span class="n">empty_space_points</span> <span class="o">=</span> <span class="kc">None</span>
@@ -725,8 +714,8 @@
         <span class="n">empty_space_points</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">distances</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># Note: We now use the original coordinates&#39; tree to calculate the observed distance</span>
-            <span class="c1"># for the first time, as per the original logic flow.</span>
+            <span class="c1"># Note: We now use the original coordinates&#39; tree to calculate the observed</span>
+            <span class="c1"># distance for the first time, as per the original logic flow.</span>
             <span class="n">empty_space_distances</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_k_neighbors</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">empty_space_points</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">calltype</span> <span class="o">==</span> <span class="s2">&quot;F&quot;</span><span class="p">:</span>
@@ -741,15 +730,19 @@
     <span class="n">observed_support</span><span class="p">,</span> <span class="n">observed_statistic</span> <span class="o">=</span> <span class="n">stat_function</span><span class="p">(</span>
         <span class="n">coordinates</span><span class="p">,</span> <span class="n">distances</span><span class="o">=</span><span class="n">distances</span><span class="p">,</span> <span class="o">**</span><span class="n">core_kwargs</span>
     <span class="p">)</span>
-    <span class="c1"># The original function passed the tree, but the wrapper functions expect coordinates</span>
-    <span class="c1"># Corrected to pass coordinates, relying on stat_function to manage the tree internally.</span>
+    <span class="c1"># The original function passed the tree, but the wrapper functions expect</span>
+    <span class="c1"># coordinates. Corrected to pass coordinates, relying on stat_function to</span>
+    <span class="c1"># manage the tree internally.</span>
 
     <span class="n">core_kwargs</span><span class="p">[</span><span class="s2">&quot;support&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">observed_support</span>
     <span class="n">n_observations</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="c1"># --- PARALLEL SIMULATION BLOCK ---</span>
     <span class="k">if</span> <span class="n">n_simulations</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;n_simulations must be positive. No simulations performed.&quot;</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;n_simulations must be positive. No simulations performed.&quot;</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="n">simulations_array</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">observed_support</span><span class="p">)))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">simulations_list</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)(</span>
@@ -801,13 +794,11 @@
     <span class="n">n_simulations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
     <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Ripley&#39;s F function</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ripley&#39;s F function</span>
 
 <span class="sd">    The so-called &quot;empty space&quot; function, this is the cumulative density function of</span>
-<span class="sd">    the distances from a random set of points to the known points in the pattern.</span>
-
-<span class="sd">    When the estimated statistic is larger than simulated values at a given distance, then</span>
+<span class="sd">    the distances from a random set of points to the known points in the pattern. When</span>
+<span class="sd">    the estimated statistic is larger than simulated values at a given distance, then</span>
 <span class="sd">    the pattern is considered &quot;dispersed&quot; or &quot;regular&quot;</span>
 
 <span class="sd">    Parameters</span>
@@ -838,11 +829,11 @@
 <span class="sd">        Simulations are independent and can be run in parallel to significantly</span>
 <span class="sd">        reduce execution time.</span>
 
-<span class="sd">        * If ``n_jobs = -1``, all available CPU cores will be used.</span>
-<span class="sd">        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),</span>
+<span class="sd">        * If ``n_jobs=-1``, all available CPU cores will be used.</span>
+<span class="sd">        * If ``n_jobs=1``, the execution will be forced to run sequentially (serially),</span>
 <span class="sd">          disabling parallel processing. This is often useful for debugging or</span>
 <span class="sd">          testing purposes.</span>
-<span class="sd">        * If ``n_jobs &gt; 1``, that specific number of cores will be used.</span>
+<span class="sd">        * If ``n_jobs&gt;1``, that specific number of cores will be used.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -850,7 +841,8 @@
 <span class="sd">    - support, the exact distance values used to evalute the statistic</span>
 <span class="sd">    - statistic, the values of the statistic at each distance</span>
 <span class="sd">    - pvalue, the percent of simulations that were as extreme as the observed value</span>
-<span class="sd">    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))</span>
+<span class="sd">    - simulations, the distribution of simulated statistics</span>
+<span class="sd">        (shaped (n_simulations, n_support_points))</span>
 <span class="sd">        or None if keep_simulations=False (which is the default)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -882,13 +874,11 @@
     <span class="n">n_simulations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
     <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Ripley&#39;s G function</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ripley&#39;s G function</span>
 
-<span class="sd">    The G function is computed from the cumulative density function of the nearest neighbor</span>
-<span class="sd">    distances between points in the pattern.</span>
-
-<span class="sd">    When the G function is below the simulated values, it suggests dispersion.</span>
+<span class="sd">    The G function is computed from the cumulative density function of the nearest</span>
+<span class="sd">    neighbor distances between points in the pattern. When the G function is below</span>
+<span class="sd">    the simulated values, it suggests dispersion.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -918,12 +908,11 @@
 <span class="sd">        Simulations are independent and can be run in parallel to significantly</span>
 <span class="sd">        reduce execution time.</span>
 
-<span class="sd">        * If ``n_jobs = -1``, all available CPU cores will be used.</span>
-<span class="sd">        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),</span>
+<span class="sd">        * If ``n_jobs=-1``, all available CPU cores will be used.</span>
+<span class="sd">        * If ``n_jobs=1``, the execution will be forced to run sequentially (serially),</span>
 <span class="sd">          disabling parallel processing. This is often useful for debugging or</span>
 <span class="sd">          testing purposes.</span>
-<span class="sd">        * If ``n_jobs &gt; 1``, that specific number of cores will be used.</span>
-
+<span class="sd">        * If ``n_jobs&gt;1``, that specific number of cores will be used.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -931,7 +920,8 @@
 <span class="sd">    - support, the exact distance values used to evalute the statistic</span>
 <span class="sd">    - statistic, the values of the statistic at each distance</span>
 <span class="sd">    - pvalue, the percent of simulations that were as extreme as the observed value</span>
-<span class="sd">    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))</span>
+<span class="sd">    - simulations, the distribution of simulated statistics</span>
+<span class="sd">        (shaped (n_simulations, n_support_points))</span>
 <span class="sd">        or None if keep_simulations=False (which is the default)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_ripley_test</span><span class="p">(</span>
@@ -963,14 +953,14 @@
     <span class="n">n_simulations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
     <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Ripley&#39;s J function</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ripley&#39;s J function</span>
 
-<span class="sd">    The so-called &quot;spatial hazard&quot; function, this is a function relating the F and G functions.</span>
+<span class="sd">    The so-called &quot;spatial hazard&quot; function, this is a function relating the F and</span>
+<span class="sd">    G functions. When the J function is consistently below 1, then it indicates</span>
+<span class="sd">    clustering. When consistently above 1, it suggests dispersion.</span>
 
-<span class="sd">    When the J function is consistently below 1, then it indicates clustering.</span>
-<span class="sd">    When consistently above 1, it suggests dispersion.</span>
-
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
 <span class="sd">    coordinates : geopandas object | numpy.ndarray, (n,2)</span>
 <span class="sd">        input coordinates to function</span>
 <span class="sd">    support : tuple of length 1, 2, or 3, int, or numpy.ndarray</span>
@@ -997,12 +987,11 @@
 <span class="sd">        Simulations are independent and can be run in parallel to significantly</span>
 <span class="sd">        reduce execution time.</span>
 
-<span class="sd">        * If ``n_jobs = -1``, all available CPU cores will be used.</span>
-<span class="sd">        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),</span>
+<span class="sd">        * If ``n_jobs=-1``, all available CPU cores will be used.</span>
+<span class="sd">        * If ``n_jobs=1``, the execution will be forced to run sequentially (serially),</span>
 <span class="sd">          disabling parallel processing. This is often useful for debugging or</span>
 <span class="sd">          testing purposes.</span>
-<span class="sd">        * If ``n_jobs &gt; 1``, that specific number of cores will be used.</span>
-
+<span class="sd">        * If ``n_jobs&gt;1``, that specific number of cores will be used.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1010,7 +999,8 @@
 <span class="sd">    - support, the exact distance values used to evalute the statistic</span>
 <span class="sd">    - statistic, the values of the statistic at each distance</span>
 <span class="sd">    - pvalue, the percent of simulations that were as extreme as the observed value</span>
-<span class="sd">    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))</span>
+<span class="sd">    - simulations, the distribution of simulated statistics</span>
+<span class="sd">        (shaped (n_simulations, n_support_points))</span>
 <span class="sd">        or None if keep_simulations=False (which is the default)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">_ripley_test</span><span class="p">(</span>
@@ -1056,13 +1046,11 @@
     <span class="n">n_simulations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
     <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Ripley&#39;s K function</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ripley&#39;s K function</span>
 
-<span class="sd">    This function counts the number of pairs of points that are closer than a given distance.</span>
-<span class="sd">    As d increases, K approaches the number of point pairs.</span>
-
-<span class="sd">    When the K function is below simulated values, it suggests that the pattern is dispersed.</span>
+<span class="sd">    This function counts the number of pairs of points that are closer than a given</span>
+<span class="sd">    distance. As d increases, K approaches the number of point pairs. When the K</span>
+<span class="sd">    function is below simulated values, it suggests that the pattern is dispersed.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1092,12 +1080,11 @@
 <span class="sd">        Simulations are independent and can be run in parallel to significantly</span>
 <span class="sd">        reduce execution time.</span>
 
-<span class="sd">        * If ``n_jobs = -1``, all available CPU cores will be used.</span>
-<span class="sd">        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),</span>
+<span class="sd">        * If ``n_jobs=-1``, all available CPU cores will be used.</span>
+<span class="sd">        * If ``n_jobs=1``, the execution will be forced to run sequentially (serially),</span>
 <span class="sd">          disabling parallel processing. This is often useful for debugging or</span>
 <span class="sd">          testing purposes.</span>
-<span class="sd">        * If ``n_jobs &gt; 1``, that specific number of cores will be used.</span>
-
+<span class="sd">        * If ``n_jobs&gt;1``, that specific number of cores will be used.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1105,7 +1092,8 @@
 <span class="sd">    - support, the exact distance values used to evalute the statistic</span>
 <span class="sd">    - statistic, the values of the statistic at each distance</span>
 <span class="sd">    - pvalue, the percent of simulations that were as extreme as the observed value</span>
-<span class="sd">    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))</span>
+<span class="sd">    - simulations, the distribution of simulated statistics</span>
+<span class="sd">        (shaped (n_simulations, n_support_points))</span>
 <span class="sd">        or None if keep_simulations=False (which is the default)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_ripley_test</span><span class="p">(</span>
@@ -1137,14 +1125,12 @@
     <span class="n">n_simulations</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
     <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Ripley&#39;s L function</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ripley&#39;s L function</span>
 
-<span class="sd">    This is a scaled and shifted version of the K function that accounts for the K function&#39;s</span>
-<span class="sd">    increasing expected value as distances increase. This means that the L function, for a</span>
-<span class="sd">    completely random pattern, should be close to zero at all distance values in the support.</span>
-
-<span class="sd">    When the L function is negative, this suggests dispersion.</span>
+<span class="sd">    This is a scaled and shifted version of the K function that accounts for the K</span>
+<span class="sd">    function&#39;s increasing expected value as distances increase. This means that the L</span>
+<span class="sd">    function, for a completely random pattern, should be close to zero at all distance</span>
+<span class="sd">    values in the support. When the L function is negative, this suggests dispersion.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1174,11 +1160,11 @@
 <span class="sd">        Simulations are independent and can be run in parallel to significantly</span>
 <span class="sd">        reduce execution time.</span>
 
-<span class="sd">        * If ``n_jobs = -1``, all available CPU cores will be used.</span>
-<span class="sd">        * If ``n_jobs = 1``, the execution will be forced to run sequentially (serially),</span>
+<span class="sd">        * If ``n_jobs=-1``, all available CPU cores will be used.</span>
+<span class="sd">        * If ``n_jobs=1``, the execution will be forced to run sequentially (serially),</span>
 <span class="sd">          disabling parallel processing. This is often useful for debugging or</span>
 <span class="sd">          testing purposes.</span>
-<span class="sd">        * If ``n_jobs &gt; 1``, that specific number of cores will be used.</span>
+<span class="sd">        * If ``n_jobs&gt;1``, that specific number of cores will be used.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1186,8 +1172,9 @@
 <span class="sd">    - support, the exact distance values used to evalute the statistic</span>
 <span class="sd">    - statistic, the values of the statistic at each distance</span>
 <span class="sd">    - pvalue, the percent of simulations that were as extreme as the observed value</span>
-<span class="sd">    - simulations, the distribution of simulated statistics (shaped (n_simulations, n_support_points))</span>
-<span class="sd">        or None if keep_simulations=False (which is the default)</span>
+<span class="sd">    - simulations, the distribution of simulated statistics</span>
+<span class="sd">        (shaped (n_simulations, n_support_points)) or None if</span>
+<span class="sd">        keep_simulations=False (which is the default)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_ripley_test</span><span class="p">(</span>
         <span class="s2">&quot;L&quot;</span><span class="p">,</span>

@@ -5,13 +5,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Distance-based statistics in pointpats &#8212; pointpats v2.5.5 Manual</title>
+    <title>Distance-based statistics in pointpats &#8212; pointpats v2.6.0 Manual</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css?v=f8dcc4ae" />
     <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
-    <script src="../_static/documentation_options.js?v=644f8b71"></script>
+    <script src="../_static/documentation_options.js?v=ae39cb24"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -44,7 +44,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           pointpats</a>
-        <span class="navbar-text navbar-version pull-left"><b>2.5.5</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>2.6.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -180,11 +180,10 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointPattern</span><span class="p">,</span> <span class="n">random</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">g_test</span><span class="p">,</span> <span class="n">k_test</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointPattern</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">g_test</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">k_test</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">random</span>
 
 <span class="c1"># Make results reproducible</span>
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
@@ -294,7 +293,7 @@ array([0., 0., 1., 1.])
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_ripley_6_0.svg" src="../_images/user-guide_ripley_6_0.svg" />
+<img alt="../_images/user-guide_ripley_5_0.svg" src="../_images/user-guide_ripley_5_0.svg" />
 </div>
 </div>
 </section>
@@ -383,7 +382,7 @@ array([0., 0., 1., 1.])
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_ripley_10_0.svg" src="../_images/user-guide_ripley_10_0.svg" />
+<img alt="../_images/user-guide_ripley_9_0.svg" src="../_images/user-guide_ripley_9_0.svg" />
 </div>
 </div>
 </section>
@@ -429,7 +428,7 @@ array([0., 0., 1., 1.])
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_ripley_12_0.svg" src="../_images/user-guide_ripley_12_0.svg" />
+<img alt="../_images/user-guide_ripley_11_0.svg" src="../_images/user-guide_ripley_11_0.svg" />
 </div>
 </div>
 </section>
@@ -508,7 +507,7 @@ array([0., 0., 1., 1.])
         <span class="mi">1</span><span class="p">,</span>
         <span class="mi">2</span><span class="p">,</span>
         <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-        <span class="n">gridspec_kw</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">width_ratios</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+        <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width_ratios&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)},</span>
     <span class="p">)</span>
 
     <span class="c1"># Left: simulation envelope + observed</span>
@@ -561,7 +560,7 @@ array([0., 0., 1., 1.])
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_ripley_16_0.svg" src="../_images/user-guide_ripley_16_0.svg" />
+<img alt="../_images/user-guide_ripley_15_0.svg" src="../_images/user-guide_ripley_15_0.svg" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -576,7 +575,7 @@ array([0., 0., 1., 1.])
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/user-guide_ripley_17_0.svg" src="../_images/user-guide_ripley_17_0.svg" />
+<img alt="../_images/user-guide_ripley_16_0.svg" src="../_images/user-guide_ripley_16_0.svg" />
 </div>
 </div>
 <p>In these plots, departures of the observed curve outside the simulation envelope indicate scales (distances) where the clustered pattern is unlikely to have arisen under CSR.</p>
