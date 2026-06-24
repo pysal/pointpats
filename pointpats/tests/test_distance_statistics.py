@@ -1,7 +1,11 @@
 import numpy as np
 import pytest
+import shapely
+from scipy import spatial
 from shapely.geometry import box
 
+from pointpats import g
+from pointpats.geometry import max_radius
 from pointpats.random import (
     _pairwise_count_kdtree,
     cluster_normal,
@@ -80,3 +84,144 @@ def test_pairwise_count_kdtree_basic():
     r = 0.75  # should connect all pairs within a 0.75 radius
     count = _pairwise_count_kdtree(points, r)
     assert count == 6  # 4 points, 6 unique pairs
+
+
+# ---------------------------------------------------------------------------
+# Ripley's G function tests
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture
+def coords_and_poly():
+    rng = np.random.default_rng(42)
+    coords = rng.uniform(0, 10, (100, 2))
+    poly = box(0, 0, 10, 10)
+    return coords, poly
+
+
+class TestGStandard:
+    def test_output_shape_consistent(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        bins, fracs = g(coords)
+        assert bins.shape == fracs.shape
+
+    def test_fracs_starts_at_zero(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        _, fracs = g(coords)
+        assert fracs[0] == 0.0
+
+    def test_fracs_ends_at_one(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        _, fracs = g(coords)
+        assert fracs[-1] == pytest.approx(1.0)
+
+    def test_monotone_non_decreasing(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        _, fracs = g(coords)
+        assert np.all(np.diff(fracs) >= 0)
+
+    def test_custom_support_length(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        bins, fracs = g(coords, support=50)
+        assert len(bins) == 50
+        assert len(fracs) == 50
+
+    def test_precomputed_nnd_1d(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        from scipy.spatial import KDTree
+
+        tree = KDTree(coords)
+        dists, _ = tree.query(coords, k=2)
+        nnd = dists[:, 1]
+        bins, fracs = g(coords, distances=nnd)
+        assert fracs[-1] == pytest.approx(1.0)
+
+    def test_invalid_edge_correction_raises(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        with pytest.raises(ValueError, match="edge_correction must be None or 'erosion'"):
+            g(coords, edge_correction="ripley")
+
+
+class TestGErosion:
+    def test_output_shape_consistent(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support, gvals = g(coords, hull=poly, edge_correction="erosion")
+        assert support.shape == gvals.shape
+
+    def test_starts_at_zero(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, gvals = g(coords, hull=poly, edge_correction="erosion")
+        assert gvals[0] == 0.0
+
+    def test_values_bounded_in_unit_interval(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, gvals = g(coords, hull=poly, edge_correction="erosion")
+        assert np.all(gvals >= 0.0)
+        assert np.all(gvals <= 1.0)
+
+    def test_support_clipped_to_erosion_threshold(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support, _ = g(coords, hull=poly, edge_correction="erosion")
+        max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
+        assert support[-1] <= max_r + 1e-12
+
+    def test_support_clipped_when_extended_beyond_threshold(self, coords_and_poly):
+        # Provide a wide support that extends past the erosion threshold; the
+        # returned support should be truncated at max_r.
+        coords, poly = coords_and_poly
+        max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
+        wide_support = np.linspace(0, max_r * 2, 40)
+        eroded_support, _ = g(coords, hull=poly, support=wide_support, edge_correction="erosion")
+        assert eroded_support[-1] <= max_r + 1e-12
+        assert len(eroded_support) < len(wide_support)
+
+    def test_with_shapely_polygon_hull(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support, gvals = g(coords, hull=poly, edge_correction="erosion")
+        assert len(support) > 0
+        assert len(gvals) > 0
+
+    def test_with_bbox_array_hull(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        bbox = np.array([0.0, 0.0, 10.0, 10.0])
+        support, gvals = g(coords, hull=bbox, edge_correction="erosion")
+        assert len(support) > 0
+        assert np.all(gvals >= 0.0)
+
+    def test_with_convex_hull(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        ch = spatial.ConvexHull(coords)
+        support, gvals = g(coords, hull=ch, edge_correction="erosion")
+        assert len(support) > 0
+        assert np.all(gvals >= 0.0)
+
+    def test_no_explicit_hull_defaults_to_bbox(self, coords_and_poly):
+        # Without hull, _prepare_hull returns a bbox — erosion still runs.
+        coords, _ = coords_and_poly
+        support, gvals = g(coords, edge_correction="erosion")
+        assert len(support) > 0
+        assert gvals[0] == 0.0
+
+    def test_true_alias_matches_erosion_string(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        s1, v1 = g(coords, hull=poly, edge_correction="erosion")
+        s2, v2 = g(coords, hull=poly, edge_correction=True)
+        np.testing.assert_array_equal(s1, s2)
+        np.testing.assert_array_equal(v1, v2)
+
+    def test_guard_semantics_exclude_boundary_points(self):
+        # Place points: one deep inside, one exactly on the boundary.
+        # At a radius larger than the boundary point's distance to the edge,
+        # the boundary point should be excluded from the guard set.
+        interior = np.array([[5.0, 5.0]])  # far from any edge
+        boundary_adj = np.array([[0.05, 5.0]])  # 0.05 from left edge
+        coords = np.vstack([interior, boundary_adj])
+        poly = box(0, 0, 10, 10)
+
+        shapely_pts = shapely.points(coords[:, 0], coords[:, 1])
+        dtb = shapely.distance(shapely_pts, poly.boundary)
+        # At r = 0.1, boundary_adj (dtb ≈ 0.05) is NOT in the guard set.
+        r = 0.1
+        guard = dtb > r
+        assert guard[0]  # interior point is a guard point
+        assert not guard[1]  # boundary-adjacent point is excluded

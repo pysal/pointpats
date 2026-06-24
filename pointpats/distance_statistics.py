@@ -11,6 +11,7 @@ from .geometry import TREE_TYPES
 from .geometry import area as _area
 from .geometry import build_best_tree as _build_best_tree
 from .geometry import k_neighbors as _k_neighbors
+from .geometry import max_radius as _max_radius
 from .geometry import prepare_hull as _prepare_hull
 from .random import poisson
 
@@ -205,6 +206,7 @@ def g(
     support=None,
     distances=None,
     metric="euclidean",
+    hull=None,
     edge_correction=None,
 ):
     """Ripley's G function
@@ -224,18 +226,31 @@ def g(
         distances from every point in the point to another point in `coordinates`
     metric: str or callable
         distance metric to use when building search tree
-    edge_correction: bool or str
-        whether or not to conduct edge correction. Not yet implemented.
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
+        the study area geometry. Required when edge_correction='erosion'.
+    edge_correction: None or 'erosion'
+        edge correction method. When 'erosion', only points whose distance to the
+        study window boundary exceeds r contribute to G(r). The support is
+        automatically clipped to the erosion threshold radius returned by
+        max_radius(..., method='erosion_threshold').
 
     Returns
     -------
-    a tuple containing the support values used to evalute the function
+    a tuple containing the support values used to evaluate the function
     and the values of the function at each distance value in the support.
     """
+    if edge_correction not in (None, "erosion", True):
+        raise ValueError(
+            f"edge_correction must be None or 'erosion'. Got {edge_correction!r}"
+        )
+    use_erosion = edge_correction in ("erosion", True)
 
-    coordinates, support, distances, metric, *_ = _prepare(
-        coordinates, support, distances, metric, None, edge_correction
+    # _prepare raises NotImplementedError for non-None edge_correction;
+    # pass None and handle erosion ourselves after preparation.
+    coordinates, support, distances, metric, hull_prepared, _ = _prepare(
+        coordinates, support, distances, metric, hull, None
     )
+
     if distances is not None:
         if distances.ndim == 2:
             if distances.shape[0] == distances.shape[1] == coordinates.shape[0]:
@@ -273,6 +288,7 @@ def g(
                 " `coordinates` to some other point in coordinates."
                 f" Input matrix was {distances.ndim} dimensional"
             )
+        nnd = distances.squeeze()
     else:
         try:
             tree  # noqa: B018
@@ -280,10 +296,54 @@ def g(
             tree = _build_best_tree(coordinates, metric)
         finally:
             distances, indices = _k_neighbors(tree, coordinates, k=1)
+        nnd = distances.squeeze()
 
-    counts, bins = numpy.histogram(distances.squeeze(), bins=support)
+    if use_erosion:
+        # Convert hull_prepared to a shapely polygon for boundary distance computation.
+        if isinstance(hull_prepared, shapely.Geometry):
+            poly = hull_prepared
+        elif isinstance(hull_prepared, numpy.ndarray):
+            # bbox encoded as [xmin, ymin, xmax, ymax]
+            poly = shapely.box(*hull_prepared)
+        elif isinstance(hull_prepared, spatial.ConvexHull):
+            pts = hull_prepared.points[hull_prepared.vertices]
+            poly = shapely.from_wkt(
+                shapely.to_wkt(shapely.convex_hull(shapely.multipoints(pts)))
+            )
+        else:
+            raise ValueError(
+                "Edge correction with erosion requires a hull that can be converted "
+                "to a shapely Polygon. Provide hull as a shapely Polygon, a bounding "
+                "box array [xmin, ymin, xmax, ymax], or 'convex'/'alpha'."
+            )
+
+        # Clip the support to the erosion threshold radius so that at least
+        # half the points remain as core (guard) points at the maximum r.
+        max_r, _ = _max_radius(poly, points=coordinates, method="erosion_threshold")
+        support = support[support <= max_r]
+        if len(support) == 0:
+            raise ValueError(
+                "No support values remain after clipping to the erosion threshold "
+                f"(max_radius={max_r:.4g}). Provide a support that starts below this value."
+            )
+
+        # Distance from each point to the study window boundary.
+        shapely_pts = shapely.points(coordinates[:, 0], coordinates[:, 1])
+        dist_to_boundary = shapely.distance(shapely_pts, poly.boundary)
+
+        # Erosion estimator: G(r) = #{guard & NND ≤ r} / #{guard}
+        # where guard(r) = {i : dist_to_boundary[i] > r}
+        g_values = numpy.zeros(len(support))
+        for i, r in enumerate(support):
+            guard = dist_to_boundary > r
+            n_guard = guard.sum()
+            if n_guard > 0:
+                g_values[i] = (guard & (nnd <= r)).sum() / n_guard
+
+        return support, g_values
+
+    counts, bins = numpy.histogram(nnd, bins=support)
     fracs = numpy.cumsum(counts) / counts.sum()
-
     return bins, numpy.asarray([0, *fracs])
 
 
