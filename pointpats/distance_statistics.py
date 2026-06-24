@@ -112,6 +112,25 @@ def _prepare(coordinates, support, distances, metric, hull, edge_correction):
     return coordinates, support, distances, metric, hull, edge_correction
 
 
+def _hull_to_poly(hull_prepared):
+    """Convert a prepared hull (bbox array, ConvexHull, or shapely geometry) to a
+    shapely polygon, required for boundary-distance computation in erosion correction."""
+    if isinstance(hull_prepared, shapely.Geometry):
+        return hull_prepared
+    if isinstance(hull_prepared, numpy.ndarray):
+        return shapely.box(*hull_prepared)
+    if isinstance(hull_prepared, spatial.ConvexHull):
+        pts = hull_prepared.points[hull_prepared.vertices]
+        return shapely.from_wkt(
+            shapely.to_wkt(shapely.convex_hull(shapely.multipoints(pts)))
+        )
+    raise ValueError(
+        "Edge correction with erosion requires a hull that can be converted to a "
+        "shapely Polygon. Provide hull as a shapely Polygon, a bounding box array "
+        "[xmin, ymin, xmax, ymax], or use hull='convex' or hull='alpha'."
+    )
+
+
 # ------------------------------------------------------------#
 # Statistical Functions                                       #
 # ------------------------------------------------------------#
@@ -299,23 +318,7 @@ def g(
         nnd = distances.squeeze()
 
     if use_erosion:
-        # Convert hull_prepared to a shapely polygon for boundary distance computation.
-        if isinstance(hull_prepared, shapely.Geometry):
-            poly = hull_prepared
-        elif isinstance(hull_prepared, numpy.ndarray):
-            # bbox encoded as [xmin, ymin, xmax, ymax]
-            poly = shapely.box(*hull_prepared)
-        elif isinstance(hull_prepared, spatial.ConvexHull):
-            pts = hull_prepared.points[hull_prepared.vertices]
-            poly = shapely.from_wkt(
-                shapely.to_wkt(shapely.convex_hull(shapely.multipoints(pts)))
-            )
-        else:
-            raise ValueError(
-                "Edge correction with erosion requires a hull that can be converted "
-                "to a shapely Polygon. Provide hull as a shapely Polygon, a bounding "
-                "box array [xmin, ymin, xmax, ymax], or 'convex'/'alpha'."
-            )
+        poly = _hull_to_poly(hull_prepared)
 
         # Clip the support to the erosion threshold radius so that at least
         # half the points remain as core (guard) points at the maximum r.
@@ -443,6 +446,7 @@ def k(
     support=None,
     distances=None,
     metric="euclidean",
+    hull=None,
     edge_correction=None,
 ):
     """Ripley's K function
@@ -458,26 +462,38 @@ def k(
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
         int, encoding number of equally-spaced intervals
         numpy.ndarray, used directly within numpy.histogram
-    distances: numpy.ndarray, (n, p) or (p,)
-        distances from every point in a random point set of size p
-        to some point in `coordinates`
+    distances: numpy.ndarray, (n, n) or (n*(n-1)/2,)
+        precomputed pairwise distances, either as a condensed upper-triangular
+        vector (pdist format) or a full square matrix
     metric: str or callable
-        distance metric to use when building search tree
-    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon
-        the hull used to construct a random sample pattern, if distances is None
-    edge_correction: bool or str
-        whether or not to conduct edge correction. Not yet implemented.
+        distance metric to use when building the search tree
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
+        the study area geometry, used for intensity estimation and (when
+        edge_correction='erosion') for boundary-distance computation.
+    edge_correction: None or 'erosion'
+        edge correction method. When 'erosion', only guard points (those whose
+        distance to the study window boundary exceeds r) act as focal points in
+        the K estimator at each radius r. The support is automatically clipped
+        to the erosion threshold returned by
+        max_radius(..., method='erosion_threshold').
 
     Returns
     -------
-    a tuple containing the support values used to evalute the function
+    a tuple containing the support values used to evaluate the function
     and the values of the function at each distance value in the support.
     """
-    coordinates, support, distances, metric, hull, edge_correction = _prepare(
-        coordinates, support, distances, metric, None, edge_correction
+    if edge_correction not in (None, "erosion", True):
+        raise ValueError(
+            f"edge_correction must be None or 'erosion'. Got {edge_correction!r}"
+        )
+    use_erosion = edge_correction in ("erosion", True)
+
+    coordinates, support, distances, metric, hull_prepared, _ = _prepare(
+        coordinates, support, distances, metric, hull, None
     )
     n = coordinates.shape[0]
     upper_tri_n = n * (n - 1) * 0.5
+
     if distances is not None:
         if distances.ndim == 1:
             if distances.shape[0] != upper_tri_n:
@@ -499,8 +515,40 @@ def k(
             )
     else:
         upper_tri_distances = spatial.distance.pdist(coordinates, metric=metric)
+
+    if use_erosion:
+        poly = _hull_to_poly(hull_prepared)
+
+        max_r, _ = _max_radius(poly, points=coordinates, method="erosion_threshold")
+        support = support[support <= max_r]
+        if len(support) == 0:
+            raise ValueError(
+                "No support values remain after clipping to the erosion threshold "
+                f"(max_radius={max_r:.4g}). Provide a support that starts below this value."
+            )
+
+        shapely_pts = shapely.points(coordinates[:, 0], coordinates[:, 1])
+        dist_to_boundary = shapely.distance(shapely_pts, poly.boundary)
+
+        # Reconstruct full n×n distance matrix; set diagonal to inf to skip self-pairs.
+        full_dists = spatial.distance.squareform(upper_tri_distances).astype(float)
+        numpy.fill_diagonal(full_dists, numpy.inf)
+
+        area = _area(poly)
+
+        # Erosion estimator: K(r) = (A / (|guard(r)| × n)) × Σ_{i∈guard} #{j: d_ij < r}
+        # where guard(r) = {i : dist_to_boundary[i] > r}
+        k_values = numpy.zeros(len(support))
+        for i, r in enumerate(support):
+            guard = dist_to_boundary > r
+            n_guard = guard.sum()
+            if n_guard > 0:
+                k_values[i] = (area / (n_guard * n)) * (full_dists[guard, :] < r).sum()
+
+        return support, k_values
+
     n_pairs_less_than_d = (upper_tri_distances < support.reshape(-1, 1)).sum(axis=1)
-    intensity = n / _area(hull)
+    intensity = n / _area(hull_prepared)
     k_estimate = ((n_pairs_less_than_d * 2) / n) / intensity
     return support, k_estimate
 
@@ -511,6 +559,7 @@ def l(  # noqa: E743 - Ambiguous function name
     permutations=9999,  # noqa: ARG001  -- Unused function argument
     distances=None,
     metric="euclidean",
+    hull=None,
     edge_correction=None,
     linearized=False,
 ):
@@ -534,10 +583,10 @@ def l(  # noqa: E743 - Ambiguous function name
         to some point in `coordinates`
     metric: str or callable
         distance metric to use when building search tree
-    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon
-        the hull used to construct a random sample pattern, if distances is None
-    edge_correction: bool or str
-        whether or not to conduct edge correction. Not yet implemented.
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
+        the study area geometry. Required when edge_correction='erosion'.
+    edge_correction: None or 'erosion'
+        edge correction method passed through to the underlying K function.
     linearized : bool
         whether or not to subtract l from its expected value (support) at each
         distance bin. This centers the l function on zero for all distances.
@@ -545,7 +594,7 @@ def l(  # noqa: E743 - Ambiguous function name
 
     Returns
     -------
-    a tuple containing the support values used to evalute the function
+    a tuple containing the support values used to evaluate the function
     and the values of the function at each distance value in the support.
     """
 
@@ -554,6 +603,7 @@ def l(  # noqa: E743 - Ambiguous function name
         support=support,
         distances=distances,
         metric=metric,
+        hull=hull,
         edge_correction=edge_correction,
     )
 
@@ -619,7 +669,7 @@ def _ripley_test(
     hull = _prepare_hull(coordinates, hull)
     empty_space_points = None
 
-    if calltype in ("F", "J"):  # these require simulations
+    if calltype in ("F", "J", "K", "L"):
         core_kwargs["hull"] = hull
         # amortize to avoid doing this every time
         empty_space_points = poisson(coordinates, size=(1000, 1))
