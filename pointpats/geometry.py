@@ -5,11 +5,23 @@ import warnings
 from functools import singledispatch
 
 import numpy
+import geopandas as gpd
 from libpysal.cg import alpha_shape_auto
 from libpysal.cg.kdtree import Arc_KDTree
 from scipy import spatial
+import scipy.spatial.distance as distance
 
-__all__ = ["area", "bbox", "contains", "k_neighbors", "build_best_tree", "prepare_hull"]
+from shapely.geometry import Polygon
+
+__all__ = [
+    "area",
+    "bbox",
+    "contains",
+    "k_neighbors",
+    "build_best_tree",
+    "prepare_hull",
+    "max_radius",
+]
 
 # ------------------------------------------------------------#
 # Utilities and dispatching                                   #
@@ -416,3 +428,107 @@ def prepare_hull(coordinates, hull=None):
         f" (None, 'bbox', 'convex', 'alpha', 'α', "
         f" shapely.geometry.Polygon, shapely.Geometry)"
     )
+
+
+def max_radius(study_window, points=None, method="bbox", pct=0.25, min_core_nodes=0.5):
+    """
+    Calculates the maximum search radius for point to point distances, with specialized
+    handling for concave windows, point distance distributions, or border erosion constraints.
+
+    Parameters:
+    -----------
+    study_window : geopandas.GeoDataFrame, shapely.geometry.Polygon, or numpy.ndarray
+        The spatial geometry representing the study area.
+    points : numpy.ndarray, optional
+        An (N, 2) array of point coordinates. Required for 'distance_pct' and 'erosion_threshold'.
+    method : str, default 'bbox'
+        Options:
+          'bbox'              : Half the length of the shortest side of the bounding box.
+          'distance_pct'      : A specified percentile of the pairwise distance distribution.
+          'erosion_threshold' : Max radius that guarantees a minimum number of core points.
+    pct : float, default 0.25
+        The percentile (0.0 to 1.0) used when method='distance_pct'.
+    min_core_nodes : int or float, default 0.5
+        Used when method='erosion_threshold'. If a float between 0.0 and 1.0, it is treated
+        as a percentage of the total points. If an integer > 1, it is the absolute minimum
+        number of target core points required.
+
+    Returns:
+    --------
+    float
+        The calculated maximum search radius.
+    eroded_area : geopandas.GeoSeries, optional
+        Only returned alongside the radius as a tuple `(radius, eroded_area)`
+        if `method="erosion_threshold"`. Contains the eroded inner geometry mask.
+    """
+    # --- Standardize the Window Geometry to a Shapely Base Geometry ---
+    if isinstance(study_window, gpd.GeoDataFrame):
+        polygon_geometry = study_window.union_all()
+        minx, miny, maxx, maxy = study_window.total_bounds
+    elif isinstance(study_window, shapely.geometry.base.BaseGeometry):
+        polygon_geometry = study_window
+        minx, miny, maxx, maxy = study_window.bounds
+    elif isinstance(study_window, numpy.ndarray):
+        if study_window.ndim != 2 or study_window.shape[1] != 2:
+            raise ValueError(
+                "NumPy array must be shape (N, 2) for polygon coordinates."
+            )
+        polygon_geometry = Polygon(study_window)
+        minx, miny, maxx, maxy = polygon_geometry.bounds
+    else:
+        raise TypeError("Invalid study_window type.")
+
+    # --- Method Branches ---
+    if method == "bbox":
+        return min(maxx - minx, maxy - miny) / 2.0
+
+    elif method == "distance_pct":
+        if points is None:
+            raise ValueError("The 'points' array is required for 'distance_pct'.")
+        if len(points) > 10000:
+            idx = numpy.random.choice(len(points), size=5000, replace=False)
+            pairwise_dists = distance.pdist(points[idx])
+        else:
+            pairwise_dists = distance.pdist(points)
+        return float(numpy.percentile(pairwise_dists, pct * 100))
+
+    elif method == "erosion_threshold":
+        if points is None:
+            raise ValueError("The 'points' array is required for 'erosion_threshold'.")
+
+        n_points = len(points)
+
+        # Normalize the threshold to an absolute count of points
+        if isinstance(min_core_nodes, float) and 0.0 < min_core_nodes <= 1.0:
+            target_count = int(numpy.ceil(min_core_nodes * n_points))
+        elif isinstance(min_core_nodes, (int, numpy.integer)) and min_core_nodes > 1:
+            target_count = min_core_nodes
+        else:
+            raise ValueError(
+                "min_core_nodes must be a percentage (float 0-1) or an absolute count (int > 1)."
+            )
+
+        if target_count > n_points:
+            raise ValueError(
+                "Requested minimum core nodes exceeds the total number of points."
+            )
+
+        # Vectorized optimization: Compute the shortest distance from EVERY point to the border
+        shapely_points = shapely.points(points[:, 0], points[:, 1])
+        distances_to_border = shapely.distance(
+            shapely_points, polygon_geometry.boundary
+        )
+
+        # Sort the distances in descending order
+        # The largest distances represent points deepest inside the core
+        sorted_distances = numpy.sort(distances_to_border)[::-1]
+
+        # To keep exactly 'target_count' points in the core, the maximum allowable
+        # erosion buffer radius is the distance value at that specific rank index.
+        max_r_allowed = sorted_distances[target_count - 1]
+        eroded_area = polygon_geometry.buffer(-max_r_allowed)
+
+        return float(max_r_allowed), gpd.GeoSeries([eroded_area])
+
+    else:
+        raise ValueError("Invalid method specified.")
