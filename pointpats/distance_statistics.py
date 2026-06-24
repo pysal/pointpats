@@ -494,6 +494,8 @@ def k(
     n = coordinates.shape[0]
     upper_tri_n = n * (n - 1) * 0.5
 
+    # Validate and normalise user-supplied distances (shape check only; no copy).
+    upper_tri_distances = None
     if distances is not None:
         if distances.ndim == 1:
             if distances.shape[0] != upper_tri_n:
@@ -513,8 +515,6 @@ def k(
                 f"of the input matrix is {distances.shape}, but required shape "
                 f"is ({upper_tri_n},) or ({n},{n})"
             )
-    else:
-        upper_tri_distances = spatial.distance.pdist(coordinates, metric=metric)
 
     if use_erosion:
         poly = _hull_to_poly(hull_prepared)
@@ -529,24 +529,49 @@ def k(
 
         shapely_pts = shapely.points(coordinates[:, 0], coordinates[:, 1])
         dist_to_boundary = shapely.distance(shapely_pts, poly.boundary)
-
-        # Reconstruct full n×n distance matrix; set diagonal to inf to skip self-pairs.
-        full_dists = spatial.distance.squareform(upper_tri_distances).astype(float)
-        numpy.fill_diagonal(full_dists, numpy.inf)
-
         area = _area(poly)
 
         # Erosion estimator: K(r) = (A / (|guard(r)| × n)) × Σ_{i∈guard} #{j: d_ij < r}
         # where guard(r) = {i : dist_to_boundary[i] > r}
         k_values = numpy.zeros(len(support))
-        for i, r in enumerate(support):
-            guard = dist_to_boundary > r
-            n_guard = guard.sum()
-            if n_guard > 0:
-                k_values[i] = (area / (n_guard * n)) * (full_dists[guard, :] < r).sum()
+
+        if upper_tri_distances is not None:
+            # User supplied precomputed distances: work from the condensed vector
+            # without expanding it to a full n×n matrix.  Each undirected pair
+            # (i, j) stored at condensed index k contributes once per guard
+            # endpoint: guard[i] means i is a focal point counting j as a
+            # neighbour, and guard[j] means j is a focal point counting i.
+            rows, cols = numpy.triu_indices(n, k=1)
+            for i, r in enumerate(support):
+                guard = dist_to_boundary > r
+                n_guard = int(guard.sum())
+                if n_guard > 0:
+                    within_r = upper_tri_distances < r
+                    weight = guard[rows].astype(numpy.int8) + guard[cols].astype(numpy.int8)
+                    k_values[i] = (area / (n_guard * n)) * int((weight * within_r).sum())
+        else:
+            # No precomputed distances: query a radius tree so we never build
+            # the O(n²) condensed vector at all.
+            tree = _build_best_tree(coordinates, metric)
+            for i, r in enumerate(support):
+                guard = dist_to_boundary > r
+                n_guard = int(guard.sum())
+                if n_guard > 0:
+                    guard_coords = coordinates[guard]
+                    if hasattr(tree, "query_radius"):  # sklearn KDTree / BallTree
+                        counts = tree.query_radius(guard_coords, r, count_only=True)
+                    else:  # scipy KDTree / Arc_KDTree
+                        counts = numpy.asarray(
+                            tree.query_ball_point(guard_coords, r, return_length=True)
+                        )
+                    # Each guard point matches itself; subtract to get neighbours only.
+                    k_values[i] = (area / (n_guard * n)) * (int(counts.sum()) - n_guard)
 
         return support, k_values
 
+    # Non-erosion path: condensed pairwise distances.
+    if upper_tri_distances is None:
+        upper_tri_distances = spatial.distance.pdist(coordinates, metric=metric)
     n_pairs_less_than_d = (upper_tri_distances < support.reshape(-1, 1)).sum(axis=1)
     intensity = n / _area(hull_prepared)
     k_estimate = ((n_pairs_less_than_d * 2) / n) / intensity
