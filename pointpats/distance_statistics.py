@@ -32,7 +32,7 @@ __all__ = [
 
 # Sentinel used as the default for edge_correction in k() and l().
 # Distinguishes "caller passed None (uncorrected)" from "caller passed nothing
-# (compute all three spatstat-default corrections)".
+# (compute all three default corrections)".
 _NOTSET = object()
 
 KEstResult = namedtuple(
@@ -143,69 +143,6 @@ def _hull_to_poly(hull_prepared):
         "shapely Polygon. Provide hull as a shapely Polygon, a bounding box array "
         "[xmin, ymin, xmax, ymax], or use hull='convex' or hull='alpha'."
     )
-
-
-def _ripley_circle_weights(coordinates, poly, support, n_circle=36):
-    """Per-point isotropic circle-sampling weights for Ripley's K correction.
-
-    For each point i and radius r, w_i(r) = n_circle / n_inside, where n_inside
-    is the count of equally-spaced circle points (radius r, centred at i) that
-    fall inside *poly*.  Points whose full circle is inside the window get w=1.
-    """
-    n = len(coordinates)
-    shapely_pts = shapely.points(coordinates[:, 0], coordinates[:, 1])
-    dist_to_boundary = shapely.distance(shapely_pts, poly.boundary)
-
-    angles = numpy.linspace(0, 2 * numpy.pi, n_circle, endpoint=False)
-    cos_a = numpy.cos(angles)
-    sin_a = numpy.sin(angles)
-
-    weights = numpy.ones((n, len(support)))
-
-    for j, r in enumerate(support):
-        if r == 0:
-            continue
-        near = dist_to_boundary <= r
-        if not near.any():
-            continue
-        idx = numpy.where(near)[0]
-        # Circle sample points: shapes broadcast to (len(idx), n_circle)
-        cx = coordinates[idx, 0:1] + r * cos_a
-        cy = coordinates[idx, 1:2] + r * sin_a
-        circle_pts = shapely.points(cx.ravel(), cy.ravel())
-        inside = shapely.within(circle_pts, poly).reshape(len(idx), n_circle)
-        n_inside = inside.sum(axis=1)
-        # n_circle / n_inside; fall back to n_circle if no points inside (degenerate)
-        weights[idx, j] = numpy.where(n_inside > 0, n_circle / n_inside, float(n_circle))
-
-    return weights
-
-
-def _ripley_analytic_weights(coordinates, poly, support):
-    """Per-point analytic area-intersection weights for Ripley's K correction.
-
-    For each point i and radius r, w_i(r) = π r² / area(circle(i,r) ∩ poly).
-    Points whose full circle lies inside the window get w=1.
-    """
-    n = len(coordinates)
-    shapely_pts = shapely.points(coordinates[:, 0], coordinates[:, 1])
-    dist_to_boundary = shapely.distance(shapely_pts, poly.boundary)
-
-    weights = numpy.ones((n, len(support)))
-
-    for j, r in enumerate(support):
-        if r == 0:
-            continue
-        near = dist_to_boundary <= r
-        if not near.any():
-            continue
-        idx = numpy.where(near)[0]
-        circle_area = numpy.pi * r * r
-        circles = shapely.buffer(shapely_pts[idx], r)
-        inter_areas = shapely.area(shapely.intersection(circles, poly))
-        weights[idx, j] = numpy.where(inter_areas > 0, circle_area / inter_areas, circle_area)
-
-    return weights
 
 
 def _isotropic_weights(coordinates, poly, support):
@@ -591,7 +528,6 @@ def k(
     metric="euclidean",
     hull=None,
     edge_correction=_NOTSET,
-    n_circle=36,
 ):
     """Ripley's K function
 
@@ -614,8 +550,9 @@ def k(
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
         the study area geometry, used for intensity estimation and (when
         edge_correction is not None) for boundary-distance computation.
-    edge_correction: None, 'border', 'isotropic', 'translate', 'erosion', 'ripley', or 'analytic'
-        edge correction method. The three spatstat-default methods are:
+    edge_correction: None, 'border', 'isotropic', 'translate', or 'erosion'
+        edge correction method. When omitted (default), all three spatstat-default
+        corrections are computed and returned as a KEstResult named tuple.
         'border': reduced-sample (border) correction. Only points whose distance
             to the study window boundary exceeds r contribute as focal points.
             Alias for 'erosion'; the support is clipped to the erosion threshold.
@@ -627,17 +564,7 @@ def k(
             (i, j) with d_ij ≤ r, the weight is area(W)² / area(W ∩ (W + h_ij))
             where h_ij = x_j − x_i. Pairs whose translation keeps W fully inside
             get weight area(W) (reducing to the uncorrected estimator).
-        Additional methods:
         'erosion': identical to 'border' (guard-point / eroded-window estimator).
-        'ripley': approximate isotropic correction using n_circle equally-spaced
-            test points sampled on the circle circumference (arc fraction estimated
-            by counting points inside the window). Less exact than 'isotropic'.
-        'analytic': area-ratio correction. w_i(r) = πr² / area(circle ∩ window).
-            Uses the area fraction rather than the arc fraction.
-    n_circle : int (default 36)
-        Number of points to place on the test circle for the 'ripley' edge
-        correction. Common choices are 36 (10° spacing) and 72 (5° spacing).
-        Ignored when edge_correction is not 'ripley'.
 
     Returns
     -------
@@ -645,43 +572,55 @@ def k(
     and the values of the function at each distance value in the support.
     """
     if edge_correction is _NOTSET:
-        # Default: compute all three spatstat-default corrections and return a named tuple.
-        coordinates_arr, support_arr, distances_out, metric, hull_prepared, _ = _prepare(
-            coordinates, support, distances, metric, hull, None
+        # Default: compute all three default corrections and return a named tuple.
+        coordinates_arr, support_arr, distances_out, metric, hull_prepared, _ = (
+            _prepare(coordinates, support, distances, metric, hull, None)
         )
         poly = _hull_to_poly(hull_prepared)
-        theo = numpy.pi * support_arr ** 2
+        theo = numpy.pi * support_arr**2
         max_r, _ = _max_radius(poly, points=coordinates_arr, method="erosion_threshold")
         border_mask = support_arr <= max_r
         border_full = numpy.full(len(support_arr), numpy.nan)
         if border_mask.any():
             _, border_vals = k(
-                coordinates_arr, support=support_arr[border_mask],
-                distances=distances_out, metric=metric, hull=poly,
-                edge_correction="border", n_circle=n_circle,
+                coordinates_arr,
+                support=support_arr[border_mask],
+                distances=distances_out,
+                metric=metric,
+                hull=poly,
+                edge_correction="border",
             )
             border_full[border_mask] = border_vals
         _, k_iso = k(
-            coordinates_arr, support=support_arr, distances=distances_out,
-            metric=metric, hull=poly, edge_correction="isotropic", n_circle=n_circle,
+            coordinates_arr,
+            support=support_arr,
+            distances=distances_out,
+            metric=metric,
+            hull=poly,
+            edge_correction="isotropic",
         )
         _, k_tra = k(
-            coordinates_arr, support=support_arr, distances=distances_out,
-            metric=metric, hull=poly, edge_correction="translate", n_circle=n_circle,
+            coordinates_arr,
+            support=support_arr,
+            distances=distances_out,
+            metric=metric,
+            hull=poly,
+            edge_correction="translate",
         )
         return KEstResult(
-            support=support_arr, theo=theo,
-            border=border_full, isotropic=k_iso, translate=k_tra,
+            support=support_arr,
+            theo=theo,
+            border=border_full,
+            isotropic=k_iso,
+            translate=k_tra,
         )
 
-    _valid = (None, "border", "isotropic", "translate", "erosion", "ripley", "analytic", True)
+    _valid = (None, "border", "isotropic", "translate", "erosion", True)
     if edge_correction not in _valid:
         raise ValueError(
             f"edge_correction must be one of {_valid[:-1]}. Got {edge_correction!r}"
         )
     use_erosion = edge_correction in ("erosion", "border", True)
-    use_ripley = edge_correction == "ripley"
-    use_analytic = edge_correction == "analytic"
     use_isotropic = edge_correction == "isotropic"
     use_translate = edge_correction == "translate"
 
@@ -744,8 +683,12 @@ def k(
                 n_guard = int(guard.sum())
                 if n_guard > 0:
                     within_r = upper_tri_distances < r
-                    weight = guard[rows].astype(numpy.int8) + guard[cols].astype(numpy.int8)
-                    k_values[i] = (area / (n_guard * n)) * int((weight * within_r).sum())
+                    weight = guard[rows].astype(numpy.int8) + guard[cols].astype(
+                        numpy.int8
+                    )
+                    k_values[i] = (area / (n_guard * n)) * int(
+                        (weight * within_r).sum()
+                    )
         else:
             # No precomputed distances: query a radius tree so we never build
             # the O(n²) condensed vector at all.
@@ -766,15 +709,10 @@ def k(
 
         return support, k_values
 
-    if use_ripley or use_analytic or use_isotropic:
+    if use_isotropic:
         poly = _hull_to_poly(hull_prepared)
         area = _area(poly)
-        if use_ripley:
-            weights = _ripley_circle_weights(coordinates, poly, support, n_circle=n_circle)
-        elif use_analytic:
-            weights = _ripley_analytic_weights(coordinates, poly, support)
-        else:
-            weights = _isotropic_weights(coordinates, poly, support)
+        weights = _isotropic_weights(coordinates, poly, support)
 
         k_values = numpy.zeros(len(support))
 
@@ -796,9 +734,12 @@ def k(
                 if hasattr(tree, "query_radius"):  # sklearn KDTree / BallTree
                     count_i = tree.query_radius(coordinates, r, count_only=True) - 1
                 else:  # scipy KDTree
-                    count_i = numpy.array(
-                        tree.query_ball_point(coordinates, r, return_length=True)
-                    ) - 1
+                    count_i = (
+                        numpy.array(
+                            tree.query_ball_point(coordinates, r, return_length=True)
+                        )
+                        - 1
+                    )
                 k_values[j_idx] = (area / (n * n)) * (weights[:, j_idx] * count_i).sum()
 
         return support, k_values
@@ -833,7 +774,6 @@ def l(  # noqa: E743 - Ambiguous function name
     hull=None,
     edge_correction=_NOTSET,
     linearized=False,
-    n_circle=36,
 ):
     """Ripley's L function
 
@@ -857,15 +797,12 @@ def l(  # noqa: E743 - Ambiguous function name
         distance metric to use when building search tree
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
         the study area geometry. Required when edge_correction is not None.
-    edge_correction: None, 'border', 'isotropic', 'translate', 'erosion', 'ripley', or 'analytic'
+    edge_correction: None, 'border', 'isotropic', 'translate', or 'erosion'
         edge correction method passed through to the underlying K function.
     linearized : bool
         whether or not to subtract l from its expected value (support) at each
         distance bin. This centers the l function on zero for all distances.
         Proposed by Besag (1977)
-    n_circle : int (default 36)
-        Number of circle test points for the 'ripley' edge correction;
-        passed through to k(). Common choices are 36 and 72.
 
     Returns
     -------
@@ -875,8 +812,11 @@ def l(  # noqa: E743 - Ambiguous function name
 
     if edge_correction is _NOTSET:
         k_result = k(
-            coordinates, support=support, distances=distances,
-            metric=metric, hull=hull, n_circle=n_circle,
+            coordinates,
+            support=support,
+            distances=distances,
+            metric=metric,
+            hull=hull,
         )
         # k_result: KEstResult(support, theo, border, isotropic, translate)
         s = k_result.support
@@ -899,7 +839,6 @@ def l(  # noqa: E743 - Ambiguous function name
         metric=metric,
         hull=hull,
         edge_correction=edge_correction,
-        n_circle=n_circle,
     )
 
     _l = numpy.sqrt(k_estimate / numpy.pi)
