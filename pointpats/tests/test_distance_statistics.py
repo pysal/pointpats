@@ -5,6 +5,7 @@ from scipy import spatial
 from shapely.geometry import box
 
 from pointpats import g, k, l
+from pointpats.distance_statistics import KEstResult, LEstResult
 from pointpats.geometry import max_radius
 from pointpats.random import (
     _pairwise_count_kdtree,
@@ -233,46 +234,47 @@ class TestGErosion:
 
 
 class TestKStandard:
+    """Tests for the uncorrected estimator (edge_correction=None)."""
+
     def test_output_is_tuple_of_two_arrays(self, coords_and_poly):
         coords, _ = coords_and_poly
-        support, kvals = k(coords)
+        support, kvals = k(coords, edge_correction=None)
         assert isinstance(support, np.ndarray)
         assert isinstance(kvals, np.ndarray)
         assert support.shape == kvals.shape
 
     def test_starts_at_zero(self, coords_and_poly):
         coords, _ = coords_and_poly
-        support, kvals = k(coords)
+        support, kvals = k(coords, edge_correction=None)
         assert kvals[0] == pytest.approx(0.0)
 
     def test_non_decreasing(self, coords_and_poly):
         coords, _ = coords_and_poly
-        _, kvals = k(coords)
+        _, kvals = k(coords, edge_correction=None)
         assert np.all(np.diff(kvals) >= 0)
 
     def test_custom_support_length(self, coords_and_poly):
         coords, _ = coords_and_poly
-        support, kvals = k(coords, support=30)
+        support, kvals = k(coords, support=30, edge_correction=None)
         assert len(support) == 30
 
     def test_precomputed_square_distances(self, coords_and_poly):
         coords, _ = coords_and_poly
         full_dists = spatial.distance.cdist(coords, coords)
-        support, kvals = k(coords, distances=full_dists)
-        _, kvals_ref = k(coords)
-        # same support values → same K estimates
+        support, kvals = k(coords, distances=full_dists, edge_correction=None)
+        _, kvals_ref = k(coords, edge_correction=None)
         np.testing.assert_allclose(kvals, kvals_ref)
 
     def test_precomputed_condensed_distances(self, coords_and_poly):
         coords, _ = coords_and_poly
         pdist = spatial.distance.pdist(coords)
-        support, kvals = k(coords, distances=pdist)
-        _, kvals_ref = k(coords)
+        support, kvals = k(coords, distances=pdist, edge_correction=None)
+        _, kvals_ref = k(coords, edge_correction=None)
         np.testing.assert_allclose(kvals, kvals_ref)
 
     def test_invalid_edge_correction_raises(self, coords_and_poly):
         coords, _ = coords_and_poly
-        with pytest.raises(ValueError, match="edge_correction must be None"):
+        with pytest.raises(ValueError, match="edge_correction must be one of"):
             k(coords, edge_correction="invalid")
 
 
@@ -414,7 +416,7 @@ class TestKRipley:
         # Weights >= 1, so K_ripley >= K_uncorrected at every support point.
         coords, poly = coords_and_poly
         support = np.linspace(0, 4, 10)
-        _, k_raw = k(coords, hull=poly, support=support)
+        _, k_raw = k(coords, hull=poly, support=support, edge_correction=None)
         _, k_rip = k(coords, hull=poly, support=support, edge_correction="ripley")
         assert np.all(k_rip >= k_raw - 1e-10)
 
@@ -423,7 +425,7 @@ class TestKRipley:
         coords = np.array([[5.0, 5.0], [5.5, 5.0], [5.0, 5.5]])
         poly = shapely.box(0, 0, 10, 10)
         support = np.array([0.0, 0.6, 1.0])
-        _, k_raw = k(coords, hull=poly, support=support)
+        _, k_raw = k(coords, hull=poly, support=support, edge_correction=None)
         _, k_rip = k(coords, hull=poly, support=support, edge_correction="ripley")
         np.testing.assert_allclose(k_raw, k_rip)
 
@@ -519,7 +521,7 @@ class TestKAnalytic:
         # area(circle ∩ window) ≤ πr², so w_i ≥ 1 and K_analytic ≥ K_uncorrected.
         coords, poly = coords_and_poly
         support = np.linspace(0, 4, 10)
-        _, k_raw = k(coords, hull=poly, support=support)
+        _, k_raw = k(coords, hull=poly, support=support, edge_correction=None)
         _, k_ana = k(coords, hull=poly, support=support, edge_correction="analytic")
         assert np.all(k_ana >= k_raw - 1e-10)
 
@@ -528,7 +530,7 @@ class TestKAnalytic:
         coords = np.array([[5.0, 5.0], [5.5, 5.0], [5.0, 5.5]])
         poly = shapely.box(0, 0, 10, 10)
         support = np.array([0.0, 0.6, 1.0])
-        _, k_raw = k(coords, hull=poly, support=support)
+        _, k_raw = k(coords, hull=poly, support=support, edge_correction=None)
         _, k_ana = k(coords, hull=poly, support=support, edge_correction="analytic")
         np.testing.assert_allclose(k_raw, k_ana)
 
@@ -594,3 +596,313 @@ class TestLAnalytic:
         poly = shapely.box(0, 0, 20, 20)
         support, lvals = l(coords, hull=poly, edge_correction="analytic", linearized=True)
         assert np.abs(lvals).max() < 1.5
+
+
+# ---------------------------------------------------------------------------
+# 'border' correction (alias for 'erosion')
+# ---------------------------------------------------------------------------
+
+
+class TestKBorder:
+    def test_border_equals_erosion(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        from pointpats.geometry import max_radius
+
+        max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
+        support = np.linspace(0, max_r * 0.9, 8)
+        _, k_bor = k(coords, hull=poly, support=support, edge_correction="border")
+        _, k_ero = k(coords, hull=poly, support=support, edge_correction="erosion")
+        np.testing.assert_array_equal(k_bor, k_ero)
+
+    def test_output_shape_consistent(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support, kvals = k(coords, hull=poly, edge_correction="border")
+        assert support.shape == kvals.shape
+
+    def test_values_non_negative(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, kvals = k(coords, hull=poly, edge_correction="border")
+        assert np.all(kvals >= 0.0)
+
+
+# ---------------------------------------------------------------------------
+# 'isotropic' correction (exact arc-fraction)
+# ---------------------------------------------------------------------------
+
+
+class TestKIsotropic:
+    def test_output_shape_consistent(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support, kvals = k(coords, hull=poly, edge_correction="isotropic")
+        assert support.shape == kvals.shape
+
+    def test_starts_at_zero(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, kvals = k(coords, hull=poly, edge_correction="isotropic")
+        assert kvals[0] == pytest.approx(0.0)
+
+    def test_values_non_negative(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, kvals = k(coords, hull=poly, edge_correction="isotropic")
+        assert np.all(kvals >= 0.0)
+
+    def test_non_decreasing(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, kvals = k(coords, hull=poly, edge_correction="isotropic")
+        assert np.all(np.diff(kvals) >= 0)
+
+    def test_corrected_geq_uncorrected(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 4, 10)
+        _, k_raw = k(coords, hull=poly, support=support, edge_correction=None)
+        _, k_iso = k(coords, hull=poly, support=support, edge_correction="isotropic")
+        assert np.all(k_iso >= k_raw - 1e-10)
+
+    def test_close_to_ripley_high_n_circle(self, coords_and_poly):
+        # Exact arc fraction should match approximate (n_circle=360) very closely.
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 4, 10)
+        _, k_iso = k(coords, hull=poly, support=support, edge_correction="isotropic")
+        _, k_rip = k(coords, hull=poly, support=support, edge_correction="ripley", n_circle=360)
+        np.testing.assert_allclose(k_iso, k_rip, rtol=0.01)
+
+    def test_interior_points_match_uncorrected(self):
+        coords = np.array([[5.0, 5.0], [5.5, 5.0], [5.0, 5.5]])
+        poly = shapely.box(0, 0, 10, 10)
+        support = np.array([0.0, 0.6, 1.0])
+        _, k_raw = k(coords, hull=poly, support=support, edge_correction=None)
+        _, k_iso = k(coords, hull=poly, support=support, edge_correction="isotropic")
+        np.testing.assert_allclose(k_raw, k_iso)
+
+    def test_deterministic(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 4, 10)
+        _, k1 = k(coords, hull=poly, support=support, edge_correction="isotropic")
+        _, k2 = k(coords, hull=poly, support=support, edge_correction="isotropic")
+        np.testing.assert_array_equal(k1, k2)
+
+    def test_precomputed_distances_match_tree(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        pdist = spatial.distance.pdist(coords)
+        support = np.linspace(0, 4, 10)
+        _, k_tree = k(coords, hull=poly, support=support, edge_correction="isotropic")
+        _, k_pd = k(
+            coords, hull=poly, support=support, distances=pdist, edge_correction="isotropic"
+        )
+        np.testing.assert_allclose(k_tree, k_pd, rtol=1e-10)
+
+    def test_csr_k_approx_pi_r_squared(self):
+        rng = np.random.default_rng(0)
+        coords = rng.uniform(0, 20, (300, 2))
+        poly = shapely.box(0, 0, 20, 20)
+        support, kvals = k(coords, hull=poly, support=15, edge_correction="isotropic")
+        expected = np.pi * support**2
+        mid = len(support) // 2
+        np.testing.assert_allclose(kvals[1:mid], expected[1:mid], rtol=0.30)
+
+    def test_l_is_sqrt_k_over_pi(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 4, 10)
+        _, kvals = k(coords, hull=poly, support=support, edge_correction="isotropic")
+        _, lvals = l(coords, hull=poly, support=support, edge_correction="isotropic")
+        np.testing.assert_allclose(lvals, np.sqrt(kvals / np.pi))
+
+
+# ---------------------------------------------------------------------------
+# 'translate' correction (translation / Ohser-Stoyan)
+# ---------------------------------------------------------------------------
+
+
+class TestKTranslate:
+    def test_output_shape_consistent(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support, kvals = k(coords, hull=poly, edge_correction="translate")
+        assert support.shape == kvals.shape
+
+    def test_starts_at_zero(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, kvals = k(coords, hull=poly, edge_correction="translate")
+        assert kvals[0] == pytest.approx(0.0)
+
+    def test_values_non_negative(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, kvals = k(coords, hull=poly, edge_correction="translate")
+        assert np.all(kvals >= 0.0)
+
+    def test_non_decreasing(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, kvals = k(coords, hull=poly, edge_correction="translate")
+        assert np.all(np.diff(kvals) >= 0)
+
+    def test_corrected_geq_uncorrected(self, coords_and_poly):
+        # Overlap area ≤ window area, so w_ij ≥ area, and K_translate ≥ K_uncorrected.
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 4, 10)
+        _, k_raw = k(coords, hull=poly, support=support, edge_correction=None)
+        _, k_tra = k(coords, hull=poly, support=support, edge_correction="translate")
+        assert np.all(k_tra >= k_raw - 1e-10)
+
+    def test_precomputed_distances_match_computed(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        pdist = spatial.distance.pdist(coords)
+        support = np.linspace(0, 4, 10)
+        _, k_tree = k(coords, hull=poly, support=support, edge_correction="translate")
+        _, k_pd = k(
+            coords, hull=poly, support=support, distances=pdist, edge_correction="translate"
+        )
+        np.testing.assert_allclose(k_tree, k_pd, rtol=1e-10)
+
+    def test_with_bbox_array_hull(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        bbox = np.array([0.0, 0.0, 10.0, 10.0])
+        _, kvals = k(coords, hull=bbox, edge_correction="translate")
+        assert np.all(kvals >= 0.0)
+
+    def test_csr_k_approx_pi_r_squared(self):
+        rng = np.random.default_rng(0)
+        coords = rng.uniform(0, 20, (300, 2))
+        poly = shapely.box(0, 0, 20, 20)
+        support, kvals = k(coords, hull=poly, support=15, edge_correction="translate")
+        expected = np.pi * support**2
+        mid = len(support) // 2
+        np.testing.assert_allclose(kvals[1:mid], expected[1:mid], rtol=0.30)
+
+    def test_l_is_sqrt_k_over_pi(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 4, 10)
+        _, kvals = k(coords, hull=poly, support=support, edge_correction="translate")
+        _, lvals = l(coords, hull=poly, support=support, edge_correction="translate")
+        np.testing.assert_allclose(lvals, np.sqrt(kvals / np.pi))
+
+
+class TestKDefault:
+    """Tests for k() called with no edge_correction — the all-three-corrections default."""
+
+    @pytest.fixture
+    def default_result(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
+        support = np.linspace(0, max_r * 1.5, 20)
+        return k(coords, hull=poly, support=support), support
+
+    def test_returns_kestresult(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = k(coords, hull=poly)
+        assert isinstance(result, KEstResult)
+
+    def test_fields_are_arrays(self, default_result):
+        result, _ = default_result
+        for field in ("support", "theo", "isotropic", "translate"):
+            assert isinstance(getattr(result, field), np.ndarray)
+        assert isinstance(result.border, np.ndarray)
+
+    def test_support_length_consistent(self, default_result):
+        result, support = default_result
+        assert len(result.support) == len(support)
+        assert len(result.theo) == len(support)
+        assert len(result.border) == len(support)
+        assert len(result.isotropic) == len(support)
+        assert len(result.translate) == len(support)
+
+    def test_theo_equals_pi_r_squared(self, default_result):
+        result, _ = default_result
+        np.testing.assert_allclose(result.theo, np.pi * result.support ** 2)
+
+    def test_border_nan_beyond_erosion_threshold(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
+        support = np.linspace(0, max_r * 1.5, 20)
+        result = k(coords, hull=poly, support=support)
+        # Support values beyond max_r should be NaN in border
+        beyond = support > max_r
+        assert np.all(np.isnan(result.border[beyond]))
+        # Support values within max_r should be finite
+        within = support <= max_r
+        assert np.all(np.isfinite(result.border[within]))
+
+    def test_iso_and_translate_fully_defined(self, default_result):
+        result, _ = default_result
+        assert not np.isnan(result.isotropic).any()
+        assert not np.isnan(result.translate).any()
+
+    def test_all_corrections_non_negative(self, default_result):
+        result, _ = default_result
+        assert np.all(result.theo >= 0)
+        assert np.all(result.isotropic >= 0)
+        assert np.all(result.translate >= 0)
+        within_r = ~np.isnan(result.border)
+        assert np.all(result.border[within_r] >= 0)
+
+    def test_border_matches_explicit_border_call(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
+        support = np.linspace(0, max_r * 0.9, 10)
+        result = k(coords, hull=poly, support=support)
+        _, k_bor = k(coords, hull=poly, support=support, edge_correction="border")
+        np.testing.assert_allclose(result.border, k_bor)
+
+    def test_iso_matches_explicit_isotropic_call(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
+        support = np.linspace(0, max_r * 0.9, 10)
+        result = k(coords, hull=poly, support=support)
+        _, k_iso = k(coords, hull=poly, support=support, edge_correction="isotropic")
+        np.testing.assert_allclose(result.isotropic, k_iso)
+
+    def test_translate_matches_explicit_translate_call(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
+        support = np.linspace(0, max_r * 0.9, 10)
+        result = k(coords, hull=poly, support=support)
+        _, k_tra = k(coords, hull=poly, support=support, edge_correction="translate")
+        np.testing.assert_allclose(result.translate, k_tra)
+
+
+class TestLDefault:
+    """Tests for l() called with no edge_correction — the all-three-corrections default."""
+
+    @pytest.fixture
+    def default_result(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
+        support = np.linspace(0, max_r * 1.5, 20)
+        return l(coords, hull=poly, support=support), support
+
+    def test_returns_lestresult(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = l(coords, hull=poly)
+        assert isinstance(result, LEstResult)
+
+    def test_theo_equals_support(self, default_result):
+        result, _ = default_result
+        np.testing.assert_allclose(result.theo, result.support)
+
+    def test_l_iso_is_sqrt_k_over_pi(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
+        support = np.linspace(0, max_r * 0.9, 10)
+        k_result = k(coords, hull=poly, support=support)
+        l_result = l(coords, hull=poly, support=support)
+        np.testing.assert_allclose(l_result.isotropic, np.sqrt(k_result.isotropic / np.pi))
+
+    def test_l_translate_is_sqrt_k_over_pi(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
+        support = np.linspace(0, max_r * 0.9, 10)
+        k_result = k(coords, hull=poly, support=support)
+        l_result = l(coords, hull=poly, support=support)
+        np.testing.assert_allclose(l_result.translate, np.sqrt(k_result.translate / np.pi))
+
+    def test_linearized_theo_is_zero(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = l(coords, hull=poly, linearized=True)
+        assert isinstance(result, LEstResult)
+        np.testing.assert_allclose(result.theo, 0.0)
+
+    def test_border_nan_beyond_erosion_threshold(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
+        support = np.linspace(0, max_r * 1.5, 20)
+        result = l(coords, hull=poly, support=support)
+        beyond = support > max_r
+        assert np.all(np.isnan(result.border[beyond]))

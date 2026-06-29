@@ -26,7 +26,21 @@ __all__ = [
     "k_test",
     "j_test",
     "l_test",
+    "KEstResult",
+    "LEstResult",
 ]
+
+# Sentinel used as the default for edge_correction in k() and l().
+# Distinguishes "caller passed None (uncorrected)" from "caller passed nothing
+# (compute all three spatstat-default corrections)".
+_NOTSET = object()
+
+KEstResult = namedtuple(
+    "KEstResult", ("support", "theo", "border", "isotropic", "translate")
+)
+LEstResult = namedtuple(
+    "LEstResult", ("support", "theo", "border", "isotropic", "translate")
+)
 
 
 def _prepare(coordinates, support, distances, metric, hull, edge_correction):
@@ -192,6 +206,72 @@ def _ripley_analytic_weights(coordinates, poly, support):
         weights[idx, j] = numpy.where(inter_areas > 0, circle_area / inter_areas, circle_area)
 
     return weights
+
+
+def _isotropic_weights(coordinates, poly, support):
+    """Per-point exact arc-fraction weights for Ripley's isotropic K correction.
+
+    For each point i and radius r, w_i(r) = 2πr / arc_inside, where arc_inside is
+    the total length of the circle circumference (radius r, centred at i) that lies
+    inside poly. Points whose full circle is inside the window get w=1.
+    """
+    n = len(coordinates)
+    shapely_pts = shapely.points(coordinates[:, 0], coordinates[:, 1])
+    dist_to_boundary = shapely.distance(shapely_pts, poly.boundary)
+
+    weights = numpy.ones((n, len(support)))
+
+    for j, r in enumerate(support):
+        if r == 0:
+            continue
+        near = dist_to_boundary <= r
+        if not near.any():
+            continue
+        idx = numpy.where(near)[0]
+        circumference = 2 * numpy.pi * r
+        circles = shapely.buffer(shapely_pts[idx], r)
+        arc_inside = shapely.intersection(shapely.boundary(circles), poly)
+        arc_lengths = shapely.length(arc_inside)
+        weights[idx, j] = numpy.where(
+            arc_lengths > 0, circumference / arc_lengths, circumference
+        )
+
+    return weights
+
+
+def _translate_pair_weights(coordinates, poly, area):
+    """Per-pair translation weights for the translation edge correction.
+
+    For each unordered pair (i, j), the weight is area(W)² / area(W ∩ (W + h_ij))
+    where h_ij = x_j - x_i.
+
+    Returns a 1-D array of shape (n*(n-1)//2,) aligned with scipy pdist output.
+    """
+    n = len(coordinates)
+    rows, cols = numpy.triu_indices(n, k=1)
+    n_pairs = len(rows)
+    translations = coordinates[cols] - coordinates[rows]  # (n_pairs, 2)
+
+    exterior_coords = numpy.array(poly.exterior.coords)  # (m, 2) — closed ring
+    shifted_exterior = exterior_coords[None] + translations[:, None]  # (n_pairs, m, 2)
+
+    interior_rings = list(poly.interiors)
+    if not interior_rings:
+        shifted_polys = shapely.polygons(shapely.linearrings(shifted_exterior))
+    else:
+        all_shifted_holes = [
+            numpy.array(ring.coords)[None] + translations[:, None]
+            for ring in interior_rings
+        ]
+        shifted_polys = numpy.empty(n_pairs, dtype=object)
+        for k_idx in range(n_pairs):
+            shell = shapely.linearrings(shifted_exterior[k_idx])
+            hole_rings = [shapely.linearrings(sh[k_idx]) for sh in all_shifted_holes]
+            shifted_polys[k_idx] = shapely.polygons(shell, hole_rings)
+
+    orig_array = numpy.full(n_pairs, poly)
+    overlap_areas = shapely.area(shapely.intersection(orig_array, shifted_polys))
+    return numpy.where(overlap_areas > 0, area * area / overlap_areas, area * area)
 
 
 # ------------------------------------------------------------#
@@ -510,7 +590,7 @@ def k(
     distances=None,
     metric="euclidean",
     hull=None,
-    edge_correction=None,
+    edge_correction=_NOTSET,
     n_circle=36,
 ):
     """Ripley's K function
@@ -534,19 +614,26 @@ def k(
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
         the study area geometry, used for intensity estimation and (when
         edge_correction is not None) for boundary-distance computation.
-    edge_correction: None, 'erosion', 'ripley', or 'analytic'
-        edge correction method.
-        'erosion': only guard points (those whose distance to the study window
-            boundary exceeds r) act as focal points. The support is clipped to
-            the erosion threshold returned by max_radius(..., 'erosion_threshold').
-        'ripley': isotropic circle-sampling correction. For each point i within r
-            of the boundary, n_circle equally-spaced points are placed on a circle
-            of radius r centred at i; the weight w_i(r) = n_circle / n_inside,
-            where n_inside is the count that fall inside the window. Points fully
-            inside the window receive w_i = 1.
-        'analytic': exact area-ratio correction. For each point i within r of the
-            boundary, w_i(r) = π r² / area(circle(i,r) ∩ window), computed
-            exactly via shapely geometry. Points fully inside get w_i = 1.
+    edge_correction: None, 'border', 'isotropic', 'translate', 'erosion', 'ripley', or 'analytic'
+        edge correction method. The three spatstat-default methods are:
+        'border': reduced-sample (border) correction. Only points whose distance
+            to the study window boundary exceeds r contribute as focal points.
+            Alias for 'erosion'; the support is clipped to the erosion threshold.
+        'isotropic': Ripley's exact isotropic correction. For each point i within r
+            of the boundary, w_i(r) = 2πr / arc_inside, where arc_inside is the
+            arc length of the circle of radius r centred at i that lies inside the
+            window, computed exactly via shapely. Points fully inside get w_i = 1.
+        'translate': translation correction (Ohser & Stoyan 1981). For each pair
+            (i, j) with d_ij ≤ r, the weight is area(W)² / area(W ∩ (W + h_ij))
+            where h_ij = x_j − x_i. Pairs whose translation keeps W fully inside
+            get weight area(W) (reducing to the uncorrected estimator).
+        Additional methods:
+        'erosion': identical to 'border' (guard-point / eroded-window estimator).
+        'ripley': approximate isotropic correction using n_circle equally-spaced
+            test points sampled on the circle circumference (arc fraction estimated
+            by counting points inside the window). Less exact than 'isotropic'.
+        'analytic': area-ratio correction. w_i(r) = πr² / area(circle ∩ window).
+            Uses the area fraction rather than the arc fraction.
     n_circle : int (default 36)
         Number of points to place on the test circle for the 'ripley' edge
         correction. Common choices are 36 (10° spacing) and 72 (5° spacing).
@@ -557,13 +644,46 @@ def k(
     a tuple containing the support values used to evaluate the function
     and the values of the function at each distance value in the support.
     """
-    if edge_correction not in (None, "erosion", "ripley", "analytic", True):
-        raise ValueError(
-            f"edge_correction must be None, 'erosion', 'ripley', or 'analytic'. Got {edge_correction!r}"
+    if edge_correction is _NOTSET:
+        # Default: compute all three spatstat-default corrections and return a named tuple.
+        coordinates_arr, support_arr, distances_out, metric, hull_prepared, _ = _prepare(
+            coordinates, support, distances, metric, hull, None
         )
-    use_erosion = edge_correction in ("erosion", True)
+        poly = _hull_to_poly(hull_prepared)
+        theo = numpy.pi * support_arr ** 2
+        max_r, _ = _max_radius(poly, points=coordinates_arr, method="erosion_threshold")
+        border_mask = support_arr <= max_r
+        border_full = numpy.full(len(support_arr), numpy.nan)
+        if border_mask.any():
+            _, border_vals = k(
+                coordinates_arr, support=support_arr[border_mask],
+                distances=distances_out, metric=metric, hull=poly,
+                edge_correction="border", n_circle=n_circle,
+            )
+            border_full[border_mask] = border_vals
+        _, k_iso = k(
+            coordinates_arr, support=support_arr, distances=distances_out,
+            metric=metric, hull=poly, edge_correction="isotropic", n_circle=n_circle,
+        )
+        _, k_tra = k(
+            coordinates_arr, support=support_arr, distances=distances_out,
+            metric=metric, hull=poly, edge_correction="translate", n_circle=n_circle,
+        )
+        return KEstResult(
+            support=support_arr, theo=theo,
+            border=border_full, isotropic=k_iso, translate=k_tra,
+        )
+
+    _valid = (None, "border", "isotropic", "translate", "erosion", "ripley", "analytic", True)
+    if edge_correction not in _valid:
+        raise ValueError(
+            f"edge_correction must be one of {_valid[:-1]}. Got {edge_correction!r}"
+        )
+    use_erosion = edge_correction in ("erosion", "border", True)
     use_ripley = edge_correction == "ripley"
     use_analytic = edge_correction == "analytic"
+    use_isotropic = edge_correction == "isotropic"
+    use_translate = edge_correction == "translate"
 
     coordinates, support, distances, metric, hull_prepared, _ = _prepare(
         coordinates, support, distances, metric, hull, None
@@ -646,13 +766,15 @@ def k(
 
         return support, k_values
 
-    if use_ripley or use_analytic:
+    if use_ripley or use_analytic or use_isotropic:
         poly = _hull_to_poly(hull_prepared)
         area = _area(poly)
         if use_ripley:
             weights = _ripley_circle_weights(coordinates, poly, support, n_circle=n_circle)
-        else:
+        elif use_analytic:
             weights = _ripley_analytic_weights(coordinates, poly, support)
+        else:
+            weights = _isotropic_weights(coordinates, poly, support)
 
         k_values = numpy.zeros(len(support))
 
@@ -681,6 +803,18 @@ def k(
 
         return support, k_values
 
+    if use_translate:
+        poly = _hull_to_poly(hull_prepared)
+        area = _area(poly)
+        if upper_tri_distances is None:
+            upper_tri_distances = spatial.distance.pdist(coordinates, metric=metric)
+        w_pairs = _translate_pair_weights(coordinates, poly, area)
+        k_values = numpy.zeros(len(support))
+        for j_idx, r in enumerate(support):
+            within_r = upper_tri_distances < r
+            k_values[j_idx] = (2.0 / (n * n)) * w_pairs[within_r].sum()
+        return support, k_values
+
     # Non-erosion path: condensed pairwise distances.
     if upper_tri_distances is None:
         upper_tri_distances = spatial.distance.pdist(coordinates, metric=metric)
@@ -697,7 +831,7 @@ def l(  # noqa: E743 - Ambiguous function name
     distances=None,
     metric="euclidean",
     hull=None,
-    edge_correction=None,
+    edge_correction=_NOTSET,
     linearized=False,
     n_circle=36,
 ):
@@ -723,7 +857,7 @@ def l(  # noqa: E743 - Ambiguous function name
         distance metric to use when building search tree
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
         the study area geometry. Required when edge_correction is not None.
-    edge_correction: None, 'erosion', 'ripley', or 'analytic'
+    edge_correction: None, 'border', 'isotropic', 'translate', 'erosion', 'ripley', or 'analytic'
         edge correction method passed through to the underlying K function.
     linearized : bool
         whether or not to subtract l from its expected value (support) at each
@@ -738,6 +872,25 @@ def l(  # noqa: E743 - Ambiguous function name
     a tuple containing the support values used to evaluate the function
     and the values of the function at each distance value in the support.
     """
+
+    if edge_correction is _NOTSET:
+        k_result = k(
+            coordinates, support=support, distances=distances,
+            metric=metric, hull=hull, n_circle=n_circle,
+        )
+        # k_result: KEstResult(support, theo, border, isotropic, translate)
+        s = k_result.support
+        l_theo = s  # sqrt(pi*r² / pi) = r
+
+        def _sqrt_k(arr):
+            return numpy.where(numpy.isnan(arr), numpy.nan, numpy.sqrt(arr / numpy.pi))
+
+        l_bor = _sqrt_k(k_result.border)
+        l_iso = _sqrt_k(k_result.isotropic)
+        l_tra = _sqrt_k(k_result.translate)
+        if linearized:
+            return LEstResult(s, numpy.zeros_like(s), l_bor - s, l_iso - s, l_tra - s)
+        return LEstResult(s, l_theo, l_bor, l_iso, l_tra)
 
     support, k_estimate = k(
         coordinates,
