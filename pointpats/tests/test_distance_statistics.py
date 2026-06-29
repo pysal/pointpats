@@ -272,8 +272,8 @@ class TestKStandard:
 
     def test_invalid_edge_correction_raises(self, coords_and_poly):
         coords, _ = coords_and_poly
-        with pytest.raises(ValueError, match="edge_correction must be None or 'erosion'"):
-            k(coords, edge_correction="ripley")
+        with pytest.raises(ValueError, match="edge_correction must be None"):
+            k(coords, edge_correction="invalid")
 
 
 class TestKErosion:
@@ -381,4 +381,109 @@ class TestLErosion:
         poly = shapely.box(0, 0, 20, 20)
         support, lvals = l(coords, hull=poly, edge_correction="erosion", linearized=True)
         # Linearized L(r) - r should be near 0 for CSR (allow ±1 unit tolerance).
+        assert np.abs(lvals).max() < 1.5
+
+
+# ---------------------------------------------------------------------------
+# Ripley's K function — 'ripley' isotropic circle-sampling edge correction
+# ---------------------------------------------------------------------------
+
+
+class TestKRipley:
+    def test_output_shape_consistent(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support, kvals = k(coords, hull=poly, edge_correction="ripley")
+        assert support.shape == kvals.shape
+
+    def test_starts_at_zero(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, kvals = k(coords, hull=poly, edge_correction="ripley")
+        assert kvals[0] == pytest.approx(0.0)
+
+    def test_values_non_negative(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, kvals = k(coords, hull=poly, edge_correction="ripley")
+        assert np.all(kvals >= 0.0)
+
+    def test_non_decreasing(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, kvals = k(coords, hull=poly, edge_correction="ripley")
+        assert np.all(np.diff(kvals) >= 0)
+
+    def test_corrected_geq_uncorrected(self, coords_and_poly):
+        # Weights >= 1, so K_ripley >= K_uncorrected at every support point.
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 4, 10)
+        _, k_raw = k(coords, hull=poly, support=support)
+        _, k_rip = k(coords, hull=poly, support=support, edge_correction="ripley")
+        assert np.all(k_rip >= k_raw - 1e-10)
+
+    def test_interior_points_match_uncorrected(self):
+        # Points far from every edge (>support max) → all weights = 1 → same as no correction.
+        coords = np.array([[5.0, 5.0], [5.5, 5.0], [5.0, 5.5]])
+        poly = shapely.box(0, 0, 10, 10)
+        support = np.array([0.0, 0.6, 1.0])
+        _, k_raw = k(coords, hull=poly, support=support)
+        _, k_rip = k(coords, hull=poly, support=support, edge_correction="ripley")
+        np.testing.assert_allclose(k_raw, k_rip)
+
+    def test_n_circle_72_close_to_36(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 4, 10)
+        _, k36 = k(coords, hull=poly, support=support, edge_correction="ripley", n_circle=36)
+        _, k72 = k(coords, hull=poly, support=support, edge_correction="ripley", n_circle=72)
+        np.testing.assert_allclose(k36, k72, rtol=0.05)
+
+    def test_precomputed_condensed_distances_match_tree(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        pdist = spatial.distance.pdist(coords)
+        support = np.linspace(0, 4, 10)
+        _, k_tree = k(coords, hull=poly, support=support, edge_correction="ripley")
+        _, k_pdist = k(
+            coords, hull=poly, support=support, distances=pdist, edge_correction="ripley"
+        )
+        np.testing.assert_allclose(k_tree, k_pdist, rtol=1e-10)
+
+    def test_with_bbox_array_hull(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        bbox = np.array([0.0, 0.0, 10.0, 10.0])
+        _, kvals = k(coords, hull=bbox, edge_correction="ripley")
+        assert np.all(kvals >= 0.0)
+
+    def test_csr_k_approx_pi_r_squared(self):
+        rng = np.random.default_rng(0)
+        coords = rng.uniform(0, 20, (300, 2))
+        poly = shapely.box(0, 0, 20, 20)
+        support, kvals = k(coords, hull=poly, support=15, edge_correction="ripley")
+        expected = np.pi * support**2
+        mid = len(support) // 2
+        np.testing.assert_allclose(kvals[1:mid], expected[1:mid], rtol=0.30)
+
+
+# ---------------------------------------------------------------------------
+# Ripley's L function — 'ripley' isotropic circle-sampling edge correction
+# ---------------------------------------------------------------------------
+
+
+class TestLRipley:
+    def test_l_is_sqrt_k_over_pi(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 4, 10)
+        s_k, kvals = k(coords, hull=poly, support=support, edge_correction="ripley")
+        s_l, lvals = l(coords, hull=poly, support=support, edge_correction="ripley")
+        np.testing.assert_array_equal(s_k, s_l)
+        np.testing.assert_allclose(lvals, np.sqrt(kvals / np.pi))
+
+    def test_n_circle_passed_through(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 4, 10)
+        _, l36 = l(coords, hull=poly, support=support, edge_correction="ripley", n_circle=36)
+        _, l72 = l(coords, hull=poly, support=support, edge_correction="ripley", n_circle=72)
+        np.testing.assert_allclose(l36, l72, rtol=0.05)
+
+    def test_linearized_centers_on_zero_for_csr(self):
+        rng = np.random.default_rng(3)
+        coords = rng.uniform(0, 20, (300, 2))
+        poly = shapely.box(0, 0, 20, 20)
+        support, lvals = l(coords, hull=poly, edge_correction="ripley", linearized=True)
         assert np.abs(lvals).max() < 1.5

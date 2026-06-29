@@ -131,6 +131,42 @@ def _hull_to_poly(hull_prepared):
     )
 
 
+def _ripley_circle_weights(coordinates, poly, support, n_circle=36):
+    """Per-point isotropic circle-sampling weights for Ripley's K correction.
+
+    For each point i and radius r, w_i(r) = n_circle / n_inside, where n_inside
+    is the count of equally-spaced circle points (radius r, centred at i) that
+    fall inside *poly*.  Points whose full circle is inside the window get w=1.
+    """
+    n = len(coordinates)
+    shapely_pts = shapely.points(coordinates[:, 0], coordinates[:, 1])
+    dist_to_boundary = shapely.distance(shapely_pts, poly.boundary)
+
+    angles = numpy.linspace(0, 2 * numpy.pi, n_circle, endpoint=False)
+    cos_a = numpy.cos(angles)
+    sin_a = numpy.sin(angles)
+
+    weights = numpy.ones((n, len(support)))
+
+    for j, r in enumerate(support):
+        if r == 0:
+            continue
+        near = dist_to_boundary <= r
+        if not near.any():
+            continue
+        idx = numpy.where(near)[0]
+        # Circle sample points: shapes broadcast to (len(idx), n_circle)
+        cx = coordinates[idx, 0:1] + r * cos_a
+        cy = coordinates[idx, 1:2] + r * sin_a
+        circle_pts = shapely.points(cx.ravel(), cy.ravel())
+        inside = shapely.within(circle_pts, poly).reshape(len(idx), n_circle)
+        n_inside = inside.sum(axis=1)
+        # n_circle / n_inside; fall back to n_circle if no points inside (degenerate)
+        weights[idx, j] = numpy.where(n_inside > 0, n_circle / n_inside, float(n_circle))
+
+    return weights
+
+
 # ------------------------------------------------------------#
 # Statistical Functions                                       #
 # ------------------------------------------------------------#
@@ -448,6 +484,7 @@ def k(
     metric="euclidean",
     hull=None,
     edge_correction=None,
+    n_circle=36,
 ):
     """Ripley's K function
 
@@ -469,24 +506,33 @@ def k(
         distance metric to use when building the search tree
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
         the study area geometry, used for intensity estimation and (when
-        edge_correction='erosion') for boundary-distance computation.
-    edge_correction: None or 'erosion'
-        edge correction method. When 'erosion', only guard points (those whose
-        distance to the study window boundary exceeds r) act as focal points in
-        the K estimator at each radius r. The support is automatically clipped
-        to the erosion threshold returned by
-        max_radius(..., method='erosion_threshold').
+        edge_correction is not None) for boundary-distance computation.
+    edge_correction: None, 'erosion', or 'ripley'
+        edge correction method.
+        'erosion': only guard points (those whose distance to the study window
+            boundary exceeds r) act as focal points. The support is clipped to
+            the erosion threshold returned by max_radius(..., 'erosion_threshold').
+        'ripley': isotropic circle-sampling correction. For each point i within r
+            of the boundary, n_circle equally-spaced points are placed on a circle
+            of radius r centred at i; the weight w_i(r) = n_circle / n_inside,
+            where n_inside is the count that fall inside the window. Points fully
+            inside the window receive w_i = 1.
+    n_circle : int (default 36)
+        Number of points to place on the test circle for the 'ripley' edge
+        correction. Common choices are 36 (10° spacing) and 72 (5° spacing).
+        Ignored when edge_correction is not 'ripley'.
 
     Returns
     -------
     a tuple containing the support values used to evaluate the function
     and the values of the function at each distance value in the support.
     """
-    if edge_correction not in (None, "erosion", True):
+    if edge_correction not in (None, "erosion", "ripley", True):
         raise ValueError(
-            f"edge_correction must be None or 'erosion'. Got {edge_correction!r}"
+            f"edge_correction must be None, 'erosion', or 'ripley'. Got {edge_correction!r}"
         )
     use_erosion = edge_correction in ("erosion", True)
+    use_ripley = edge_correction == "ripley"
 
     coordinates, support, distances, metric, hull_prepared, _ = _prepare(
         coordinates, support, distances, metric, hull, None
@@ -569,6 +615,38 @@ def k(
 
         return support, k_values
 
+    if use_ripley:
+        poly = _hull_to_poly(hull_prepared)
+        area = _area(poly)
+        weights = _ripley_circle_weights(coordinates, poly, support, n_circle=n_circle)
+
+        k_values = numpy.zeros(len(support))
+
+        if upper_tri_distances is not None:
+            rows, cols = numpy.triu_indices(n, k=1)
+            for j_idx, r in enumerate(support):
+                if r == 0:
+                    continue
+                within_r = upper_tri_distances < r
+                count_i = numpy.zeros(n, dtype=numpy.int64)
+                numpy.add.at(count_i, rows[within_r], 1)
+                numpy.add.at(count_i, cols[within_r], 1)
+                k_values[j_idx] = (area / (n * n)) * (weights[:, j_idx] * count_i).sum()
+        else:
+            tree = _build_best_tree(coordinates, metric)
+            for j_idx, r in enumerate(support):
+                if r == 0:
+                    continue
+                if hasattr(tree, "query_radius"):  # sklearn KDTree / BallTree
+                    count_i = tree.query_radius(coordinates, r, count_only=True) - 1
+                else:  # scipy KDTree
+                    count_i = numpy.array(
+                        tree.query_ball_point(coordinates, r, return_length=True)
+                    ) - 1
+                k_values[j_idx] = (area / (n * n)) * (weights[:, j_idx] * count_i).sum()
+
+        return support, k_values
+
     # Non-erosion path: condensed pairwise distances.
     if upper_tri_distances is None:
         upper_tri_distances = spatial.distance.pdist(coordinates, metric=metric)
@@ -587,6 +665,7 @@ def l(  # noqa: E743 - Ambiguous function name
     hull=None,
     edge_correction=None,
     linearized=False,
+    n_circle=36,
 ):
     """Ripley's L function
 
@@ -609,13 +688,16 @@ def l(  # noqa: E743 - Ambiguous function name
     metric: str or callable
         distance metric to use when building search tree
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
-        the study area geometry. Required when edge_correction='erosion'.
-    edge_correction: None or 'erosion'
+        the study area geometry. Required when edge_correction is not None.
+    edge_correction: None, 'erosion', or 'ripley'
         edge correction method passed through to the underlying K function.
     linearized : bool
         whether or not to subtract l from its expected value (support) at each
         distance bin. This centers the l function on zero for all distances.
         Proposed by Besag (1977)
+    n_circle : int (default 36)
+        Number of circle test points for the 'ripley' edge correction;
+        passed through to k(). Common choices are 36 and 72.
 
     Returns
     -------
@@ -630,6 +712,7 @@ def l(  # noqa: E743 - Ambiguous function name
         metric=metric,
         hull=hull,
         edge_correction=edge_correction,
+        n_circle=n_circle,
     )
 
     _l = numpy.sqrt(k_estimate / numpy.pi)
