@@ -487,3 +487,110 @@ class TestLRipley:
         poly = shapely.box(0, 0, 20, 20)
         support, lvals = l(coords, hull=poly, edge_correction="ripley", linearized=True)
         assert np.abs(lvals).max() < 1.5
+
+
+# ---------------------------------------------------------------------------
+# Ripley's K function — 'analytic' exact area-ratio edge correction
+# ---------------------------------------------------------------------------
+
+
+class TestKAnalytic:
+    def test_output_shape_consistent(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support, kvals = k(coords, hull=poly, edge_correction="analytic")
+        assert support.shape == kvals.shape
+
+    def test_starts_at_zero(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, kvals = k(coords, hull=poly, edge_correction="analytic")
+        assert kvals[0] == pytest.approx(0.0)
+
+    def test_values_non_negative(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, kvals = k(coords, hull=poly, edge_correction="analytic")
+        assert np.all(kvals >= 0.0)
+
+    def test_non_decreasing(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, kvals = k(coords, hull=poly, edge_correction="analytic")
+        assert np.all(np.diff(kvals) >= 0)
+
+    def test_corrected_geq_uncorrected(self, coords_and_poly):
+        # area(circle ∩ window) ≤ πr², so w_i ≥ 1 and K_analytic ≥ K_uncorrected.
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 4, 10)
+        _, k_raw = k(coords, hull=poly, support=support)
+        _, k_ana = k(coords, hull=poly, support=support, edge_correction="analytic")
+        assert np.all(k_ana >= k_raw - 1e-10)
+
+    def test_interior_points_match_uncorrected(self):
+        # Points far from every edge (dist > support max) → w_i = 1 everywhere.
+        coords = np.array([[5.0, 5.0], [5.5, 5.0], [5.0, 5.5]])
+        poly = shapely.box(0, 0, 10, 10)
+        support = np.array([0.0, 0.6, 1.0])
+        _, k_raw = k(coords, hull=poly, support=support)
+        _, k_ana = k(coords, hull=poly, support=support, edge_correction="analytic")
+        np.testing.assert_allclose(k_raw, k_ana)
+
+    def test_deterministic(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 4, 10)
+        _, k1 = k(coords, hull=poly, support=support, edge_correction="analytic")
+        _, k2 = k(coords, hull=poly, support=support, edge_correction="analytic")
+        np.testing.assert_array_equal(k1, k2)
+
+    def test_analytic_leq_ripley(self, coords_and_poly):
+        # Area fraction ≥ arc fraction for partial circles in convex windows,
+        # so analytic weights ≤ ripley weights → K_analytic ≤ K_ripley.
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 4, 10)
+        _, k_rip = k(coords, hull=poly, support=support, edge_correction="ripley", n_circle=360)
+        _, k_ana = k(coords, hull=poly, support=support, edge_correction="analytic")
+        assert np.all(k_ana <= k_rip + 1e-10)
+
+    def test_precomputed_condensed_distances_match_tree(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        pdist = spatial.distance.pdist(coords)
+        support = np.linspace(0, 4, 10)
+        _, k_tree = k(coords, hull=poly, support=support, edge_correction="analytic")
+        _, k_pdist = k(
+            coords, hull=poly, support=support, distances=pdist, edge_correction="analytic"
+        )
+        np.testing.assert_allclose(k_tree, k_pdist, rtol=1e-10)
+
+    def test_with_bbox_array_hull(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        bbox = np.array([0.0, 0.0, 10.0, 10.0])
+        _, kvals = k(coords, hull=bbox, edge_correction="analytic")
+        assert np.all(kvals >= 0.0)
+
+    def test_csr_k_approx_pi_r_squared(self):
+        rng = np.random.default_rng(0)
+        coords = rng.uniform(0, 20, (300, 2))
+        poly = shapely.box(0, 0, 20, 20)
+        support, kvals = k(coords, hull=poly, support=15, edge_correction="analytic")
+        expected = np.pi * support**2
+        mid = len(support) // 2
+        np.testing.assert_allclose(kvals[1:mid], expected[1:mid], rtol=0.30)
+
+
+# ---------------------------------------------------------------------------
+# Ripley's L function — 'analytic' exact area-ratio edge correction
+# ---------------------------------------------------------------------------
+
+
+class TestLAnalytic:
+    def test_l_is_sqrt_k_over_pi(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 4, 10)
+        s_k, kvals = k(coords, hull=poly, support=support, edge_correction="analytic")
+        s_l, lvals = l(coords, hull=poly, support=support, edge_correction="analytic")
+        np.testing.assert_array_equal(s_k, s_l)
+        np.testing.assert_allclose(lvals, np.sqrt(kvals / np.pi))
+
+    def test_linearized_centers_on_zero_for_csr(self):
+        rng = np.random.default_rng(5)
+        coords = rng.uniform(0, 20, (300, 2))
+        poly = shapely.box(0, 0, 20, 20)
+        support, lvals = l(coords, hull=poly, edge_correction="analytic", linearized=True)
+        assert np.abs(lvals).max() < 1.5

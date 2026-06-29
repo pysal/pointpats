@@ -167,6 +167,33 @@ def _ripley_circle_weights(coordinates, poly, support, n_circle=36):
     return weights
 
 
+def _ripley_analytic_weights(coordinates, poly, support):
+    """Per-point analytic area-intersection weights for Ripley's K correction.
+
+    For each point i and radius r, w_i(r) = π r² / area(circle(i,r) ∩ poly).
+    Points whose full circle lies inside the window get w=1.
+    """
+    n = len(coordinates)
+    shapely_pts = shapely.points(coordinates[:, 0], coordinates[:, 1])
+    dist_to_boundary = shapely.distance(shapely_pts, poly.boundary)
+
+    weights = numpy.ones((n, len(support)))
+
+    for j, r in enumerate(support):
+        if r == 0:
+            continue
+        near = dist_to_boundary <= r
+        if not near.any():
+            continue
+        idx = numpy.where(near)[0]
+        circle_area = numpy.pi * r * r
+        circles = shapely.buffer(shapely_pts[idx], r)
+        inter_areas = shapely.area(shapely.intersection(circles, poly))
+        weights[idx, j] = numpy.where(inter_areas > 0, circle_area / inter_areas, circle_area)
+
+    return weights
+
+
 # ------------------------------------------------------------#
 # Statistical Functions                                       #
 # ------------------------------------------------------------#
@@ -507,7 +534,7 @@ def k(
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
         the study area geometry, used for intensity estimation and (when
         edge_correction is not None) for boundary-distance computation.
-    edge_correction: None, 'erosion', or 'ripley'
+    edge_correction: None, 'erosion', 'ripley', or 'analytic'
         edge correction method.
         'erosion': only guard points (those whose distance to the study window
             boundary exceeds r) act as focal points. The support is clipped to
@@ -517,6 +544,9 @@ def k(
             of radius r centred at i; the weight w_i(r) = n_circle / n_inside,
             where n_inside is the count that fall inside the window. Points fully
             inside the window receive w_i = 1.
+        'analytic': exact area-ratio correction. For each point i within r of the
+            boundary, w_i(r) = π r² / area(circle(i,r) ∩ window), computed
+            exactly via shapely geometry. Points fully inside get w_i = 1.
     n_circle : int (default 36)
         Number of points to place on the test circle for the 'ripley' edge
         correction. Common choices are 36 (10° spacing) and 72 (5° spacing).
@@ -527,12 +557,13 @@ def k(
     a tuple containing the support values used to evaluate the function
     and the values of the function at each distance value in the support.
     """
-    if edge_correction not in (None, "erosion", "ripley", True):
+    if edge_correction not in (None, "erosion", "ripley", "analytic", True):
         raise ValueError(
-            f"edge_correction must be None, 'erosion', or 'ripley'. Got {edge_correction!r}"
+            f"edge_correction must be None, 'erosion', 'ripley', or 'analytic'. Got {edge_correction!r}"
         )
     use_erosion = edge_correction in ("erosion", True)
     use_ripley = edge_correction == "ripley"
+    use_analytic = edge_correction == "analytic"
 
     coordinates, support, distances, metric, hull_prepared, _ = _prepare(
         coordinates, support, distances, metric, hull, None
@@ -615,10 +646,13 @@ def k(
 
         return support, k_values
 
-    if use_ripley:
+    if use_ripley or use_analytic:
         poly = _hull_to_poly(hull_prepared)
         area = _area(poly)
-        weights = _ripley_circle_weights(coordinates, poly, support, n_circle=n_circle)
+        if use_ripley:
+            weights = _ripley_circle_weights(coordinates, poly, support, n_circle=n_circle)
+        else:
+            weights = _ripley_analytic_weights(coordinates, poly, support)
 
         k_values = numpy.zeros(len(support))
 
@@ -689,7 +723,7 @@ def l(  # noqa: E743 - Ambiguous function name
         distance metric to use when building search tree
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
         the study area geometry. Required when edge_correction is not None.
-    edge_correction: None, 'erosion', or 'ripley'
+    edge_correction: None, 'erosion', 'ripley', or 'analytic'
         edge correction method passed through to the underlying K function.
     linearized : bool
         whether or not to subtract l from its expected value (support) at each
