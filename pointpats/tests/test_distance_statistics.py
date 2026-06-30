@@ -4,8 +4,14 @@ import shapely
 from scipy import spatial
 from shapely.geometry import box
 
-from pointpats import g, k, l
-from pointpats.distance_statistics import KEstResult, LEstResult
+from pointpats import f, g, j, k, l
+from pointpats.distance_statistics import (
+    FEstResult,
+    GEstResult,
+    JEstResult,
+    KEstResult,
+    LEstResult,
+)
 from pointpats.geometry import max_radius
 from pointpats.random import (
     _pairwise_count_kdtree,
@@ -88,7 +94,7 @@ def test_pairwise_count_kdtree_basic():
 
 
 # ---------------------------------------------------------------------------
-# Ripley's G function tests
+# Shared fixture
 # ---------------------------------------------------------------------------
 
 
@@ -100,132 +106,711 @@ def coords_and_poly():
     return coords, poly
 
 
-class TestGStandard:
+# ---------------------------------------------------------------------------
+# Ripley's G function tests
+# ---------------------------------------------------------------------------
+
+
+class TestGRaw:
+    """Raw (uncorrected) G estimator via edge_correction=None."""
+
     def test_output_shape_consistent(self, coords_and_poly):
         coords, _ = coords_and_poly
-        bins, fracs = g(coords)
+        bins, fracs = g(coords, edge_correction=None)
         assert bins.shape == fracs.shape
 
     def test_fracs_starts_at_zero(self, coords_and_poly):
         coords, _ = coords_and_poly
-        _, fracs = g(coords)
+        _, fracs = g(coords, edge_correction=None)
         assert fracs[0] == 0.0
 
     def test_fracs_ends_at_one(self, coords_and_poly):
         coords, _ = coords_and_poly
-        _, fracs = g(coords)
+        _, fracs = g(coords, edge_correction=None)
         assert fracs[-1] == pytest.approx(1.0)
 
     def test_monotone_non_decreasing(self, coords_and_poly):
         coords, _ = coords_and_poly
-        _, fracs = g(coords)
+        _, fracs = g(coords, edge_correction=None)
         assert np.all(np.diff(fracs) >= 0)
 
     def test_custom_support_length(self, coords_and_poly):
         coords, _ = coords_and_poly
-        bins, fracs = g(coords, support=50)
+        bins, fracs = g(coords, support=50, edge_correction=None)
         assert len(bins) == 50
         assert len(fracs) == 50
 
     def test_precomputed_nnd_1d(self, coords_and_poly):
         coords, _ = coords_and_poly
-        from scipy.spatial import KDTree
-
-        tree = KDTree(coords)
+        tree = spatial.KDTree(coords)
         dists, _ = tree.query(coords, k=2)
         nnd = dists[:, 1]
-        bins, fracs = g(coords, distances=nnd)
+        bins, fracs = g(coords, distances=nnd, edge_correction=None)
         assert fracs[-1] == pytest.approx(1.0)
 
     def test_invalid_edge_correction_raises(self, coords_and_poly):
         coords, _ = coords_and_poly
-        with pytest.raises(ValueError, match="edge_correction must be None or 'erosion'"):
+        with pytest.raises(ValueError, match="edge_correction must be one of"):
             g(coords, edge_correction="ripley")
 
+    def test_raw_string_alias(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        s1, v1 = g(coords, edge_correction=None)
+        s2, v2 = g(coords, edge_correction="raw")
+        np.testing.assert_array_equal(s1, s2)
+        np.testing.assert_array_equal(v1, v2)
 
-class TestGErosion:
+
+class TestGRS:
+    """Reduced-sample (border) G estimator via edge_correction='rs'."""
+
     def test_output_shape_consistent(self, coords_and_poly):
         coords, poly = coords_and_poly
-        support, gvals = g(coords, hull=poly, edge_correction="erosion")
+        support, gvals = g(coords, hull=poly, edge_correction="rs")
         assert support.shape == gvals.shape
 
     def test_starts_at_zero(self, coords_and_poly):
         coords, poly = coords_and_poly
-        _, gvals = g(coords, hull=poly, edge_correction="erosion")
+        _, gvals = g(coords, hull=poly, edge_correction="rs")
         assert gvals[0] == 0.0
 
     def test_values_bounded_in_unit_interval(self, coords_and_poly):
         coords, poly = coords_and_poly
-        _, gvals = g(coords, hull=poly, edge_correction="erosion")
+        _, gvals = g(coords, hull=poly, edge_correction="rs")
         assert np.all(gvals >= 0.0)
         assert np.all(gvals <= 1.0)
 
     def test_support_clipped_to_erosion_threshold(self, coords_and_poly):
         coords, poly = coords_and_poly
-        support, _ = g(coords, hull=poly, edge_correction="erosion")
+        support, _ = g(coords, hull=poly, edge_correction="rs")
         max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
         assert support[-1] <= max_r + 1e-12
 
     def test_support_clipped_when_extended_beyond_threshold(self, coords_and_poly):
-        # Provide a wide support that extends past the erosion threshold; the
-        # returned support should be truncated at max_r.
         coords, poly = coords_and_poly
         max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
         wide_support = np.linspace(0, max_r * 2, 40)
-        eroded_support, _ = g(coords, hull=poly, support=wide_support, edge_correction="erosion")
+        eroded_support, _ = g(coords, hull=poly, support=wide_support, edge_correction="rs")
         assert eroded_support[-1] <= max_r + 1e-12
         assert len(eroded_support) < len(wide_support)
 
     def test_with_shapely_polygon_hull(self, coords_and_poly):
         coords, poly = coords_and_poly
-        support, gvals = g(coords, hull=poly, edge_correction="erosion")
+        support, gvals = g(coords, hull=poly, edge_correction="rs")
         assert len(support) > 0
         assert len(gvals) > 0
 
     def test_with_bbox_array_hull(self, coords_and_poly):
         coords, _ = coords_and_poly
         bbox = np.array([0.0, 0.0, 10.0, 10.0])
-        support, gvals = g(coords, hull=bbox, edge_correction="erosion")
+        support, gvals = g(coords, hull=bbox, edge_correction="rs")
         assert len(support) > 0
         assert np.all(gvals >= 0.0)
 
     def test_with_convex_hull(self, coords_and_poly):
         coords, _ = coords_and_poly
         ch = spatial.ConvexHull(coords)
-        support, gvals = g(coords, hull=ch, edge_correction="erosion")
+        support, gvals = g(coords, hull=ch, edge_correction="rs")
         assert len(support) > 0
         assert np.all(gvals >= 0.0)
 
     def test_no_explicit_hull_defaults_to_bbox(self, coords_and_poly):
-        # Without hull, _prepare_hull returns a bbox — erosion still runs.
         coords, _ = coords_and_poly
-        support, gvals = g(coords, edge_correction="erosion")
+        support, gvals = g(coords, edge_correction="rs")
         assert len(support) > 0
         assert gvals[0] == 0.0
 
-    def test_true_alias_matches_erosion_string(self, coords_and_poly):
+    def test_erosion_alias_matches_rs(self, coords_and_poly):
         coords, poly = coords_and_poly
-        s1, v1 = g(coords, hull=poly, edge_correction="erosion")
+        s1, v1 = g(coords, hull=poly, edge_correction="rs")
+        s2, v2 = g(coords, hull=poly, edge_correction="erosion")
+        np.testing.assert_array_equal(s1, s2)
+        np.testing.assert_array_equal(v1, v2)
+
+    def test_true_alias_matches_rs(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        s1, v1 = g(coords, hull=poly, edge_correction="rs")
         s2, v2 = g(coords, hull=poly, edge_correction=True)
         np.testing.assert_array_equal(s1, s2)
         np.testing.assert_array_equal(v1, v2)
 
     def test_guard_semantics_exclude_boundary_points(self):
-        # Place points: one deep inside, one exactly on the boundary.
-        # At a radius larger than the boundary point's distance to the edge,
-        # the boundary point should be excluded from the guard set.
-        interior = np.array([[5.0, 5.0]])  # far from any edge
-        boundary_adj = np.array([[0.05, 5.0]])  # 0.05 from left edge
+        interior = np.array([[5.0, 5.0]])
+        boundary_adj = np.array([[0.05, 5.0]])
         coords = np.vstack([interior, boundary_adj])
         poly = box(0, 0, 10, 10)
 
         shapely_pts = shapely.points(coords[:, 0], coords[:, 1])
         dtb = shapely.distance(shapely_pts, poly.boundary)
-        # At r = 0.1, boundary_adj (dtb ≈ 0.05) is NOT in the guard set.
         r = 0.1
         guard = dtb > r
-        assert guard[0]  # interior point is a guard point
-        assert not guard[1]  # boundary-adjacent point is excluded
+        assert guard[0]
+        assert not guard[1]
+
+
+class TestGKM:
+    """Kaplan-Meier G estimator via edge_correction='km'."""
+
+    def test_output_shape_consistent(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support, gvals = g(coords, hull=poly, edge_correction="km")
+        assert support.shape == gvals.shape
+
+    def test_starts_at_zero(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, gvals = g(coords, hull=poly, edge_correction="km")
+        assert gvals[0] == 0.0
+
+    def test_monotone_non_decreasing(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, gvals = g(coords, hull=poly, edge_correction="km")
+        assert np.all(np.diff(gvals) >= -1e-12)
+
+    def test_values_bounded(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, gvals = g(coords, hull=poly, edge_correction="km")
+        assert np.all(gvals >= 0.0)
+        assert np.all(gvals <= 1.0)
+
+    def test_no_hull_defaults_to_bbox(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        support, gvals = g(coords, edge_correction="km")
+        assert len(support) > 0
+        assert gvals[0] == 0.0
+
+    def test_precomputed_nnd(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        tree = spatial.KDTree(coords)
+        dists, _ = tree.query(coords, k=2)
+        nnd = dists[:, 1]
+        support, gvals = g(coords, hull=poly, distances=nnd, edge_correction="km")
+        assert np.all(gvals >= 0.0)
+
+
+class TestGHanisch:
+    """Hanisch G estimator via edge_correction='hanisch'."""
+
+    def test_output_shape_consistent(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support, gvals = g(coords, hull=poly, edge_correction="hanisch")
+        assert support.shape == gvals.shape
+
+    def test_starts_at_zero(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, gvals = g(coords, hull=poly, edge_correction="hanisch")
+        assert gvals[0] == 0.0
+
+    def test_values_bounded(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, gvals = g(coords, hull=poly, edge_correction="hanisch")
+        assert np.all(gvals >= 0.0)
+        assert np.all(gvals <= 1.0 + 1e-12)
+
+    def test_no_hull_defaults_to_bbox(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        support, gvals = g(coords, edge_correction="hanisch")
+        assert len(support) > 0
+        assert gvals[0] == 0.0
+
+    def test_monotone_non_decreasing(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, gvals = g(coords, hull=poly, edge_correction="hanisch")
+        assert np.all(np.diff(gvals) >= -1e-12)
+
+
+class TestGDefault:
+    """g() with no edge_correction returns GEstResult with all corrections."""
+
+    def test_returns_gestresult(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = g(coords, hull=poly)
+        assert isinstance(result, GEstResult)
+
+    def test_fields_are_arrays(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = g(coords, hull=poly)
+        for field in GEstResult._fields:
+            assert isinstance(getattr(result, field), np.ndarray), field
+
+    def test_all_fields_same_length(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 2, 15)
+        result = g(coords, hull=poly, support=support)
+        for field in GEstResult._fields:
+            assert len(getattr(result, field)) == len(support), field
+
+    def test_theo_formula(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 2, 15)
+        result = g(coords, hull=poly, support=support)
+        n = len(coords)
+        area = poly.area
+        lam = n / area
+        expected_theo = 1 - np.exp(-lam * np.pi * support**2)
+        np.testing.assert_allclose(result.theo, expected_theo)
+
+    def test_rs_nan_beyond_erosion_threshold(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
+        support = np.linspace(0, max_r * 1.5, 20)
+        result = g(coords, hull=poly, support=support)
+        beyond = support > max_r
+        assert np.all(np.isnan(result.rs[beyond]))
+
+    def test_rs_finite_within_erosion_threshold(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
+        support = np.linspace(0, max_r * 1.5, 20)
+        result = g(coords, hull=poly, support=support)
+        within = support <= max_r
+        assert np.all(np.isfinite(result.rs[within]))
+
+    def test_km_monotone_non_decreasing(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = g(coords, hull=poly)
+        assert np.all(np.diff(result.km) >= -1e-12)
+
+    def test_all_corrections_bounded(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = g(coords, hull=poly)
+        assert np.all(result.raw >= 0) and np.all(result.raw <= 1)
+        assert np.all(result.km >= 0) and np.all(result.km <= 1)
+        assert np.all(result.hanisch >= 0) and np.all(result.hanisch <= 1 + 1e-12)
+        finite_rs = result.rs[~np.isnan(result.rs)]
+        assert np.all(finite_rs >= 0) and np.all(finite_rs <= 1)
+
+    def test_rs_matches_explicit_rs_call(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
+        support = np.linspace(0, max_r * 0.9, 10)
+        result = g(coords, hull=poly, support=support)
+        _, rs_explicit = g(coords, hull=poly, support=support, edge_correction="rs")
+        np.testing.assert_allclose(result.rs, rs_explicit)
+
+    def test_km_matches_explicit_km_call(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 2, 12)
+        result = g(coords, hull=poly, support=support)
+        _, km_explicit = g(coords, hull=poly, support=support, edge_correction="km")
+        np.testing.assert_allclose(result.km, km_explicit)
+
+    def test_hanisch_matches_explicit_hanisch_call(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 2, 12)
+        result = g(coords, hull=poly, support=support)
+        _, han_explicit = g(coords, hull=poly, support=support, edge_correction="hanisch")
+        np.testing.assert_allclose(result.hanisch, han_explicit)
+
+
+# ---------------------------------------------------------------------------
+# Ripley's F function tests
+# ---------------------------------------------------------------------------
+# NOTE: f() generates random test points. Use rng=7 (not 42, the coords seed)
+# to avoid coincident test points and events which would bias the estimator.
+
+
+class TestFRaw:
+    """Raw (uncorrected) F estimator via edge_correction=None."""
+
+    def test_output_shape_consistent(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        bins, fracs = f(coords, edge_correction=None)
+        assert bins.shape == fracs.shape
+
+    def test_fracs_starts_at_zero(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        _, fracs = f(coords, edge_correction=None)
+        assert fracs[0] == 0.0
+
+    def test_fracs_ends_at_one(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        _, fracs = f(coords, edge_correction=None)
+        assert fracs[-1] == pytest.approx(1.0)
+
+    def test_monotone_non_decreasing(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        _, fracs = f(coords, edge_correction=None)
+        assert np.all(np.diff(fracs) >= 0)
+
+    def test_custom_support_length(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        bins, fracs = f(coords, support=50, edge_correction=None)
+        assert len(bins) == 50
+        assert len(fracs) == 50
+
+    def test_precomputed_distances(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        rng_obj = np.random.default_rng(7)
+        test_pts = rng_obj.uniform(0, 10, (500, 2))
+        tree = spatial.KDTree(coords)
+        dists, _ = tree.query(test_pts, k=1)
+        bins, fracs = f(coords, distances=dists.squeeze(), edge_correction=None)
+        assert fracs[-1] == pytest.approx(1.0)
+
+    def test_invalid_edge_correction_raises(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        with pytest.raises(ValueError, match="edge_correction must be one of"):
+            f(coords, edge_correction="ripley")
+
+    def test_raw_string_alias(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        s1, v1 = f(coords, edge_correction=None, rng=7)
+        s2, v2 = f(coords, edge_correction="raw", rng=7)
+        np.testing.assert_array_equal(s1, s2)
+        np.testing.assert_array_equal(v1, v2)
+
+
+class TestFRS:
+    """Reduced-sample (border) F estimator via edge_correction='rs'."""
+
+    def test_output_shape_consistent(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support, fvals = f(coords, hull=poly, edge_correction="rs", rng=7)
+        assert support.shape == fvals.shape
+
+    def test_starts_at_zero(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, fvals = f(coords, hull=poly, edge_correction="rs", rng=7)
+        assert fvals[0] == 0.0
+
+    def test_values_bounded(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, fvals = f(coords, hull=poly, edge_correction="rs", rng=7)
+        assert np.all(fvals >= 0.0)
+        assert np.all(fvals <= 1.0)
+
+    def test_monotone_non_decreasing(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, fvals = f(coords, hull=poly, edge_correction="rs", rng=7)
+        assert np.all(np.diff(fvals) >= -1e-12)
+
+    def test_no_hull_defaults_to_bbox(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        support, fvals = f(coords, edge_correction="rs", rng=7)
+        assert len(support) > 0
+        assert fvals[0] == 0.0
+
+    def test_with_shapely_polygon(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support, fvals = f(coords, hull=poly, edge_correction="rs", rng=7)
+        assert len(support) > 0 and len(fvals) > 0
+
+    def test_seed_reproducible(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        s1, v1 = f(coords, hull=poly, edge_correction="rs", rng=7)
+        s2, v2 = f(coords, hull=poly, edge_correction="rs", rng=7)
+        np.testing.assert_array_equal(v1, v2)
+
+
+class TestFKM:
+    """Kaplan-Meier F estimator via edge_correction='km'."""
+
+    def test_output_shape_consistent(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support, fvals = f(coords, hull=poly, edge_correction="km", rng=7)
+        assert support.shape == fvals.shape
+
+    def test_starts_at_zero(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, fvals = f(coords, hull=poly, edge_correction="km", rng=7)
+        assert fvals[0] == 0.0
+
+    def test_monotone_non_decreasing(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, fvals = f(coords, hull=poly, edge_correction="km", rng=7)
+        assert np.all(np.diff(fvals) >= -1e-12)
+
+    def test_values_bounded(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, fvals = f(coords, hull=poly, edge_correction="km", rng=7)
+        assert np.all(fvals >= 0.0)
+        assert np.all(fvals <= 1.0)
+
+    def test_no_hull_defaults_to_bbox(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        support, fvals = f(coords, edge_correction="km", rng=7)
+        assert len(support) > 0
+        assert fvals[0] == 0.0
+
+    def test_seed_reproducible(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        s1, v1 = f(coords, hull=poly, edge_correction="km", rng=7)
+        s2, v2 = f(coords, hull=poly, edge_correction="km", rng=7)
+        np.testing.assert_array_equal(v1, v2)
+
+
+class TestFCS:
+    """Chiu-Stoyan F estimator via edge_correction='cs'."""
+
+    def test_output_shape_consistent(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support, fvals = f(coords, hull=poly, edge_correction="cs", rng=7)
+        assert support.shape == fvals.shape
+
+    def test_starts_at_zero(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, fvals = f(coords, hull=poly, edge_correction="cs", rng=7)
+        assert fvals[0] == 0.0
+
+    def test_monotone_non_decreasing(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, fvals = f(coords, hull=poly, edge_correction="cs", rng=7)
+        assert np.all(np.diff(fvals) >= -1e-12)
+
+    def test_values_bounded(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, fvals = f(coords, hull=poly, edge_correction="cs", rng=7)
+        assert np.all(fvals >= 0.0)
+        assert np.all(fvals <= 1.0 + 1e-12)
+
+    def test_no_hull_defaults_to_bbox(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        support, fvals = f(coords, edge_correction="cs", rng=7)
+        assert len(support) > 0
+        assert fvals[0] == 0.0
+
+    def test_seed_reproducible(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        s1, v1 = f(coords, hull=poly, edge_correction="cs", rng=7)
+        s2, v2 = f(coords, hull=poly, edge_correction="cs", rng=7)
+        np.testing.assert_array_equal(v1, v2)
+
+
+class TestFDefault:
+    """f() with no edge_correction returns FEstResult with all corrections."""
+
+    def test_returns_festresult(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = f(coords, hull=poly, rng=7)
+        assert isinstance(result, FEstResult)
+
+    def test_fields_are_arrays(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = f(coords, hull=poly, rng=7)
+        for field in FEstResult._fields:
+            assert isinstance(getattr(result, field), np.ndarray), field
+
+    def test_all_fields_same_length(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 2, 15)
+        result = f(coords, hull=poly, support=support, rng=7)
+        for field in FEstResult._fields:
+            assert len(getattr(result, field)) == len(support), field
+
+    def test_theo_formula(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 2, 15)
+        result = f(coords, hull=poly, support=support, rng=7)
+        n = len(coords)
+        area = poly.area
+        lam = n / area
+        expected_theo = 1 - np.exp(-lam * np.pi * support**2)
+        np.testing.assert_allclose(result.theo, expected_theo)
+
+    def test_all_corrections_bounded(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = f(coords, hull=poly, rng=7)
+        assert np.all(result.raw >= 0) and np.all(result.raw <= 1)
+        assert np.all(result.rs >= 0) and np.all(result.rs <= 1)
+        assert np.all(result.km >= 0) and np.all(result.km <= 1)
+        assert np.all(result.cs >= 0) and np.all(result.cs <= 1 + 1e-12)
+
+    def test_km_monotone(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = f(coords, hull=poly, rng=7)
+        assert np.all(np.diff(result.km) >= -1e-12)
+
+    def test_rs_matches_explicit_rs_call(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 2, 12)
+        result = f(coords, hull=poly, support=support, rng=7)
+        _, rs_explicit = f(coords, hull=poly, support=support, edge_correction="rs", rng=7)
+        np.testing.assert_allclose(result.rs, rs_explicit)
+
+    def test_km_matches_explicit_km_call(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 2, 12)
+        result = f(coords, hull=poly, support=support, rng=7)
+        _, km_explicit = f(coords, hull=poly, support=support, edge_correction="km", rng=7)
+        np.testing.assert_allclose(result.km, km_explicit)
+
+    def test_cs_matches_explicit_cs_call(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 2, 12)
+        result = f(coords, hull=poly, support=support, rng=7)
+        _, cs_explicit = f(coords, hull=poly, support=support, edge_correction="cs", rng=7)
+        np.testing.assert_allclose(result.cs, cs_explicit)
+
+
+# ---------------------------------------------------------------------------
+# Ripley's J function tests
+# ---------------------------------------------------------------------------
+# NOTE: j() calls f() internally. Use rng=7 (not 42) to avoid coincident
+# test points and events when f() generates its random test points.
+
+
+class TestJUncorrected:
+    """Uncorrected J estimator via edge_correction=None."""
+
+    def test_output_is_tuple(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        result = j(coords, edge_correction=None)
+        assert isinstance(result, tuple)
+        assert len(result) == 2
+
+    def test_output_shape_consistent(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        support, jvals = j(coords, edge_correction=None)
+        assert support.shape == jvals.shape
+
+    def test_values_finite(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        support, jvals = j(coords, edge_correction=None)
+        assert np.all(np.isfinite(jvals))
+
+    def test_raw_alias(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        s1, v1 = j(coords, edge_correction=None, rng=7)
+        s2, v2 = j(coords, edge_correction="un", rng=7)
+        np.testing.assert_array_equal(s1, s2)
+        np.testing.assert_array_equal(v1, v2)
+
+    def test_invalid_edge_correction_raises(self, coords_and_poly):
+        coords, _ = coords_and_poly
+        with pytest.raises(ValueError, match="edge_correction must be one of"):
+            j(coords, edge_correction="ripley")
+
+
+class TestJRS:
+    """Reduced-sample J estimator via edge_correction='rs'."""
+
+    def test_output_is_tuple(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = j(coords, hull=poly, edge_correction="rs", rng=7)
+        assert isinstance(result, tuple)
+        assert len(result) == 2
+
+    def test_output_shape_consistent(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support, jvals = j(coords, hull=poly, edge_correction="rs", rng=7)
+        assert support.shape == jvals.shape
+
+    def test_values_non_negative(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, jvals = j(coords, hull=poly, edge_correction="rs", rng=7)
+        assert np.all(jvals >= 0)
+
+    def test_seed_reproducible(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        s1, v1 = j(coords, hull=poly, edge_correction="rs", rng=7)
+        s2, v2 = j(coords, hull=poly, edge_correction="rs", rng=7)
+        np.testing.assert_array_equal(v1, v2)
+
+
+class TestJKM:
+    """Kaplan-Meier J estimator via edge_correction='km'."""
+
+    def test_output_is_tuple(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = j(coords, hull=poly, edge_correction="km", rng=7)
+        assert isinstance(result, tuple)
+        assert len(result) == 2
+
+    def test_output_shape_consistent(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support, jvals = j(coords, hull=poly, edge_correction="km", rng=7)
+        assert support.shape == jvals.shape
+
+    def test_values_non_negative(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, jvals = j(coords, hull=poly, edge_correction="km", rng=7)
+        assert np.all(jvals >= 0)
+
+    def test_seed_reproducible(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        s1, v1 = j(coords, hull=poly, edge_correction="km", rng=7)
+        s2, v2 = j(coords, hull=poly, edge_correction="km", rng=7)
+        np.testing.assert_array_equal(v1, v2)
+
+
+class TestJHan:
+    """Hybrid Hanisch/CS J estimator via edge_correction='han'."""
+
+    def test_output_is_tuple(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = j(coords, hull=poly, edge_correction="han", rng=7)
+        assert isinstance(result, tuple)
+        assert len(result) == 2
+
+    def test_output_shape_consistent(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support, jvals = j(coords, hull=poly, edge_correction="han", rng=7)
+        assert support.shape == jvals.shape
+
+    def test_values_non_negative(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        _, jvals = j(coords, hull=poly, edge_correction="han", rng=7)
+        assert np.all(jvals >= 0)
+
+    def test_seed_reproducible(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        s1, v1 = j(coords, hull=poly, edge_correction="han", rng=7)
+        s2, v2 = j(coords, hull=poly, edge_correction="han", rng=7)
+        np.testing.assert_array_equal(v1, v2)
+
+
+class TestJDefault:
+    """j() with no edge_correction returns JEstResult with all corrections."""
+
+    def test_returns_jestresult(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = j(coords, hull=poly, rng=7)
+        assert isinstance(result, JEstResult)
+
+    def test_fields_are_arrays(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = j(coords, hull=poly, rng=7)
+        for field in JEstResult._fields:
+            assert isinstance(getattr(result, field), np.ndarray), field
+
+    def test_all_fields_same_length(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 1, 10)
+        result = j(coords, hull=poly, support=support, rng=7)
+        for field in JEstResult._fields:
+            assert len(getattr(result, field)) == len(support), field
+
+    def test_theo_all_ones(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = j(coords, hull=poly, rng=7)
+        np.testing.assert_allclose(result.theo, 1.0)
+
+    def test_all_corrections_non_negative(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        result = j(coords, hull=poly, rng=7)
+        for field in ("rs", "km", "han", "un"):
+            vals = getattr(result, field)
+            finite_vals = vals[~np.isnan(vals)]
+            assert np.all(finite_vals >= 0), f"{field} has negative values"
+
+    def test_seed_reproducible(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 1, 10)
+        r1 = j(coords, hull=poly, support=support, rng=7)
+        r2 = j(coords, hull=poly, support=support, rng=7)
+        for field in JEstResult._fields:
+            np.testing.assert_array_equal(getattr(r1, field), getattr(r2, field))
+
+    def test_rs_ratio_of_g_rs_and_f_rs(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        support = np.linspace(0, 1, 8)
+        result = j(coords, hull=poly, support=support, rng=7)
+        gr = g(coords, hull=poly, support=support)
+        fr = f(coords, hull=poly, support=support, rng=7)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            expected = (1 - gr.rs) / (1 - fr.rs)
+        mask = ~(np.isnan(result.rs) | np.isnan(expected))
+        np.testing.assert_allclose(result.rs[mask], expected[mask])
 
 
 # ---------------------------------------------------------------------------
@@ -338,22 +923,19 @@ class TestKErosion:
         np.testing.assert_array_equal(v1, v2)
 
     def test_guard_excludes_focal_points_near_boundary(self, coords_and_poly):
-        # At r slightly above 0.05, a point 0.05 from the boundary is excluded.
         coords, poly = coords_and_poly
         shapely_pts = shapely.points(coords[:, 0], coords[:, 1])
         dtb = shapely.distance(shapely_pts, poly.boundary)
-        r = dtb.min() + 1e-6  # just above the closest point's distance to boundary
+        r = dtb.min() + 1e-6
         guard = dtb > r
-        assert guard.sum() < len(coords)  # at least one point excluded
+        assert guard.sum() < len(coords)
 
     def test_csr_k_approx_pi_r_squared(self):
-        # For a dense CSR pattern, K(r) ≈ π r² under the erosion estimator.
         rng = np.random.default_rng(0)
         coords = rng.uniform(0, 20, (300, 2))
         poly = shapely.box(0, 0, 20, 20)
         support, kvals = k(coords, hull=poly, support=15, edge_correction="erosion")
         expected = np.pi * support**2
-        # Allow ±30% relative tolerance — erosion clips edge, so compare only interior.
         mid = len(support) // 2
         np.testing.assert_allclose(kvals[1:mid], expected[1:mid], rtol=0.30)
 
@@ -382,11 +964,9 @@ class TestLErosion:
         coords = rng.uniform(0, 20, (300, 2))
         poly = shapely.box(0, 0, 20, 20)
         support, lvals = l(coords, hull=poly, edge_correction="erosion", linearized=True)
-        # Linearized L(r) - r should be near 0 for CSR (allow ±1 unit tolerance).
         assert np.abs(lvals).max() < 1.5
 
 
-# ---------------------------------------------------------------------------
 # ---------------------------------------------------------------------------
 # 'border' correction (alias for 'erosion')
 # ---------------------------------------------------------------------------
@@ -395,8 +975,6 @@ class TestLErosion:
 class TestKBorder:
     def test_border_equals_erosion(self, coords_and_poly):
         coords, poly = coords_and_poly
-        from pointpats.geometry import max_radius
-
         max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
         support = np.linspace(0, max_r * 0.9, 8)
         _, k_bor = k(coords, hull=poly, support=support, edge_correction="border")
@@ -516,7 +1094,6 @@ class TestKTranslate:
         assert np.all(np.diff(kvals) >= 0)
 
     def test_corrected_geq_uncorrected(self, coords_and_poly):
-        # Overlap area ≤ window area, so w_ij ≥ area, and K_translate ≥ K_uncorrected.
         coords, poly = coords_and_poly
         support = np.linspace(0, 4, 10)
         _, k_raw = k(coords, hull=poly, support=support, edge_correction=None)
@@ -594,10 +1171,8 @@ class TestKDefault:
         max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
         support = np.linspace(0, max_r * 1.5, 20)
         result = k(coords, hull=poly, support=support)
-        # Support values beyond max_r should be NaN in border
         beyond = support > max_r
         assert np.all(np.isnan(result.border[beyond]))
-        # Support values within max_r should be finite
         within = support <= max_r
         assert np.all(np.isfinite(result.border[within]))
 

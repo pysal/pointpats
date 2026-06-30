@@ -26,6 +26,9 @@ __all__ = [
     "k_test",
     "j_test",
     "l_test",
+    "GEstResult",
+    "FEstResult",
+    "JEstResult",
     "KEstResult",
     "LEstResult",
 ]
@@ -35,6 +38,9 @@ __all__ = [
 # (compute all three default corrections)".
 _NOTSET = object()
 
+GEstResult = namedtuple("GEstResult", ("support", "theo", "raw", "rs", "km", "hanisch"))
+FEstResult = namedtuple("FEstResult", ("support", "theo", "raw", "rs", "km", "cs"))
+JEstResult = namedtuple("JEstResult", ("support", "theo", "rs", "km", "han", "un"))
 KEstResult = namedtuple(
     "KEstResult", ("support", "theo", "border", "isotropic", "translate")
 )
@@ -211,6 +217,37 @@ def _translate_pair_weights(coordinates, poly, area):
     return numpy.where(overlap_areas > 0, area * area / overlap_areas, area * area)
 
 
+def _kaplan_meier_cdf(obs_times, events):
+    """Kaplan-Meier CDF from (observed_time, event_indicator) pairs.
+
+    obs_times : min(event_time, censoring_time) for each observation
+    events    : 1 = event occurred, 0 = censored at obs_time
+
+    Returns unique_event_times and CDF values (1 - survival) at those times.
+    """
+    obs_times = numpy.asarray(obs_times, dtype=float)
+    events = numpy.asarray(events, dtype=int)
+    unique_t = numpy.sort(numpy.unique(obs_times[events == 1]))
+    if len(unique_t) == 0:
+        return numpy.array([], dtype=float), numpy.array([], dtype=float)
+    survival = 1.0
+    cdf = numpy.zeros(len(unique_t))
+    for i, t in enumerate(unique_t):
+        n_at_risk = int((obs_times >= t).sum())
+        n_events = int(((obs_times == t) & (events == 1)).sum())
+        survival *= 1.0 - n_events / n_at_risk
+        cdf[i] = 1.0 - survival
+    return unique_t, cdf
+
+
+def _km_at_support(km_times, km_cdf, support):
+    """Evaluate step-function KM CDF at arbitrary support points."""
+    if len(km_times) == 0:
+        return numpy.zeros(len(support))
+    idx = numpy.searchsorted(km_times, support, side="right") - 1
+    return numpy.where(idx >= 0, km_cdf[numpy.clip(idx, 0, len(km_cdf) - 1)], 0.0)
+
+
 # ------------------------------------------------------------#
 # Statistical Functions                                       #
 # ------------------------------------------------------------#
@@ -222,7 +259,8 @@ def f(
     distances=None,
     metric="euclidean",
     hull=None,
-    edge_correction=None,
+    edge_correction=_NOTSET,
+    rng=None,
 ):
     """Ripley's F function
 
@@ -238,31 +276,101 @@ def f(
         int, encoding number of equally-spaced intervals
         numpy.ndarray, used directly within numpy.histogram
     distances: numpy.ndarray, (n, p) or (p,)
-        distances from every point in a random point set of size p
-        to some point in `coordinates`
+        distances from p random test points to their nearest event in
+        ``coordinates``. Honoured only when ``edge_correction`` is ``None``
+        (uncorrected); spatial corrections always generate test points
+        internally.
     metric: str or callable
         distance metric to use when building search tree
-    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon
-        the hull used to construct a random sample pattern, if distances is None
-    edge_correction: bool or str
-        whether or not to conduct edge correction. Not yet implemented.
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
+        the study area geometry. Required for spatial edge corrections.
+    edge_correction: None, 'raw', 'rs', 'km', or 'cs'
+        edge correction method.  When omitted (default), all four corrections
+        are computed and returned as an FEstResult named tuple.
+        ``None`` / ``'raw'``: uncorrected histogram estimator.
+        ``'rs'``: reduced-sample (border) correction — only test points
+            further from the boundary than ``r`` contribute at radius ``r``.
+        ``'km'``: spatial Kaplan-Meier — distance to boundary acts as
+            a censoring time in a survival-analysis framework.
+        ``'cs'``: Chiu-Stoyan correction — observations are weighted by
+            ``area(W) / area(disk(u, d(u)) ∩ W)``.
+    rng : int, numpy.random.Generator, or None
+        Seed or generator for the internal random test points. Ignored when
+        ``distances`` is supplied. Useful for reproducible tests.
 
     Returns
     -------
-    a tuple containing the support values used to evalute the function
-    and the values of the function at each distance value in the support.
+    When ``edge_correction`` is omitted: an FEstResult named tuple with fields
+    ``support``, ``theo``, ``raw``, ``rs``, ``km``, ``cs``.
+    Otherwise: a 2-tuple ``(support, values)`` for the requested correction.
     """
-    coordinates, support, distances, metric, hull, _ = _prepare(
-        coordinates, support, distances, metric, hull, edge_correction
+    _valid_f = (None, "raw", "rs", "km", "cs")
+    if edge_correction is not _NOTSET and edge_correction not in _valid_f:
+        raise ValueError(
+            f"edge_correction must be one of {_valid_f}. Got {edge_correction!r}"
+        )
+
+    # _prepare raises NotImplementedError for non-None edge_correction; bypass.
+    coordinates, support, distances, metric, hull_prepared, _ = _prepare(
+        coordinates, support, distances, metric, hull, None
     )
+    n = coordinates.shape[0]
+
+    # ------------------------------------------------------------------ #
+    # Default mode: compute all four corrections and return FEstResult    #
+    # ------------------------------------------------------------------ #
+    if edge_correction is _NOTSET:
+        poly = _hull_to_poly(hull_prepared)
+        test_pts = poisson(hull=poly, size=(1000, 1), rng=rng).squeeze()
+        tree = _build_best_tree(coordinates, metric)
+        _d, _ = tree.query(test_pts, k=1)
+        test_dists = _d.squeeze()
+
+        area_W = poly.area
+        intensity = n / area_W
+        theo = 1.0 - numpy.exp(-intensity * numpy.pi * support**2)
+
+        m = len(test_dists)
+        raw = numpy.array([(test_dists <= r).sum() / m for r in support])
+
+        shapely_test_pts = shapely.points(test_pts[:, 0], test_pts[:, 1])
+        dtb_test = shapely.distance(shapely_test_pts, poly.boundary)
+
+        # RS
+        f_rs = numpy.zeros(len(support))
+        for i, r in enumerate(support):
+            guard = dtb_test > r
+            n_guard = int(guard.sum())
+            if n_guard > 0:
+                f_rs[i] = int((guard & (test_dists <= r)).sum()) / n_guard
+
+        # KM
+        obs_t = numpy.minimum(test_dists, dtb_test)
+        ev = (test_dists < dtb_test).astype(int)
+        kmt, kmcdf = _kaplan_meier_cdf(obs_t, ev)
+        f_km = _km_at_support(kmt, kmcdf, support)
+
+        # CS (Chiu-Stoyan)
+        disks = shapely.buffer(shapely_test_pts, test_dists)
+        inters = shapely.intersection(disks, poly)
+        inter_areas = shapely.area(inters)
+        disk_areas = numpy.pi * test_dists**2
+        cs_w = numpy.where((inter_areas > 0) & (test_dists > 0), disk_areas / inter_areas, 1.0)
+        total_cs = cs_w.sum()
+        f_cs = numpy.array([(cs_w[test_dists <= r]).sum() / total_cs for r in support])
+
+        return FEstResult(support, theo, raw, f_rs, f_km, f_cs)
+
+    # ------------------------------------------------------------------ #
+    # Compute test-point distances (precomputed or fresh)                 #
+    # ------------------------------------------------------------------ #
     if distances is not None:
-        n = coordinates.shape[0]
         if distances.ndim == 2:
-            k, p = distances.shape
-            if k == p == n:
+            k_, p_ = distances.shape
+            if k_ == p_ == n:
                 warnings.warn(
                     f"A full distance matrix is not required for this function, and"
-                    f" the intput matrix is a square {n},{n} matrix. Only the"
+                    f" the input matrix is a square {n},{n} matrix. Only the"
                     f" distances from p random points to their nearest neighbor within"
                     f" the pattern is required, as an {n},p matrix. Assuming the"
                     f" provided distance matrix has rows pertaining to input"
@@ -270,34 +378,72 @@ def f(
                     stacklevel=2,
                 )
                 distances = distances.min(axis=0)
-            elif k == n:
+            elif k_ == n:
                 distances = distances.min(axis=0)
             else:
                 raise ValueError(
                     f"Distance matrix should have the same rows as the input"
                     f" coordinates with p columns, where n may be equal to p."
-                    f" Recieved an {k},{p} distance matrix for {n} coordinates"
+                    f" Received an {k_},{p_} distance matrix for {n} coordinates"
                 )
-        elif distances.ndim == 1:
-            p = len(distances)
+        test_dists = distances.squeeze()
+        test_pts = None
     else:
-        # Do 1000 empties. Users can control this by computing their own
-        # empty space distribution.
-        n_empty_points = 1000
+        poly = _hull_to_poly(hull_prepared)
+        test_pts = poisson(hull=poly, size=(1000, 1), rng=rng).squeeze()
+        tree = _build_best_tree(coordinates, metric)
+        _d, _ = tree.query(test_pts, k=1)
+        test_dists = _d.squeeze()
 
-        randoms = poisson(hull=hull, size=(n_empty_points, 1))
-        try:
-            tree  # noqa: B018
-        except NameError:
-            tree = _build_best_tree(coordinates, metric)
-        finally:
-            distances, _ = tree.query(randoms, k=1)
-            distances = distances.squeeze()
+    # ------------------------------------------------------------------ #
+    # Uncorrected                                                         #
+    # ------------------------------------------------------------------ #
+    if edge_correction in (None, "raw"):
+        counts, bins = numpy.histogram(test_dists, bins=support)
+        fracs = numpy.cumsum(counts) / counts.sum()
+        return bins, numpy.asarray([0, *fracs])
 
-    counts, bins = numpy.histogram(distances, bins=support)
-    fracs = numpy.cumsum(counts) / counts.sum()
+    # ------------------------------------------------------------------ #
+    # Spatial corrections — need test point locations                     #
+    # ------------------------------------------------------------------ #
+    if test_pts is None:
+        # User supplied precomputed distances but requested a spatial
+        # correction: generate fresh test points for the correction.
+        poly = _hull_to_poly(hull_prepared)
+        test_pts = poisson(hull=poly, size=(1000, 1), rng=rng).squeeze()
+        tree = _build_best_tree(coordinates, metric)
+        _d, _ = tree.query(test_pts, k=1)
+        test_dists = _d.squeeze()
+    else:
+        poly = _hull_to_poly(hull_prepared)
 
-    return bins, numpy.asarray([0, *fracs])
+    shapely_test_pts = shapely.points(test_pts[:, 0], test_pts[:, 1])
+    dtb_test = shapely.distance(shapely_test_pts, poly.boundary)
+
+    if edge_correction == "rs":
+        f_values = numpy.zeros(len(support))
+        for i, r in enumerate(support):
+            guard = dtb_test > r
+            n_guard = int(guard.sum())
+            if n_guard > 0:
+                f_values[i] = int((guard & (test_dists <= r)).sum()) / n_guard
+        return support, f_values
+
+    if edge_correction == "km":
+        obs_t = numpy.minimum(test_dists, dtb_test)
+        ev = (test_dists < dtb_test).astype(int)
+        kmt, kmcdf = _kaplan_meier_cdf(obs_t, ev)
+        return support, _km_at_support(kmt, kmcdf, support)
+
+    # edge_correction == "cs"
+    disks = shapely.buffer(shapely_test_pts, test_dists)
+    inters = shapely.intersection(disks, poly)
+    inter_areas = shapely.area(inters)
+    disk_areas = numpy.pi * test_dists**2
+    cs_w = numpy.where((inter_areas > 0) & (test_dists > 0), disk_areas / inter_areas, 1.0)
+    total_cs = cs_w.sum()
+    f_values = numpy.array([(cs_w[test_dists <= r]).sum() / total_cs for r in support])
+    return support, f_values
 
 
 def g(
@@ -306,7 +452,7 @@ def g(
     distances=None,
     metric="euclidean",
     hull=None,
-    edge_correction=None,
+    edge_correction=_NOTSET,
 ):
     """Ripley's G function
 
@@ -326,30 +472,39 @@ def g(
     metric: str or callable
         distance metric to use when building search tree
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
-        the study area geometry. Required when edge_correction='erosion'.
-    edge_correction: None or 'erosion'
-        edge correction method. When 'erosion', only points whose distance to the
-        study window boundary exceeds r contribute to G(r). The support is
-        automatically clipped to the erosion threshold radius returned by
-        max_radius(..., method='erosion_threshold').
+        the study area geometry. Required for spatial edge corrections.
+    edge_correction: None, 'raw', 'rs', 'erosion', 'km', or 'hanisch'
+        edge correction method. When omitted (default), all four corrections
+        are computed and returned as a GEstResult named tuple.
+        ``None`` / ``'raw'``: uncorrected histogram estimator.
+        ``'rs'`` / ``'erosion'``: reduced-sample (border) correction — only
+            points further from the boundary than ``r`` act as focal points.
+            The support is automatically clipped to the erosion threshold.
+        ``'km'``: spatial Kaplan-Meier — the distance to the boundary acts
+            as a censoring time in a survival-analysis framework.
+        ``'hanisch'``: Hanisch (1984) correction — observations weighted by
+            the inverse area of the window eroded to the observed NND.
 
     Returns
     -------
-    a tuple containing the support values used to evaluate the function
-    and the values of the function at each distance value in the support.
+    When ``edge_correction`` is omitted: a GEstResult named tuple with fields
+    ``support``, ``theo``, ``raw``, ``rs``, ``km``, ``hanisch``.
+    Otherwise: a 2-tuple ``(support, values)`` for the requested correction.
     """
-    if edge_correction not in (None, "erosion", True):
+    _valid_g = (None, "raw", "rs", "erosion", "km", "hanisch", True)
+    if edge_correction is not _NOTSET and edge_correction not in _valid_g:
         raise ValueError(
-            f"edge_correction must be None or 'erosion'. Got {edge_correction!r}"
+            f"edge_correction must be one of {_valid_g[:-1]}. Got {edge_correction!r}"
         )
-    use_erosion = edge_correction in ("erosion", True)
 
-    # _prepare raises NotImplementedError for non-None edge_correction;
-    # pass None and handle erosion ourselves after preparation.
+    # _prepare raises NotImplementedError for non-None edge_correction; bypass.
     coordinates, support, distances, metric, hull_prepared, _ = _prepare(
         coordinates, support, distances, metric, hull, None
     )
 
+    # ------------------------------------------------------------------ #
+    # Compute NND                                                         #
+    # ------------------------------------------------------------------ #
     if distances is not None:
         if distances.ndim == 2:
             if distances.shape[0] == distances.shape[1] == coordinates.shape[0]:
@@ -364,44 +519,91 @@ def g(
                 k, p = distances.shape
                 n = coordinates.shape[0]
                 raise ValueError(
-                    " Input distance matrix has an invalid shape: {k},{p}."
-                    " Distances supplied can either be 2 dimensional"
-                    " square matrices with the same number of rows"
-                    f" as `coordinates` ({n}) or 1 dimensional and contain"
-                    " the shortest distance from each point in "
-                    " `coordinates` to some other point in coordinates."
+                    f"Input distance matrix has an invalid shape: {k},{p}."
+                    " Distances supplied can either be 2 dimensional square matrices"
+                    f" with the same number of rows as `coordinates` ({n}) or"
+                    " 1 dimensional and contain the shortest distance from each point."
                 )
         elif distances.ndim == 1:
             if distances.shape[0] != coordinates.shape[0]:
                 raise ValueError(
-                    "Distances are not aligned with coordinates! Distance"
-                    " matrix must be (n_coordinates, n_coordinates), but recieved"
-                    f" {distances.shape} instead of ({coordinates.shape[0]},)"
+                    "Distances are not aligned with coordinates!"
+                    f" Expected ({coordinates.shape[0]},), received {distances.shape}"
                 )
-        else:
-            raise ValueError(
-                "Distances supplied can either be 2 dimensional"
-                " square matrices with the same number of rows"
-                " as `coordinates` or 1 dimensional and contain"
-                " the shortest distance from each point in "
-                " `coordinates` to some other point in coordinates."
-                f" Input matrix was {distances.ndim} dimensional"
-            )
         nnd = distances.squeeze()
     else:
-        try:
-            tree  # noqa: B018
-        except NameError:
-            tree = _build_best_tree(coordinates, metric)
-        finally:
-            distances, indices = _k_neighbors(tree, coordinates, k=1)
-        nnd = distances.squeeze()
+        tree = _build_best_tree(coordinates, metric)
+        _dists, _ = _k_neighbors(tree, coordinates, k=1)
+        nnd = _dists.squeeze()
 
-    if use_erosion:
+    # ------------------------------------------------------------------ #
+    # Default mode: compute all corrections and return GEstResult         #
+    # ------------------------------------------------------------------ #
+    if edge_correction is _NOTSET:
         poly = _hull_to_poly(hull_prepared)
+        n = len(coordinates)
+        area = _area(poly)
+        intensity = n / area
+        theo = 1.0 - numpy.exp(-intensity * numpy.pi * support**2)
 
-        # Clip the support to the erosion threshold radius so that at least
-        # half the points remain as core (guard) points at the maximum r.
+        # Raw
+        raw = numpy.array([(nnd <= r).sum() / n for r in support])
+
+        shapely_pts = shapely.points(coordinates[:, 0], coordinates[:, 1])
+        dtb = shapely.distance(shapely_pts, poly.boundary)
+
+        # RS — NaN beyond the erosion threshold
+        max_r, _ = _max_radius(poly, points=coordinates, method="erosion_threshold")
+        rs_full = numpy.full(len(support), numpy.nan)
+        rs_mask = support <= max_r
+        rs_vals = numpy.zeros(int(rs_mask.sum()))
+        for i, r in enumerate(support[rs_mask]):
+            guard = dtb > r
+            n_guard = int(guard.sum())
+            if n_guard > 0:
+                rs_vals[i] = int((guard & (nnd <= r)).sum()) / n_guard
+        rs_full[rs_mask] = rs_vals
+
+        # KM
+        obs_times = numpy.minimum(nnd, dtb)
+        events_arr = (nnd < dtb).astype(int)
+        km_t, km_c = _kaplan_meier_cdf(obs_times, events_arr)
+        km_vals = _km_at_support(km_t, km_c, support)
+
+        # Hanisch
+        unique_nnds = numpy.unique(nnd)
+        nnd_to_ea = {}
+        for d in unique_nnds:
+            eroded = poly.buffer(-d)
+            nnd_to_ea[d] = eroded.area if not eroded.is_empty else 0.0
+        ea = numpy.array([nnd_to_ea[d] for d in nnd])
+        valid_h = ea > 0
+        if valid_h.any():
+            w_h = 1.0 / ea[valid_h]
+            vn = nnd[valid_h]
+            tw = w_h.sum()
+            hanisch_vals = numpy.array([(w_h[vn <= r]).sum() / tw for r in support])
+        else:
+            hanisch_vals = numpy.zeros(len(support))
+
+        return GEstResult(support, theo, raw, rs_full, km_vals, hanisch_vals)
+
+    # ------------------------------------------------------------------ #
+    # Uncorrected                                                         #
+    # ------------------------------------------------------------------ #
+    if edge_correction in (None, "raw"):
+        counts, bins = numpy.histogram(nnd, bins=support)
+        fracs = numpy.cumsum(counts) / counts.sum()
+        return bins, numpy.asarray([0, *fracs])
+
+    # ------------------------------------------------------------------ #
+    # Spatial corrections — need the polygon                              #
+    # ------------------------------------------------------------------ #
+    poly = _hull_to_poly(hull_prepared)
+    shapely_pts = shapely.points(coordinates[:, 0], coordinates[:, 1])
+    dtb = shapely.distance(shapely_pts, poly.boundary)
+
+    if edge_correction in ("rs", "erosion", True):
         max_r, _ = _max_radius(poly, points=coordinates, method="erosion_threshold")
         support = support[support <= max_r]
         if len(support) == 0:
@@ -409,25 +611,35 @@ def g(
                 "No support values remain after clipping to the erosion threshold "
                 f"(max_radius={max_r:.4g}). Provide a support that starts below this value."
             )
-
-        # Distance from each point to the study window boundary.
-        shapely_pts = shapely.points(coordinates[:, 0], coordinates[:, 1])
-        dist_to_boundary = shapely.distance(shapely_pts, poly.boundary)
-
-        # Erosion estimator: G(r) = #{guard & NND ≤ r} / #{guard}
-        # where guard(r) = {i : dist_to_boundary[i] > r}
         g_values = numpy.zeros(len(support))
         for i, r in enumerate(support):
-            guard = dist_to_boundary > r
-            n_guard = guard.sum()
+            guard = dtb > r
+            n_guard = int(guard.sum())
             if n_guard > 0:
-                g_values[i] = (guard & (nnd <= r)).sum() / n_guard
-
+                g_values[i] = int((guard & (nnd <= r)).sum()) / n_guard
         return support, g_values
 
-    counts, bins = numpy.histogram(nnd, bins=support)
-    fracs = numpy.cumsum(counts) / counts.sum()
-    return bins, numpy.asarray([0, *fracs])
+    if edge_correction == "km":
+        obs_times = numpy.minimum(nnd, dtb)
+        events_arr = (nnd < dtb).astype(int)
+        km_t, km_c = _kaplan_meier_cdf(obs_times, events_arr)
+        return support, _km_at_support(km_t, km_c, support)
+
+    # edge_correction == "hanisch"
+    unique_nnds = numpy.unique(nnd)
+    nnd_to_ea = {}
+    for d in unique_nnds:
+        eroded = poly.buffer(-d)
+        nnd_to_ea[d] = eroded.area if not eroded.is_empty else 0.0
+    ea = numpy.array([nnd_to_ea[d] for d in nnd])
+    valid_h = ea > 0
+    if not valid_h.any():
+        return support, numpy.zeros(len(support))
+    w_h = 1.0 / ea[valid_h]
+    vn = nnd[valid_h]
+    tw = w_h.sum()
+    g_values = numpy.array([(w_h[vn <= r]).sum() / tw for r in support])
+    return support, g_values
 
 
 def j(
@@ -436,13 +648,13 @@ def j(
     distances=None,
     metric="euclidean",
     hull=None,
-    edge_correction=None,
+    edge_correction=_NOTSET,
     truncate=True,
+    rng=None,
 ):
-    """Ripely's J function
+    """Ripley's J function
 
-    The so-called "spatial hazard" function, this is a function relating the
-    F and G functions.
+    The so-called "spatial hazard" function, J(r) = (1 - G(r)) / (1 - F(r)).
 
     Parameters
     ----------
@@ -453,53 +665,114 @@ def j(
         int, encoding number of equally-spaced intervals
         numpy.ndarray, used directly within numpy.histogram
     distances: tuple of numpy.ndarray
-        precomputed distances to use to evaluate the j function.
-        The first must be of shape (n,n) or (n,) and is used in the g function.
-        the second must be of shape (n,p) or (p,) (with p possibly equal to n)
-        used in the f function.
+        precomputed distances ``(g_distances, f_distances)``. Honoured only
+        when ``edge_correction`` is ``None`` (uncorrected).
     metric: str or callable
         distance metric to use when building search tree
-    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon
-        the hull used to construct a random sample pattern for the f function.
-    edge_correction: bool or str
-        whether or not to conduct edge correction. Not yet implemented.
+    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
+        the study area geometry. Required for spatial edge corrections.
+    edge_correction: None, 'un', 'rs', 'km', or 'han'
+        edge correction method.  When omitted (default), all four corrections
+        are computed and returned as a JEstResult named tuple.
+        ``None`` / ``'un'``: uncorrected ratio of raw G and F estimates.
+        ``'rs'``: ratio of border-corrected G and F (``rs`` estimators).
+        ``'km'``: ratio of Kaplan-Meier G and F estimates.
+        ``'han'``: hybrid Hanisch/Chiu-Stoyan ratio —
+            ``(1 - G_hanisch) / (1 - F_cs)``.
     truncate: bool (default: True)
-        whether or not to truncate the results when the F function reaches one. If the
-        F function is one but the G function is less than one, this function will return
-        numpy.nan values.
+        when using a single correction, truncate the result at the first
+        infinity (where F reaches 1). Ignored in default (all-corrections) mode.
 
     Returns
     -------
-    a tuple containing the support values used to evalute the function
-    and the values of the function at each distance value in the support.
+    When ``edge_correction`` is omitted: a JEstResult named tuple with fields
+    ``support``, ``theo``, ``rs``, ``km``, ``han``, ``un``.
+    Otherwise: a 2-tuple ``(support, values)`` for the requested correction.
     """
+    _valid_j = (None, "un", "rs", "km", "han")
+    if edge_correction is not _NOTSET and edge_correction not in _valid_j:
+        raise ValueError(
+            f"edge_correction must be one of {_valid_j}. Got {edge_correction!r}"
+        )
+
+    # ------------------------------------------------------------------ #
+    # Default mode: compute all four corrections and return JEstResult    #
+    # ------------------------------------------------------------------ #
+    if edge_correction is _NOTSET:
+        # Build support on a common grid using _prepare
+        coords_arr, supp, _, metric_out, hull_prep, _ = _prepare(
+            coordinates, support, None, metric, hull, None
+        )
+        poly = _hull_to_poly(hull_prep)
+
+        theo = numpy.ones(len(supp))
+
+        g_result = g(coords_arr, support=supp, hull=poly, edge_correction=_NOTSET)
+        f_result = f(coords_arr, support=supp, hull=poly, edge_correction=_NOTSET, rng=rng)
+
+        def _ratio(gv, fv):
+            with numpy.errstate(invalid="ignore", divide="ignore"):
+                r = (1.0 - gv) / (1.0 - fv)
+            r = numpy.where(numpy.isnan(gv) | numpy.isnan(fv), numpy.nan, r)
+            r[(gv >= 1.0) & (fv >= 1.0)] = numpy.nan
+            return r
+
+        j_rs = _ratio(g_result.rs, f_result.rs)
+        j_km = _ratio(g_result.km, f_result.km)
+        j_han = _ratio(g_result.hanisch, f_result.cs)
+        j_un = _ratio(g_result.raw, f_result.raw)
+
+        return JEstResult(supp, theo, j_rs, j_km, j_han, j_un)
+
+    # ------------------------------------------------------------------ #
+    # Single-correction path                                              #
+    # ------------------------------------------------------------------ #
+    # Map J correction labels to G and F correction strings
+    if edge_correction in (None, "un"):
+        g_ec, f_ec = None, None
+    elif edge_correction == "rs":
+        g_ec, f_ec = "rs", "rs"
+    elif edge_correction == "km":
+        g_ec, f_ec = "km", "km"
+    else:  # "han"
+        g_ec, f_ec = "hanisch", "cs"
+
     if distances is not None:
         g_distances, f_distances = distances
     else:
         g_distances = f_distances = None
+
     fsupport, fstats = f(
         coordinates,
         support=support,
         distances=f_distances,
         metric=metric,
         hull=hull,
-        edge_correction=edge_correction,
+        edge_correction=f_ec,
+        rng=rng,
     )
-
     gsupport, gstats = g(
         coordinates,
         support=support,
         distances=g_distances,
         metric=metric,
-        edge_correction=edge_correction,
+        hull=hull,
+        edge_correction=g_ec,
     )
 
-    if isinstance(support, numpy.ndarray) and not numpy.allclose(gsupport, support):
-        gfunction = interpolate.interp1d(gsupport, gstats, fill_value=1)
+    def _supports_differ(a, b):
+        return len(a) != len(b) or not numpy.allclose(a, b)
+
+    if isinstance(support, numpy.ndarray) and _supports_differ(gsupport, support):
+        gfunction = interpolate.interp1d(
+            gsupport, gstats, fill_value=1, bounds_error=False
+        )
         gstats = gfunction(support)
         gsupport = support
-    if not (numpy.allclose(gsupport, fsupport)):
-        ffunction = interpolate.interp1d(fsupport, fstats, fill_value=1)
+    if _supports_differ(gsupport, fsupport):
+        ffunction = interpolate.interp1d(
+            fsupport, fstats, fill_value=1, bounds_error=False
+        )
         fstats = ffunction(gsupport)
         fsupport = gsupport
 
