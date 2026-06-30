@@ -703,12 +703,7 @@ def strauss(
     return result.squeeze()
 
 
-def sobol(
-        hull,
-        intensity=None,
-        size=None,
-        scramble=True,
-        seed=None):
+def sobol(hull, intensity=None, size=None, scramble=True, seed=None):
     """
     Simulate a point pattern using a Sobol low-discrepancy sequence.
 
@@ -787,7 +782,6 @@ def sobol(
         accepted = []
 
         while len(accepted) < n_observations:
-
             remaining = n_observations - len(accepted)
 
             m = int(numpy.ceil(numpy.log2(max(remaining, 1))))
@@ -807,12 +801,7 @@ def sobol(
     return result.squeeze()
 
 
-def halton(
-        hull,
-        intensity=None,
-        size=None,
-        scramble=True,
-        seed=None):
+def halton(hull, intensity=None, size=None, scramble=True, seed=None):
     """
     Simulate a point pattern using a Halton low-discrepancy sequence.
 
@@ -891,7 +880,6 @@ def halton(
         accepted = []
 
         while len(accepted) < n_observations:
-
             remaining = n_observations - len(accepted)
 
             candidates = hltn.random(remaining)
@@ -983,7 +971,7 @@ def r2(hull, intensity=None, size=None, seed=None):
 
         while len(accepted) < n_observations:
             remaining = n_observations - len(accepted)
-            
+
             indices = numpy.arange(n_generated + 1, n_generated + remaining + 1)
             candidates = (offset + numpy.outer(indices, alpha)) % 1.0
             n_generated += remaining
