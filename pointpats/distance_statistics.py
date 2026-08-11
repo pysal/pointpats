@@ -320,6 +320,14 @@ def f(
     # Default mode: compute all four corrections and return FEstResult    #
     # ------------------------------------------------------------------ #
     if edge_correction is _NOTSET:
+        warnings.warn(
+            "Calling f() without edge_correction returns an FEstResult named tuple "
+            "with all corrections. In a future major version this default will change. "
+            "Pass edge_correction=None for the uncorrected estimator, or specify a "
+            "correction ('raw', 'rs', 'km', 'cs') explicitly to silence this warning.",
+            FutureWarning,
+            stacklevel=2,
+        )
         poly = _hull_to_poly(hull_prepared)
         test_pts = poisson(hull=poly, size=(1000, 1), rng=rng).squeeze()
         tree = _build_best_tree(coordinates, metric)
@@ -540,6 +548,14 @@ def g(
     # Default mode: compute all corrections and return GEstResult         #
     # ------------------------------------------------------------------ #
     if edge_correction is _NOTSET:
+        warnings.warn(
+            "Calling g() without edge_correction returns a GEstResult named tuple "
+            "with all corrections. In a future major version this default will change. "
+            "Pass edge_correction=None for the uncorrected estimator, or specify a "
+            "correction ('raw', 'rs', 'erosion', 'km', 'hanisch') explicitly to silence this warning.",
+            FutureWarning,
+            stacklevel=2,
+        )
         poly = _hull_to_poly(hull_prepared)
         n = len(coordinates)
         area = _area(poly)
@@ -699,6 +715,14 @@ def j(
     # Default mode: compute all four corrections and return JEstResult    #
     # ------------------------------------------------------------------ #
     if edge_correction is _NOTSET:
+        warnings.warn(
+            "Calling j() without edge_correction returns a JEstResult named tuple "
+            "with all corrections. In a future major version this default will change. "
+            "Pass edge_correction=None for the uncorrected estimator, or specify a "
+            "correction ('un', 'rs', 'km', 'han') explicitly to silence this warning.",
+            FutureWarning,
+            stacklevel=2,
+        )
         # Build support on a common grid using _prepare
         coords_arr, supp, _, metric_out, hull_prep, _ = _prepare(
             coordinates, support, None, metric, hull, None
@@ -707,8 +731,10 @@ def j(
 
         theo = numpy.ones(len(supp))
 
-        g_result = g(coords_arr, support=supp, hull=poly, edge_correction=_NOTSET)
-        f_result = f(coords_arr, support=supp, hull=poly, edge_correction=_NOTSET, rng=rng)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", FutureWarning)
+            g_result = g(coords_arr, support=supp, hull=poly, edge_correction=_NOTSET)
+            f_result = f(coords_arr, support=supp, hull=poly, edge_correction=_NOTSET, rng=rng)
 
         def _ratio(gv, fv):
             with numpy.errstate(invalid="ignore", divide="ignore"):
@@ -845,6 +871,14 @@ def k(
     and the values of the function at each distance value in the support.
     """
     if edge_correction is _NOTSET:
+        warnings.warn(
+            "Calling k() without edge_correction returns a KEstResult named tuple "
+            "with all corrections. In a future major version this default will change. "
+            "Pass edge_correction=None for the uncorrected estimator, or specify a "
+            "correction ('border', 'isotropic', 'translate', 'erosion') explicitly to silence this warning.",
+            FutureWarning,
+            stacklevel=2,
+        )
         # Default: compute all three default corrections and return a named tuple.
         coordinates_arr, support_arr, distances_out, metric, hull_prepared, _ = (
             _prepare(coordinates, support, distances, metric, hull, None)
@@ -1084,13 +1118,23 @@ def l(  # noqa: E743 - Ambiguous function name
     """
 
     if edge_correction is _NOTSET:
-        k_result = k(
-            coordinates,
-            support=support,
-            distances=distances,
-            metric=metric,
-            hull=hull,
+        warnings.warn(
+            "Calling l() without edge_correction returns an LEstResult named tuple "
+            "with all corrections. In a future major version this default will change. "
+            "Pass edge_correction=None for the uncorrected estimator, or specify a "
+            "correction ('border', 'isotropic', 'translate', 'erosion') explicitly to silence this warning.",
+            FutureWarning,
+            stacklevel=2,
         )
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", FutureWarning)
+            k_result = k(
+                coordinates,
+                support=support,
+                distances=distances,
+                metric=metric,
+                hull=hull,
+            )
         # k_result: KEstResult(support, theo, border, isotropic, translate)
         s = k_result.support
         l_theo = s  # sqrt(pi*r² / pi) = r
