@@ -318,6 +318,65 @@ class TestGHanisch:
         assert np.all(np.diff(gvals) >= -1e-12)
 
 
+class TestDefaultBehavior:
+    """Omitting edge_correction emits FutureWarning and returns uncorrected 2-tuple."""
+
+    def test_g_warns(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        with pytest.warns(FutureWarning, match="deprecated"):
+            g(coords, hull=poly)
+
+    def test_f_warns(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        with pytest.warns(FutureWarning, match="deprecated"):
+            f(coords, hull=poly, rng=7)
+
+    def test_j_warns(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        with pytest.warns(FutureWarning, match="deprecated"):
+            j(coords, hull=poly, rng=7)
+
+    def test_k_warns(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        with pytest.warns(FutureWarning, match="deprecated"):
+            k(coords, hull=poly)
+
+    def test_l_warns(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        with pytest.warns(FutureWarning, match="deprecated"):
+            l(coords, hull=poly)
+
+    def test_g_default_equals_none(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", FutureWarning)
+            s_def, v_def = g(coords, hull=poly)
+        s_none, v_none = g(coords, hull=poly, edge_correction=None)
+        np.testing.assert_array_equal(s_def, s_none)
+        np.testing.assert_array_equal(v_def, v_none)
+
+    def test_k_default_equals_none(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", FutureWarning)
+            s_def, v_def = k(coords, hull=poly)
+        s_none, v_none = k(coords, hull=poly, edge_correction=None)
+        np.testing.assert_array_equal(s_def, s_none)
+        np.testing.assert_array_equal(v_def, v_none)
+
+    def test_none_does_not_warn(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        import warnings
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            g(coords, hull=poly, edge_correction=None)
+            k(coords, hull=poly, edge_correction=None)
+        fw = [w for w in caught if issubclass(w.category, FutureWarning)]
+        assert len(fw) == 0, f"Unexpected FutureWarnings: {[str(w.message) for w in fw]}"
+
+
 class TestGDefault:
     """g() with edge_correction='all' returns GEstResult with all corrections."""
 
