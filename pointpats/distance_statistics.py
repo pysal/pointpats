@@ -285,8 +285,7 @@ def f(
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
         the study area geometry. Required for spatial edge corrections.
     edge_correction: None, 'raw', 'rs', 'km', or 'cs'
-        edge correction method.  When omitted (default), all four corrections
-        are computed and returned as an FEstResult named tuple.
+        edge correction method.
         ``None`` / ``'raw'``: uncorrected histogram estimator.
         ``'rs'``: reduced-sample (border) correction — only test points
             further from the boundary than ``r`` contribute at radius ``r``.
@@ -294,20 +293,42 @@ def f(
             a censoring time in a survival-analysis framework.
         ``'cs'``: Chiu-Stoyan correction — observations are weighted by
             ``area(W) / area(disk(u, d(u)) ∩ W)``.
+
+        ``'all'``: compute all four corrections and return an ``FEstResult``
+        named tuple with fields ``support``, ``theo``, ``raw``, ``rs``,
+        ``km``, ``cs``.
+
+        .. deprecated::
+            Omitting ``edge_correction`` is deprecated and raises a
+            ``FutureWarning``. The default will change in the next major
+            release to return all corrections as an ``FEstResult`` named tuple.
+            Pass ``edge_correction=None`` to retain the current uncorrected
+            estimator, or ``edge_correction='all'`` to opt in now.
     rng : int, numpy.random.Generator, or None
         Seed or generator for the internal random test points. Ignored when
         ``distances`` is supplied. Useful for reproducible tests.
 
     Returns
     -------
-    When ``edge_correction`` is omitted: an FEstResult named tuple with fields
-    ``support``, ``theo``, ``raw``, ``rs``, ``km``, ``cs``.
-    Otherwise: a 2-tuple ``(support, values)`` for the requested correction.
+    FEstResult named tuple with fields ``support``, ``theo``, ``raw``, ``rs``,
+    ``km``, ``cs`` when ``edge_correction='all'``.
+    Otherwise a 2-tuple ``(support, values)`` for the requested correction.
     """
-    _valid_f = (None, "raw", "rs", "km", "cs")
-    if edge_correction is not _NOTSET and edge_correction not in _valid_f:
+    if edge_correction is _NOTSET:
+        warnings.warn(
+            "Calling f() without edge_correction is deprecated. "
+            "Pass edge_correction=None for the uncorrected estimator (current "
+            "behavior), or edge_correction='all' to get all corrections as an "
+            "FEstResult named tuple. The default will change to 'all' in the "
+            "next major release.",
+            FutureWarning,
+            stacklevel=2,
+        )
+        edge_correction = None
+    _valid_f = (None, "raw", "rs", "km", "cs", "all")
+    if edge_correction not in _valid_f:
         raise ValueError(
-            f"edge_correction must be one of {_valid_f}. Got {edge_correction!r}"
+            f"edge_correction must be one of {_valid_f[:-1]}. Got {edge_correction!r}"
         )
 
     # _prepare raises NotImplementedError for non-None edge_correction; bypass.
@@ -316,10 +337,10 @@ def f(
     )
     n = coordinates.shape[0]
 
-    # ------------------------------------------------------------------ #
-    # Default mode: compute all four corrections and return FEstResult    #
-    # ------------------------------------------------------------------ #
-    if edge_correction is _NOTSET:
+    if edge_correction == "all":
+        # ------------------------------------------------------------------ #
+        # All corrections: return FEstResult named tuple                      #
+        # ------------------------------------------------------------------ #
         poly = _hull_to_poly(hull_prepared)
         test_pts = poisson(hull=poly, size=(1000, 1), rng=rng).squeeze()
         tree = _build_best_tree(coordinates, metric)
@@ -474,8 +495,7 @@ def g(
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
         the study area geometry. Required for spatial edge corrections.
     edge_correction: None, 'raw', 'rs', 'erosion', 'km', or 'hanisch'
-        edge correction method. When omitted (default), all four corrections
-        are computed and returned as a GEstResult named tuple.
+        edge correction method.
         ``None`` / ``'raw'``: uncorrected histogram estimator.
         ``'rs'`` / ``'erosion'``: reduced-sample (border) correction — only
             points further from the boundary than ``r`` act as focal points.
@@ -485,16 +505,38 @@ def g(
         ``'hanisch'``: Hanisch (1984) correction — observations weighted by
             the inverse area of the window eroded to the observed NND.
 
+        ``'all'``: compute all corrections and return a ``GEstResult`` named
+        tuple with fields ``support``, ``theo``, ``raw``, ``rs``, ``km``,
+        ``hanisch``.
+
+        .. deprecated::
+            Omitting ``edge_correction`` is deprecated and raises a
+            ``FutureWarning``. The default will change in the next major
+            release to return all corrections as a ``GEstResult`` named tuple.
+            Pass ``edge_correction=None`` to retain the current uncorrected
+            estimator, or ``edge_correction='all'`` to opt in now.
+
     Returns
     -------
-    When ``edge_correction`` is omitted: a GEstResult named tuple with fields
-    ``support``, ``theo``, ``raw``, ``rs``, ``km``, ``hanisch``.
-    Otherwise: a 2-tuple ``(support, values)`` for the requested correction.
+    GEstResult named tuple with fields ``support``, ``theo``, ``raw``, ``rs``,
+    ``km``, ``hanisch`` when ``edge_correction='all'``.
+    Otherwise a 2-tuple ``(support, values)`` for the requested correction.
     """
-    _valid_g = (None, "raw", "rs", "erosion", "km", "hanisch", True)
-    if edge_correction is not _NOTSET and edge_correction not in _valid_g:
+    if edge_correction is _NOTSET:
+        warnings.warn(
+            "Calling g() without edge_correction is deprecated. "
+            "Pass edge_correction=None for the uncorrected estimator (current "
+            "behavior), or edge_correction='all' to get all corrections as a "
+            "GEstResult named tuple. The default will change to 'all' in the "
+            "next major release.",
+            FutureWarning,
+            stacklevel=2,
+        )
+        edge_correction = None
+    _valid_g = (None, "raw", "rs", "erosion", "km", "hanisch", "all", True)
+    if edge_correction not in _valid_g:
         raise ValueError(
-            f"edge_correction must be one of {_valid_g[:-1]}. Got {edge_correction!r}"
+            f"edge_correction must be one of {_valid_g[:-2]}. Got {edge_correction!r}"
         )
 
     # _prepare raises NotImplementedError for non-None edge_correction; bypass.
@@ -536,10 +578,10 @@ def g(
         _dists, _ = _k_neighbors(tree, coordinates, k=1)
         nnd = _dists.squeeze()
 
-    # ------------------------------------------------------------------ #
-    # Default mode: compute all corrections and return GEstResult         #
-    # ------------------------------------------------------------------ #
-    if edge_correction is _NOTSET:
+    if edge_correction == "all":
+        # ------------------------------------------------------------------ #
+        # All corrections: return GEstResult named tuple                      #
+        # ------------------------------------------------------------------ #
         poly = _hull_to_poly(hull_prepared)
         n = len(coordinates)
         area = _area(poly)
@@ -672,34 +714,53 @@ def j(
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
         the study area geometry. Required for spatial edge corrections.
     edge_correction: None, 'un', 'rs', 'km', or 'han'
-        edge correction method.  When omitted (default), all four corrections
-        are computed and returned as a JEstResult named tuple.
+        edge correction method.
         ``None`` / ``'un'``: uncorrected ratio of raw G and F estimates.
         ``'rs'``: ratio of border-corrected G and F (``rs`` estimators).
         ``'km'``: ratio of Kaplan-Meier G and F estimates.
         ``'han'``: hybrid Hanisch/Chiu-Stoyan ratio —
             ``(1 - G_hanisch) / (1 - F_cs)``.
+
+        ``'all'``: compute all corrections and return a ``JEstResult`` named
+        tuple with fields ``support``, ``theo``, ``rs``, ``km``, ``han``,
+        ``un``.
+
+        .. deprecated::
+            Omitting ``edge_correction`` is deprecated and raises a
+            ``FutureWarning``. The default will change in the next major
+            release to return all corrections as a ``JEstResult`` named tuple.
+            Pass ``edge_correction=None`` to retain the current uncorrected
+            estimator, or ``edge_correction='all'`` to opt in now.
     truncate: bool (default: True)
-        when using a single correction, truncate the result at the first
-        infinity (where F reaches 1). Ignored in default (all-corrections) mode.
+        when True, truncate the result at the first infinity (where F reaches 1).
 
     Returns
     -------
-    When ``edge_correction`` is omitted: a JEstResult named tuple with fields
-    ``support``, ``theo``, ``rs``, ``km``, ``han``, ``un``.
-    Otherwise: a 2-tuple ``(support, values)`` for the requested correction.
+    JEstResult named tuple with fields ``support``, ``theo``, ``rs``, ``km``,
+    ``han``, ``un`` when ``edge_correction='all'``.
+    Otherwise a 2-tuple ``(support, values)`` for the requested correction.
     """
-    _valid_j = (None, "un", "rs", "km", "han")
-    if edge_correction is not _NOTSET and edge_correction not in _valid_j:
+    if edge_correction is _NOTSET:
+        warnings.warn(
+            "Calling j() without edge_correction is deprecated. "
+            "Pass edge_correction=None for the uncorrected estimator (current "
+            "behavior), or edge_correction='all' to get all corrections as a "
+            "JEstResult named tuple. The default will change to 'all' in the "
+            "next major release.",
+            FutureWarning,
+            stacklevel=2,
+        )
+        edge_correction = None
+    _valid_j = (None, "un", "rs", "km", "han", "all")
+    if edge_correction not in _valid_j:
         raise ValueError(
-            f"edge_correction must be one of {_valid_j}. Got {edge_correction!r}"
+            f"edge_correction must be one of {_valid_j[:-1]}. Got {edge_correction!r}"
         )
 
-    # ------------------------------------------------------------------ #
-    # Default mode: compute all four corrections and return JEstResult    #
-    # ------------------------------------------------------------------ #
-    if edge_correction is _NOTSET:
-        # Build support on a common grid using _prepare
+    if edge_correction == "all":
+        # ------------------------------------------------------------------ #
+        # All corrections: return JEstResult named tuple                      #
+        # ------------------------------------------------------------------ #
         coords_arr, supp, _, metric_out, hull_prep, _ = _prepare(
             coordinates, support, None, metric, hull, None
         )
@@ -707,8 +768,8 @@ def j(
 
         theo = numpy.ones(len(supp))
 
-        g_result = g(coords_arr, support=supp, hull=poly, edge_correction=_NOTSET)
-        f_result = f(coords_arr, support=supp, hull=poly, edge_correction=_NOTSET, rng=rng)
+        g_result = g(coords_arr, support=supp, hull=poly, edge_correction="all")
+        f_result = f(coords_arr, support=supp, hull=poly, edge_correction="all", rng=rng)
 
         def _ratio(gv, fv):
             with numpy.errstate(invalid="ignore", divide="ignore"):
@@ -824,28 +885,51 @@ def k(
         the study area geometry, used for intensity estimation and (when
         edge_correction is not None) for boundary-distance computation.
     edge_correction: None, 'border', 'isotropic', 'translate', or 'erosion'
-        edge correction method. When omitted (default), all three spatstat-default
-        corrections are computed and returned as a KEstResult named tuple.
-        'border': reduced-sample (border) correction. Only points whose distance
+        edge correction method.
+        ``None``: uncorrected estimator.
+        ``'border'``: reduced-sample (border) correction. Only points whose distance
             to the study window boundary exceeds r contribute as focal points.
-            Alias for 'erosion'; the support is clipped to the erosion threshold.
-        'isotropic': Ripley's exact isotropic correction. For each point i within r
+            Alias for ``'erosion'``; the support is clipped to the erosion threshold.
+        ``'isotropic'``: Ripley's exact isotropic correction. For each point i within r
             of the boundary, w_i(r) = 2πr / arc_inside, where arc_inside is the
             arc length of the circle of radius r centred at i that lies inside the
             window, computed exactly via shapely. Points fully inside get w_i = 1.
-        'translate': translation correction (Ohser & Stoyan 1981). For each pair
+        ``'translate'``: translation correction (Ohser & Stoyan 1981). For each pair
             (i, j) with d_ij ≤ r, the weight is area(W)² / area(W ∩ (W + h_ij))
             where h_ij = x_j − x_i. Pairs whose translation keeps W fully inside
             get weight area(W) (reducing to the uncorrected estimator).
-        'erosion': identical to 'border' (guard-point / eroded-window estimator).
+        ``'erosion'``: identical to ``'border'`` (guard-point / eroded-window estimator).
+
+        ``'all'``: compute border, isotropic, and translate corrections and
+        return a ``KEstResult`` named tuple with fields ``support``, ``theo``,
+        ``border``, ``isotropic``, ``translate``.
+
+        .. deprecated::
+            Omitting ``edge_correction`` is deprecated and raises a
+            ``FutureWarning``. The default will change in the next major
+            release to return all corrections as a ``KEstResult`` named tuple.
+            Pass ``edge_correction=None`` to retain the current uncorrected
+            estimator, or ``edge_correction='all'`` to opt in now.
 
     Returns
     -------
-    a tuple containing the support values used to evaluate the function
-    and the values of the function at each distance value in the support.
+    KEstResult named tuple with fields ``support``, ``theo``, ``border``,
+    ``isotropic``, ``translate`` when ``edge_correction='all'``.
+    Otherwise a 2-tuple ``(support, values)``.
     """
     if edge_correction is _NOTSET:
-        # Default: compute all three default corrections and return a named tuple.
+        warnings.warn(
+            "Calling k() without edge_correction is deprecated. "
+            "Pass edge_correction=None for the uncorrected estimator (current "
+            "behavior), or edge_correction='all' to get all corrections as a "
+            "KEstResult named tuple. The default will change to 'all' in the "
+            "next major release.",
+            FutureWarning,
+            stacklevel=2,
+        )
+        edge_correction = None
+
+    if edge_correction == "all":
         coordinates_arr, support_arr, distances_out, metric, hull_prepared, _ = (
             _prepare(coordinates, support, distances, metric, hull, None)
         )
@@ -1072,6 +1156,18 @@ def l(  # noqa: E743 - Ambiguous function name
         the study area geometry. Required when edge_correction is not None.
     edge_correction: None, 'border', 'isotropic', 'translate', or 'erosion'
         edge correction method passed through to the underlying K function.
+        ``None``: uncorrected estimator.
+
+        ``'all'``: compute border, isotropic, and translate corrections and
+        return an ``LEstResult`` named tuple with fields ``support``, ``theo``,
+        ``border``, ``isotropic``, ``translate``.
+
+        .. deprecated::
+            Omitting ``edge_correction`` is deprecated and raises a
+            ``FutureWarning``. The default will change in the next major
+            release to return all corrections as an ``LEstResult`` named tuple.
+            Pass ``edge_correction=None`` to retain the current uncorrected
+            estimator, or ``edge_correction='all'`` to opt in now.
     linearized : bool
         whether or not to subtract l from its expected value (support) at each
         distance bin. This centers the l function on zero for all distances.
@@ -1079,17 +1175,31 @@ def l(  # noqa: E743 - Ambiguous function name
 
     Returns
     -------
-    a tuple containing the support values used to evaluate the function
-    and the values of the function at each distance value in the support.
+    LEstResult named tuple with fields ``support``, ``theo``, ``border``,
+    ``isotropic``, ``translate`` when ``edge_correction='all'``.
+    Otherwise a 2-tuple ``(support, values)``.
     """
 
     if edge_correction is _NOTSET:
+        warnings.warn(
+            "Calling l() without edge_correction is deprecated. "
+            "Pass edge_correction=None for the uncorrected estimator (current "
+            "behavior), or edge_correction='all' to get all corrections as an "
+            "LEstResult named tuple. The default will change to 'all' in the "
+            "next major release.",
+            FutureWarning,
+            stacklevel=2,
+        )
+        edge_correction = None
+
+    if edge_correction == "all":
         k_result = k(
             coordinates,
             support=support,
             distances=distances,
             metric=metric,
             hull=hull,
+            edge_correction="all",
         )
         # k_result: KEstResult(support, theo, border, isotropic, translate)
         s = k_result.support

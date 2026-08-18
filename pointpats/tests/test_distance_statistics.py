@@ -318,31 +318,90 @@ class TestGHanisch:
         assert np.all(np.diff(gvals) >= -1e-12)
 
 
+class TestDefaultBehavior:
+    """Omitting edge_correction emits FutureWarning and returns uncorrected 2-tuple."""
+
+    def test_g_warns(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        with pytest.warns(FutureWarning, match="deprecated"):
+            g(coords, hull=poly)
+
+    def test_f_warns(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        with pytest.warns(FutureWarning, match="deprecated"):
+            f(coords, hull=poly, rng=7)
+
+    def test_j_warns(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        with pytest.warns(FutureWarning, match="deprecated"):
+            j(coords, hull=poly, rng=7)
+
+    def test_k_warns(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        with pytest.warns(FutureWarning, match="deprecated"):
+            k(coords, hull=poly)
+
+    def test_l_warns(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        with pytest.warns(FutureWarning, match="deprecated"):
+            l(coords, hull=poly)
+
+    def test_g_default_equals_none(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", FutureWarning)
+            s_def, v_def = g(coords, hull=poly)
+        s_none, v_none = g(coords, hull=poly, edge_correction=None)
+        np.testing.assert_array_equal(s_def, s_none)
+        np.testing.assert_array_equal(v_def, v_none)
+
+    def test_k_default_equals_none(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", FutureWarning)
+            s_def, v_def = k(coords, hull=poly)
+        s_none, v_none = k(coords, hull=poly, edge_correction=None)
+        np.testing.assert_array_equal(s_def, s_none)
+        np.testing.assert_array_equal(v_def, v_none)
+
+    def test_none_does_not_warn(self, coords_and_poly):
+        coords, poly = coords_and_poly
+        import warnings
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            g(coords, hull=poly, edge_correction=None)
+            k(coords, hull=poly, edge_correction=None)
+        fw = [w for w in caught if issubclass(w.category, FutureWarning)]
+        assert len(fw) == 0, f"Unexpected FutureWarnings: {[str(w.message) for w in fw]}"
+
+
 class TestGDefault:
-    """g() with no edge_correction returns GEstResult with all corrections."""
+    """g() with edge_correction='all' returns GEstResult with all corrections."""
 
     def test_returns_gestresult(self, coords_and_poly):
         coords, poly = coords_and_poly
-        result = g(coords, hull=poly)
+        result = g(coords, hull=poly, edge_correction="all")
         assert isinstance(result, GEstResult)
 
     def test_fields_are_arrays(self, coords_and_poly):
         coords, poly = coords_and_poly
-        result = g(coords, hull=poly)
+        result = g(coords, hull=poly, edge_correction="all")
         for field in GEstResult._fields:
             assert isinstance(getattr(result, field), np.ndarray), field
 
     def test_all_fields_same_length(self, coords_and_poly):
         coords, poly = coords_and_poly
         support = np.linspace(0, 2, 15)
-        result = g(coords, hull=poly, support=support)
+        result = g(coords, hull=poly, support=support, edge_correction="all")
         for field in GEstResult._fields:
             assert len(getattr(result, field)) == len(support), field
 
     def test_theo_formula(self, coords_and_poly):
         coords, poly = coords_and_poly
         support = np.linspace(0, 2, 15)
-        result = g(coords, hull=poly, support=support)
+        result = g(coords, hull=poly, support=support, edge_correction="all")
         n = len(coords)
         area = poly.area
         lam = n / area
@@ -353,7 +412,7 @@ class TestGDefault:
         coords, poly = coords_and_poly
         max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
         support = np.linspace(0, max_r * 1.5, 20)
-        result = g(coords, hull=poly, support=support)
+        result = g(coords, hull=poly, support=support, edge_correction="all")
         beyond = support > max_r
         assert np.all(np.isnan(result.rs[beyond]))
 
@@ -361,18 +420,18 @@ class TestGDefault:
         coords, poly = coords_and_poly
         max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
         support = np.linspace(0, max_r * 1.5, 20)
-        result = g(coords, hull=poly, support=support)
+        result = g(coords, hull=poly, support=support, edge_correction="all")
         within = support <= max_r
         assert np.all(np.isfinite(result.rs[within]))
 
     def test_km_monotone_non_decreasing(self, coords_and_poly):
         coords, poly = coords_and_poly
-        result = g(coords, hull=poly)
+        result = g(coords, hull=poly, edge_correction="all")
         assert np.all(np.diff(result.km) >= -1e-12)
 
     def test_all_corrections_bounded(self, coords_and_poly):
         coords, poly = coords_and_poly
-        result = g(coords, hull=poly)
+        result = g(coords, hull=poly, edge_correction="all")
         assert np.all(result.raw >= 0) and np.all(result.raw <= 1)
         assert np.all(result.km >= 0) and np.all(result.km <= 1)
         assert np.all(result.hanisch >= 0) and np.all(result.hanisch <= 1 + 1e-12)
@@ -383,21 +442,21 @@ class TestGDefault:
         coords, poly = coords_and_poly
         max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
         support = np.linspace(0, max_r * 0.9, 10)
-        result = g(coords, hull=poly, support=support)
+        result = g(coords, hull=poly, support=support, edge_correction="all")
         _, rs_explicit = g(coords, hull=poly, support=support, edge_correction="rs")
         np.testing.assert_allclose(result.rs, rs_explicit)
 
     def test_km_matches_explicit_km_call(self, coords_and_poly):
         coords, poly = coords_and_poly
         support = np.linspace(0, 2, 12)
-        result = g(coords, hull=poly, support=support)
+        result = g(coords, hull=poly, support=support, edge_correction="all")
         _, km_explicit = g(coords, hull=poly, support=support, edge_correction="km")
         np.testing.assert_allclose(result.km, km_explicit)
 
     def test_hanisch_matches_explicit_hanisch_call(self, coords_and_poly):
         coords, poly = coords_and_poly
         support = np.linspace(0, 2, 12)
-        result = g(coords, hull=poly, support=support)
+        result = g(coords, hull=poly, support=support, edge_correction="all")
         _, han_explicit = g(coords, hull=poly, support=support, edge_correction="hanisch")
         np.testing.assert_allclose(result.hanisch, han_explicit)
 
@@ -577,30 +636,30 @@ class TestFCS:
 
 
 class TestFDefault:
-    """f() with no edge_correction returns FEstResult with all corrections."""
+    """f() with edge_correction='all' returns FEstResult with all corrections."""
 
     def test_returns_festresult(self, coords_and_poly):
         coords, poly = coords_and_poly
-        result = f(coords, hull=poly, rng=7)
+        result = f(coords, hull=poly, rng=7, edge_correction="all")
         assert isinstance(result, FEstResult)
 
     def test_fields_are_arrays(self, coords_and_poly):
         coords, poly = coords_and_poly
-        result = f(coords, hull=poly, rng=7)
+        result = f(coords, hull=poly, rng=7, edge_correction="all")
         for field in FEstResult._fields:
             assert isinstance(getattr(result, field), np.ndarray), field
 
     def test_all_fields_same_length(self, coords_and_poly):
         coords, poly = coords_and_poly
         support = np.linspace(0, 2, 15)
-        result = f(coords, hull=poly, support=support, rng=7)
+        result = f(coords, hull=poly, support=support, rng=7, edge_correction="all")
         for field in FEstResult._fields:
             assert len(getattr(result, field)) == len(support), field
 
     def test_theo_formula(self, coords_and_poly):
         coords, poly = coords_and_poly
         support = np.linspace(0, 2, 15)
-        result = f(coords, hull=poly, support=support, rng=7)
+        result = f(coords, hull=poly, support=support, rng=7, edge_correction="all")
         n = len(coords)
         area = poly.area
         lam = n / area
@@ -609,7 +668,7 @@ class TestFDefault:
 
     def test_all_corrections_bounded(self, coords_and_poly):
         coords, poly = coords_and_poly
-        result = f(coords, hull=poly, rng=7)
+        result = f(coords, hull=poly, rng=7, edge_correction="all")
         assert np.all(result.raw >= 0) and np.all(result.raw <= 1)
         assert np.all(result.rs >= 0) and np.all(result.rs <= 1)
         assert np.all(result.km >= 0) and np.all(result.km <= 1)
@@ -617,27 +676,27 @@ class TestFDefault:
 
     def test_km_monotone(self, coords_and_poly):
         coords, poly = coords_and_poly
-        result = f(coords, hull=poly, rng=7)
+        result = f(coords, hull=poly, rng=7, edge_correction="all")
         assert np.all(np.diff(result.km) >= -1e-12)
 
     def test_rs_matches_explicit_rs_call(self, coords_and_poly):
         coords, poly = coords_and_poly
         support = np.linspace(0, 2, 12)
-        result = f(coords, hull=poly, support=support, rng=7)
+        result = f(coords, hull=poly, support=support, rng=7, edge_correction="all")
         _, rs_explicit = f(coords, hull=poly, support=support, edge_correction="rs", rng=7)
         np.testing.assert_allclose(result.rs, rs_explicit)
 
     def test_km_matches_explicit_km_call(self, coords_and_poly):
         coords, poly = coords_and_poly
         support = np.linspace(0, 2, 12)
-        result = f(coords, hull=poly, support=support, rng=7)
+        result = f(coords, hull=poly, support=support, rng=7, edge_correction="all")
         _, km_explicit = f(coords, hull=poly, support=support, edge_correction="km", rng=7)
         np.testing.assert_allclose(result.km, km_explicit)
 
     def test_cs_matches_explicit_cs_call(self, coords_and_poly):
         coords, poly = coords_and_poly
         support = np.linspace(0, 2, 12)
-        result = f(coords, hull=poly, support=support, rng=7)
+        result = f(coords, hull=poly, support=support, rng=7, edge_correction="all")
         _, cs_explicit = f(coords, hull=poly, support=support, edge_correction="cs", rng=7)
         np.testing.assert_allclose(result.cs, cs_explicit)
 
@@ -760,34 +819,34 @@ class TestJHan:
 
 
 class TestJDefault:
-    """j() with no edge_correction returns JEstResult with all corrections."""
+    """j() with edge_correction='all' returns JEstResult with all corrections."""
 
     def test_returns_jestresult(self, coords_and_poly):
         coords, poly = coords_and_poly
-        result = j(coords, hull=poly, rng=7)
+        result = j(coords, hull=poly, rng=7, edge_correction="all")
         assert isinstance(result, JEstResult)
 
     def test_fields_are_arrays(self, coords_and_poly):
         coords, poly = coords_and_poly
-        result = j(coords, hull=poly, rng=7)
+        result = j(coords, hull=poly, rng=7, edge_correction="all")
         for field in JEstResult._fields:
             assert isinstance(getattr(result, field), np.ndarray), field
 
     def test_all_fields_same_length(self, coords_and_poly):
         coords, poly = coords_and_poly
         support = np.linspace(0, 1, 10)
-        result = j(coords, hull=poly, support=support, rng=7)
+        result = j(coords, hull=poly, support=support, rng=7, edge_correction="all")
         for field in JEstResult._fields:
             assert len(getattr(result, field)) == len(support), field
 
     def test_theo_all_ones(self, coords_and_poly):
         coords, poly = coords_and_poly
-        result = j(coords, hull=poly, rng=7)
+        result = j(coords, hull=poly, rng=7, edge_correction="all")
         np.testing.assert_allclose(result.theo, 1.0)
 
     def test_all_corrections_non_negative(self, coords_and_poly):
         coords, poly = coords_and_poly
-        result = j(coords, hull=poly, rng=7)
+        result = j(coords, hull=poly, rng=7, edge_correction="all")
         for field in ("rs", "km", "han", "un"):
             vals = getattr(result, field)
             finite_vals = vals[~np.isnan(vals)]
@@ -796,17 +855,17 @@ class TestJDefault:
     def test_seed_reproducible(self, coords_and_poly):
         coords, poly = coords_and_poly
         support = np.linspace(0, 1, 10)
-        r1 = j(coords, hull=poly, support=support, rng=7)
-        r2 = j(coords, hull=poly, support=support, rng=7)
+        r1 = j(coords, hull=poly, support=support, rng=7, edge_correction="all")
+        r2 = j(coords, hull=poly, support=support, rng=7, edge_correction="all")
         for field in JEstResult._fields:
             np.testing.assert_array_equal(getattr(r1, field), getattr(r2, field))
 
     def test_rs_ratio_of_g_rs_and_f_rs(self, coords_and_poly):
         coords, poly = coords_and_poly
         support = np.linspace(0, 1, 8)
-        result = j(coords, hull=poly, support=support, rng=7)
-        gr = g(coords, hull=poly, support=support)
-        fr = f(coords, hull=poly, support=support, rng=7)
+        result = j(coords, hull=poly, support=support, rng=7, edge_correction="all")
+        gr = g(coords, hull=poly, support=support, edge_correction="all")
+        fr = f(coords, hull=poly, support=support, rng=7, edge_correction="all")
         with np.errstate(invalid="ignore", divide="ignore"):
             expected = (1 - gr.rs) / (1 - fr.rs)
         mask = ~(np.isnan(result.rs) | np.isnan(expected))
@@ -1134,18 +1193,18 @@ class TestKTranslate:
 
 
 class TestKDefault:
-    """Tests for k() called with no edge_correction — the all-three-corrections default."""
+    """Tests for k() called with edge_correction='all' — the all-three-corrections mode."""
 
     @pytest.fixture
     def default_result(self, coords_and_poly):
         coords, poly = coords_and_poly
         max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
         support = np.linspace(0, max_r * 1.5, 20)
-        return k(coords, hull=poly, support=support), support
+        return k(coords, hull=poly, support=support, edge_correction="all"), support
 
     def test_returns_kestresult(self, coords_and_poly):
         coords, poly = coords_and_poly
-        result = k(coords, hull=poly)
+        result = k(coords, hull=poly, edge_correction="all")
         assert isinstance(result, KEstResult)
 
     def test_fields_are_arrays(self, default_result):
@@ -1170,7 +1229,7 @@ class TestKDefault:
         coords, poly = coords_and_poly
         max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
         support = np.linspace(0, max_r * 1.5, 20)
-        result = k(coords, hull=poly, support=support)
+        result = k(coords, hull=poly, support=support, edge_correction="all")
         beyond = support > max_r
         assert np.all(np.isnan(result.border[beyond]))
         within = support <= max_r
@@ -1193,7 +1252,7 @@ class TestKDefault:
         coords, poly = coords_and_poly
         max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
         support = np.linspace(0, max_r * 0.9, 10)
-        result = k(coords, hull=poly, support=support)
+        result = k(coords, hull=poly, support=support, edge_correction="all")
         _, k_bor = k(coords, hull=poly, support=support, edge_correction="border")
         np.testing.assert_allclose(result.border, k_bor)
 
@@ -1201,7 +1260,7 @@ class TestKDefault:
         coords, poly = coords_and_poly
         max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
         support = np.linspace(0, max_r * 0.9, 10)
-        result = k(coords, hull=poly, support=support)
+        result = k(coords, hull=poly, support=support, edge_correction="all")
         _, k_iso = k(coords, hull=poly, support=support, edge_correction="isotropic")
         np.testing.assert_allclose(result.isotropic, k_iso)
 
@@ -1209,24 +1268,24 @@ class TestKDefault:
         coords, poly = coords_and_poly
         max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
         support = np.linspace(0, max_r * 0.9, 10)
-        result = k(coords, hull=poly, support=support)
+        result = k(coords, hull=poly, support=support, edge_correction="all")
         _, k_tra = k(coords, hull=poly, support=support, edge_correction="translate")
         np.testing.assert_allclose(result.translate, k_tra)
 
 
 class TestLDefault:
-    """Tests for l() called with no edge_correction — the all-three-corrections default."""
+    """Tests for l() called with edge_correction='all' — the all-three-corrections mode."""
 
     @pytest.fixture
     def default_result(self, coords_and_poly):
         coords, poly = coords_and_poly
         max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
         support = np.linspace(0, max_r * 1.5, 20)
-        return l(coords, hull=poly, support=support), support
+        return l(coords, hull=poly, support=support, edge_correction="all"), support
 
     def test_returns_lestresult(self, coords_and_poly):
         coords, poly = coords_and_poly
-        result = l(coords, hull=poly)
+        result = l(coords, hull=poly, edge_correction="all")
         assert isinstance(result, LEstResult)
 
     def test_theo_equals_support(self, default_result):
@@ -1237,21 +1296,21 @@ class TestLDefault:
         coords, poly = coords_and_poly
         max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
         support = np.linspace(0, max_r * 0.9, 10)
-        k_result = k(coords, hull=poly, support=support)
-        l_result = l(coords, hull=poly, support=support)
+        k_result = k(coords, hull=poly, support=support, edge_correction="all")
+        l_result = l(coords, hull=poly, support=support, edge_correction="all")
         np.testing.assert_allclose(l_result.isotropic, np.sqrt(k_result.isotropic / np.pi))
 
     def test_l_translate_is_sqrt_k_over_pi(self, coords_and_poly):
         coords, poly = coords_and_poly
         max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
         support = np.linspace(0, max_r * 0.9, 10)
-        k_result = k(coords, hull=poly, support=support)
-        l_result = l(coords, hull=poly, support=support)
+        k_result = k(coords, hull=poly, support=support, edge_correction="all")
+        l_result = l(coords, hull=poly, support=support, edge_correction="all")
         np.testing.assert_allclose(l_result.translate, np.sqrt(k_result.translate / np.pi))
 
     def test_linearized_theo_is_zero(self, coords_and_poly):
         coords, poly = coords_and_poly
-        result = l(coords, hull=poly, linearized=True)
+        result = l(coords, hull=poly, linearized=True, edge_correction="all")
         assert isinstance(result, LEstResult)
         np.testing.assert_allclose(result.theo, 0.0)
 
@@ -1259,6 +1318,6 @@ class TestLDefault:
         coords, poly = coords_and_poly
         max_r, _ = max_radius(poly, points=coords, method="erosion_threshold")
         support = np.linspace(0, max_r * 1.5, 20)
-        result = l(coords, hull=poly, support=support)
+        result = l(coords, hull=poly, support=support, edge_correction="all")
         beyond = support > max_r
         assert np.all(np.isnan(result.border[beyond]))
