@@ -34,14 +34,10 @@ jobs:
         include:
           # no numba
           - environment-file: ci/envs/314-latest.yaml
-            os: macos-15-intel # Intel
-          - environment-file: ci/envs/314-latest.yaml
             os: macos-latest # Apple Silicon
           - environment-file: ci/envs/314-latest.yaml
             os: windows-latest
           # with numba
-          - environment-file: ci/envs/314-numba-latest.yaml
-            os: macos-15-intel # Intel
           - environment-file: ci/envs/314-numba-latest.yaml
             os: macos-latest # Apple Silicon
           - environment-file: ci/envs/314-numba-latest.yaml
@@ -52,7 +48,7 @@ jobs:
         shell: bash -l {0}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: setup micromamba
         uses: mamba-org/setup-micromamba@v3
@@ -74,4 +70,4 @@ jobs:
           --cov-report term-missing \
           --cov-report xml .
 
-      - uses: codecov/codecov-action@v6
+      - uses: codecov/codecov-action@v7
