@@ -269,36 +269,36 @@ def f(
 
     Parameters
     ----------
-    coordinates : geopandas object | numpy.ndarray of shape (n,2)
-        input coordinates to function
+    coordinates : geopandas object | numpy.ndarray
+        input coordinates to function. Array should be of a shape (n, 2).
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
         int, encoding number of equally-spaced intervals
         numpy.ndarray, used directly within numpy.histogram
-    distances: numpy.ndarray, (n, p) or (p,)
+    distances : numpy.ndarray
         distances from p random test points to their nearest event in
-        ``coordinates``. Honoured only when ``edge_correction`` is ``None``
-        (uncorrected); spatial corrections always generate test points
+        ``coordinates``, shaped (n, p) or (p,). Honoured only when ``edge_correction``
+        is ``None`` (uncorrected); spatial corrections always generate test points
         internally.
-    metric: str or callable
+    metric : str or callable
         distance metric to use when building search tree
-    hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
+    hull : bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
         the study area geometry. Required for spatial edge corrections.
-    edge_correction: None, 'raw', 'rs', 'km', or 'cs'
+    edge_correction : None, 'raw', 'rs', 'km', or 'cs'
         edge correction method.
-        ``None`` / ``'raw'``: uncorrected histogram estimator.
-        ``'rs'``: reduced-sample (border) correction — only test points
-            further from the boundary than ``r`` contribute at radius ``r``.
-        ``'km'``: spatial Kaplan-Meier — distance to boundary acts as
-            a censoring time in a survival-analysis framework.
-        ``'cs'``: Chiu-Stoyan correction — observations are weighted by
-            ``area(W) / area(disk(u, d(u)) ∩ W)``.
 
-        ``'all'``: compute all four corrections and return an ``FEstResult``
-        named tuple with fields ``support``, ``theo``, ``raw``, ``rs``,
-        ``km``, ``cs``.
+        * ``None`` / ``'raw'``: uncorrected histogram estimator.
+        * ``'rs'``: reduced-sample (border) correction — only test points
+          further from the boundary than ``r`` contribute at radius ``r``.
+        * ``'km'``: spatial Kaplan-Meier — distance to boundary acts as
+          a censoring time in a survival-analysis framework.
+        * ``'cs'``: Chiu-Stoyan correction — observations are weighted by
+          ``area(W) / area(disk(u, d(u)) ∩ W)``.
+        * ``'all'``: compute all four corrections and return an ``FEstResult``
+          named tuple with fields ``support``, ``theo``, ``raw``, ``rs``, ``km``,
+          ``cs``.
 
-        .. deprecated::
+        .. deprecated:: 2.7.0
             Omitting ``edge_correction`` is deprecated and raises a
             ``FutureWarning``. The default will change in the next major
             release to return all corrections as an ``FEstResult`` named tuple.
@@ -376,7 +376,9 @@ def f(
         inters = shapely.intersection(disks, poly)
         inter_areas = shapely.area(inters)
         disk_areas = numpy.pi * test_dists**2
-        cs_w = numpy.where((inter_areas > 0) & (test_dists > 0), disk_areas / inter_areas, 1.0)
+        cs_w = numpy.where(
+            (inter_areas > 0) & (test_dists > 0), disk_areas / inter_areas, 1.0
+        )
         total_cs = cs_w.sum()
         f_cs = numpy.array([(cs_w[test_dists <= r]).sum() / total_cs for r in support])
 
@@ -461,7 +463,9 @@ def f(
     inters = shapely.intersection(disks, poly)
     inter_areas = shapely.area(inters)
     disk_areas = numpy.pi * test_dists**2
-    cs_w = numpy.where((inter_areas > 0) & (test_dists > 0), disk_areas / inter_areas, 1.0)
+    cs_w = numpy.where(
+        (inter_areas > 0) & (test_dists > 0), disk_areas / inter_areas, 1.0
+    )
     total_cs = cs_w.sum()
     f_values = numpy.array([(cs_w[test_dists <= r]).sum() / total_cs for r in support])
     return support, f_values
@@ -482,34 +486,35 @@ def g(
 
     Parameters
     ----------
-    coordinates : geopandas object | numpy.ndarray of shape (n,2)
-        input coordinates to function
+    coordinates : geopandas object | numpy.ndarray
+        input coordinates to function. Array should be of a shape (n, 2).
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
         int, encoding number of equally-spaced intervals
         numpy.ndarray, used directly within numpy.histogram
-    distances: numpy.ndarray, (n, n) or (n,)
-        distances from every point in the point to another point in `coordinates`
+    distances: numpy.ndarray
+        distances from every point in the point to another point in `coordinates`,
+        shaped (n, n) or (n,).
     metric: str or callable
         distance metric to use when building search tree
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
         the study area geometry. Required for spatial edge corrections.
     edge_correction: None, 'raw', 'rs', 'erosion', 'km', or 'hanisch'
         edge correction method.
-        ``None`` / ``'raw'``: uncorrected histogram estimator.
-        ``'rs'`` / ``'erosion'``: reduced-sample (border) correction — only
-            points further from the boundary than ``r`` act as focal points.
-            The support is automatically clipped to the erosion threshold.
-        ``'km'``: spatial Kaplan-Meier — the distance to the boundary acts
-            as a censoring time in a survival-analysis framework.
-        ``'hanisch'``: Hanisch (1984) correction — observations weighted by
-            the inverse area of the window eroded to the observed NND.
 
-        ``'all'``: compute all corrections and return a ``GEstResult`` named
-        tuple with fields ``support``, ``theo``, ``raw``, ``rs``, ``km``,
-        ``hanisch``.
+        * ``None`` / ``'raw'``: uncorrected histogram estimator.
+        * ``'rs'`` / ``'erosion'``: reduced-sample (border) correction — only
+          points further from the boundary than ``r`` act as focal points.
+          The support is automatically clipped to the erosion threshold.
+        * ``'km'``: spatial Kaplan-Meier — the distance to the boundary acts
+          as a censoring time in a survival-analysis framework.
+        * ``'hanisch'``: Hanisch (1984) correction — observations weighted by
+          the inverse area of the window eroded to the observed NND.
+        * ``'all'``: compute all corrections and return a ``GEstResult`` named
+          tuple with fields ``support``, ``theo``, ``raw``, ``rs``, ``km``,
+          ``hanisch``.
 
-        .. deprecated::
+        .. deprecated:: 2.7.0
             Omitting ``edge_correction`` is deprecated and raises a
             ``FutureWarning``. The default will change in the next major
             release to return all corrections as a ``GEstResult`` named tuple.
@@ -700,8 +705,8 @@ def j(
 
     Parameters
     ----------
-    coordinates : geopandas object | numpy.ndarray, (n,2)
-        input coordinates to function
+    coordinates : geopandas object | numpy.ndarray
+        input coordinates to function. Array should be of a shape (n, 2).
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
         int, encoding number of equally-spaced intervals
@@ -715,17 +720,17 @@ def j(
         the study area geometry. Required for spatial edge corrections.
     edge_correction: None, 'un', 'rs', 'km', or 'han'
         edge correction method.
-        ``None`` / ``'un'``: uncorrected ratio of raw G and F estimates.
-        ``'rs'``: ratio of border-corrected G and F (``rs`` estimators).
-        ``'km'``: ratio of Kaplan-Meier G and F estimates.
-        ``'han'``: hybrid Hanisch/Chiu-Stoyan ratio —
-            ``(1 - G_hanisch) / (1 - F_cs)``.
 
-        ``'all'``: compute all corrections and return a ``JEstResult`` named
-        tuple with fields ``support``, ``theo``, ``rs``, ``km``, ``han``,
-        ``un``.
+        * ``None`` / ``'un'``: uncorrected ratio of raw G and F estimates.
+        * ``'rs'``: ratio of border-corrected G and F (``rs`` estimators).
+        * ``'km'``: ratio of Kaplan-Meier G and F estimates.
+        * ``'han'``: hybrid Hanisch/Chiu-Stoyan ratio —
+          ``(1 - G_hanisch) / (1 - F_cs)``.
+        * ``'all'``: compute all corrections and return a ``JEstResult`` named
+          tuple with fields ``support``, ``theo``, ``rs``, ``km``, ``han``,
+          ``un``.
 
-        .. deprecated::
+        .. deprecated:: 2.7.0
             Omitting ``edge_correction`` is deprecated and raises a
             ``FutureWarning``. The default will change in the next major
             release to return all corrections as a ``JEstResult`` named tuple.
@@ -769,7 +774,9 @@ def j(
         theo = numpy.ones(len(supp))
 
         g_result = g(coords_arr, support=supp, hull=poly, edge_correction="all")
-        f_result = f(coords_arr, support=supp, hull=poly, edge_correction="all", rng=rng)
+        f_result = f(
+            coords_arr, support=supp, hull=poly, edge_correction="all", rng=rng
+        )
 
         def _ratio(gv, fv):
             with numpy.errstate(invalid="ignore", divide="ignore"):
@@ -870,15 +877,15 @@ def k(
 
     Parameters
     ----------
-    coordinates : geopandas object | numpy.ndarray, (n,2)
-        input coordinates to function
+    coordinates : geopandas object | numpy.ndarray
+        input coordinates to function. Array should be of a shape (n, 2).
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
         int, encoding number of equally-spaced intervals
         numpy.ndarray, used directly within numpy.histogram
-    distances: numpy.ndarray, (n, n) or (n*(n-1)/2,)
+    distances: numpy.ndarray
         precomputed pairwise distances, either as a condensed upper-triangular
-        vector (pdist format) or a full square matrix
+        vector (pdist format) shaped (n*(n-1)/2,) or a full square matrix shaped (n, n).
     metric: str or callable
         distance metric to use when building the search tree
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
@@ -886,25 +893,25 @@ def k(
         edge_correction is not None) for boundary-distance computation.
     edge_correction: None, 'border', 'isotropic', 'translate', or 'erosion'
         edge correction method.
-        ``None``: uncorrected estimator.
-        ``'border'``: reduced-sample (border) correction. Only points whose distance
-            to the study window boundary exceeds r contribute as focal points.
-            Alias for ``'erosion'``; the support is clipped to the erosion threshold.
-        ``'isotropic'``: Ripley's exact isotropic correction. For each point i within r
-            of the boundary, w_i(r) = 2πr / arc_inside, where arc_inside is the
-            arc length of the circle of radius r centred at i that lies inside the
-            window, computed exactly via shapely. Points fully inside get w_i = 1.
-        ``'translate'``: translation correction (Ohser & Stoyan 1981). For each pair
-            (i, j) with d_ij ≤ r, the weight is area(W)² / area(W ∩ (W + h_ij))
-            where h_ij = x_j − x_i. Pairs whose translation keeps W fully inside
-            get weight area(W) (reducing to the uncorrected estimator).
-        ``'erosion'``: identical to ``'border'`` (guard-point / eroded-window estimator).
 
-        ``'all'``: compute border, isotropic, and translate corrections and
-        return a ``KEstResult`` named tuple with fields ``support``, ``theo``,
-        ``border``, ``isotropic``, ``translate``.
+        * ``None``: uncorrected estimator.
+        * ``'border'``: reduced-sample (border) correction. Only points whose distance
+          to the study window boundary exceeds r contribute as focal points.
+          Alias for ``'erosion'``; the support is clipped to the erosion threshold.
+        * ``'isotropic'``: Ripley's exact isotropic correction. For each point i within r
+          of the boundary, w_i(r) = 2πr / arc_inside, where arc_inside is the
+          arc length of the circle of radius r centred at i that lies inside the
+          window, computed exactly via shapely. Points fully inside get w_i = 1.
+        * ``'translate'``: translation correction (Ohser & Stoyan 1981). For each pair
+          (i, j) with d_ij ≤ r, the weight is area(W)² / area(W ∩ (W + h_ij))
+          where h_ij = x_j − x_i. Pairs whose translation keeps W fully inside
+          get weight area(W) (reducing to the uncorrected estimator).
+        * ``'erosion'``: identical to ``'border'`` (guard-point / eroded-window estimator).
+        * ``'all'``: compute border, isotropic, and translate corrections and
+          return a ``KEstResult`` named tuple with fields ``support``, ``theo``,
+          ``border``, ``isotropic``, ``translate``.
 
-        .. deprecated::
+        .. deprecated:: 2.7.0
             Omitting ``edge_correction`` is deprecated and raises a
             ``FutureWarning``. The default will change in the next major
             release to return all corrections as a ``KEstResult`` named tuple.
@@ -1141,28 +1148,28 @@ def l(  # noqa: E743 - Ambiguous function name
 
     Parameters
     ----------
-    coordinates : geopandas object | numpy.ndarray, (n,2)
-        input coordinates to function
+    coordinates : geopandas object | numpy.ndarray.
+        input coordinates to function. Array should be of a shape (n, 2).
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
         int, encoding number of equally-spaced intervals
         numpy.ndarray, used directly within numpy.histogram
-    distances: numpy.ndarray, (n, p) or (p,)
+    distances: numpy.ndarray
         distances from every point in a random point set of size p
-        to some point in `coordinates`
+        to some point in `coordinates`, shaped (n, p) or (p,).
     metric: str or callable
         distance metric to use when building search tree
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon, or None
         the study area geometry. Required when edge_correction is not None.
     edge_correction: None, 'border', 'isotropic', 'translate', or 'erosion'
         edge correction method passed through to the underlying K function.
-        ``None``: uncorrected estimator.
 
-        ``'all'``: compute border, isotropic, and translate corrections and
-        return an ``LEstResult`` named tuple with fields ``support``, ``theo``,
-        ``border``, ``isotropic``, ``translate``.
+        * ``None``: uncorrected estimator.
+        * ``'all'``: compute border, isotropic, and translate corrections and
+          return an ``LEstResult`` named tuple with fields ``support``, ``theo``,
+          ``border``, ``isotropic``, ``translate``.
 
-        .. deprecated::
+        .. deprecated:: 2.7.0
             Omitting ``edge_correction`` is deprecated and raises a
             ``FutureWarning``. The default will change in the next major
             release to return all corrections as an ``LEstResult`` named tuple.
@@ -1379,15 +1386,15 @@ def f_test(
 
     Parameters
     ----------
-    coordinates : geopandas object | numpy.ndarray, (n,2)
-        input coordinates to function
+    coordinates : geopandas object | numpy.ndarray
+        input coordinates to function. Array should be of shape (n, 2).
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
         int, encoding number of equally-spaced intervals
         numpy.ndarray, used directly within numpy.histogram
-    distances: numpy.ndarray, (n, p) or (p,)
+    distances: numpy.ndarray
         distances from every point in a random point set of size p
-        to some point in `coordinates`
+        to some point in `coordinates`, shaped (n, p) or (p,)
     metric: str or callable
         distance metric to use when building search tree
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon
@@ -1455,15 +1462,15 @@ def g_test(
 
     Parameters
     ----------
-    coordinates : geopandas object | numpy.ndarray, (n,2)
-        input coordinates to function
+    coordinates : geopandas object | numpy.ndarray
+        input coordinates to function. Array should be of shape (n, 2).
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
         int, encoding number of equally-spaced intervals
         numpy.ndarray, used directly within numpy.histogram
-    distances: numpy.ndarray, (n, p) or (p,)
+    distances: numpy.ndarray
         distances from every point in a random point set of size p
-        to some point in `coordinates`
+        to some point in `coordinates`, shaded (n, p) or (p,).
     metric: str or callable
         distance metric to use when building search tree
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon
@@ -1531,15 +1538,15 @@ def j_test(
 
     Parameters
     ----------
-    coordinates : geopandas object | numpy.ndarray, (n,2)
-        input coordinates to function
+    coordinates : geopandas object | numpy.ndarray
+        input coordinates to function. Array should be of shape (n, 2).
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
         int, encoding number of equally-spaced intervals
         numpy.ndarray, used directly within numpy.histogram
-    distances: numpy.ndarray, (n, p) or (p,)
+    distances: numpy.ndarray
         distances from every point in a random point set of size p
-        to some point in `coordinates`
+        to some point in `coordinates`, shaped (n, p) or (p,).
     metric: str or callable
         distance metric to use when building search tree
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon
@@ -1621,15 +1628,15 @@ def k_test(
 
     Parameters
     ----------
-    coordinates : geopandas object | numpy.ndarray, (n,2)
-        input coordinates to function
+    coordinates : geopandas object | numpy.ndarray
+        input coordinates to function. Array should be of shape (n, 2).
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
         int, encoding number of equally-spaced intervals
         numpy.ndarray, used directly within numpy.histogram
-    distances: numpy.ndarray, (n, p) or (p,)
+    distances: numpy.ndarray
         distances from every point in a random point set of size p
-        to some point in `coordinates`
+        to some point in `coordinates`, shaped (n, p) or (p,).
     metric: str or callable
         distance metric to use when building search tree
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon
@@ -1698,15 +1705,15 @@ def l_test(
 
     Parameters
     ----------
-    coordinates : geopandas object | numpy.ndarray, (n,2)
-        input coordinates to function
+    coordinates : geopandas object | numpy.ndarray
+        input coordinates to function. Array should be of shape (n, 2).
     support : tuple of length 1, 2, or 3, int, or numpy.ndarray
         tuple, encoding (stop,), (start, stop), or (start, stop, num)
         int, encoding number of equally-spaced intervals
         numpy.ndarray, used directly within numpy.histogram
-    distances: numpy.ndarray, (n, p) or (p,)
+    distances: numpy.ndarray
         distances from every point in a random point set of size p
-        to some point in `coordinates`
+        to some point in `coordinates`, shaped (n, p) or (p,).
     metric: str or callable
         distance metric to use when building search tree
     hull: bounding box, scipy.spatial.ConvexHull, shapely.geometry.Polygon

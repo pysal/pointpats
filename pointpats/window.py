@@ -58,18 +58,20 @@ class Window(ps.cg.Polygon):
     This area is used in estimating the intensity of the point pattern.
     See :attr:`PointPattern.lambda_window`.
 
-    Parameters
-    ----------
-    parts: sequence
-           A sequence of rings which bound the positive space  point
-           pattern.
-    holes: sequence
-           A sequence of rings which bound holes in the polygons that bound the
-           point pattern.
-
     """
 
     def __init__(self, parts, holes=[]):  # noqa: B006 - mutable data structure
+        """Create a window from one or more rings and optional holes.
+
+        Parameters
+        ----------
+        parts : sequence
+               A sequence of rings which bound the positive space point
+               pattern.
+        holes : sequence
+               A sequence of rings which bound holes in the polygons that
+               bound the point pattern.
+        """
         if holes:
             super().__init__(parts, holes)
         else:

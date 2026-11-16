@@ -48,7 +48,7 @@ class SpaceTimeEvents:
     path            : string
                       the path to the appropriate shapefile, including the
                       file name and extension
-    time            : string
+    time_col        : string
                       column header in the DBF file indicating the column
                       containing the time stamp.
     infer_timestamp : bool, optional
@@ -1138,8 +1138,6 @@ class KnoxLocal:
         number of random permutations for inference
     keep: bool
         whether to store realized values of the statistic under permutations
-    conditional: bool
-        whether to include conditional permutation inference
     crit: float
       signifcance level for local statistics
     crs: str (optional)
