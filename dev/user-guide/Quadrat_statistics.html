@@ -42,7 +42,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.2b7fb0df65482c23e.min.css?v=666199ae" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.6efbe22605a23fcd6.min.css?v=b2ceb110" />
         <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
         <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d127c87d" />
@@ -996,11 +996,9 @@ the observed counts per cell to what is expected under <strong>complete spatial 
 included in the analysis. The implemented test statistic is the Pearson chi-square
 statistic with <strong>equal expected counts</strong> across included cells:</p>
 <div class="math notranslate nohighlight">
-\[
-X^2 = \sum_{i=1}^k \frac{(O_i - \bar{O})^2}{\bar{O}},
+\[X^2 = \sum_{i=1}^k \frac{(O_i - \bar{O})^2}{\bar{O}},
 \qquad
-\bar{O} = \frac{1}{k} \sum_{i=1}^k O_i.
-\]</div>
+\bar{O} = \frac{1}{k} \sum_{i=1}^k O_i.\]</div>
 <p>Analytical inference compares <span class="math notranslate nohighlight">\(X^2\)</span>  to a chi-square distribution with <span class="math notranslate nohighlight">\((k-1)\)</span>
 degrees of freedom. Simulation-based inference (Monte Carlo) instead compares the
 observed <span class="math notranslate nohighlight">\(X^2\)</span> to the sampling distribution obtained from CSR realizations
@@ -1220,7 +1218,7 @@ which is the required input type for <code class="docutils literal notranslate">
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>np.float64(6.375950695202795e-22)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>np.float64(6.375950695202749e-22)
 </code></pre></div>
 </div>
 </div>
@@ -1230,9 +1228,7 @@ which is the required input type for <code class="docutils literal notranslate">
 and the chi-square statistic is recomputed for each realization. The Monte Carlo
 p-value uses the standard +1 correction:</p>
 <div class="math notranslate nohighlight">
-\[
-p = \frac{\#\{X^2_{sim} \ge X^2_{obs}\} + 1}{R + 1},
-\]</div>
+\[p = \frac{\#\{X^2_{sim} \ge X^2_{obs}\} + 1}{R + 1},\]</div>
 <p>where <span class="math notranslate nohighlight">\(R\)</span> is the number of realizations.</p>
 <h3 id="reproducibility">Reproducibility<a class="headerlink" href="#reproducibility" title="Link to this heading">¶</a></h3>
 <p>All simulation-based results can be made reproducible by supplying <code class="docutils literal notranslate"><span class="pre">rng</span></code>:</p>
@@ -1454,7 +1450,7 @@ not convert the test into an area-proportional quadrat test when the window is i
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>np.float64(0.0010544670440019446)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>np.float64(0.0010544670440019426)
 </code></pre></div>
 </div>
 </div>
@@ -1567,7 +1563,7 @@ not convert the test into an area-proportional quadrat test when the window is i
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.top", "search.share", "search.suggest", "toc.follow", "toc.sticky", "content.code.copy", "content.action.edit"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": null, "versionPath": "https://pysal.org/pointpats/versions.json"}}</script>
     
       
-        <script src="../_static/sphinx_immaterial_theme.567b0e0fd947ea7d9.min.js?v=5850e81b"></script>
+        <script src="../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>
         <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
         <script src="../_static/copybutton.js?v=f281be69"></script>
         <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
