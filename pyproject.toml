@@ -50,14 +50,12 @@ dev = [
     "ruff",
 ]
 docs = [
-    "nbsphinx",
-    "numpydoc",
-    "pandoc",
+    "myst-nb",
     "sphinx",
     "sphinxcontrib-bibtex",
-    "sphinx_bootstrap_theme",
-    "mkdocs-jupyter",
-    "myst-parser"
+    "sphinx-autosummary-accessors",
+    "sphinx-copybutton",
+    "sphinx-immaterial",
 ]
 tests = [
     "codecov",
