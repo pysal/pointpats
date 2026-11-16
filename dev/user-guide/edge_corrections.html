@@ -1,0 +1,2044 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="ripley.html">
+      
+      
+        <link rel="next" href="random.html">
+      
+      
+      <link rel="icon" href="../_static/pysal_favicon.ico">
+    
+    
+      
+        <title>Edge corrections for G, F, J, K, and L functions - pointpats</title>
+      
+    
+    
+      
+        
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.2b7fb0df65482c23e.min.css?v=666199ae" />
+        <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+        <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d127c87d" />
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#point-patterns" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="pointpats" class="md-header__button md-logo" aria-label="pointpats" data-md-component="logo">
+      <img src="../_static/pysal_logo.svg" alt="logo">
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            pointpats
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Edge corrections for G, F, J, K, and L functions
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="red"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="red"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/pysal/pointpats/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pysal/pointpats
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="pointpats" class="md-nav__button md-logo" aria-label="pointpats" data-md-component="logo">
+      <img src="../_static/pysal_logo.svg" alt="logo">
+    </a>
+    pointpats
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/pysal/pointpats/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pysal/pointpats
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Home</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Installation</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    <span>User Guide</span>
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            <span>User Guide</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="centrography.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Centrography in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="sd_ellipse.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Standard deviational ellipse in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Quadrat_statistics.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Quadrat-<wbr>based statistics in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ripley.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Distance-<wbr>based statistics in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    <span>Edge corrections for G, F, J, K, and L functions</span>
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Edge corrections for G, F, J, K, and L functions</span>
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#point-patterns" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>1.<wbr> Point patterns</span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ripley-s-g-function" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>2.<wbr> Ripley’s G function</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Ripley’s G function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#available-corrections" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>2.<wbr>1 Available corrections</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requesting-a-single-correction" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>2.<wbr>2 Requesting a single correction</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ripley-s-f-function" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>3.<wbr> Ripley’s F function</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Ripley’s F function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id1" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>3.<wbr>1 Available corrections</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-j-function" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>4.<wbr> The J function</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. The J function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#definition-and-corrections" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>4.<wbr>1 Definition and corrections</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ripley-s-k-function" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>5.<wbr> Ripley’s K function</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Ripley’s K function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id2" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>5.<wbr>1 Available corrections</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ripley-s-l-function" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>6.<wbr> Ripley’s L function</span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#side-by-side-comparison-km-estimates" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>7.<wbr> Side-<wbr>by-<wbr>side comparison — KM estimates</span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#requesting-individual-corrections" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>8.<wbr> Requesting individual corrections</span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#guidance-which-correction-to-use" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>9.<wbr> Guidance:<wbr> which correction to use?</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Guidance: which correction to use?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#g-f-j" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>G, F, J</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#k-and-l" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>K and L</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>References</span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="random.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Simulating random point patterns with pointpats.<wbr>random</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="marks.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Working with marks in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../references.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>References</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    <span>API</span>
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            <span>API</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>API reference</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    <span>For contributors</span>
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            <span>For contributors</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/pysal/mapclassify" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Git<wbr>Hub</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/pysal/mapclassify/releases" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Changelog</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#point-patterns" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>1.<wbr> Point patterns</span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ripley-s-g-function" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>2.<wbr> Ripley’s G function</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Ripley’s G function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#available-corrections" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>2.<wbr>1 Available corrections</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requesting-a-single-correction" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>2.<wbr>2 Requesting a single correction</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ripley-s-f-function" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>3.<wbr> Ripley’s F function</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Ripley’s F function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id1" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>3.<wbr>1 Available corrections</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-j-function" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>4.<wbr> The J function</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. The J function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#definition-and-corrections" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>4.<wbr>1 Definition and corrections</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ripley-s-k-function" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>5.<wbr> Ripley’s K function</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Ripley’s K function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id2" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>5.<wbr>1 Available corrections</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ripley-s-l-function" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>6.<wbr> Ripley’s L function</span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#side-by-side-comparison-km-estimates" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>7.<wbr> Side-<wbr>by-<wbr>side comparison — KM estimates</span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#requesting-individual-corrections" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>8.<wbr> Requesting individual corrections</span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#guidance-which-correction-to-use" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>9.<wbr> Guidance:<wbr> which correction to use?</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Guidance: which correction to use?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#g-f-j" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>G, F, J</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#k-and-l" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>K and L</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>References</span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                
+                
+                  
+
+
+  
+    <a href="https://github.com/pysal/pointpats/blob/main/docs/source/user-guide/edge_corrections.ipynb" title="Edit this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 9h5.5L13 3.5zM6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4c0-1.11.89-2 2-2m.12 13.5 3.74 3.74 1.42-1.41-2.33-2.33 2.33-2.33-1.42-1.41zm11.16 0-3.74-3.74-1.42 1.41 2.33 2.33-2.33 2.33 1.42 1.41z"/></svg>
+    </a>
+  
+  
+
+<h1 id="edge-corrections-for-g-f-j-k-and-l-functions">Edge corrections for G, F, J, K, and L functions<a class="headerlink" href="#edge-corrections-for-g-f-j-k-and-l-functions" title="Link to this heading">¶</a></h1>
+<p>When estimating spatial summary functions from data observed in a bounded
+window <strong>W</strong>, points near the boundary cause bias:</p>
+<ul class="simple">
+<li><p>For the <strong>G function</strong> (nearest-neighbour distance) and
+<strong>F function</strong> (empty-space distance), boundary truncation makes observed
+distances too large, so the estimated CDFs rise too slowly.</p></li>
+<li><p>For <strong>Ripley’s K</strong> (and its normalised form <strong>L</strong>), pairs involving points
+near the boundary miss partners outside <strong>W</strong>, causing K to be
+underestimated.</p></li>
+<li><p>The <strong>J function</strong> inherits the combined G / F bias.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">pointpats</span></code> implements the same suite of corrections used by the R package
+<strong>spatstat</strong>.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Available corrections</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>G</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">raw</span></code>, <code class="docutils literal notranslate"><span class="pre">rs</span></code>, <code class="docutils literal notranslate"><span class="pre">km</span></code>, <code class="docutils literal notranslate"><span class="pre">hanisch</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>F</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">raw</span></code>, <code class="docutils literal notranslate"><span class="pre">rs</span></code>, <code class="docutils literal notranslate"><span class="pre">km</span></code>, <code class="docutils literal notranslate"><span class="pre">cs</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>J</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">un</span></code>, <code class="docutils literal notranslate"><span class="pre">rs</span></code>, <code class="docutils literal notranslate"><span class="pre">km</span></code>, <code class="docutils literal notranslate"><span class="pre">han</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>K</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code> (raw), <code class="docutils literal notranslate"><span class="pre">border</span></code>/<code class="docutils literal notranslate"><span class="pre">erosion</span></code>, <code class="docutils literal notranslate"><span class="pre">isotropic</span></code>, <code class="docutils literal notranslate"><span class="pre">translate</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>L</strong></p></td>
+<td><p>same as K</p></td>
+</tr>
+</tbody>
+</table>
+<p>Pass <code class="docutils literal notranslate"><span class="pre">edge_correction='all'</span></code> to compute all available corrections at once
+and receive a named tuple (<code class="docutils literal notranslate"><span class="pre">GEstResult</span></code>, <code class="docutils literal notranslate"><span class="pre">FEstResult</span></code>, <code class="docutils literal notranslate"><span class="pre">JEstResult</span></code>,
+<code class="docutils literal notranslate"><span class="pre">KEstResult</span></code>, <code class="docutils literal notranslate"><span class="pre">LEstResult</span></code>) as the return value.</p>
+<p>Pass <code class="docutils literal notranslate"><span class="pre">edge_correction=None</span></code> (or a named correction string) to get a plain
+<code class="docutils literal notranslate"><span class="pre">(support,</span> <span class="pre">values)</span></code> 2-tuple — the backward-compatible form.</p>
+<blockquote>
+<div><p><strong>Note:</strong> Omitting <code class="docutils literal notranslate"><span class="pre">edge_correction</span></code> raises a <code class="docutils literal notranslate"><span class="pre">FutureWarning</span></code> because the
+default will change in the next major version. The current default returns
+the <strong>uncorrected</strong> estimator. Pass <code class="docutils literal notranslate"><span class="pre">edge_correction=None</span></code> explicitly to
+silence the warning, or <code class="docutils literal notranslate"><span class="pre">edge_correction='all'</span></code> to opt in to the
+named-tuple API now.</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shapely</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats.random</span><span class="w"> </span><span class="kn">import</span> <span class="n">cluster_poisson</span><span class="p">,</span> <span class="n">poisson</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">"figure.dpi"</span><span class="p">:</span> <span class="mi">110</span><span class="p">,</span> <span class="s2">"axes.grid"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"grid.alpha"</span><span class="p">:</span> <span class="mf">0.35</span><span class="p">})</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="point-patterns">1. Point patterns<a class="headerlink" href="#point-patterns" title="Link to this heading">¶</a></h2>
+<p>We work with a 10 × 10 square window and generate two patterns:</p>
+<ul class="simple">
+<li><p><strong>CSR</strong> — homogeneous Poisson process (200 points, intensity λ = 2 per unit²)</p></li>
+<li><p><strong>Clustered</strong> — Poisson cluster process (200 points in 8 clusters)</p></li>
+</ul>
+<p>For a homogeneous Poisson process with intensity λ the theoretical functions are:
+$<span class="math notranslate nohighlight">\(G(r) = F(r) = 1 - e^{-\lambda \pi r^2}, \quad J(r) = 1,
+\quad K(r) = \pi r^2, \quad L(r) = r.\)</span>$</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">rng_seed</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">poly</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">hull_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">])</span>
+
+<span class="n">coords_csr</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">(</span><span class="n">hull_arr</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng_seed</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="n">coords_clu</span> <span class="o">=</span> <span class="n">cluster_poisson</span><span class="p">(</span><span class="n">hull_arr</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">n_seeds</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng_seed</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">title</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="p">[</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">coords_clu</span><span class="p">],</span> <span class="p">[</span><span class="s2">"CSR"</span><span class="p">,</span> <span class="s2">"Clustered"</span><span class="p">]):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">"equal"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"x"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"y"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/9bb59bc6cbf3ae94478704d04a6e15d24109bb87b8f6361b276d83be17b443fe.png" src="../_images/9bb59bc6cbf3ae94478704d04a6e15d24109bb87b8f6361b276d83be17b443fe.png" />
+</div>
+</div>
+<h2 id="ripley-s-g-function">2. Ripley’s G function<a class="headerlink" href="#ripley-s-g-function" title="Link to this heading">¶</a></h2>
+<h3 id="available-corrections">2.1 Available corrections<a class="headerlink" href="#available-corrections" title="Link to this heading">¶</a></h3>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Argument</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Raw</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;raw&quot;</span></code></p></td>
+<td><p>Uncorrected ECDF of NNDs — biased downward</p></td>
+</tr>
+<tr class="row-odd"><td><p>Reduced-sample</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;rs&quot;</span></code></p></td>
+<td><p>Include only events whose NND guard-band fits inside <strong>W</strong>; support is clipped to the erosion threshold</p></td>
+</tr>
+<tr class="row-even"><td><p>Kaplan-Meier</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;km&quot;</span></code></p></td>
+<td><p>Treats each event as censored at its distance-to-boundary; uses KM product-limit estimator</p></td>
+</tr>
+<tr class="row-odd"><td><p>Hanisch</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;hanisch&quot;</span></code></p></td>
+<td><p>Weights each event by the inverse area of the eroded window at its NND</p></td>
+</tr>
+</tbody>
+</table>
+<p>Pass <code class="docutils literal notranslate"><span class="pre">edge_correction='all'</span></code> to obtain a <code class="docutils literal notranslate"><span class="pre">GEstResult</span></code> named tuple with <strong>all
+four</strong> estimates plus the CSR theoretical curve:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="n">g_csr</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s1">'all'</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<p>Omitting <code class="docutils literal notranslate"><span class="pre">edge_correction</span></code> raises a <code class="docutils literal notranslate"><span class="pre">FutureWarning</span></code> and currently returns
+the uncorrected estimator. In the next major release the default will change
+to return all corrections.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">g_csr</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
+<span class="n">g_clu</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">coords_clu</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">g_csr</span><span class="p">))</span>          <span class="c1"># GEstResult</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">g_csr</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>        <span class="c1"># ('support', 'theo', 'raw', 'rs', 'km', 'hanisch')</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"support length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">g_csr</span><span class="o">.</span><span class="n">support</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;class 'pointpats.distance_statistics.GEstResult'&gt;
+('support', 'theo', 'raw', 'rs', 'km', 'hanisch')
+support length: 20
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">gr</span><span class="p">,</span> <span class="n">title</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="p">[</span><span class="n">g_csr</span><span class="p">,</span> <span class="n">g_clu</span><span class="p">],</span> <span class="p">[</span><span class="s2">"CSR"</span><span class="p">,</span> <span class="s2">"Clustered"</span><span class="p">]):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">gr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">gr</span><span class="o">.</span><span class="n">theo</span><span class="p">,</span> <span class="s2">"k--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Theoretical (CSR)"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">gr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">gr</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Raw (no correction)"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">gr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">gr</span><span class="o">.</span><span class="n">rs</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Reduced-sample (rs)"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">gr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">gr</span><span class="o">.</span><span class="n">km</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Kaplan-Meier (km)"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">gr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">gr</span><span class="o">.</span><span class="n">hanisch</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Hanisch"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"r"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"G(r)"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"G function — </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/3b0905adef83cc651ff5988cfb30675886c21f8e48de7360925dd75b07cdcd66.png" src="../_images/3b0905adef83cc651ff5988cfb30675886c21f8e48de7360925dd75b07cdcd66.png" />
+</div>
+</div>
+<p><strong>What to observe:</strong></p>
+<ul class="simple">
+<li><p>For the CSR pattern all corrected estimates track the theoretical curve closely.</p></li>
+<li><p>The raw estimate rises slightly <strong>below</strong> the theoretical, reflecting the downward
+bias from unobserved neighbours outside <strong>W</strong>.</p></li>
+<li><p>The reduced-sample (rs) estimate is only defined up to the <em>erosion threshold</em>
+(the largest radius at which at least one interior guard point remains), which is
+why that curve terminates earlier than the others.</p></li>
+<li><p>For the clustered pattern all corrected G curves rise steeply at short distances,
+confirming that events are closer to each other than expected under CSR.</p></li>
+</ul>
+<h3 id="requesting-a-single-correction">2.2 Requesting a single correction<a class="headerlink" href="#requesting-a-single-correction" title="Link to this heading">¶</a></h3>
+<p>Pass <code class="docutils literal notranslate"><span class="pre">edge_correction=</span></code> explicitly to get a plain <code class="docutils literal notranslate"><span class="pre">(support,</span> <span class="pre">values)</span></code> tuple:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">support</span><span class="p">,</span> <span class="n">g_km</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"km"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"type:"</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">support</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">g_km</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"support[:5]:"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">support</span><span class="p">[:</span><span class="mi">5</span><span class="p">],</span> <span class="mi">4</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"G_km[:5]:  "</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">g_km</span><span class="p">[:</span><span class="mi">5</span><span class="p">],</span> <span class="mi">4</span><span class="p">))</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>type: &lt;class 'numpy.ndarray'&gt; &lt;class 'numpy.ndarray'&gt;
+support[:5]: [0.     0.0421 0.0841 0.1262 0.1682]
+G_km[:5]:   [0.     0.     0.01   0.0454 0.1629]
+</code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="ripley-s-f-function">3. Ripley’s F function<a class="headerlink" href="#ripley-s-f-function" title="Link to this heading">¶</a></h2>
+<h3 id="id1">3.1 Available corrections<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Argument</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Raw</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;raw&quot;</span></code></p></td>
+<td><p>Uncorrected ECDF of empty-space distances from random test points</p></td>
+</tr>
+<tr class="row-odd"><td><p>Reduced-sample</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;rs&quot;</span></code></p></td>
+<td><p>Include only test points whose guard-band fits inside <strong>W</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>Kaplan-Meier</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;km&quot;</span></code></p></td>
+<td><p>Test-point distances censored at distance-to-boundary</p></td>
+</tr>
+<tr class="row-odd"><td><p>Chiu-Stoyan</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;cs&quot;</span></code></p></td>
+<td><p>Weights each test point by the inverse fraction of its distance-disk that lies inside <strong>W</strong></p></td>
+</tr>
+</tbody>
+</table>
+<p>F requires random test points. Pass <code class="docutils literal notranslate"><span class="pre">rng=</span></code> for reproducible results.
+Use a seed <strong>different</strong> from the one used to generate the point pattern
+to avoid artificial coincidences between test locations and events.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">f_csr</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="mi">99</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
+<span class="n">f_clu</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">coords_clu</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="mi">99</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">f_csr</span><span class="p">))</span>     <span class="c1"># FEstResult</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f_csr</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>   <span class="c1"># ('support', 'theo', 'raw', 'rs', 'km', 'cs')</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;class 'pointpats.distance_statistics.FEstResult'&gt;
+('support', 'theo', 'raw', 'rs', 'km', 'cs')
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">fr</span><span class="p">,</span> <span class="n">title</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="p">[</span><span class="n">f_csr</span><span class="p">,</span> <span class="n">f_clu</span><span class="p">],</span> <span class="p">[</span><span class="s2">"CSR"</span><span class="p">,</span> <span class="s2">"Clustered"</span><span class="p">]):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">fr</span><span class="o">.</span><span class="n">theo</span><span class="p">,</span> <span class="s2">"k--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Theoretical (CSR)"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">fr</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Raw (no correction)"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">fr</span><span class="o">.</span><span class="n">rs</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Reduced-sample (rs)"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">fr</span><span class="o">.</span><span class="n">km</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Kaplan-Meier (km)"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">fr</span><span class="o">.</span><span class="n">cs</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Chiu-Stoyan (cs)"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"r"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"F(r)"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"F function — </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/2ef6cce00688dff3eb99a3b1adb8d0f99f6fdd70369ceea98916e246471781bb.png" src="../_images/2ef6cce00688dff3eb99a3b1adb8d0f99f6fdd70369ceea98916e246471781bb.png" />
+</div>
+</div>
+<p><strong>What to observe:</strong></p>
+<ul class="simple">
+<li><p>Under CSR the corrected F estimates agree well with the theoretical curve.</p></li>
+<li><p>The raw F rises more slowly than theory, again reflecting boundary truncation.</p></li>
+<li><p>For the clustered pattern F rises <strong>more slowly</strong> than under CSR at short
+distances: events are concentrated in clusters, leaving large empty-space
+gaps between them, so test points have to travel farther to reach an event.</p></li>
+</ul>
+<h2 id="the-j-function">4. The J function<a class="headerlink" href="#the-j-function" title="Link to this heading">¶</a></h2>
+<h3 id="definition-and-corrections">4.1 Definition and corrections<a class="headerlink" href="#definition-and-corrections" title="Link to this heading">¶</a></h3>
+<p>Van Lieshout &amp; Baddeley (1996) defined:</p>
+<div class="math notranslate nohighlight">
+\[J(r) = \frac{1 - G(r)}{1 - F(r)}\]</div>
+<p>Under CSR, <span class="math notranslate nohighlight">\(J(r) = 1\)</span> for all <span class="math notranslate nohighlight">\(r\)</span>. Clustering produces <span class="math notranslate nohighlight">\(J &lt; 1\)</span>;
+regularity produces <span class="math notranslate nohighlight">\(J &gt; 1\)</span>.</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Argument</p></th>
+<th class="head"><p>G component</p></th>
+<th class="head"><p>F component</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;rs&quot;</span></code></p></td>
+<td><p>G rs</p></td>
+<td><p>F rs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;km&quot;</span></code></p></td>
+<td><p>G km</p></td>
+<td><p>F km</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;han&quot;</span></code></p></td>
+<td><p>G Hanisch</p></td>
+<td><p>F Chiu-Stoyan</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;un&quot;</span></code> (or <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></td>
+<td><p>G raw</p></td>
+<td><p>F raw</p></td>
+</tr>
+</tbody>
+</table>
+<p>J is truncated where either <span class="math notranslate nohighlight">\(G(r) \approx 1\)</span> or <span class="math notranslate nohighlight">\(F(r) \approx 1\)</span> (the ratio
+becomes unstable). Use <code class="docutils literal notranslate"><span class="pre">truncate=False</span></code> to keep all values.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">j_csr</span> <span class="o">=</span> <span class="n">j</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="mi">99</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
+<span class="n">j_clu</span> <span class="o">=</span> <span class="n">j</span><span class="p">(</span><span class="n">coords_clu</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="mi">99</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">j_csr</span><span class="p">))</span>     <span class="c1"># JEstResult</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">j_csr</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>   <span class="c1"># ('support', 'theo', 'rs', 'km', 'han', 'un')</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;class 'pointpats.distance_statistics.JEstResult'&gt;
+('support', 'theo', 'rs', 'km', 'han', 'un')
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">jr</span><span class="p">,</span> <span class="n">title</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="p">[</span><span class="n">j_csr</span><span class="p">,</span> <span class="n">j_clu</span><span class="p">],</span> <span class="p">[</span><span class="s2">"CSR"</span><span class="p">,</span> <span class="s2">"Clustered"</span><span class="p">]):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Theoretical J = 1"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">jr</span><span class="o">.</span><span class="n">rs</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Reduced-sample (rs)"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">jr</span><span class="o">.</span><span class="n">km</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Kaplan-Meier (km)"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">jr</span><span class="o">.</span><span class="n">han</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Hanisch/CS (han)"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">jr</span><span class="o">.</span><span class="n">un</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Uncorrected (un)"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"r"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"J(r)"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"J function — </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/8e258a1ec4877b1f547abd8d34ef86855c2715577b07a25aacac698675ca71f6.png" src="../_images/8e258a1ec4877b1f547abd8d34ef86855c2715577b07a25aacac698675ca71f6.png" />
+</div>
+</div>
+<p><strong>What to observe:</strong></p>
+<ul class="simple">
+<li><p>Under CSR all J estimates hover near 1, as expected.</p></li>
+<li><p>For the clustered pattern J drops clearly <strong>below 1</strong> at short distances,
+confirming aggregation.</p></li>
+<li><p>The uncorrected estimate (<code class="docutils literal notranslate"><span class="pre">un</span></code>) tends to be closer to 1 than the corrected
+versions because the biases in G and F partially cancel in the ratio —
+but this cancellation is coincidental and pattern-dependent.</p></li>
+</ul>
+<h2 id="ripley-s-k-function">5. Ripley’s K function<a class="headerlink" href="#ripley-s-k-function" title="Link to this heading">¶</a></h2>
+<h3 id="id2">5.1 Available corrections<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Argument</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Raw</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Uncorrected count-based estimator — biased downward</p></td>
+</tr>
+<tr class="row-odd"><td><p>Border / erosion</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;border&quot;</span></code> (alias <code class="docutils literal notranslate"><span class="pre">&quot;erosion&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">True</span></code>)</p></td>
+<td><p>Include only pairs where the focal point is more than <em>r</em> from the boundary (guard-point method); support clipped to erosion threshold</p></td>
+</tr>
+<tr class="row-even"><td><p>Isotropic</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;isotropic&quot;</span></code></p></td>
+<td><p>Weights each pair by the inverse fraction of the circle arc that lies inside <strong>W</strong>; no support truncation</p></td>
+</tr>
+<tr class="row-odd"><td><p>Translation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;translate&quot;</span></code></p></td>
+<td><p>Weights each pair by the inverse area of the intersection of <strong>W</strong> with <strong>W</strong> shifted by the inter-point vector</p></td>
+</tr>
+</tbody>
+</table>
+<p>Pass <code class="docutils literal notranslate"><span class="pre">edge_correction='all'</span></code> to obtain a <code class="docutils literal notranslate"><span class="pre">KEstResult</span></code> named tuple with
+fields <code class="docutils literal notranslate"><span class="pre">(support,</span> <span class="pre">theo,</span> <span class="pre">border,</span> <span class="pre">isotropic,</span> <span class="pre">translate)</span></code>. Under CSR the
+theoretical curve is <span class="math notranslate nohighlight">\(K(r) = \pi r^2\)</span>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="n">k_csr</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s1">'all'</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<p>Omitting <code class="docutils literal notranslate"><span class="pre">edge_correction</span></code> raises a <code class="docutils literal notranslate"><span class="pre">FutureWarning</span></code> and currently returns
+the uncorrected estimator. In the next major release the default will change
+to return all corrections.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">k_csr</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
+<span class="n">k_clu</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">coords_clu</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">k_csr</span><span class="p">))</span>          <span class="c1"># KEstResult</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">k_csr</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>        <span class="c1"># ('support', 'theo', 'border', 'isotropic', 'translate')</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"support length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">k_csr</span><span class="o">.</span><span class="n">support</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;class 'pointpats.distance_statistics.KEstResult'&gt;
+('support', 'theo', 'border', 'isotropic', 'translate')
+support length: 20
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">kr</span><span class="p">,</span> <span class="n">title</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="p">[</span><span class="n">k_csr</span><span class="p">,</span> <span class="n">k_clu</span><span class="p">],</span> <span class="p">[</span><span class="s2">"CSR"</span><span class="p">,</span> <span class="s2">"Clustered"</span><span class="p">]):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">kr</span><span class="o">.</span><span class="n">theo</span><span class="p">,</span> <span class="s2">"k--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Theoretical π r²"</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">k_raw</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">coords_csr</span> <span class="k">if</span> <span class="n">title</span> <span class="o">==</span> <span class="s2">"CSR"</span> <span class="k">else</span> <span class="n">coords_clu</span><span class="p">,</span>
+                 <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">k_raw</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Raw (no correction)"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">kr</span><span class="o">.</span><span class="n">border</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Border/erosion"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">kr</span><span class="o">.</span><span class="n">isotropic</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Isotropic"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">kr</span><span class="o">.</span><span class="n">translate</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Translation"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"r"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"K(r)"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"K function — </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/da9ad691a0893678fc267ab21d2a14566b453abae4c2a5f8a4d79dc4b61cda77.png" src="../_images/da9ad691a0893678fc267ab21d2a14566b453abae4c2a5f8a4d79dc4b61cda77.png" />
+</div>
+</div>
+<p><strong>What to observe:</strong></p>
+<ul class="simple">
+<li><p>Under CSR all corrected K estimates follow <span class="math notranslate nohighlight">\(\pi r^2\)</span> closely.</p></li>
+<li><p>The raw (uncorrected) K rises <strong>below</strong> the theoretical because pairs near
+the boundary are systematically undercounted.</p></li>
+<li><p>The border estimate is clipped at the erosion threshold (the largest <em>r</em> for
+which a guard region still exists inside <strong>W</strong>).</p></li>
+<li><p>Isotropic and translation corrections are available at all distances and
+agree well with each other.</p></li>
+<li><p>For the clustered pattern K rises <strong>above</strong> the CSR theoretical curve,
+indicating more pairs at short distances than expected under randomness.</p></li>
+</ul>
+<h2 id="ripley-s-l-function">6. Ripley’s L function<a class="headerlink" href="#ripley-s-l-function" title="Link to this heading">¶</a></h2>
+<p>L is defined as:
+$<span class="math notranslate nohighlight">\(L(r) = \sqrt{\frac{K(r)}{\pi}}\)</span>$</p>
+<p>Under CSR <span class="math notranslate nohighlight">\(L(r) = r\)</span>. The <em>linearised</em> form <span class="math notranslate nohighlight">\(L(r) - r\)</span> centres on zero,
+making deviations from CSR easier to read.</p>
+<p><code class="docutils literal notranslate"><span class="pre">l()</span></code> accepts the same <code class="docutils literal notranslate"><span class="pre">edge_correction</span></code> values as <code class="docutils literal notranslate"><span class="pre">k()</span></code>. Pass
+<code class="docutils literal notranslate"><span class="pre">edge_correction='all'</span></code> to return a <code class="docutils literal notranslate"><span class="pre">LEstResult</span></code> named tuple with the
+same fields as <code class="docutils literal notranslate"><span class="pre">KEstResult</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">l_csr</span> <span class="o">=</span> <span class="n">l</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
+<span class="n">l_clu</span> <span class="o">=</span> <span class="n">l</span><span class="p">(</span><span class="n">coords_clu</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
+
+<span class="n">l_lin_csr</span> <span class="o">=</span> <span class="n">l</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"all"</span><span class="p">,</span> <span class="n">linearized</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">l_lin_clu</span> <span class="o">=</span> <span class="n">l</span><span class="p">(</span><span class="n">coords_clu</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"all"</span><span class="p">,</span> <span class="n">linearized</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">l_csr</span><span class="p">))</span>    <span class="c1"># LEstResult</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">l_csr</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>  <span class="c1"># ('support', 'theo', 'border', 'isotropic', 'translate')</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;class 'pointpats.distance_statistics.LEstResult'&gt;
+('support', 'theo', 'border', 'isotropic', 'translate')
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+
+<span class="c1"># Top row: L(r) vs r</span>
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">title</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">l_csr</span><span class="p">,</span> <span class="n">l_clu</span><span class="p">],</span> <span class="p">[</span><span class="s2">"CSR"</span><span class="p">,</span> <span class="s2">"Clustered"</span><span class="p">]):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">lr</span><span class="o">.</span><span class="n">theo</span><span class="p">,</span> <span class="s2">"k--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Theoretical L = r"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">lr</span><span class="o">.</span><span class="n">border</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Border/erosion"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">lr</span><span class="o">.</span><span class="n">isotropic</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Isotropic"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">lr</span><span class="o">.</span><span class="n">translate</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Translation"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"r"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"L(r)"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"L(r) — </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+<span class="c1"># Bottom row: linearised L(r) − r</span>
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">title</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">l_lin_csr</span><span class="p">,</span> <span class="n">l_lin_clu</span><span class="p">],</span> <span class="p">[</span><span class="s2">"CSR"</span><span class="p">,</span> <span class="s2">"Clustered"</span><span class="p">]):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Theoretical L − r = 0"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">lr</span><span class="o">.</span><span class="n">border</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Border/erosion"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">lr</span><span class="o">.</span><span class="n">isotropic</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Isotropic"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">lr</span><span class="o">.</span><span class="n">translate</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Translation"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"r"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"L(r) − r"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Linearised L(r) − r — </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/737af07d290aad5a0095377dcdfb2efacca88473d89cc09d49bcc7196b84259d.png" src="../_images/737af07d290aad5a0095377dcdfb2efacca88473d89cc09d49bcc7196b84259d.png" />
+</div>
+</div>
+<p><strong>What to observe:</strong></p>
+<ul class="simple">
+<li><p>Under CSR the linearised <span class="math notranslate nohighlight">\(L(r) - r\)</span> fluctuates around zero for all
+corrections; systematic positive excursions would indicate clustering,
+negative excursions would indicate regularity.</p></li>
+<li><p>For the clustered pattern <span class="math notranslate nohighlight">\(L(r) - r\)</span> rises well above zero at short to
+moderate distances — the signature of aggregation.</p></li>
+<li><p>Isotropic and translation corrections generally agree closely; the border
+correction terminates early at the erosion threshold.</p></li>
+</ul>
+<h2 id="side-by-side-comparison-km-estimates">7. Side-by-side comparison — KM estimates<a class="headerlink" href="#side-by-side-comparison-km-estimates" title="Link to this heading">¶</a></h2>
+<p>The Kaplan-Meier estimate is a natural general-purpose default: it uses all
+data, requires no spatial geometry beyond the window boundary, and is
+consistent. The panel below compares KM estimates for G, F, J, K, and L
+across both patterns.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"CSR"</span><span class="p">,</span> <span class="s2">"Clustered"</span><span class="p">]</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"steelblue"</span><span class="p">,</span> <span class="s2">"tomato"</span><span class="p">]</span>
+
+<span class="c1"># --- row 0: G, F, J ---</span>
+<span class="n">pairs_row0</span> <span class="o">=</span> <span class="p">[(</span><span class="n">g_csr</span><span class="p">,</span> <span class="n">g_clu</span><span class="p">),</span> <span class="p">(</span><span class="n">f_csr</span><span class="p">,</span> <span class="n">f_clu</span><span class="p">),</span> <span class="p">(</span><span class="n">j_csr</span><span class="p">,</span> <span class="n">j_clu</span><span class="p">)]</span>
+<span class="n">ylabels_row0</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"G(r)"</span><span class="p">,</span> <span class="s2">"F(r)"</span><span class="p">,</span> <span class="s2">"J(r)"</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="p">(</span><span class="n">r_csr</span><span class="p">,</span> <span class="n">r_clu</span><span class="p">),</span> <span class="n">ylabel</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pairs_row0</span><span class="p">,</span> <span class="n">ylabels_row0</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">ylabel</span> <span class="o">==</span> <span class="s2">"J(r)"</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Theoretical"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r_csr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">r_csr</span><span class="o">.</span><span class="n">theo</span><span class="p">,</span> <span class="s2">"k--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Theoretical"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">r_csr</span><span class="p">,</span> <span class="n">r_clu</span><span class="p">],</span> <span class="n">labels</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="s2">"km"</span><span class="p">),</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> (KM)"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"r"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ylabel</span> <span class="o">==</span> <span class="s2">"J(r)"</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+
+<span class="c1"># --- row 1: K, L, L-linearised ---</span>
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="p">(</span><span class="n">r_csr</span><span class="p">,</span> <span class="n">r_clu</span><span class="p">),</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="p">[(</span><span class="n">k_csr</span><span class="p">,</span> <span class="n">k_clu</span><span class="p">),</span> <span class="p">(</span><span class="n">l_csr</span><span class="p">,</span> <span class="n">l_clu</span><span class="p">),</span> <span class="p">(</span><span class="n">l_lin_csr</span><span class="p">,</span> <span class="n">l_lin_clu</span><span class="p">)],</span>
+    <span class="p">[</span><span class="s2">"K(r)"</span><span class="p">,</span> <span class="s2">"L(r)"</span><span class="p">,</span> <span class="s2">"L(r) − r"</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">"isotropic"</span><span class="p">,</span> <span class="s2">"isotropic"</span><span class="p">,</span> <span class="s2">"isotropic"</span><span class="p">],</span>
+<span class="p">):</span>
+    <span class="k">if</span> <span class="n">ylabel</span> <span class="o">==</span> <span class="s2">"K(r)"</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r_csr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">r_csr</span><span class="o">.</span><span class="n">theo</span><span class="p">,</span> <span class="s2">"k--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Theoretical π r²"</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ylabel</span> <span class="o">==</span> <span class="s2">"L(r)"</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r_csr</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">r_csr</span><span class="o">.</span><span class="n">theo</span><span class="p">,</span> <span class="s2">"k--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Theoretical r"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Theoretical 0"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">r_csr</span><span class="p">,</span> <span class="n">r_clu</span><span class="p">],</span> <span class="n">labels</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">field</span><span class="p">),</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> (isotropic)"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"r"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+<span class="c1"># hide unused panel</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"KM / isotropic estimates — CSR vs Clustered"</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.01</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/f21629f50ce9bce0563196680fdea343e6483c2104f4bce8bcc09e7c7123f016.png" src="../_images/f21629f50ce9bce0563196680fdea343e6483c2104f4bce8bcc09e7c7123f016.png" />
+</div>
+</div>
+<h2 id="requesting-individual-corrections">8. Requesting individual corrections<a class="headerlink" href="#requesting-individual-corrections" title="Link to this heading">¶</a></h2>
+<p>Pass <code class="docutils literal notranslate"><span class="pre">edge_correction=</span></code> explicitly to get a plain <code class="docutils literal notranslate"><span class="pre">(support,</span> <span class="pre">values)</span></code> tuple
+rather than the full named tuple.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># G — single corrections</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">g_raw</span>     <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">g_rs</span>      <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"rs"</span><span class="p">)</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">g_km</span>      <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"km"</span><span class="p">)</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">g_hanisch</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"hanisch"</span><span class="p">)</span>
+
+<span class="c1"># F — single corrections</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">f_raw</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="mi">99</span><span class="p">)</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">f_rs</span>  <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"rs"</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="mi">99</span><span class="p">)</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">f_km</span>  <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"km"</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="mi">99</span><span class="p">)</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">f_cs</span>  <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"cs"</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="mi">99</span><span class="p">)</span>
+
+<span class="c1"># J — single corrections</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">j_rs</span>  <span class="o">=</span> <span class="n">j</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"rs"</span><span class="p">,</span>  <span class="n">rng</span><span class="o">=</span><span class="mi">99</span><span class="p">)</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">j_km</span>  <span class="o">=</span> <span class="n">j</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"km"</span><span class="p">,</span>  <span class="n">rng</span><span class="o">=</span><span class="mi">99</span><span class="p">)</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">j_han</span> <span class="o">=</span> <span class="n">j</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"han"</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="mi">99</span><span class="p">)</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">j_un</span>  <span class="o">=</span> <span class="n">j</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"un"</span><span class="p">,</span>  <span class="n">rng</span><span class="o">=</span><span class="mi">99</span><span class="p">)</span>
+
+<span class="c1"># K — single corrections (no rng needed)</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">k_raw</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">k_bor</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"border"</span><span class="p">)</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">k_iso</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"isotropic"</span><span class="p">)</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">k_tra</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"translate"</span><span class="p">)</span>
+
+<span class="c1"># L — single corrections</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">l_iso</span> <span class="o">=</span> <span class="n">l</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"isotropic"</span><span class="p">)</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">l_tra</span> <span class="o">=</span> <span class="n">l</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"translate"</span><span class="p">)</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">l_lin</span> <span class="o">=</span> <span class="n">l</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"isotropic"</span><span class="p">,</span> <span class="n">linearized</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"K isotropic[:3]:"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">k_iso</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="mi">4</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"L isotropic[:3]:"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">l_iso</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="mi">4</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"L linearised[:3]:"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">l_lin</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="mi">4</span><span class="p">))</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>K isotropic[:3]: [0.    0.    0.005]
+L isotropic[:3]: [0.     0.     0.0399]
+L linearised[:3]: [ 0.     -0.0421 -0.0442]
+</code></pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>/var/folders/n0/xbnn2f2d0ybbp2c_bf_9ztzw0000gn/T/ipykernel_10238/3969019792.py:17: UserWarning: requested None bins to evaluate the J function, but it reaches infinity at d=0.7570, meaning only 19 bins will be used to characterize the J function.
+  s, j_un  = j(coords_csr, hull=poly, edge_correction="un",  rng=99)
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>The individual corrections returned by <code class="docutils literal notranslate"><span class="pre">edge_correction='all'</span></code> and by
+explicit single-correction calls are numerically identical (same RNG state,
+same support grid):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">g_default</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
+<span class="n">f_default</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="mi">99</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
+<span class="n">k_default</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
+<span class="n">l_default</span> <span class="o">=</span> <span class="n">l</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
+
+<span class="n">_</span><span class="p">,</span> <span class="n">g_km_single</span>  <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"km"</span><span class="p">)</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">f_km_single</span>  <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"km"</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="mi">99</span><span class="p">)</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">k_iso_single</span> <span class="o">=</span> <span class="n">k</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"isotropic"</span><span class="p">)</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">l_iso_single</span> <span class="o">=</span> <span class="n">l</span><span class="p">(</span><span class="n">coords_csr</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">support</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">edge_correction</span><span class="o">=</span><span class="s2">"isotropic"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"G km matches:        "</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">g_default</span><span class="o">.</span><span class="n">km</span><span class="p">,</span> <span class="n">g_km_single</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"F km matches:        "</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">f_default</span><span class="o">.</span><span class="n">km</span><span class="p">,</span> <span class="n">f_km_single</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"K isotropic matches: "</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">k_default</span><span class="o">.</span><span class="n">isotropic</span><span class="p">,</span> <span class="n">k_iso_single</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"L isotropic matches: "</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">l_default</span><span class="o">.</span><span class="n">isotropic</span><span class="p">,</span> <span class="n">l_iso_single</span><span class="p">))</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>G km matches:         True
+F km matches:         True
+K isotropic matches:  True
+L isotropic matches:  True
+</code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="guidance-which-correction-to-use">9. Guidance: which correction to use?<a class="headerlink" href="#guidance-which-correction-to-use" title="Link to this heading">¶</a></h2>
+<h3 id="g-f-j">G, F, J<a class="headerlink" href="#g-f-j" title="Link to this heading">¶</a></h3>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Correction</p></th>
+<th class="head"><p>Recommended when</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Raw</strong></p></td>
+<td><p>Quick exploratory look; large windows where boundary effects are minor</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Reduced-sample (rs)</strong></p></td>
+<td><p>Simple and interpretable; support is truncated at the erosion threshold</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Kaplan-Meier (km)</strong></p></td>
+<td><p>General-purpose default; no support truncation; consistent estimator</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Hanisch (G) / Chiu-Stoyan (F)</strong></p></td>
+<td><p>Sparse patterns near boundary; pairs naturally as <code class="docutils literal notranslate"><span class="pre">edge_correction=&quot;han&quot;</span></code> in J</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="k-and-l">K and L<a class="headerlink" href="#k-and-l" title="Link to this heading">¶</a></h3>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Correction</p></th>
+<th class="head"><p>Recommended when</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Raw</strong></p></td>
+<td><p>Not recommended; included for comparison only</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Border / erosion</strong></p></td>
+<td><p>Simple guard-point method; support truncated at erosion threshold</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Isotropic</strong></p></td>
+<td><p>Best all-round choice for rectangular / convex windows; no truncation</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Translation</strong></p></td>
+<td><p>Similar to isotropic; preferred for irregular windows; no truncation</p></td>
+</tr>
+</tbody>
+</table>
+<p>When in doubt, pass <code class="docutils literal notranslate"><span class="pre">edge_correction='all'</span></code> to get all estimates at once
+and compare them. Large discrepancies between corrected and uncorrected
+estimates signal strong boundary effects.</p>
+<blockquote>
+<div><p><strong>FutureWarning note:</strong> Omitting <code class="docutils literal notranslate"><span class="pre">edge_correction</span></code> raises a <code class="docutils literal notranslate"><span class="pre">FutureWarning</span></code>
+because the default will change in the next major release to return all
+corrections as a named tuple (equivalent to <code class="docutils literal notranslate"><span class="pre">edge_correction='all'</span></code>).
+Pass <code class="docutils literal notranslate"><span class="pre">edge_correction=None</span></code> to retain the uncorrected estimator and silence
+the warning, or <code class="docutils literal notranslate"><span class="pre">edge_correction='all'</span></code> to opt in to the new API now.
+To suppress the warning in bulk for a notebook or script:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="s2">"pointpats"</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div></blockquote>
+<h2 id="references">References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Baddeley, A., Rubak, E., &amp; Turner, R. (2015). <em>Spatial Point Patterns:
+Methodology and Applications with R</em>. CRC Press.</p></li>
+<li><p>Diggle, P. J. (2003). <em>Statistical Analysis of Spatial Point Patterns</em>
+(2nd ed.). Hodder Arnold.</p></li>
+<li><p>Hanisch, K.-H. (1984). Some remarks on estimators of the distribution
+function of nearest-neighbour distance in stationary spatial point
+processes. <em>Mathematische Operationsforschung und Statistik</em>, 15, 409–412.</p></li>
+<li><p>Van Lieshout, M. N. M., &amp; Baddeley, A. J. (1996). A nonparametric measure
+of spatial interaction in point patterns. <em>Statistica Neerlandica</em>, 50,
+344–361.</p></li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        &#169; Copyright 2018-, pysal developers.
+        
+    </div>
+  
+    Created using
+    <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
+    9.2.0.
+     and
+    <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.top", "search.share", "search.suggest", "toc.follow", "toc.sticky", "content.code.copy", "content.action.edit"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": null, "versionPath": "https://pysal.org/pointpats/versions.json"}}</script>
+    
+      
+        <script src="../_static/sphinx_immaterial_theme.567b0e0fd947ea7d9.min.js?v=5850e81b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js"></script>
+    
+  </body>
+</html>

@@ -1,0 +1,17 @@
+﻿pointpats.Knox
+==============
+
+.. currentmodule:: pointpats
+
+.. autoclass:: Knox
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Knox.from_dataframe
+   
+
+   

@@ -1,0 +1,18 @@
+﻿pointpats.HexagonM
+==================
+
+.. currentmodule:: pointpats
+
+.. autoclass:: HexagonM
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~HexagonM.plot
+      ~HexagonM.point_location_sta
+   
+
+   

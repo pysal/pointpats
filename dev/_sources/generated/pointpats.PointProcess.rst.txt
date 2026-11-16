@@ -1,0 +1,19 @@
+﻿pointpats.PointProcess
+======================
+
+.. currentmodule:: pointpats
+
+.. autoclass:: PointProcess
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PointProcess.draw
+      ~PointProcess.realize
+      ~PointProcess.setup
+   
+
+   

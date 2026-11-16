@@ -1,0 +1,6 @@
+﻿pointpats.k
+===========
+
+.. currentmodule:: pointpats
+
+.. autofunction:: k

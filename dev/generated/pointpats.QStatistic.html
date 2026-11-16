@@ -1,0 +1,2531 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="pointpats.HexagonM.html">
+      
+      
+        <link rel="next" href="pointpats.f.html">
+      
+      
+      <link rel="icon" href="../_static/pysal_favicon.ico">
+    
+    
+      
+        <title>pointpats.QStatistic - pointpats</title>
+      
+    
+    
+      
+        
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.2b7fb0df65482c23e.min.css?v=666199ae" />
+        <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+        <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d127c87d" />
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pointpats.QStatistic" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="pointpats" class="md-header__button md-logo" aria-label="pointpats" data-md-component="logo">
+      <img src="../_static/pysal_logo.svg" alt="logo">
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            pointpats
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              pointpats.QStatistic
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="red"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="red"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/pysal/pointpats/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pysal/pointpats
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="pointpats" class="md-nav__button md-logo" aria-label="pointpats" data-md-component="logo">
+      <img src="../_static/pysal_logo.svg" alt="logo">
+    </a>
+    pointpats
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/pysal/pointpats/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pysal/pointpats
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Home</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Installation</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    <span>User Guide</span>
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            <span>User Guide</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/centrography.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Centrography in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/sd_ellipse.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Standard deviational ellipse in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/Quadrat_statistics.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Quadrat-<wbr>based statistics in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/ripley.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Distance-<wbr>based statistics in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/edge_corrections.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Edge corrections for G, F, J, K, and L functions</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/random.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Simulating random point patterns with pointpats.<wbr>random</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/marks.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Working with marks in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../references.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>References</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    <span>API</span>
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            <span>API</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../api.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    <span>API reference</span>
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            <span>API reference</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html#point-pattern" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Point Pattern</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html#point-processes" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Point Processes</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html#centrography" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Centrography</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html#density" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Density</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../api.html#quadrat-based-statistics" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    <span>Quadrat Based Statistics</span>
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_1_5" id="__nav_4_1_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_1_5">
+            <span class="md-nav__icon md-icon"></span>
+            <span>Quadrat Based Statistics</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="pointpats.RectangleM.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>pointpats.<wbr>Rectangle<wbr>M</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="pointpats.HexagonM.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>pointpats.<wbr>Hexagon<wbr>M</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    <span>pointpats.<wbr>QStatistic</span>
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>pointpats.<wbr>QStatistic</span>
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pointpats.QStatistic" class="md-nav__link">
+    
+      <span aria-label="Python class" class="objinfo-icon objinfo-icon__data" title="Python class">C</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic (Python class) — Pearson chi-square quadrat test for complete spatial randomness (CSR)."><span>pointpats.<wbr>QStatistic</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="pointpats.QStatistic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.pp" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.pp (Python parameter) — Event coordinates as an (n, 2) array-like of floats (x, y)."><span>pp</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.shape" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.shape (Python parameter) — Quadrat tessellation type."><span>shape</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.nx" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.nx (Python parameter) — Number of columns when shape=&#34;rectangle&#34; and rectangle_width / rectangle_height are not provided."><span>nx</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.ny" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.ny (Python parameter) — Number of rows when shape=&#34;rectangle&#34; and rectangle_width / rectangle_height are not provided."><span>ny</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.rectangle_width" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.rectangle_width (Python parameter) — Target rectangle width."><span>rectangle_<wbr>width</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.rectangle_height" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.rectangle_height (Python parameter) — Target rectangle height."><span>rectangle_<wbr>height</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.lh" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.lh (Python parameter) — Hexagon side length when shape=&#34;hexagon&#34;."><span>lh</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.realizations" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.realizations (Python parameter) — Number of CSR simulations used to compute a Monte Carlo p-value. If 0, no simulation-based inference is performed."><span>realizations</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.window" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.window (Python parameter) — Study window (e.g., Polygon or MultiPolygon)."><span>window</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.rng" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.rng (Python parameter) — Random number generator control for reproducible CSR simulations when realizations &gt; 0."><span>rng</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.points" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.points (Python attribute) — (n, 2) array of event coordinates."><span>points</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="points">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.points-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.mbb" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.mbb (Python attribute) — Bounding box of points as [xmin, ymin, xmax, ymax]."><span>mbb</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="mbb">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.mbb-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.window" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.window (Python attribute) — Study window used for simulation and plotting."><span>window</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="window">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.window-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.shape" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.shape (Python attribute) — Quadrat tessellation type: &#34;rectangle&#34; or &#34;hexagon&#34;."><span>shape</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="shape">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.shape-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.rng" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.rng (Python attribute) — RNG used for CSR simulations (always stored as a Generator)."><span>rng</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="rng">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.rng-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.mr" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.mr (Python attribute) — Tessellation manager instance."><span>mr</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="mr">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.mr-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.cell_ids" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.cell_ids (Python attribute) — Cell identifiers included in the test statistic (all grid cells)."><span>cell_<wbr>ids</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="cell_ids">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.cell_ids-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.chi2 (Python attribute) — Observed Pearson chi-square statistic."><span>chi2</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="chi2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.df" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.df (Python attribute) — Degrees of freedom for the analytical chi-square reference distribution, equal to k - 1 where k is the number of included cells."><span>df</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="df">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.df-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2_pvalue" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.chi2_pvalue (Python attribute) — Analytical p-value from the chi-square distribution."><span>chi2_<wbr>pvalue</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="chi2_pvalue">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2_pvalue-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2_contrib" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.chi2_contrib (Python attribute) — Per-cell chi-square contributions aligned with cell_ids, computed as (O - E)^2 / E with E = mean(O) over included cells."><span>chi2_<wbr>contrib</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="chi2_contrib">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2_contrib-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2_realizations" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.chi2_realizations (Python attribute) — Simulated chi-square statistics for CSR realizations. Present only when realizations &gt; 0."><span>chi2_<wbr>realizations</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="chi2_realizations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2_realizations-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2_r_pvalue" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.chi2_r_pvalue (Python attribute) — Monte Carlo p-value based on chi2_realizations, computed using the standard +1 correction: ( #{T_sim &gt;= T_obs} + 1 ) / (realizations + 1). Present only when realizations &gt; 0."><span>chi2_<wbr>r_<wbr>pvalue</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="chi2_r_pvalue">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2_r_pvalue-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.plot" class="md-nav__link">
+    
+      <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.plot (Python method)"><span>plot</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html#distance-based-statistics" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Distance Based Statistics</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html#window-functions" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Window functions</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html#random-distributions" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Random distributions</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html#space-time-interaction-tests" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Space-<wbr>Time Interaction Tests</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    <span>For contributors</span>
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            <span>For contributors</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/pysal/mapclassify" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Git<wbr>Hub</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/pysal/mapclassify/releases" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Changelog</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pointpats.QStatistic" class="md-nav__link">
+    
+      <span aria-label="Python class" class="objinfo-icon objinfo-icon__data" title="Python class">C</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic (Python class) — Pearson chi-square quadrat test for complete spatial randomness (CSR)."><span>pointpats.<wbr>QStatistic</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="pointpats.QStatistic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.pp" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.pp (Python parameter) — Event coordinates as an (n, 2) array-like of floats (x, y)."><span>pp</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.shape" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.shape (Python parameter) — Quadrat tessellation type."><span>shape</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.nx" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.nx (Python parameter) — Number of columns when shape=&#34;rectangle&#34; and rectangle_width / rectangle_height are not provided."><span>nx</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.ny" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.ny (Python parameter) — Number of rows when shape=&#34;rectangle&#34; and rectangle_width / rectangle_height are not provided."><span>ny</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.rectangle_width" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.rectangle_width (Python parameter) — Target rectangle width."><span>rectangle_<wbr>width</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.rectangle_height" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.rectangle_height (Python parameter) — Target rectangle height."><span>rectangle_<wbr>height</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.lh" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.lh (Python parameter) — Hexagon side length when shape=&#34;hexagon&#34;."><span>lh</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.realizations" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.realizations (Python parameter) — Number of CSR simulations used to compute a Monte Carlo p-value. If 0, no simulation-based inference is performed."><span>realizations</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.window" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.window (Python parameter) — Study window (e.g., Polygon or MultiPolygon)."><span>window</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.__init__.rng" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.__init__.rng (Python parameter) — Random number generator control for reproducible CSR simulations when realizations &gt; 0."><span>rng</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.points" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.points (Python attribute) — (n, 2) array of event coordinates."><span>points</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="points">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.points-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.mbb" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.mbb (Python attribute) — Bounding box of points as [xmin, ymin, xmax, ymax]."><span>mbb</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="mbb">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.mbb-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.window" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.window (Python attribute) — Study window used for simulation and plotting."><span>window</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="window">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.window-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.shape" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.shape (Python attribute) — Quadrat tessellation type: &#34;rectangle&#34; or &#34;hexagon&#34;."><span>shape</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="shape">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.shape-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.rng" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.rng (Python attribute) — RNG used for CSR simulations (always stored as a Generator)."><span>rng</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="rng">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.rng-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.mr" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.mr (Python attribute) — Tessellation manager instance."><span>mr</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="mr">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.mr-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.cell_ids" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.cell_ids (Python attribute) — Cell identifiers included in the test statistic (all grid cells)."><span>cell_<wbr>ids</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="cell_ids">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.cell_ids-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.chi2 (Python attribute) — Observed Pearson chi-square statistic."><span>chi2</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="chi2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.df" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.df (Python attribute) — Degrees of freedom for the analytical chi-square reference distribution, equal to k - 1 where k is the number of included cells."><span>df</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="df">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.df-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2_pvalue" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.chi2_pvalue (Python attribute) — Analytical p-value from the chi-square distribution."><span>chi2_<wbr>pvalue</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="chi2_pvalue">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2_pvalue-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2_contrib" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.chi2_contrib (Python attribute) — Per-cell chi-square contributions aligned with cell_ids, computed as (O - E)^2 / E with E = mean(O) over included cells."><span>chi2_<wbr>contrib</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="chi2_contrib">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2_contrib-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2_realizations" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.chi2_realizations (Python attribute) — Simulated chi-square statistics for CSR realizations. Present only when realizations &gt; 0."><span>chi2_<wbr>realizations</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="chi2_realizations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2_realizations-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2_r_pvalue" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.chi2_r_pvalue (Python attribute) — Monte Carlo p-value based on chi2_realizations, computed using the standard +1 correction: ( #{T_sim &gt;= T_obs} + 1 ) / (realizations + 1). Present only when realizations &gt; 0."><span>chi2_<wbr>r_<wbr>pvalue</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="chi2_r_pvalue">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.chi2_r_pvalue-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.QStatistic.plot" class="md-nav__link">
+    
+      <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.QStatistic.plot (Python method)"><span>plot</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                
+                
+                  
+
+
+  
+    <a href="https://github.com/pysal/pointpats/blob/main/docs/source/generated/pointpats.QStatistic.rst" title="Edit this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 9h5.5L13 3.5zM6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4c0-1.11.89-2 2-2m.12 13.5 3.74 3.74 1.42-1.41-2.33-2.33 2.33-2.33-1.42-1.41zm11.16 0-3.74-3.74-1.42 1.41 2.33 2.33-2.33 2.33 1.42 1.41z"/></svg>
+    </a>
+  
+  
+
+<h1 id="pointpats-qstatistic">pointpats.QStatistic<a class="headerlink" href="#pointpats-qstatistic" title="Link to this heading">¶</a></h1>
+<dl class="py class objdesc">
+<dt class="sig sig-object highlight sig-wrap py" id="pointpats.QStatistic">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">QStatistic</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.QStatistic.__init__.pp" title="pointpats.QStatistic.__init__.pp (Python parameter) — Event coordinates as an (n, 2) array-like of floats (x, y)."><span class="n"><span class="pre">pp</span></span></a></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.QStatistic.__init__.shape" title="pointpats.QStatistic.__init__.shape (Python parameter) — Quadrat tessellation type."><span class="n"><span class="pre">shape</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'rectangle'</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.QStatistic.__init__.nx" title="pointpats.QStatistic.__init__.nx (Python parameter) — Number of columns when shape=&quot;rectangle&quot; and rectangle_width / rectangle_height are not provided."><span class="n"><span class="pre">nx</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">3</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.QStatistic.__init__.ny" title="pointpats.QStatistic.__init__.ny (Python parameter) — Number of rows when shape=&quot;rectangle&quot; and rectangle_width / rectangle_height are not provided."><span class="n"><span class="pre">ny</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">3</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.QStatistic.__init__.rectangle_width" title="pointpats.QStatistic.__init__.rectangle_width (Python parameter) — Target rectangle width."><span class="n"><span class="pre">rectangle_width</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">0</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.QStatistic.__init__.rectangle_height" title="pointpats.QStatistic.__init__.rectangle_height (Python parameter) — Target rectangle height."><span class="n"><span class="pre">rectangle_height</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">0</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.QStatistic.__init__.lh" title="pointpats.QStatistic.__init__.lh (Python parameter) — Hexagon side length when shape=&quot;hexagon&quot;."><span class="n"><span class="pre">lh</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">10</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.QStatistic.__init__.realizations" title="pointpats.QStatistic.__init__.realizations (Python parameter) — Number of CSR simulations used to compute a Monte Carlo p-value. If 0, no simulation-based inference is performed."><span class="n"><span class="pre">realizations</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">0</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.QStatistic.__init__.window" title="pointpats.QStatistic.__init__.window (Python parameter) — Study window (e.g., Polygon or MultiPolygon)."><span class="n"><span class="pre">window</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.QStatistic.__init__.rng" title="pointpats.QStatistic.__init__.rng (Python parameter) — Random number generator control for reproducible CSR simulations when realizations &gt; 0."><span class="n"><span class="pre">rng</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em></span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats/quadrat_statistics.py#L502-L705"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic" title="Link to this definition">¶</a></dt>
+<dd><p>Pearson chi-square quadrat test for complete spatial randomness (CSR).</p>
+<p>This class partitions the study region into quadrats (rectangles or hexagons),
+counts the number of events falling in each quadrat, and evaluates departure
+from CSR using a Pearson chi-square statistic under an equal-intensity CSR
+null model.</p>
+<p>The primary outputs are the observed chi-square statistic and its analytical
+p-value (from the chi-square distribution). Optionally, a simulation-based
+(Monte Carlo) p-value can be computed by generating CSR realizations within
+the study window and recomputing the chi-square statistic for each
+realization.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.QStatistic-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#pointpats.QStatistic-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt id="pointpats.QStatistic.__init__.pp"><span class="n sig-name">pp</span><a class="headerlink" href="#pointpats.QStatistic.__init__.pp" title="Permalink to this definition">¶</a></dt><dd><p>Event coordinates as an (n, 2) array-like of floats (x, y).</p>
+</dd>
+<dt id="pointpats.QStatistic.__init__.shape"><span class="sig-name descname">shape</span><span class="p"> : </span><span class="desctype"><span class="desctype">{&quot;rectangle&quot;, &quot;hexagon&quot;}, default=&quot;rectangle&quot;</span></span><a class="headerlink" href="#pointpats.QStatistic.__init__.shape" title="Permalink to this definition">¶</a></dt><dd><p>Quadrat tessellation type.</p>
+</dd>
+<dt id="pointpats.QStatistic.__init__.nx"><span class="sig-name descname">nx</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a>, default=3</span></span><a class="headerlink" href="#pointpats.QStatistic.__init__.nx" title="Permalink to this definition">¶</a></dt><dd><p>Number of columns when <cite>shape=”rectangle”</cite> and <cite>rectangle_width</cite> /
+<cite>rectangle_height</cite> are not provided.</p>
+</dd>
+<dt id="pointpats.QStatistic.__init__.ny"><span class="sig-name descname">ny</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a>, default=3</span></span><a class="headerlink" href="#pointpats.QStatistic.__init__.ny" title="Permalink to this definition">¶</a></dt><dd><p>Number of rows when <cite>shape=”rectangle”</cite> and <cite>rectangle_width</cite> /
+<cite>rectangle_height</cite> are not provided.</p>
+</dd>
+<dt id="pointpats.QStatistic.__init__.rectangle_width"><span class="sig-name descname">rectangle_width</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a>, default=0</span></span><a class="headerlink" href="#pointpats.QStatistic.__init__.rectangle_width" title="Permalink to this definition">¶</a></dt><dd><p>Target rectangle width. Must be provided together with
+<cite>rectangle_height</cite>. When both are provided and non-zero, <cite>nx</cite> and <cite>ny</cite>
+are ignored and the grid dimensions are computed from the point-set MBB.</p>
+</dd>
+<dt id="pointpats.QStatistic.__init__.rectangle_height"><span class="sig-name descname">rectangle_height</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a>, default=0</span></span><a class="headerlink" href="#pointpats.QStatistic.__init__.rectangle_height" title="Permalink to this definition">¶</a></dt><dd><p>Target rectangle height. Must be provided together with
+<cite>rectangle_width</cite>. When both are provided and non-zero, <cite>nx</cite> and <cite>ny</cite>
+are ignored and the grid dimensions are computed from the point-set MBB.</p>
+</dd>
+<dt id="pointpats.QStatistic.__init__.lh"><span class="sig-name descname">lh</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a>, default=10</span></span><a class="headerlink" href="#pointpats.QStatistic.__init__.lh" title="Permalink to this definition">¶</a></dt><dd><p>Hexagon side length when <cite>shape=”hexagon”</cite>.</p>
+</dd>
+<dt id="pointpats.QStatistic.__init__.realizations"><span class="sig-name descname">realizations</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a>, default=0</span></span><a class="headerlink" href="#pointpats.QStatistic.__init__.realizations" title="Permalink to this definition">¶</a></dt><dd><p>Number of CSR simulations used to compute a Monte Carlo p-value.
+If 0, no simulation-based inference is performed.</p>
+</dd>
+<dt id="pointpats.QStatistic.__init__.window"><span class="sig-name descname">window</span><span class="p"> : </span><span class="desctype"><span class="desctype">shapely geometry, optional</span></span><a class="headerlink" href="#pointpats.QStatistic.__init__.window" title="Permalink to this definition">¶</a></dt><dd><p>Study window (e.g., Polygon or MultiPolygon). If None, the window is
+taken to be the axis-aligned MBB rectangle of <cite>points</cite>.</p>
+</dd>
+<dt id="pointpats.QStatistic.__init__.rng"><span class="sig-name descname">rng</span><span class="p"> : </span><span class="desctype"><span class="desctype">None | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a> | <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.5)">numpy.random.Generator</a> | <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.5)">numpy.random.RandomState</a>, optional</span></span><a class="headerlink" href="#pointpats.QStatistic.__init__.rng" title="Permalink to this definition">¶</a></dt><dd><p><p>Random number generator control for reproducible CSR simulations when
+<cite>realizations &gt; 0</cite>.</p>
+<ul class="simple">
+<li><p>None: create a new <code class="docutils literal notranslate"><span class="pre">numpy.random.default_rng()</span></code></p></li>
+<li><p>int: use as a seed for <code class="docutils literal notranslate"><span class="pre">numpy.random.default_rng(seed)</span></code></p></li>
+<li><p>Generator: used as-is</p></li>
+<li><p>RandomState: wrapped via <code class="docutils literal notranslate"><span class="pre">numpy.random.default_rng(RandomState)</span></code></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.QStatistic.points">
+<span class="sig-name descname"><span class="pre">points</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.points" title="Link to this definition">¶</a></dt>
+<dd><p>(n, 2) array of event coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.QStatistic.points-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.QStatistic.points-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.QStatistic.mbb">
+<span class="sig-name descname"><span class="pre">mbb</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.mbb" title="Link to this definition">¶</a></dt>
+<dd><p>Bounding box of <cite>points</cite> as <code class="docutils literal notranslate"><span class="pre">[xmin,</span> <span class="pre">ymin,</span> <span class="pre">xmax,</span> <span class="pre">ymax]</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.QStatistic.mbb-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.QStatistic.mbb-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.QStatistic.window">
+<span class="sig-name descname"><span class="pre">window</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.window" title="Link to this definition">¶</a></dt>
+<dd><p>Study window used for simulation and plotting.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.QStatistic.window-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.QStatistic.window-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>shapely geometry</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.QStatistic.shape">
+<span class="sig-name descname"><span class="pre">shape</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.shape" title="Link to this definition">¶</a></dt>
+<dd><p>Quadrat tessellation type: “rectangle” or “hexagon”.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.QStatistic.shape-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.QStatistic.shape-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.QStatistic.rng">
+<span class="sig-name descname"><span class="pre">rng</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.rng" title="Link to this definition">¶</a></dt>
+<dd><p>RNG used for CSR simulations (always stored as a Generator).</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.QStatistic.rng-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.QStatistic.rng-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.5)">numpy.random.Generator</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.QStatistic.mr">
+<span class="sig-name descname"><span class="pre">mr</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.mr" title="Link to this definition">¶</a></dt>
+<dd><p>Tessellation manager instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.QStatistic.mr-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.QStatistic.mr-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference internal" href="pointpats.RectangleM.html#pointpats.RectangleM" title="pointpats.RectangleM (Python class) — Rectangle grid structure for quadrat-based method.">RectangleM</a> or <a class="reference internal" href="pointpats.HexagonM.html#pointpats.HexagonM" title="pointpats.HexagonM (Python class) — Hexagon grid structure for quadrat-based method.">HexagonM</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.QStatistic.cell_ids">
+<span class="sig-name descname"><span class="pre">cell_ids</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.cell_ids" title="Link to this definition">¶</a></dt>
+<dd><p>Cell identifiers included in the test statistic (all grid cells).</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.QStatistic.cell_ids-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.QStatistic.cell_ids-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a> of <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.QStatistic.chi2">
+<span class="sig-name descname"><span class="pre">chi2</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.chi2" title="Link to this definition">¶</a></dt>
+<dd><p>Observed Pearson chi-square statistic.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.QStatistic.chi2-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.QStatistic.chi2-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.QStatistic.df">
+<span class="sig-name descname"><span class="pre">df</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.df" title="Link to this definition">¶</a></dt>
+<dd><p>Degrees of freedom for the analytical chi-square reference distribution,
+equal to <code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">-</span> <span class="pre">1</span></code> where <code class="docutils literal notranslate"><span class="pre">k</span></code> is the number of included cells.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.QStatistic.df-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.QStatistic.df-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.QStatistic.chi2_pvalue">
+<span class="sig-name descname"><span class="pre">chi2_pvalue</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.chi2_pvalue" title="Link to this definition">¶</a></dt>
+<dd><p>Analytical p-value from the chi-square distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.QStatistic.chi2_pvalue-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.QStatistic.chi2_pvalue-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.QStatistic.chi2_contrib">
+<span class="sig-name descname"><span class="pre">chi2_contrib</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.chi2_contrib" title="Link to this definition">¶</a></dt>
+<dd><p>Per-cell chi-square contributions aligned with <cite>cell_ids</cite>, computed as
+<code class="docutils literal notranslate"><span class="pre">(O</span> <span class="pre">-</span> <span class="pre">E)^2</span> <span class="pre">/</span> <span class="pre">E</span></code> with <code class="docutils literal notranslate"><span class="pre">E</span> <span class="pre">=</span> <span class="pre">mean(O)</span></code> over included cells.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.QStatistic.chi2_contrib-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.QStatistic.chi2_contrib-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.QStatistic.chi2_realizations">
+<span class="sig-name descname"><span class="pre">chi2_realizations</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.chi2_realizations" title="Link to this definition">¶</a></dt>
+<dd><p>Simulated chi-square statistics for CSR realizations. Present only when
+<cite>realizations &gt; 0</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.QStatistic.chi2_realizations-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.QStatistic.chi2_realizations-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.QStatistic.chi2_r_pvalue">
+<span class="sig-name descname"><span class="pre">chi2_r_pvalue</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.chi2_r_pvalue" title="Link to this definition">¶</a></dt>
+<dd><p>Monte Carlo p-value based on <cite>chi2_realizations</cite>, computed using the
+standard +1 correction:
+<code class="docutils literal notranslate"><span class="pre">(</span> <span class="pre">#{T_sim</span> <span class="pre">&gt;=</span> <span class="pre">T_obs}</span> <span class="pre">+</span> <span class="pre">1</span> <span class="pre">)</span> <span class="pre">/</span> <span class="pre">(realizations</span> <span class="pre">+</span> <span class="pre">1)</span></code>.
+Present only when <cite>realizations &gt; 0</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.QStatistic.chi2_r_pvalue-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.QStatistic.chi2_r_pvalue-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The analytical test uses <code class="docutils literal notranslate"><span class="pre">scipy.stats.chisquare</span></code> with expected
+counts equal across cells (i.e., <code class="docutils literal notranslate"><span class="pre">E</span> <span class="pre">=</span> <span class="pre">mean(O)</span></code>). This
+corresponds to a homogeneous CSR null with equal-area cells. For
+irregular windows, a fully-correct analytical reference would
+area-weight expectations.</p></li>
+<li><p>The simulation-based null generates CSR realizations within <cite>window</cite> with
+intensity <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">/</span> <span class="pre">area(window)</span></code>. Reproducibility depends on passing <cite>rng</cite>
+through to the underlying CSR generator (<code class="docutils literal notranslate"><span class="pre">poisson(...,</span> <span class="pre">rng=...)</span></code>).</p></li>
+</ul>
+<div class="seealso admonition">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="pointpats.RectangleM.html#pointpats.RectangleM" title="pointpats.RectangleM (Python class) — Rectangle grid structure for quadrat-based method."><code class="xref py py-obj docutils literal notranslate"><span class="pre">RectangleM</span></code></a></dt><dd><p>Rectangular tessellation over the point-set MBB.</p>
+</dd>
+<dt><a class="reference internal" href="pointpats.HexagonM.html#pointpats.HexagonM" title="pointpats.HexagonM (Python class) — Hexagon grid structure for quadrat-based method."><code class="xref py py-obj docutils literal notranslate"><span class="pre">HexagonM</span></code></a></dt><dd><p>Hexagonal tessellation over the point-set MBB.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils data align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.QStatistic.plot" title="pointpats.QStatistic.plot (Python method)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([title, show])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.QStatistic.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.QStatistic.plot" title="pointpats.QStatistic.plot.title (Python parameter)"><span class="n"><span class="pre">title</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'Quadrat Count'</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.QStatistic.plot" title="pointpats.QStatistic.plot.show (Python parameter)"><span class="n"><span class="pre">show</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'counts'</span></code></em></span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats/quadrat_statistics.py#L687-L705"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.QStatistic.plot" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        &#169; Copyright 2018-, pysal developers.
+        
+    </div>
+  
+    Created using
+    <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
+    9.2.0.
+     and
+    <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.top", "search.share", "search.suggest", "toc.follow", "toc.sticky", "content.code.copy", "content.action.edit"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": null, "versionPath": "https://pysal.org/pointpats/versions.json"}}</script>
+    
+      
+        <script src="../_static/sphinx_immaterial_theme.567b0e0fd947ea7d9.min.js?v=5850e81b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+    
+  </body>
+</html>

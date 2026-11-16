@@ -1,0 +1,6 @@
+﻿pointpats.minimum\_bounding\_circle
+===================================
+
+.. currentmodule:: pointpats
+
+.. autofunction:: minimum_bounding_circle

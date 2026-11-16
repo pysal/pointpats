@@ -1,0 +1,2047 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../installation.html">
+      
+      
+        <link rel="next" href="sd_ellipse.html">
+      
+      
+      <link rel="icon" href="../_static/pysal_favicon.ico">
+    
+    
+      
+        <title>Centrography in pointpats - pointpats</title>
+      
+    
+    
+      
+        
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.2b7fb0df65482c23e.min.css?v=666199ae" />
+        <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+        <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d127c87d" />
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#central-tendency" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="pointpats" class="md-header__button md-logo" aria-label="pointpats" data-md-component="logo">
+      <img src="../_static/pysal_logo.svg" alt="logo">
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            pointpats
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Centrography in pointpats
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="red"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="red"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/pysal/pointpats/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pysal/pointpats
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="pointpats" class="md-nav__button md-logo" aria-label="pointpats" data-md-component="logo">
+      <img src="../_static/pysal_logo.svg" alt="logo">
+    </a>
+    pointpats
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/pysal/pointpats/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pysal/pointpats
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Home</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Installation</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    <span>User Guide</span>
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            <span>User Guide</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    <span>Centrography in pointpats</span>
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Centrography in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#central-tendency" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>1.<wbr> Central tendency</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Central tendency">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mean-center-x-mc-y-mc" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Mean Center <wbr>(x_<wbr><wbr>{mc},y_<wbr><wbr>{mc})</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weighted-mean-center-x-wmc-y-wmc" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>1.<wbr>1 Weighted mean center <wbr>(x_<wbr><wbr>{wmc}, y_<wbr><wbr>{wmc})</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manhattan-median-x-mm-y-mm" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>1.<wbr>2 Manhattan median <wbr>(x_<wbr><wbr>{mm}, y_<wbr><wbr>{mm})</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#euclidean-median-x-em-y-em" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>1.<wbr>3 Euclidean median <wbr>(x_<wbr><wbr>{em}, y_<wbr><wbr>{em})</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dispersion-and-orientation" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>2.<wbr> Dispersion and orientation</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Dispersion and orientation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standard-distance-standard-distance-circle" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Standard Distance &amp; Standard Distance Circle</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#standard-deviational-ellipse" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>3.<wbr> Standard deviational ellipse</span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shape-analysis" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>4.<wbr> Shape analysis</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Shape analysis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#convex-hull" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>4.<wbr>1 Convex hull</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimum-bounding-rectangle" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>4.<wbr>2 Minimum bounding rectangle</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-example-simulated-patterns-in-virginia" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>5.<wbr> Additional example:<wbr> simulated patterns in Virginia</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Additional example: simulated patterns in Virginia">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#simulate-a-100-point-dataset-within-the-virginia-state-border-under-csr-complete-spatial-randomness" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>5.<wbr>1 Simulate a 100-<wbr>point dataset within the Virginia state border under CSR <wbr>(complete spatial randomness)</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simulate-a-500-point-dataset-within-the-virginia-state-border-under-csr-complete-spatial-randomness" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>5.<wbr>2 Simulate a 500-<wbr>point dataset within the Virginia state border under CSR <wbr>(complete spatial randomness)</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recap" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>6.<wbr> Recap</span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="sd_ellipse.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Standard deviational ellipse in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Quadrat_statistics.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Quadrat-<wbr>based statistics in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ripley.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Distance-<wbr>based statistics in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="edge_corrections.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Edge corrections for G, F, J, K, and L functions</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="random.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Simulating random point patterns with pointpats.<wbr>random</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="marks.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Working with marks in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../references.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>References</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    <span>API</span>
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            <span>API</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>API reference</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    <span>For contributors</span>
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            <span>For contributors</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/pysal/mapclassify" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Git<wbr>Hub</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/pysal/mapclassify/releases" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Changelog</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#central-tendency" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>1.<wbr> Central tendency</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Central tendency">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mean-center-x-mc-y-mc" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Mean Center <wbr>(x_<wbr><wbr>{mc},y_<wbr><wbr>{mc})</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weighted-mean-center-x-wmc-y-wmc" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>1.<wbr>1 Weighted mean center <wbr>(x_<wbr><wbr>{wmc}, y_<wbr><wbr>{wmc})</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manhattan-median-x-mm-y-mm" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>1.<wbr>2 Manhattan median <wbr>(x_<wbr><wbr>{mm}, y_<wbr><wbr>{mm})</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#euclidean-median-x-em-y-em" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>1.<wbr>3 Euclidean median <wbr>(x_<wbr><wbr>{em}, y_<wbr><wbr>{em})</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dispersion-and-orientation" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>2.<wbr> Dispersion and orientation</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Dispersion and orientation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standard-distance-standard-distance-circle" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Standard Distance &amp; Standard Distance Circle</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#standard-deviational-ellipse" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>3.<wbr> Standard deviational ellipse</span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shape-analysis" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>4.<wbr> Shape analysis</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Shape analysis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#convex-hull" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>4.<wbr>1 Convex hull</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimum-bounding-rectangle" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>4.<wbr>2 Minimum bounding rectangle</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-example-simulated-patterns-in-virginia" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>5.<wbr> Additional example:<wbr> simulated patterns in Virginia</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Additional example: simulated patterns in Virginia">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#simulate-a-100-point-dataset-within-the-virginia-state-border-under-csr-complete-spatial-randomness" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>5.<wbr>1 Simulate a 100-<wbr>point dataset within the Virginia state border under CSR <wbr>(complete spatial randomness)</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simulate-a-500-point-dataset-within-the-virginia-state-border-under-csr-complete-spatial-randomness" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>5.<wbr>2 Simulate a 500-<wbr>point dataset within the Virginia state border under CSR <wbr>(complete spatial randomness)</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recap" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>6.<wbr> Recap</span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                
+                
+                  
+
+
+  
+    <a href="https://github.com/pysal/pointpats/blob/main/docs/source/user-guide/centrography.ipynb" title="Edit this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 9h5.5L13 3.5zM6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4c0-1.11.89-2 2-2m.12 13.5 3.74 3.74 1.42-1.41-2.33-2.33 2.33-2.33-1.42-1.41zm11.16 0-3.74-3.74-1.42 1.41 2.33 2.33-2.33 2.33 1.42 1.41z"/></svg>
+    </a>
+  
+  
+
+<h1 id="centrography-in-pointpats">Centrography in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code><a class="headerlink" href="#centrography-in-pointpats" title="Link to this heading">¶</a></h1>
+<p>This notebook introduces <strong>centrographic statistics</strong> for planar point
+patterns, focusing on:</p>
+<ul class="simple">
+<li><p>Measures of <strong>central tendency</strong> (mean center, weighted mean center,
+Manhattan and Euclidean medians)</p></li>
+<li><p>Measures of <strong>dispersion and orientation</strong> (standard distance and
+the standard deviational ellipse)</p></li>
+<li><p>Basic <strong>shape descriptors</strong> (convex hull and minimum bounding rectangle)</p></li>
+</ul>
+<p>We will:</p>
+<ol class="arabic simple">
+<li><p>Construct a simple example point pattern and compute its centrographic
+summaries using functions from <code class="docutils literal notranslate"><span class="pre">pointpats.centrography</span></code>.</p></li>
+<li><p>Visualize central tendency, dispersion, and shape diagnostics to build
+intuition about how these measures behave.</p></li>
+<li><p>Explore an additional example based on simulated point patterns within the
+Virginia state border under complete spatial randomness (CSR).</p></li>
+</ol>
+<p>This notebook is designed to live in the <code class="docutils literal notranslate"><span class="pre">docs/user-guide/</span></code> folder and be
+executed automatically as part of the <code class="docutils literal notranslate"><span class="pre">pointpats</span></code> documentation build.</p>
+<p>The python file <strong>centrography.py</strong> contains several functions with which we can conduct centrography analysis.</p>
+<ul class="simple">
+<li><p>Central Tendency</p>
+<ol class="arabic simple">
+<li><p>mean_center: calculate the mean center of the unmarked point pattern.</p></li>
+<li><p>weighted_mean_center: calculate the weighted mean center of the marked point pattern.</p></li>
+<li><p>manhattan_median: calculate the manhattan median</p></li>
+<li><p>euclidean_median: calculate the Euclidean median</p></li>
+</ol>
+</li>
+<li><p>Dispersion and Orientation</p>
+<ol class="arabic simple">
+<li><p>std_distance: calculate the standard distance</p></li>
+</ol>
+</li>
+<li><p>Shape Analysis</p>
+<ol class="arabic simple">
+<li><p>hull: calculate the convex hull of the point pattern</p></li>
+<li><p>mbr: calculate the minimum bounding box (rectangle)</p></li>
+</ol>
+</li>
+</ul>
+<p>All of the above functions operate on a series of coordinate pairs. That is, the data type of the first argument should be <span class="math notranslate nohighlight">\((n,2)\)</span> array_like. In case that you have a point pattern (PointPattern instance), you need to pass its attribute “points” instead of itself to these functions.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointPattern</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">points</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="mf">66.22</span><span class="p">,</span> <span class="mf">32.54</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">22.52</span><span class="p">,</span> <span class="mf">22.39</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">31.01</span><span class="p">,</span> <span class="mf">81.21</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">9.47</span><span class="p">,</span> <span class="mf">31.02</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">30.78</span><span class="p">,</span> <span class="mf">60.10</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">75.21</span><span class="p">,</span> <span class="mf">58.93</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">79.26</span><span class="p">,</span> <span class="mf">7.68</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">8.23</span><span class="p">,</span> <span class="mf">39.93</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">98.73</span><span class="p">,</span> <span class="mf">77.17</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">89.78</span><span class="p">,</span> <span class="mf">42.53</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">65.19</span><span class="p">,</span> <span class="mf">92.08</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">54.46</span><span class="p">,</span> <span class="mf">8.48</span><span class="p">],</span>
+<span class="p">]</span>
+<span class="n">pp</span> <span class="o">=</span> <span class="n">PointPattern</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>  <span class="c1"># create a point pattern "pp" from list</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">points</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x</th>
+      <th>y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>66.22</td>
+      <td>32.54</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>22.52</td>
+      <td>22.39</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>31.01</td>
+      <td>81.21</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>9.47</td>
+      <td>31.02</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>30.78</td>
+      <td>60.10</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>75.21</td>
+      <td>58.93</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>79.26</td>
+      <td>7.68</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>8.23</td>
+      <td>39.93</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>98.73</td>
+      <td>77.17</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>89.78</td>
+      <td>42.53</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>65.19</td>
+      <td>92.08</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>54.46</td>
+      <td>8.48</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="nb">type</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>pandas.DataFrame
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>We can use PointPattern class method <strong>plot</strong> to visualize <strong>pp</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/f7ccd35bc05cd016a3614d1b40d1ae17d6c2160cf37eedd913de60bcd33fa0a2.png" src="../_images/f7ccd35bc05cd016a3614d1b40d1ae17d6c2160cf37eedd913de60bcd33fa0a2.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># import centragraphy analysis functions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats.centrography</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ellipse</span><span class="p">,</span>
+    <span class="n">euclidean_median</span><span class="p">,</span>
+    <span class="n">hull</span><span class="p">,</span>
+    <span class="n">manhattan_median</span><span class="p">,</span>
+    <span class="n">mean_center</span><span class="p">,</span>
+    <span class="n">minimum_bounding_rectangle</span><span class="p">,</span>
+    <span class="n">std_distance</span><span class="p">,</span>
+    <span class="n">weighted_mean_center</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="central-tendency">1. Central tendency<a class="headerlink" href="#central-tendency" title="Link to this heading">¶</a></h2>
+<p>Central Tendency concerns about the center point of the two-dimensional distribution. It is similar to the first moment of a one-dimensional distribution. There are several ways to measure central tendency, each having pros and cons. We need to carefully select the appropriate measure according to our objective and data status.</p>
+<h3 id="mean-center-x-mc-y-mc">Mean Center <span class="math notranslate nohighlight">\((x_{mc},y_{mc})\)</span><a class="headerlink" href="#mean-center-x-mc-y-mc" title="Link to this heading">¶</a></h3>
+<div class="math notranslate nohighlight">
+\[x_{mc}=\frac{1}{n} \sum^n_{i=1}x_i\]</div>
+<div class="math notranslate nohighlight">
+\[y_{mc}=\frac{1}{n} \sum^n_{i=1}y_i\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">mc</span> <span class="o">=</span> <span class="n">mean_center</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+<span class="n">mc</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>array([52.57166667, 46.17166667])
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"b^"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Mean Center"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;matplotlib.legend.Legend at 0x701fced160&gt;
+</code></pre></div>
+</div>
+<img alt="../_images/0f1a7010a2e42275c15cfdba16a53ab96edcb50dffac0c01869b2da23272cb80.png" src="../_images/0f1a7010a2e42275c15cfdba16a53ab96edcb50dffac0c01869b2da23272cb80.png" />
+</div>
+</div>
+<h3 id="weighted-mean-center-x-wmc-y-wmc">1.1 Weighted mean center <span class="math notranslate nohighlight">\((x_{wmc}, y_{wmc})\)</span><a class="headerlink" href="#weighted-mean-center-x-wmc-y-wmc" title="Link to this heading">¶</a></h3>
+<div class="math notranslate nohighlight">
+\[x_{wmc}=\sum^n_{i=1} \frac{w_i x_i}{\sum^n_{i=1}w_i}\]</div>
+<div class="math notranslate nohighlight">
+\[y_{wmc}=\sum^n_{i=1} \frac{w_i y_i}{\sum^n_{i=1}w_i}\]</div>
+<p>Weighted mean center is meant for marked point patterns. Aside from the first argument which is a seris of <span class="math notranslate nohighlight">\((x,y)\)</span> coordinates in <strong>weighted_mean_center</strong> function, we need to specify its second argument which is the weight for each event point.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">weights</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>array([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11])
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">wmc</span> <span class="o">=</span> <span class="n">weighted_mean_center</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+<span class="n">wmc</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>array([60.51681818, 47.76848485])
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>  <span class="c1"># use class method "plot" to visualize point pattern</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"b^"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Mean Center"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"gd"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Weighted Mean Center"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;matplotlib.legend.Legend at 0x701ff71be0&gt;
+</code></pre></div>
+</div>
+<img alt="../_images/0e6e2b7d5343e44fc2c4cc8b7188ed346e47112f59421138b8cfe879040f342d.png" src="../_images/0e6e2b7d5343e44fc2c4cc8b7188ed346e47112f59421138b8cfe879040f342d.png" />
+</div>
+</div>
+<h3 id="manhattan-median-x-mm-y-mm">1.2 Manhattan median <span class="math notranslate nohighlight">\((x_{mm}, y_{mm})\)</span><a class="headerlink" href="#manhattan-median-x-mm-y-mm" title="Link to this heading">¶</a></h3>
+<div class="math notranslate nohighlight">
+\[min  f(x_{mm},y_{mm})= \sum^n_{i=1}(|x_i-x_{mm}|+|y_i-y_{mm}|)\]</div>
+<p>The Manhattan median is the location which minimizes the absolute distance to all the event points. It is an extension of the median measure in one-dimensional space to two-dimensional space. Since in one-dimensional space, a median is the number separating the higher half of a dataset from the lower half, we define the Manhattan median as a tuple whose first element is the median of <span class="math notranslate nohighlight">\(x\)</span> coordinates and second element is the median of <span class="math notranslate nohighlight">\(y\)</span> coordinates.</p>
+<p>Though Manhattan median can be found very quickly, it is not unique if you have even number of points. In this case, pysal handles the Manhattan median the same way as numpy.median: return the average of the two middle values.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># get the number of points in point pattern "pp"</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">n</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>12
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Manhattan Median is not unique for "pp"</span>
+<span class="n">mm</span> <span class="o">=</span> <span class="n">manhattan_median</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+<span class="n">mm</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>/Users/martinfleis/dev/pysal/pointpats/pointpats/centrography.py:505: UserWarning: Manhattan Median is not unique for even point patterns.
+  return manhattan_median(points)
+</code></pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>array([59.825, 41.23 ])
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"b^"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Mean Center"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"gd"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Weighted Mean Center"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"rv"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Manhattan Median"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;matplotlib.legend.Legend at 0x701ffe9fd0&gt;
+</code></pre></div>
+</div>
+<img alt="../_images/818e1a89c36c502a8059a5b08a1889f10ae978cb495560b13da2af5506afb14c.png" src="../_images/818e1a89c36c502a8059a5b08a1889f10ae978cb495560b13da2af5506afb14c.png" />
+</div>
+</div>
+<h3 id="euclidean-median-x-em-y-em">1.3 Euclidean median <span class="math notranslate nohighlight">\((x_{em}, y_{em})\)</span><a class="headerlink" href="#euclidean-median-x-em-y-em" title="Link to this heading">¶</a></h3>
+<div class="math notranslate nohighlight">
+\[min  f(x_{em},y_{em})= \sum^n_{i=1} \sqrt{(x_i-x_{em})^2+(y_i-y_{em})^2}\]</div>
+<p>The Euclidean Median is the location from which the sum of the Euclidean distances to all points in a distribution is a minimum. It is an optimization problem and very important for more general location allocation problems. There is no closed form solution. We can use first iterative algorithm (Kuhn and Kuenne, 1962) to approximate Euclidean Median.</p>
+<p>Below, we define a function named median_center with the first argument <strong>points</strong> a series of <span class="math notranslate nohighlight">\((x,y)\)</span> coordinates and the second argument <strong>crit</strong> the convergence criterion.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">median_center</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">crit</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">):</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">crit</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dy</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">crit</span><span class="p">:</span>
+        <span class="n">xd</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x0</span>
+        <span class="n">yd</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y0</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xd</span> <span class="o">*</span> <span class="n">xd</span> <span class="o">+</span> <span class="n">yd</span> <span class="o">*</span> <span class="n">yd</span><span class="p">)</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">d</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">/</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">x1</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">y1</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">x1</span> <span class="o">-</span> <span class="n">x0</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">y1</span> <span class="o">-</span> <span class="n">y0</span>
+        <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">iteration</span><span class="p">)</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">x1</span>
+        <span class="n">y0</span> <span class="o">=</span> <span class="n">y1</span>
+
+    <span class="k">return</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">median_center</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">crit</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>52.57166666666668 53.178128280602785 0.606461613936105 -0.9290354286335258 466.24479074356606 1
+53.178128280602785 53.56643624463614 0.388307964033352 -0.4199402653980684 465.9311160558993 2
+53.56643624463614 53.80720376806838 0.24076752343224683 -0.1974862190386233 465.84555867343346 3
+53.80720376806838 53.95348076207835 0.1462769940099662 -0.09642613786996179 465.8197750145871 4
+53.95348076207835 54.04117257066307 0.08769180858472225 -0.04872250646902643 465.8115372002813 5
+54.04117257066307 54.09327726928146 0.05210469861838618 -0.025370793047137852 465.80882301324334 6
+54.09327726928146 54.12405125525861 0.030773985977148755 -0.013552246205456697 465.8079149010591 7
+54.12405125525861 54.14215248769505 0.018101232436443127 -0.00739190209046825 465.8076087750224 8
+54.14215248769505 54.15276956049696 0.010617072801906602 -0.0040992658298719675 465.8075052025632 9
+54.15276956049696 54.15898467957115 0.0062151190741914775 -0.0023026998071102867 465.80747009858044 10
+54.15898467957115 54.16261796248172 0.0036332829105703013 -0.0013061853179365812 465.80745819050844 11
+54.16261796248172 54.16473989468326 0.002121932201539778 -0.0007463404183738476 465.80745414933307 12
+54.16473989468326 54.165978319450346 0.00123842476708802 -0.00042875101595285514 465.80745277762423 13
+54.165978319450346 54.166700756153695 0.0007224367033487056 -0.00024727631074483725 465.80745231197506 14
+54.166700756153695 54.16712204754273 0.0004212913890384584 -0.00014302182778891392 465.8074521538953 15
+54.16712204754273 54.16736766581608 0.00024561827334679265 -8.289363293556562e-05 465.8074521002288 16
+54.16736766581608 54.167510839857464 0.0001431740413835314 -4.8115880247223686e-05 465.80745208200943 17
+54.167510839857464 54.167594287646125 8.344778866131719e-05 -2.7959041396741213e-05 465.807452075824 18
+</code></pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>(np.float64(54.167594287646125), np.float64(44.42430865883205))
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>After 18 iterations, the convergence criterion is reached. The Euclidean Median is <span class="math notranslate nohighlight">\((54.167594287646125,44.424308658832047)\)</span>.</p>
+<p>We can also call the function <strong>euclidean_median</strong> in pysal to calculate the Euclidean Median.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">em</span> <span class="o">=</span> <span class="n">euclidean_median</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+<span class="n">em</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>array([54.16773427, 44.42425854])
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>The two results we get from <strong>euclidean_median</strong> function in pysal and the <strong>median_center</strong> function we define here are very much the same.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"b^"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Mean Center"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"gd"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Weighted Mean Center"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"rv"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Manhattan Median"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"m+"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Euclidean Median"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;matplotlib.legend.Legend at 0x701fc81d30&gt;
+</code></pre></div>
+</div>
+<img alt="../_images/a5af7dd1f5ab18a26fab16c233a2847f4fe770cd1845435e923e03e5de6d7790.png" src="../_images/a5af7dd1f5ab18a26fab16c233a2847f4fe770cd1845435e923e03e5de6d7790.png" />
+</div>
+</div>
+<h2 id="dispersion-and-orientation">2. Dispersion and orientation<a class="headerlink" href="#dispersion-and-orientation" title="Link to this heading">¶</a></h2>
+<h3 id="standard-distance-standard-distance-circle">Standard Distance &amp; Standard Distance Circle<a class="headerlink" href="#standard-distance-standard-distance-circle" title="Link to this heading">¶</a></h3>
+<div class="math notranslate nohighlight">
+\[SD = \displaystyle \sqrt{\frac{\sum^n_{i=1}(x_i-x_{m})^2}{n} + \frac{\sum^n_{i=1}(y_i-y_{m})^2}{n}}\]</div>
+<p>The Standard distance is  closely related to the usual definition of the standard deviation of a data set, and it provides a measure of how dispersed the events are around their mean center <span class="math notranslate nohighlight">\((x_m,y_m)\)</span>.  Taken together, these measurements can be used to plot a summary circle (standard distance circle) for the point pattern, centered at <span class="math notranslate nohighlight">\((x_m,y_m)\)</span> with radius <span class="math notranslate nohighlight">\(SD\)</span>, as shown below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">stdd</span> <span class="o">=</span> <span class="n">std_distance</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+<span class="n">stdd</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>np.float64(40.14980648908671)
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>Plot mean center as well as the standard distance circle.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">circle1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">stdd</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"r"</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">get_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Standard Distance Circle"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">circle1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"b^"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Mean Center"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">"equal"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;matplotlib.legend.Legend at 0x701fc41d30&gt;
+</code></pre></div>
+</div>
+<img alt="../_images/7024a17247061a72d1182570eb2ac2d1ec5e6d1d1b9584fdb46432b7bcb2010d.png" src="../_images/7024a17247061a72d1182570eb2ac2d1ec5e6d1d1b9584fdb46432b7bcb2010d.png" />
+</div>
+</div>
+<p>From the above figure, we can observe that there are five points outside the standard distance circle which are potential outliers.</p>
+<h2 id="standard-deviational-ellipse">3. Standard deviational ellipse<a class="headerlink" href="#standard-deviational-ellipse" title="Link to this heading">¶</a></h2>
+<p>Compared with standard distance circle which measures dispersion using a single parameter <span class="math notranslate nohighlight">\(SD\)</span>, standard deviational ellipse measures dispersion and trend in two dimensions through angle of rotation <span class="math notranslate nohighlight">\(\theta\)</span>, dispersion along major axis <span class="math notranslate nohighlight">\(s_x\)</span> and dispersion along minor axis <span class="math notranslate nohighlight">\(s_y\)</span>:</p>
+<ul class="simple">
+<li><p>Major axis defines the direction of maximum spread in the distribution. <span class="math notranslate nohighlight">\(s_x\)</span> is the semi-major axis (half the length of the major axis):</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[ s_x = \displaystyle \sqrt{\frac{2(\sum_{i=1}^n (x_i-\bar{x})\cos(\theta) - \sum_{i=1}^n (y_i-\bar{y})\sin(\theta))^2}{n-2}}\]</div>
+<ul class="simple">
+<li><p>Minor axis defines the direction of minimum spread and is orthogonal to major axis. <span class="math notranslate nohighlight">\(s_y\)</span> is the semi-minor axis (half the length of the minor axis):</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[ s_y = \displaystyle \sqrt{\frac{2(\sum_{i=1}^n (x_i-\bar{x})\sin(\theta) - \sum_{i=1}^n (y_i-\bar{y})\cos(\theta))^2}{n-2}}\]</div>
+<ul class="simple">
+<li><p>The ellipse is rotated clockwise through an angle <span class="math notranslate nohighlight">\(\theta\)</span>:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\theta = \displaystyle \arctan{\{ (\sum_i(x_i-\bar{x})^2-\sum_i(y_i-\bar{y})^2) + \frac{[(\sum_i(x_i-\bar{x})^2-\sum_i(y_i-\bar{y})^2)^2 + 4(\sum_i(x-\bar{x})(y_i-\bar{y}))^2]^\frac{1}{2}}{2\sum_i(x-\bar{x})(y_i-\bar{y})}\}}\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">ellipse</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+<span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">theta</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>(np.float64(47.945446085971454),
+ np.float64(39.62386788646298),
+ np.float64(0.46686948392980593))
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">theta_degree</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>  <span class="c1"># need degree of rotation to plot the ellipse</span>
+<span class="n">theta_degree</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>np.float64(26.749651012628693)
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>The Standard Deviational Ellipse for the point pattern is rotated clockwise by <span class="math notranslate nohighlight">\(63.25^{\circ}\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ellipse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylab</span><span class="w"> </span><span class="kn">import</span> <span class="n">figure</span><span class="p">,</span> <span class="n">show</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">figure</span><span class="p">()</span>
+<span class="c1"># angle is rotation in degrees (anti-clockwise)</span>
+<span class="n">e</span> <span class="o">=</span> <span class="n">Ellipse</span><span class="p">(</span><span class="n">xy</span><span class="o">=</span><span class="n">mean_center</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="n">sx</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">sy</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">angle</span><span class="o">=-</span><span class="n">theta_degree</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">get_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Standard Deviational Ellipse"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="n">e</span><span class="o">.</span><span class="n">set_clip_box</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">bbox</span><span class="p">)</span>
+<span class="n">e</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">e</span><span class="o">.</span><span class="n">set_edgecolor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">"equal"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"b^"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Mean Center"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;Figure size 640x480 with 0 Axes&gt;
+</code></pre></div>
+</div>
+<img alt="../_images/8173b993865834eb0c30f55a4435c64a01029176b8dc7b041f4daf5e28db23c0.png" src="../_images/8173b993865834eb0c30f55a4435c64a01029176b8dc7b041f4daf5e28db23c0.png" />
+</div>
+</div>
+<h2 id="shape-analysis">4. Shape analysis<a class="headerlink" href="#shape-analysis" title="Link to this heading">¶</a></h2>
+<h3 id="convex-hull">4.1 Convex hull<a class="headerlink" href="#convex-hull" title="Link to this heading">¶</a></h3>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Convex_hull">Convex hull</a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">hull</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>array([[31.01, 81.21],
+       [ 8.23, 39.93],
+       [ 9.47, 31.02],
+       [22.52, 22.39],
+       [54.46,  8.48],
+       [79.26,  7.68],
+       [89.78, 42.53],
+       [98.73, 77.17],
+       [65.19, 92.08]])
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>By specifying “hull” argument <strong>True</strong> in PointPattern class method <strong>plot</strong>, we can easily plot convex hull of the point pattern.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># plot point pattern "pp" as well as its convex hull</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Centers"</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"b^"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Mean Center"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"gd"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Weighted Mean Center"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"rv"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Manhattan Median"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"m+"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Euclidean Median"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;matplotlib.legend.Legend at 0x70201a8440&gt;
+</code></pre></div>
+</div>
+<img alt="../_images/63fbfa1b53d6708aac0f8951a0385f9568466482495709836a269272f604fe78.png" src="../_images/63fbfa1b53d6708aac0f8951a0385f9568466482495709836a269272f604fe78.png" />
+</div>
+</div>
+<h3 id="minimum-bounding-rectangle">4.2 Minimum bounding rectangle<a class="headerlink" href="#minimum-bounding-rectangle" title="Link to this heading">¶</a></h3>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Minimum_bounding_rectangle">Minimum bounding rectangle</a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">minimum_bounding_rectangle</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>(np.float64(8.23), np.float64(7.68), np.float64(98.73), np.float64(92.08))
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>Thus, four vertices of the  minimum bounding rectangle is <span class="math notranslate nohighlight">\((8.23,7.68),(98.73,7.68),(98.73,92.08),(8.23,92.08)\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"Centers"</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>  <span class="c1"># plot point pattern "pp" as well as its Minimum Bounding Rectangle</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"b^"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Mean Center"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"gd"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Weighted Mean Center"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"rv"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Manhattan Median"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"m+"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Euclidean Median"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;matplotlib.legend.Legend at 0x702021cec0&gt;
+</code></pre></div>
+</div>
+<img alt="../_images/1d636e41367e2afdb757aa7753d55c57e4c3fbc723c01165e40fd381ce05c6a6.png" src="../_images/1d636e41367e2afdb757aa7753d55c57e4c3fbc723c01165e40fd381ce05c6a6.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"Centers"</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>  <span class="c1"># plot point pattern "pp", convex hull, and Minimum Bounding Rectangle</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"b^"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Mean Center"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wmc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wmc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"gd"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Weighted Mean Center"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"rv"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Manhattan Median"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"m+"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Euclidean Median"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;matplotlib.legend.Legend at 0x70202797f0&gt;
+</code></pre></div>
+</div>
+<img alt="../_images/e7e19fed3676c9891fe07216ff930eaa3553b2877cc36a9745639cf531113479.png" src="../_images/e7e19fed3676c9891fe07216ff930eaa3553b2877cc36a9745639cf531113479.png" />
+</div>
+</div>
+<p>Plot Standard Distance Circle and Convex Hull.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">circle1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">stdd</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"r"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">get_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Standard Distance Circle"</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">circle1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"b^"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Mean Center"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">"equal"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;matplotlib.legend.Legend at 0x70202ee120&gt;
+</code></pre></div>
+</div>
+<img alt="../_images/46a8ef4774b58202156ca6447ca9d9780c3623a3e5df75f51a7a9ce4cd8ff8cb.png" src="../_images/46a8ef4774b58202156ca6447ca9d9780c3623a3e5df75f51a7a9ce4cd8ff8cb.png" />
+</div>
+</div>
+<h2 id="additional-example-simulated-patterns-in-virginia">5. Additional example: simulated patterns in Virginia<a class="headerlink" href="#additional-example-simulated-patterns-in-virginia" title="Link to this heading">¶</a></h2>
+<p>We apply the  centrography statistics and visualization to 2 simulated random datasets.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">libpysal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">libpysal.cg</span><span class="w"> </span><span class="kn">import</span> <span class="n">shapely_ext</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PoissonPointProcess</span><span class="p">,</span>  <span class="c1"># complete spatial randomness</span>
+    <span class="n">as_window</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># open "vautm17n" polygon shapefile</span>
+<span class="n">va</span> <span class="o">=</span> <span class="n">libpysal</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">libpysal</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">"vautm17n.shp"</span><span class="p">))</span>
+
+<span class="c1"># Create the exterior polygons for VA from the union of the county shapes</span>
+<span class="n">polys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">va</span><span class="p">)</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">shapely_ext</span><span class="o">.</span><span class="n">cascaded_union</span><span class="p">(</span><span class="n">polys</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="simulate-a-100-point-dataset-within-the-virginia-state-border-under-csr-complete-spatial-randomness">5.1 Simulate a 100-point dataset within the Virginia state border under CSR (complete spatial randomness)<a class="headerlink" href="#simulate-a-100-point-dataset-within-the-virginia-state-border-under-csr-complete-spatial-randomness" title="Link to this heading">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">pp</span> <span class="o">=</span> <span class="n">PoissonPointProcess</span><span class="p">(</span><span class="n">as_window</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">asPP</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">realizations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/eca575a1f35d72293bbd535018401ab3c7ed895e6fc684e431a0c8c08d31cc1d.png" src="../_images/eca575a1f35d72293bbd535018401ab3c7ed895e6fc684e431a0c8c08d31cc1d.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/7dfc68ae309863c9a85ba6490b48d82ef66491cf3d562466c2c26bdf46c99c8b.png" src="../_images/7dfc68ae309863c9a85ba6490b48d82ef66491cf3d562466c2c26bdf46c99c8b.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">mc</span> <span class="o">=</span> <span class="n">mean_center</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+<span class="n">mm</span> <span class="o">=</span> <span class="n">manhattan_median</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+<span class="n">em</span> <span class="o">=</span> <span class="n">euclidean_median</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+
+<span class="c1"># plot point pattern "pp", convex hull, and Minimum Bounding Rectangle</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Centers"</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"c^"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Mean Center"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"rv"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Manhattan Median"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"m+"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Euclidean Median"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>/Users/martinfleis/dev/pysal/pointpats/pointpats/centrography.py:505: UserWarning: Manhattan Median is not unique for even point patterns.
+  return manhattan_median(points)
+</code></pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;matplotlib.legend.Legend at 0x70204f3770&gt;
+</code></pre></div>
+</div>
+<img alt="../_images/717e8ce33de0b13eb86db05672570f28efecb0b384168fb75dda57a7fea5f6ad.png" src="../_images/717e8ce33de0b13eb86db05672570f28efecb0b384168fb75dda57a7fea5f6ad.png" />
+</div>
+</div>
+<h3 id="simulate-a-500-point-dataset-within-the-virginia-state-border-under-csr-complete-spatial-randomness">5.2 Simulate a 500-point dataset within the Virginia state border under CSR (complete spatial randomness)<a class="headerlink" href="#simulate-a-500-point-dataset-within-the-virginia-state-border-under-csr-complete-spatial-randomness" title="Link to this heading">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">pp</span> <span class="o">=</span> <span class="n">PoissonPointProcess</span><span class="p">(</span><span class="n">as_window</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">asPP</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">realizations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/572cd25221664791a1d5caecf00aab13d7a66a6f1fde94fea8c3d3f784466c81.png" src="../_images/572cd25221664791a1d5caecf00aab13d7a66a6f1fde94fea8c3d3f784466c81.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/a8574905e8831c1ae446cd835ee23696c061e530bf46018ba938ee0e9f75ca73.png" src="../_images/a8574905e8831c1ae446cd835ee23696c061e530bf46018ba938ee0e9f75ca73.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">mc</span> <span class="o">=</span> <span class="n">mean_center</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+<span class="n">mm</span> <span class="o">=</span> <span class="n">manhattan_median</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+<span class="n">em</span> <span class="o">=</span> <span class="n">euclidean_median</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+
+<span class="c1"># plot point pattern "pp", convex hull, and Minimum Bounding Rectangle</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Centers"</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"c^"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Mean Center"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"rv"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Manhattan Median"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"m+"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Euclidean Median"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>/Users/martinfleis/dev/pysal/pointpats/pointpats/centrography.py:505: UserWarning: Manhattan Median is not unique for even point patterns.
+  return manhattan_median(points)
+</code></pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>&lt;matplotlib.legend.Legend at 0x7020478440&gt;
+</code></pre></div>
+</div>
+<img alt="../_images/35f3768ba2c795d2f0d44f5e46cda24ef5b0e875ebc1acfee62d76f9ed6ec292.png" src="../_images/35f3768ba2c795d2f0d44f5e46cda24ef5b0e875ebc1acfee62d76f9ed6ec292.png" />
+</div>
+</div>
+<p>If we calculate the Euclidean distances between every event point and Mean Center (Euclidean Median), and sum them up, we can see that Euclidean Median is the optimal point in iterms of minimizing the Euclidean distances to all the event points.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pointpats</span><span class="w"> </span><span class="kn">import</span> <span class="n">dtot</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">dtot</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">dtot</span><span class="p">(</span><span class="n">em</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">pp</span><span class="o">.</span><span class="n">points</span><span class="p">))</span>
+</code></pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><code>True
+</code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="recap">6. Recap<a class="headerlink" href="#recap" title="Link to this heading">¶</a></h2>
+<p>In this notebook, we:</p>
+<ul class="simple">
+<li><p>Reviewed a range of <strong>centrographic statistics</strong> for planar point patterns,
+including measures of central tendency, dispersion, and shape.</p></li>
+<li><p>Used functions in <code class="docutils literal notranslate"><span class="pre">pointpats.centrography</span></code> to compute and visualize
+the mean center, weighted mean center, Manhattan and Euclidean medians.</p></li>
+<li><p>Explored measures of spread and orientation via the <strong>standard distance</strong>
+and <strong>standard deviational ellipse</strong>.</p></li>
+<li><p>Illustrated basic <strong>shape descriptors</strong>, such as the convex hull and
+minimum bounding rectangle, and examined how these relate to dispersion.</p></li>
+<li><p>Worked through an additional example based on simulated point patterns
+within the Virginia state border under CSR.</p></li>
+</ul>
+<p>Together with the quadrat- and distance-based statistics notebooks, these
+tools provide a complementary set of summaries for exploring spatial point
+pattern structure in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code>.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        &#169; Copyright 2018-, pysal developers.
+        
+    </div>
+  
+    Created using
+    <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
+    9.2.0.
+     and
+    <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.top", "search.share", "search.suggest", "toc.follow", "toc.sticky", "content.code.copy", "content.action.edit"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": null, "versionPath": "https://pysal.org/pointpats/versions.json"}}</script>
+    
+      
+        <script src="../_static/sphinx_immaterial_theme.567b0e0fd947ea7d9.min.js?v=5850e81b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js"></script>
+    
+  </body>
+</html>

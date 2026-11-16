@@ -1,0 +1,6 @@
+﻿pointpats.minimum\_rotated\_rectangle
+=====================================
+
+.. currentmodule:: pointpats
+
+.. autofunction:: minimum_rotated_rectangle

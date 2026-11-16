@@ -1,0 +1,427 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "9c9ec342-b3cc-4628-9b8b-2100134c77b6",
+   "metadata": {},
+   "source": [
+    "# Standard deviational ellipse in `pointpats`\n",
+    "\n",
+    "This notebook demonstrates how to compute and visualize the\n",
+    "**standard deviational ellipse** (SDE) for planar point patterns using\n",
+    "`pointpats.centrography`.\n",
+    "\n",
+    "The SDE provides a compact summary of:\n",
+    "\n",
+    "- **Central location** of the point pattern\n",
+    "- **Dispersion** along two principal axes\n",
+    "- **Orientation** of the pattern in the plane\n",
+    "- Optional **weighting** of points (e.g., counts, magnitudes, intensities)\n",
+    "\n",
+    "We will:\n",
+    "\n",
+    "1. Construct a simple example point pattern and compute its standard\n",
+    "   deviational ellipse.\n",
+    "2. Show how the SDE computation **dispatches on input type**, including\n",
+    "   NumPy arrays and GeoPandas GeoDataFrames.\n",
+    "3. Compare **unweighted** and **weighted** ellipses to see how weights\n",
+    "   affect the ellipse size and orientation.\n",
+    "4. Explore additional options in the ellipse construction, including\n",
+    "   corrections that align or differ from CrimeStat-style ellipses.\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b6fbd94a-9b3a-47a5-a04a-f16b9146f9ed",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import geopandas as gpd\n",
+    "import matplotlib.pyplot as plt\n",
+    "import numpy as np\n",
+    "\n",
+    "from pointpats import ellipse"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8c22f909-f5d5-4c26-a8a0-2f1118eef336",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pointpats"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5fa8c9eb-b023-4d3e-8914-2fd690cbcf0b",
+   "metadata": {},
+   "source": [
+    "## 1. Example point pattern\n",
+    "\n",
+    "- 100 points\n",
+    "- randomly distributed in [(0,0), (10, 10)]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a567c58f-dec2-4ca6-b7d5-c8fedbce2a46",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "seed = 65647437836358831880808032086803839626\n",
+    "rng = np.random.default_rng(seed)\n",
+    "points = rng.integers(0, 100, (50, 2))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "90686986-ba5c-4a56-9694-5ba521946be0",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "points_gdf = gpd.GeoDataFrame(geometry=gpd.points_from_xy(points[:, 0], points[:, 1]))\n",
+    "\n",
+    "points_gdf.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ade6fe62-313e-4e4f-bced-a16fd9f84f55",
+   "metadata": {},
+   "source": [
+    "## 2. Dispatching on input type\n",
+    "\n",
+    "`ellipse` can take the following inputs\n",
+    "\n",
+    "- points as a 2-D numpy array\n",
+    "- a geodataframe with a point GeoSeries\n",
+    "\n",
+    "It is important to note that the return types differ between these two cases."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c08e18cb-59ae-4952-80c6-9ea7203364f0",
+   "metadata": {},
+   "source": [
+    "### 2.1 Passing an array"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f381e968-3868-4a44-bc4f-f8fb620bba81",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ellipse_ = ellipse(points)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "20caa5b8-fd65-4c94-b18f-f9069ca4f2ba",
+   "metadata": {},
+   "source": [
+    "This will return a tuple with\n",
+    "- length of the major axis\n",
+    "- length of the minor axis\n",
+    "- angle of rotation (in radians)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "706c3026-a75c-4a46-a848-f22d58694118",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ellipse_"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "68de8ebb-0354-4c7a-beff-bd07db2a221d",
+   "metadata": {},
+   "source": [
+    "### 2.2 Passing a GeoDataFrame"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6b1272a6-5180-4211-936f-9fb70044b82d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ellipse_poly = ellipse(points_gdf)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "459548fb-2bc5-4e11-95fe-9f989006aeb0",
+   "metadata": {},
+   "source": [
+    "This will return a `shapely` `Polygon`"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3420d0d1-5c2a-491c-abd9-9ea2b7d64a0b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "type(ellipse_poly)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c4dcaefb-cd34-4272-a8c1-c7dd45079bbb",
+   "metadata": {},
+   "source": [
+    "## 3. Unweighted and weighted ellipses\n",
+    "\n",
+    "The default is to treat the points as an unmarked point pattern and construct the ellipse accordingly."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "23e497c8-3a62-4d37-8a74-6c59fd94f03c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ellipse_gdf = gpd.GeoDataFrame(geometry=[ellipse_poly])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c3dd02c1-e139-4413-8044-5e15bef12149",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "base = ellipse_gdf.plot()\n",
+    "points_gdf.plot(ax=base, color=\"k\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "73b29b5a-96be-428d-ba68-3b7bc41ca7a1",
+   "metadata": {},
+   "source": [
+    "### 3.1 Weighted points\n",
+    "\n",
+    "If marks are available to attach to each point, the weighted standard deviational ellipse can be constructed. Here we use use the $y$ coordinate as the weight for demonstration:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "143ddf77-89b6-4ef4-8405-0ce17b2a54ba",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Normalize or scale marker size (you can tune this)\n",
+    "size_scale = 20  # try 10, 20, 50 etc. to get a good size visually\n",
+    "marker_sizes = points[:, 1] * size_scale\n",
+    "\n",
+    "fig, ax = plt.subplots(figsize=(8, 6))\n",
+    "base = points_gdf.plot(\n",
+    "    ax=ax, markersize=marker_sizes, alpha=0.6, color=\"cornflowerblue\", edgecolor=\"k\"\n",
+    ")\n",
+    "points_gdf.plot(ax=base, color=\"k\")\n",
+    "ax.set_title(\"Marked Point Pattern\", fontsize=14)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4536e782-5e00-445f-86bc-14691eabf366",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ellipse_w_poly = ellipse(points_gdf, weights=points[:, 1])\n",
+    "ellipse_w_poly"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b54a2dc5-8927-41ae-a732-623c3b039bf2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "mc = pointpats.mean_center(points)\n",
+    "mc"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "66738152-5476-4c4d-8c98-3f9d7002d3c2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "wmc = pointpats.weighted_mean_center(points, points[:, 1])\n",
+    "wmc"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "bb956941-df8b-4410-922f-f34695889519",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "size_scale = 20\n",
+    "marker_sizes = points[:, 1] * size_scale\n",
+    "\n",
+    "fig, ax = plt.subplots(figsize=(8, 6))\n",
+    "\n",
+    "ellipse_gdf.plot(ax=ax)\n",
+    "gpd.GeoSeries([ellipse_w_poly]).plot(color=\"yellow\", ax=ax)\n",
+    "points_gdf.plot(ax=ax, color=\"k\")\n",
+    "base = points_gdf.plot(\n",
+    "    ax=ax, markersize=marker_sizes, alpha=0.6, color=\"cornflowerblue\", edgecolor=\"k\"\n",
+    ")\n",
+    "points_gdf.plot(ax=ax, color=\"k\")\n",
+    "ax.plot(*mc, marker=\"o\", color=\"red\", markersize=10, label=\"mean center\")\n",
+    "ax.plot(*wmc, marker=\"o\", color=\"green\", markersize=10, label=\"weighted mean center\")\n",
+    "ax.legend()\n",
+    "ax.set_title(\"Marked Point Pattern\", fontsize=14);"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e068b84a-83b8-4f29-939a-6b4b420abd6f",
+   "metadata": {},
+   "source": [
+    "## 4. Other options\n",
+    "\n",
+    "The default option constructs the standard deviational ellipse following the method used in CrimeStat."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f5efab64-b13e-42a6-8d05-d68391ad8869",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ellipse(points)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "af44e1e8-cbe7-4bcd-b496-864a6d3822f5",
+   "metadata": {},
+   "source": [
+    "The default construction can be overridden in one of two (or both) ways.\n",
+    "\n",
+    "The first employs the `yuill` method which employs a different estimator for the major and minor axes lengths:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "04800f10-f44b-442e-a0ff-fc833e0f6680",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ellipse(points, method=\"yuill\", crimestatCorr=False)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b98d38be-0b7e-420b-b63c-dc2f821d6a55",
+   "metadata": {},
+   "source": [
+    "This results in shorter axes lengths relative to to crimestat.\n",
+    "\n",
+    "The second approach drops the degrees of freedom correction used in the default:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "93d51f17-71a9-435a-8d5e-9255c465e579",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ellipse(points, method=\"yuill\", degfreedCorr=False)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "987d22d8-639f-4ff4-82b4-1a2bfd1c21c2",
+   "metadata": {},
+   "source": [
+    "Again, this shortens the estimated axes.\n",
+    "\n",
+    "Finally, both corrections can be toggled off:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "55ee9923-9dcb-4580-a9a1-3388cce22fc5",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ellipse(points, method=\"yuill\", crimestatCorr=False, degfreedCorr=False)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "660bc907",
+   "metadata": {},
+   "source": [
+    "## 5. Recap\n",
+    "\n",
+    "In this notebook, we:\n",
+    "\n",
+    "- Introduced the **standard deviational ellipse** (SDE) as a summary of\n",
+    "  the central location, dispersion, and orientation of a point pattern.\n",
+    "- Showed how `pointpats.centrography` can construct an SDE from both\n",
+    "  NumPy arrays and GeoPandas GeoDataFrames.\n",
+    "- Compared **unweighted** and **weighted** ellipses to highlight how\n",
+    "  point weights influence the ellipse axes and rotation.\n",
+    "- Explored additional construction options, including corrections that\n",
+    "  control consistency with CrimeStat-style ellipses.\n",
+    "\n",
+    "The SDE complements other centrographic measures (mean center, standard\n",
+    "distance) and the quadrat- and distance-based statistics notebooks to\n",
+    "provide a richer description of spatial point pattern structure in\n",
+    "`pointpats`.\n"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "default",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.14.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

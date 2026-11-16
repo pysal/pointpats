@@ -1,0 +1,18 @@
+﻿pointpats.RectangleM
+====================
+
+.. currentmodule:: pointpats
+
+.. autoclass:: RectangleM
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~RectangleM.plot
+      ~RectangleM.point_location_sta
+   
+
+   

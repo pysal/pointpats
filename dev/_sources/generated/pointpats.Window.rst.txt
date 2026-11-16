@@ -1,0 +1,33 @@
+﻿pointpats.Window
+================
+
+.. currentmodule:: pointpats
+
+.. autoclass:: Window
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Window.build_quad_tree_structure
+      ~Window.contains_point
+      ~Window.filter_contained
+   
+
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Window.area
+      ~Window.bbox
+      ~Window.bounding_box
+      ~Window.centroid
+      ~Window.holes
+      ~Window.len
+      ~Window.parts
+      ~Window.perimeter
+      ~Window.vertices
+   

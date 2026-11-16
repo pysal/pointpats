@@ -1,0 +1,19 @@
+﻿pointpats.PoissonPointProcess
+=============================
+
+.. currentmodule:: pointpats
+
+.. autoclass:: PoissonPointProcess
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PoissonPointProcess.draw
+      ~PoissonPointProcess.realize
+      ~PoissonPointProcess.setup
+   
+
+   

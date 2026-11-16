@@ -1,0 +1,505 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "b046916b",
+   "metadata": {},
+   "source": [
+    "# Working with marks in `pointpats`\n",
+    "\n",
+    "In addition to the *locations* of events, a point pattern can have extra attributes\n",
+    "attached to each point: these are called **marks**.\n",
+    "\n",
+    "Examples of marks:\n",
+    "\n",
+    "- species of a tree (categorical)\n",
+    "- crime type (categorical)\n",
+    "- tree diameter (continuous)\n",
+    "- number of injuries at an accident (count)\n",
+    "\n",
+    "In `pointpats`, a **marked point pattern** is represented by a\n",
+    "`PointPattern` whose underlying data frame (`pp.df`) has extra columns\n",
+    "beyond the coordinates, or by adding marks using the `add_marks` method.\n",
+    "You can also split a marked pattern into separate unmarked patterns using\n",
+    "`explode`. \n",
+    "\n",
+    "In this notebook we will:\n",
+    "\n",
+    "1. Create an unmarked point pattern.\n",
+    "2. Attach categorical and numeric marks with `add_marks`.\n",
+    "3. Explore marks in the underlying pandas DataFrame.\n",
+    "4. Visualize the pattern by mark category.\n",
+    "5. Use `explode` to split the pattern into one pattern per mark level.\n",
+    "6. Compute a **weighted mean center** using a numeric mark as weights. \n",
+    "\n",
+    "## Setup and imports\n",
+    "\n",
+    "We will simulate points in the unit square `[0, 1] × [0, 1]` using the\n",
+    "random distributions in `pointpats.random` and then work with their marks.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4dcf9af3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import matplotlib.pyplot as plt\n",
+    "import numpy as np\n",
+    "\n",
+    "from pointpats import (  # centrography functions\n",
+    "    PointPattern,\n",
+    "    mean_center,\n",
+    "    weighted_mean_center,\n",
+    ")\n",
+    "from pointpats import random as ppr\n",
+    "\n",
+    "# Make results reproducible\n",
+    "np.random.seed(42)\n",
+    "\n",
+    "# Define a simple square hull as a bounding box: [xmin, ymin, xmax, ymax]\n",
+    "hull = np.array([0.0, 0.0, 1.0, 1.0])\n",
+    "hull"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "67e5f4cb",
+   "metadata": {},
+   "source": [
+    "## 1. Create an unmarked point pattern\n",
+    "\n",
+    "First, we simulate 200 locations from a homogeneous Poisson point process\n",
+    "in the unit square and construct a `PointPattern` from the coordinates. \n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "ee524a72",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Simulate 200 points in the unit square (unmarked pattern)\n",
+    "coords = ppr.poisson(hull, size=200)\n",
+    "coords.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "ab0d2505",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Build an unmarked PointPattern\n",
+    "pp = PointPattern(coords)\n",
+    "\n",
+    "pp.summary()  # quick textual summary\n",
+    "pp.df.head()  # underlying DataFrame with coordinates only (x, y)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "11f0062c",
+   "metadata": {},
+   "source": [
+    "At this stage, `pp` has only coordinates (`x`, `y`) and **no marks**.\n",
+    "\n",
+    "Internally, `PointPattern` stores the data in a pandas DataFrame (`pp.df`).\n",
+    "Any extra columns we add will be treated as marks (attributes) of the\n",
+    "points. \n",
+    "\n",
+    "\n",
+    "## 2. Add categorical and numeric marks with `add_marks`\n",
+    "\n",
+    "We will assign two marks to each point:\n",
+    "\n",
+    "- `type`: a **categorical** mark taking values `'A'` or `'B'`.\n",
+    "- `value`: a **continuous** mark drawn from a normal distribution.\n",
+    "\n",
+    "We use the `add_marks(marks, mark_names=None)` method of `PointPattern`\n",
+    "to attach these attributes. \n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "58797dbf",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "n = pp.n\n",
+    "\n",
+    "# Categorical mark: two types, A and B\n",
+    "types = np.random.choice([\"A\", \"B\"], size=n, p=[0.6, 0.4])\n",
+    "\n",
+    "# Numeric mark: e.g. \"intensity\" or \"size\" for each event\n",
+    "values = np.random.gamma(shape=2.0, scale=1.0, size=n)\n",
+    "\n",
+    "# Attach both marks to the point pattern\n",
+    "pp.add_marks([types, values], mark_names=[\"type\", \"value\"])\n",
+    "\n",
+    "pp.df.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "72f763b1",
+   "metadata": {},
+   "source": [
+    "Now `pp` is a **marked point pattern**. The DataFrame has four columns:\n",
+    "`x`, `y` (coordinates) and `type`, `value` (marks).\n",
+    "\n",
+    "We can work with marks using standard pandas tools, for example to\n",
+    "compute simple summaries by type:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1b8e99e8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Counts by categorical mark\n",
+    "pp.df[\"type\"].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4a80a2a4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Mean of the numeric mark by type\n",
+    "pp.df.groupby(\"type\")[\"value\"].mean()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "51984ed0",
+   "metadata": {},
+   "source": [
+    "## 3. Visualizing a marked point pattern\n",
+    "\n",
+    "Let’s write a helper to plot points colored by a categorical mark, here\n",
+    "`type`.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "24547460",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def plot_marked_pattern(pp, mark_column=\"type\", ax=None, title=None):\n",
+    "    \"\"\"Plot a marked point pattern, coloring by a categorical mark.\n",
+    "\n",
+    "    Parameters\n",
+    "    ----------\n",
+    "    pp : pointpats.PointPattern\n",
+    "        Marked point pattern.\n",
+    "    mark_column : str\n",
+    "        Column in `pp.df` containing categorical marks.\n",
+    "    ax : matplotlib.axes.Axes, optional\n",
+    "        Axis to plot on.\n",
+    "    title : str, optional\n",
+    "        Plot title.\n",
+    "    \"\"\"\n",
+    "    if ax is None:\n",
+    "        fig, ax = plt.subplots(figsize=(5, 5))\n",
+    "\n",
+    "    df = pp.df\n",
+    "    categories = df[mark_column].astype(\"category\")\n",
+    "    cats = categories.cat.categories\n",
+    "\n",
+    "    # Basic color cycle\n",
+    "    colors = plt.rcParams[\"axes.prop_cycle\"].by_key()[\"color\"]\n",
+    "\n",
+    "    for i, cat in enumerate(cats):\n",
+    "        sub = df[categories == cat]\n",
+    "        ax.scatter(\n",
+    "            sub[pp.coord_names[0]],\n",
+    "            sub[pp.coord_names[1]],\n",
+    "            s=15,\n",
+    "            label=f\"{mark_column} = {cat}\",\n",
+    "            color=colors[i % len(colors)],\n",
+    "            alpha=0.8,\n",
+    "        )\n",
+    "\n",
+    "    # Use the window of the pattern to set plot limits\n",
+    "    xmin, ymin, xmax, ymax = pp.window.bbox\n",
+    "    ax.set_xlim(xmin, xmax)\n",
+    "    ax.set_ylim(ymin, ymax)\n",
+    "    ax.set_aspect(\"equal\", adjustable=\"box\")\n",
+    "    ax.set_xlabel(pp.coord_names[0])\n",
+    "    ax.set_ylabel(pp.coord_names[1])\n",
+    "    if title:\n",
+    "        ax.set_title(title)\n",
+    "    ax.legend(loc=\"best\")\n",
+    "\n",
+    "    return ax\n",
+    "\n",
+    "\n",
+    "plot_marked_pattern(\n",
+    "    pp, mark_column=\"type\", title=\"Marked point pattern colored by type\"\n",
+    ")\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ae87e7b0",
+   "metadata": {},
+   "source": [
+    "The colors distinguish the mark categories (`type = 'A'` vs `type = 'B'`).\n",
+    "You can adapt the plotting function to map numeric marks to size or\n",
+    "color gradients if desired.\n",
+    "\n",
+    "## 4. Splitting a marked pattern with `explode`\n",
+    "\n",
+    "To analyze each mark category as its own point pattern, we can use the\n",
+    "`explode(mark)` method of `PointPattern`. It returns a list of\n",
+    "`PointPattern` objects, one per unique value of the mark. \n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b6421f39",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Unique categories in the \"type\" mark\n",
+    "categories = pp.df[\"type\"].astype(\"category\").cat.categories\n",
+    "categories"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b367b558",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Explode into a list of unmarked patterns, one per category\n",
+    "pps_by_type = pp.explode(\"type\")\n",
+    "\n",
+    "len(pps_by_type)  # should match the number of unique categories"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e7870bdb",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "for cat, sub_pp in zip(categories, pps_by_type, strict=True):\n",
+    "    print(f\"Category {cat!r} -> {sub_pp.n} points\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f4d3b414",
+   "metadata": {},
+   "source": [
+    "We can visualize each category in its own panel to compare their\n",
+    "spatial distributions."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e2a5098e-f418-41b6-8857-7313589a58e1",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "fig, axes = plt.subplots(1, len(pps_by_type), figsize=(5 * len(pps_by_type), 4))\n",
+    "if len(pps_by_type) == 1:\n",
+    "    axes = [axes]\n",
+    "\n",
+    "for ax, cat, sub_pp in zip(axes, categories, pps_by_type, strict=True):\n",
+    "    df = sub_pp.df\n",
+    "    xname, yname = sub_pp.coord_names\n",
+    "\n",
+    "    ax.scatter(df[xname], df[yname], s=15, alpha=0.8)\n",
+    "    xmin, ymin, xmax, ymax = sub_pp.window.bbox\n",
+    "    ax.set_xlim(xmin, xmax)\n",
+    "    ax.set_ylim(ymin, ymax)\n",
+    "    ax.set_aspect(\"equal\", adjustable=\"box\")\n",
+    "    ax.set_title(f\"type = {cat}\")\n",
+    "    ax.set_xlabel(xname)\n",
+    "    ax.set_ylabel(yname)\n",
+    "\n",
+    "plt.tight_layout()\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "80cda364",
+   "metadata": {},
+   "source": [
+    "Each panel now shows the points belonging to a single mark category.\n",
+    "\n",
+    "This is useful when you want to treat each type as its **own** point\n",
+    "pattern (e.g., trees of different species, crimes of different types)\n",
+    "and compare their intensities, clustering, or nearest-neighbor behavior.\n",
+    "\n",
+    "## 5. Using numeric marks as weights: weighted mean center\n",
+    "\n",
+    "Numeric marks are often used as **weights** when summarizing the pattern.\n",
+    "For example, you might weight accidents by the number of injuries or\n",
+    "trees by their biomass.\n",
+    "\n",
+    "The function `weighted_mean_center(points, weights)` computes a\n",
+    "weighted mean center, where each point contributes proportionally to its\n",
+    "weight. \n",
+    "\n",
+    "Here we compare the (unweighted) mean center of the pattern to the\n",
+    "weighted mean center using the `value` mark as weights."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b11cb2d4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Unweighted mean center\n",
+    "mc = mean_center(pp.points)\n",
+    "\n",
+    "# Weighted mean center using the numeric mark \"value\" as weights\n",
+    "wmc = weighted_mean_center(pp.points, pp.df[\"value\"].values)\n",
+    "\n",
+    "mc, wmc"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e09e6e5c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "fig, ax = plt.subplots(figsize=(5, 5))\n",
+    "\n",
+    "# Plot marked pattern with small gray points\n",
+    "ax.scatter(\n",
+    "    pp.df[pp.coord_names[0]], pp.df[pp.coord_names[1]], s=10, alpha=0.5, label=\"events\"\n",
+    ")\n",
+    "\n",
+    "xmin, ymin, xmax, ymax = pp.window.bbox\n",
+    "ax.set_xlim(xmin, xmax)\n",
+    "ax.set_ylim(ymin, ymax)\n",
+    "ax.set_aspect(\"equal\", adjustable=\"box\")\n",
+    "\n",
+    "# Add unweighted and weighted mean centers\n",
+    "ax.plot(mc[0], mc[1], \"b^\", markersize=10, label=\"mean center\")\n",
+    "ax.plot(wmc[0], wmc[1], \"ro\", markersize=10, label=\"weighted mean center\")\n",
+    "\n",
+    "ax.set_xlabel(pp.coord_names[0])\n",
+    "ax.set_ylabel(pp.coord_names[1])\n",
+    "ax.set_title(\"Unweighted vs weighted mean center\")\n",
+    "ax.legend()\n",
+    "\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ff56dbf8",
+   "metadata": {},
+   "source": [
+    "The weighted mean center is pulled toward points with larger `value`.\n",
+    "This is a simple example of how numeric marks can affect spatial\n",
+    "summaries.\n",
+    "\n",
+    "\n",
+    "## 6. Creating a marked pattern directly from an array\n",
+    "\n",
+    "Instead of starting with an unmarked pattern and calling `add_marks`,\n",
+    "you can also pass a full `(n, p)` array (coordinates + attributes) into\n",
+    "`PointPattern` and specify `names` for the columns. \n",
+    "\n",
+    "In this example we build a second point pattern whose coordinates and\n",
+    "marks are all stored in a single NumPy array:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "16c80159",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Build a new (n, 4) array: x, y, type_code, value\n",
+    "type_code = (types == \"B\").astype(float)  # 0 for A, 1 for B\n",
+    "points_with_marks = np.column_stack([pp.points, type_code, values])\n",
+    "\n",
+    "names = [\"x\", \"y\", \"type_code\", \"value\"]\n",
+    "pp2 = PointPattern(points_with_marks, names=names)\n",
+    "\n",
+    "pp2.df.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "09d0bb9f",
+   "metadata": {},
+   "source": [
+    "Here, `pp2` is also a marked point pattern: `x`, `y` are coordinates,\n",
+    "and `type_code`, `value` are marks.\n",
+    "\n",
+    "This pattern (constructing a full `(n, p)` table and passing it to\n",
+    "`PointPattern`) is convenient when your data already live in a\n",
+    "DataFrame or when loading from a CSV or GIS table.\n",
+    "\n",
+    "## Recap\n",
+    "\n",
+    "In this notebook, we have:\n",
+    "\n",
+    "- Built an **unmarked** `PointPattern` from simulated coordinates.\n",
+    "- Attached **categorical** and **numeric** marks with `add_marks`.\n",
+    "- Used `pp.df` (a pandas DataFrame) to summarize marks by category.\n",
+    "- Visualized a marked point pattern with color by categorical mark.\n",
+    "- Applied `explode` to split a marked pattern into separate patterns,\n",
+    "  one per mark category.\n",
+    "- Computed a **weighted mean center** using a numeric mark as weights.\n",
+    "- Created a marked pattern directly from a full `(n, p)` array with\n",
+    "  coordinate and mark columns.\n",
+    "\n",
+    "These tools form the core of working with **marked point patterns** in\n",
+    "`pointpats`. You can combine them with quadrat statistics, distance-based\n",
+    "functions, and space–time tests for more advanced analyses.\n"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "default",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.14.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

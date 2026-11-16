@@ -1,0 +1,11 @@
+﻿pointpats.SpaceTimeEvents
+=========================
+
+.. currentmodule:: pointpats
+
+.. autoclass:: SpaceTimeEvents
+
+   
+   
+
+   

@@ -1,0 +1,6 @@
+﻿pointpats.random.normal
+=======================
+
+.. currentmodule:: pointpats.random
+
+.. autofunction:: normal

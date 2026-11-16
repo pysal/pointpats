@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pointpats.quadrat_statistics &#8212; pointpats v2.6.0 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pysal-styles.css?v=f8dcc4ae" />
+    <script src="../../_static/documentation_options.js?v=ae39cb24"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="icon" href="../../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          pointpats</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.6.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../installation.html">Installation</a></li>
+                <li><a href="../../user-guide/intro.html">User Guide</a></li>
+                <li><a href="../../api.html">API</a></li>
+                <li><a href="../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guide/intro.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/centrography.html">Centrography in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/sd_ellipse.html">Standard deviational ellipse in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/Quadrat_statistics.html">Quadrat-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/ripley.html">Distance-based statistics in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/random.html">Simulating random point patterns with <code class="docutils literal notranslate"><span class="pre">pointpats.random</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user-guide/marks.html">Working with marks in <code class="docutils literal notranslate"><span class="pre">pointpats</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#installing-released-version">Installing released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#installing-development-version">Installing development version</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#point-pattern">Point Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#point-processes">Point Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#centrography">Centrography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#density">Density</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#quadrat-based-statistics">Quadrat Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#distance-based-statistics">Distance Based Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#window-functions">Window functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#random-distributions">Random distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#space-time-interaction-tests">Space-Time Interaction Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for pointpats.quadrat_statistics</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Quadrat statistics for planar point patterns</span>
+
+<span class="sd">- First argument everywhere is a NumPy ndarray of point coordinates (n, 2).</span>
+<span class="sd">- MBB is computed internally from the array.</span>
+<span class="sd">- Optional `window` (shapely geometry). If omitted, uses the MBB rectangle.</span>
+<span class="sd">- Optional `rng` for reproducible simulation-based inference.</span>
+<span class="sd">- Rectangle and hexagon grids supported.</span>
+<span class="sd">- Plotting is self-contained (matplotlib only): scatters points, draws window, draws grid,</span>
+<span class="sd">  annotates counts, and optionally annotates per-cell chi-square contributions.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Serge Rey, Wei Kang, Hu Shao&quot;</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;RectangleM&quot;</span><span class="p">,</span> <span class="s2">&quot;HexagonM&quot;</span><span class="p">,</span> <span class="s2">&quot;QStatistic&quot;</span><span class="p">]</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.stats</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">PatchCollection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polygon</span> <span class="k">as</span> <span class="n">MplPolygon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiPolygon</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">box</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.random</span><span class="w"> </span><span class="kn">import</span> <span class="n">poisson</span>
+
+
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="c1"># Helpers</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_as_points_array</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalize input into an (n, 2) float ndarray.</span>
+
+<span class="sd">    Accepts:</span>
+<span class="sd">      - array-like shaped (n, 2)</span>
+<span class="sd">      - GeoPandas GeoSeries / GeometryArray of Points (and optionally MultiPoints)</span>
+<span class="sd">      - PointPattern</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      - np.ndarray of shape (n, 2)</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">      - ValueError for empty inputs or non-2D coordinate inputs</span>
+<span class="sd">      - TypeError for unsupported geometry types</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">):</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">geometry</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoSeries</span><span class="p">):</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">points</span><span class="o">.</span><span class="n">geom_type</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s2">&quot;Point&quot;</span><span class="p">,</span> <span class="s2">&quot;MultiPoint&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;GeoSeries must contain Point geometries (optionally MultiPoint). &quot;</span>
+                <span class="s2">&quot;Got geometry type: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;geom_type&#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">type</span><span class="p">(</span><span class="n">points</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;no non-empty Point geometries.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">coords</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="c1"># ---- PointPattern ---</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="s2">&quot;points&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">points</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="c1"># ---- Generic array-like path ----</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pts</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">pts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;points must be a (n, 2) array-like. Got shape </span><span class="si">{</span><span class="n">pts</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pts</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;points is empty; cannot compute mbb.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pts</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_mbb</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="n">x_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">y_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span>
+    <span class="n">x_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">y_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_min</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">y_max</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_ensure_window</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">mbb</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">box</span><span class="p">(</span><span class="n">mbb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mbb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mbb</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">mbb</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">window</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_coerce_rng</span><span class="p">(</span><span class="n">rng</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Coerce rng input to a NumPy Generator.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rng : None | int | numpy.random.Generator | numpy.random.RandomState | numpy.random.BitGenerator</span>
+<span class="sd">        Random number generator specification.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.random.Generator</span>
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+    <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">rng</span>
+
+    <span class="c1"># Accept legacy RandomState by deriving a seed from it.</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">):</span>
+        <span class="c1"># Draw a seed deterministically from the RandomState stream.</span>
+        <span class="n">seed</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">32</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="c1"># If a BitGenerator is passed, wrap it.</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">BitGenerator</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">rng</span><span class="p">)</span>
+
+    <span class="c1"># Int-like seeds</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">rng</span><span class="p">))</span>
+
+    <span class="c1"># Fall back to NumPy’s coercion (e.g., SeedSequence)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">rng</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_window_to_paths</span><span class="p">(</span><span class="n">window_geom</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return list of (x, y) arrays for plotting boundary(ies).&quot;&quot;&quot;</span>
+    <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">window_geom</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">paths</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">window_geom</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">window_geom</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">xy</span>
+        <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">ring</span> <span class="ow">in</span> <span class="n">window_geom</span><span class="o">.</span><span class="n">interiors</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ring</span><span class="o">.</span><span class="n">xy</span>
+            <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">paths</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">window_geom</span><span class="p">,</span> <span class="n">MultiPolygon</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">poly</span> <span class="ow">in</span> <span class="n">window_geom</span><span class="o">.</span><span class="n">geoms</span><span class="p">:</span>
+            <span class="n">paths</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_window_to_paths</span><span class="p">(</span><span class="n">poly</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">paths</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">window_geom</span><span class="p">,</span> <span class="s2">&quot;geoms&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">window_geom</span><span class="o">.</span><span class="n">geoms</span><span class="p">:</span>
+            <span class="n">paths</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_window_to_paths</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">paths</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_scatter_points</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_draw_window</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">window_geom</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">_window_to_paths</span><span class="p">(</span><span class="n">window_geom</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cell_center_from_bounds</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">x0</span> <span class="o">+</span> <span class="n">x1</span><span class="p">),</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">y0</span> <span class="o">+</span> <span class="n">y1</span><span class="p">))</span>
+
+
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="c1"># Rectangle grid</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="RectangleM">
+<a class="viewcode-back" href="../../generated/pointpats.RectangleM.html#pointpats.RectangleM">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RectangleM</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rectangle grid structure for quadrat-based method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RectangleM.__init__">
+<a class="viewcode-back" href="../../generated/pointpats.RectangleM.html#pointpats.RectangleM.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">pp</span><span class="p">,</span>
+        <span class="n">count_column</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">count_row</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">rectangle_width</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">rectangle_height</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="n">_as_points_array</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span> <span class="o">=</span> <span class="n">_compute_mbb</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="n">_ensure_window</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">)</span>
+
+        <span class="n">x_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">y_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">rectangle_width</span> <span class="ow">and</span> <span class="n">rectangle_height</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rectangle_width</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">rectangle_width</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rectangle_height</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">rectangle_height</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">count_column</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">x_range</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">rectangle_width</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">count_row</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">y_range</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">rectangle_height</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">count_column</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">count_column</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">count_row</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">count_row</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rectangle_width</span> <span class="o">=</span> <span class="n">x_range</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_column</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rectangle_height</span> <span class="o">=</span> <span class="n">y_range</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_row</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_column</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_row</span></div>
+
+
+<div class="viewcode-block" id="RectangleM.point_location_sta">
+<a class="viewcode-back" href="../../generated/pointpats.RectangleM.html#pointpats.RectangleM.point_location_sta">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">point_location_sta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dict_id_count</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">j</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_column</span><span class="p">:</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_row</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_column</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="n">x_min</span><span class="p">,</span> <span class="n">y_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">:</span>
+            <span class="n">index_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_min</span><span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">rectangle_width</span>
+            <span class="n">index_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y_min</span><span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">rectangle_height</span>
+
+            <span class="k">if</span> <span class="n">index_x</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_column</span><span class="p">:</span>
+                <span class="n">index_x</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">index_y</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_row</span><span class="p">:</span>
+                <span class="n">index_y</span> <span class="o">-=</span> <span class="mi">1</span>
+
+            <span class="n">cell_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">index_y</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_column</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">index_x</span><span class="p">)</span>
+            <span class="n">dict_id_count</span><span class="p">[</span><span class="n">cell_id</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">dict_id_count</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_rect_cell_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="p">):</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">ix</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rectangle_width</span>
+        <span class="n">y0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">iy</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rectangle_height</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">rectangle_width</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">rectangle_height</span>
+        <span class="k">return</span> <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_rect_cell_polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="p">):</span>
+        <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rect_cell_bounds</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">box</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_iter_cells</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">iy</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_row</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_column</span><span class="p">):</span>
+                <span class="n">cell_id</span> <span class="o">=</span> <span class="n">ix</span> <span class="o">+</span> <span class="n">iy</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_column</span>
+                <span class="n">poly</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rect_cell_polygon</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="p">)</span>
+                <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rect_cell_bounds</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="p">)</span>
+                <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span> <span class="o">=</span> <span class="n">_cell_center_from_bounds</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">cell_id</span><span class="p">,</span> <span class="n">poly</span><span class="p">,</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RectangleM.plot">
+<a class="viewcode-back" href="../../generated/pointpats.RectangleM.html#pointpats.RectangleM.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Quadrat Count&quot;</span><span class="p">,</span>
+        <span class="n">show</span><span class="o">=</span><span class="s2">&quot;counts&quot;</span><span class="p">,</span>
+        <span class="n">chi2_contrib</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+
+        <span class="n">_scatter_points</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+        <span class="n">_draw_window</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">)</span>
+
+        <span class="n">dict_id_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">point_location_sta</span><span class="p">()</span>
+
+        <span class="n">patches</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">ann_xy</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cell_ids</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">cell_id</span><span class="p">,</span> <span class="n">poly</span><span class="p">,</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_cells</span><span class="p">():</span>
+            <span class="n">patches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MplPolygon</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">poly</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">coords</span><span class="p">),</span> <span class="n">closed</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="n">ann_xy</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">))</span>
+            <span class="n">cell_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell_id</span><span class="p">)</span>
+
+        <span class="n">pc</span> <span class="o">=</span> <span class="n">PatchCollection</span><span class="p">(</span><span class="n">patches</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_collection</span><span class="p">(</span><span class="n">pc</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="s2">&quot;counts&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">),</span> <span class="n">cell_id</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ann_xy</span><span class="p">,</span> <span class="n">cell_ids</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+                    <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">dict_id_count</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cell_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">show</span> <span class="o">==</span> <span class="s2">&quot;chi2&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">chi2_contrib</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;chi2_contrib must be provided when show=&quot;chi2&quot;.&#39;</span><span class="p">)</span>
+            <span class="n">chi2_contrib</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">chi2_contrib</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">chi2_contrib</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell_ids</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;chi2_contrib length must match number of plotted cells &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cell_ids</span><span class="p">)</span><span class="si">}</span><span class="s2">). Got </span><span class="si">{</span><span class="n">chi2_contrib</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">pc</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="n">chi2_contrib</span><span class="p">)</span>
+            <span class="n">pc</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.6</span><span class="p">)</span>
+            <span class="n">pc</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">pc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Chi-square contribution&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">),</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ann_xy</span><span class="p">,</span> <span class="n">chi2_contrib</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;show must be &quot;counts&quot; or &quot;chi2&quot;.&#39;</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ax</span><span class="p">,</span> <span class="n">cell_ids</span></div>
+</div>
+
+
+
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="c1"># Hexagon grid</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="HexagonM">
+<a class="viewcode-back" href="../../generated/pointpats.HexagonM.html#pointpats.HexagonM">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">HexagonM</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Hexagon grid structure for quadrat-based method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="HexagonM.__init__">
+<a class="viewcode-back" href="../../generated/pointpats.HexagonM.html#pointpats.HexagonM.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pp</span><span class="p">,</span> <span class="n">lh</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="n">_as_points_array</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_length</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lh</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span> <span class="o">=</span> <span class="n">_compute_mbb</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="n">_ensure_window</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">)</span>
+
+        <span class="n">range_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">range_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">count_column</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_length</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">&lt;</span> <span class="n">range_x</span><span class="p">:</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="n">range_x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_length</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_length</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">count_column</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">semi_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_length</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">6.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count_row_even</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">semi_height</span> <span class="o">&lt;</span> <span class="n">range_y</span><span class="p">:</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="n">range_y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">semi_height</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">semi_height</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">count_row_even</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">count_row_odd</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">range_y</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">semi_height</span><span class="p">)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_row_odd</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_column</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_column</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_row_even</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_column</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HexagonM.point_location_sta">
+<a class="viewcode-back" href="../../generated/pointpats.HexagonM.html#pointpats.HexagonM.point_location_sta">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">point_location_sta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">semi_cell_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_length</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">dict_id_count</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_row_even</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_column</span><span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">count_row_even</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_row_odd</span>
+                    <span class="ow">and</span> <span class="n">i</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_row_even</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="ow">and</span> <span class="n">j</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span>
+                <span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="n">dict_id_count</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_column</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">x_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">y_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">:</span>
+            <span class="n">intercept_degree_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_min</span><span class="p">)</span> <span class="o">//</span> <span class="n">semi_cell_length</span>
+
+            <span class="n">possible_y_index_even</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">semi_height</span> <span class="o">-</span> <span class="n">y_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">semi_height</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">possible_y_index_odd</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">semi_height</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">intercept_degree_x</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">center_index_x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">intercept_degree_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">3</span><span class="p">)</span>
+                <span class="n">center_index_y</span> <span class="o">=</span> <span class="n">possible_y_index_odd</span>
+                <span class="k">if</span> <span class="n">center_index_x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">center_index_y</span> <span class="o">=</span> <span class="n">possible_y_index_even</span>
+                <span class="n">dict_id_count</span><span class="p">[</span><span class="n">center_index_x</span> <span class="o">+</span> <span class="n">center_index_y</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_column</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">center_index_x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">intercept_degree_x</span> <span class="o">//</span> <span class="mi">3</span><span class="p">)</span>
+                <span class="n">center_x</span> <span class="o">=</span> <span class="n">center_index_x</span> <span class="o">*</span> <span class="n">semi_cell_length</span> <span class="o">*</span> <span class="mf">3.0</span> <span class="o">+</span> <span class="n">x_min</span>
+
+                <span class="n">center_index_y</span> <span class="o">=</span> <span class="n">possible_y_index_odd</span>
+                <span class="n">center_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">center_index_y</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">semi_height</span> <span class="o">+</span> <span class="n">y_min</span>
+
+                <span class="k">if</span> <span class="n">center_index_x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">center_index_y</span> <span class="o">=</span> <span class="n">possible_y_index_even</span>
+                    <span class="n">center_y</span> <span class="o">=</span> <span class="n">center_index_y</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">semi_height</span> <span class="o">+</span> <span class="n">y_min</span>
+
+                <span class="k">if</span> <span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">center_y</span><span class="p">:</span>
+                    <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span> <span class="o">=</span> <span class="n">center_x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_length</span><span class="p">,</span> <span class="n">center_y</span>
+                    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">center_x</span> <span class="o">+</span> <span class="n">semi_cell_length</span><span class="p">,</span> <span class="n">center_y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">semi_height</span>
+                    <span class="n">indicator</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span>
+                        <span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="o">-</span> <span class="p">(</span>
+                            <span class="p">(</span><span class="n">y0</span> <span class="o">-</span> <span class="n">y1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span> <span class="o">*</span> <span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                            <span class="o">+</span> <span class="p">(</span><span class="n">x0</span> <span class="o">*</span> <span class="n">y1</span> <span class="o">-</span> <span class="n">x1</span> <span class="o">*</span> <span class="n">y0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span> <span class="o">=</span> <span class="n">center_x</span> <span class="o">+</span> <span class="n">semi_cell_length</span><span class="p">,</span> <span class="n">center_y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">semi_height</span>
+                    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">center_x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_length</span><span class="p">,</span> <span class="n">center_y</span>
+                    <span class="n">indicator</span> <span class="o">=</span> <span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span>
+                        <span class="p">(</span><span class="n">y0</span> <span class="o">-</span> <span class="n">y1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span> <span class="o">*</span> <span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="o">+</span> <span class="p">(</span><span class="n">x0</span> <span class="o">*</span> <span class="n">y1</span> <span class="o">-</span> <span class="n">x1</span> <span class="o">*</span> <span class="n">y0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">indicator</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">center_index_x</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">center_index_y</span> <span class="o">=</span> <span class="n">possible_y_index_odd</span>
+                    <span class="k">if</span> <span class="n">center_index_x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">center_index_y</span> <span class="o">=</span> <span class="n">possible_y_index_even</span>
+
+                <span class="n">dict_id_count</span><span class="p">[</span><span class="n">center_index_x</span> <span class="o">+</span> <span class="n">center_index_y</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_column</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">dict_id_count</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_hex_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">):</span>
+        <span class="n">sh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">semi_height</span>
+        <span class="n">lh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_length</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">[</span><span class="n">cx</span> <span class="o">+</span> <span class="n">lh</span><span class="p">,</span> <span class="n">cy</span><span class="p">],</span>
+                <span class="p">[</span><span class="n">cx</span> <span class="o">+</span> <span class="n">lh</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">cy</span> <span class="o">+</span> <span class="n">sh</span><span class="p">],</span>
+                <span class="p">[</span><span class="n">cx</span> <span class="o">-</span> <span class="n">lh</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">cy</span> <span class="o">+</span> <span class="n">sh</span><span class="p">],</span>
+                <span class="p">[</span><span class="n">cx</span> <span class="o">-</span> <span class="n">lh</span><span class="p">,</span> <span class="n">cy</span><span class="p">],</span>
+                <span class="p">[</span><span class="n">cx</span> <span class="o">-</span> <span class="n">lh</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">cy</span> <span class="o">-</span> <span class="n">sh</span><span class="p">],</span>
+                <span class="p">[</span><span class="n">cx</span> <span class="o">+</span> <span class="n">lh</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">cy</span> <span class="o">-</span> <span class="n">sh</span><span class="p">],</span>
+                <span class="p">[</span><span class="n">cx</span> <span class="o">+</span> <span class="n">lh</span><span class="p">,</span> <span class="n">cy</span><span class="p">],</span>
+            <span class="p">],</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_iter_cells</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dict_id_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">point_location_sta</span><span class="p">()</span>
+
+        <span class="n">x_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">y_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">cell_id</span> <span class="ow">in</span> <span class="n">dict_id_count</span><span class="p">:</span>
+            <span class="n">ix</span> <span class="o">=</span> <span class="n">cell_id</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_column</span>
+            <span class="n">iy</span> <span class="o">=</span> <span class="n">cell_id</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_column</span>
+
+            <span class="n">cx</span> <span class="o">=</span> <span class="n">ix</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_length</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="mf">3.0</span> <span class="o">+</span> <span class="n">x_min</span>
+            <span class="n">cy</span> <span class="o">=</span> <span class="n">iy</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">semi_height</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">y_min</span>
+            <span class="k">if</span> <span class="n">ix</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">cy</span> <span class="o">=</span> <span class="p">(</span><span class="n">iy</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">semi_height</span> <span class="o">+</span> <span class="n">y_min</span>
+
+            <span class="n">verts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hex_vertices</span><span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">)</span>
+            <span class="n">poly</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">verts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="k">yield</span> <span class="n">cell_id</span><span class="p">,</span> <span class="n">poly</span><span class="p">,</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HexagonM.plot">
+<a class="viewcode-back" href="../../generated/pointpats.HexagonM.html#pointpats.HexagonM.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Quadrat Count&quot;</span><span class="p">,</span>
+        <span class="n">show</span><span class="o">=</span><span class="s2">&quot;counts&quot;</span><span class="p">,</span>
+        <span class="n">chi2_contrib</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+
+        <span class="n">_scatter_points</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+        <span class="n">_draw_window</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">)</span>
+
+        <span class="n">dict_id_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">point_location_sta</span><span class="p">()</span>
+
+        <span class="n">patches</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">ann_xy</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cell_ids</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">cell_id</span><span class="p">,</span> <span class="n">poly</span><span class="p">,</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_cells</span><span class="p">():</span>
+            <span class="n">patches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MplPolygon</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">poly</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">coords</span><span class="p">),</span> <span class="n">closed</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="n">ann_xy</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">))</span>
+            <span class="n">cell_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell_id</span><span class="p">)</span>
+
+        <span class="n">pc</span> <span class="o">=</span> <span class="n">PatchCollection</span><span class="p">(</span><span class="n">patches</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_collection</span><span class="p">(</span><span class="n">pc</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="s2">&quot;counts&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">),</span> <span class="n">cell_id</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ann_xy</span><span class="p">,</span> <span class="n">cell_ids</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+                    <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">dict_id_count</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cell_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">show</span> <span class="o">==</span> <span class="s2">&quot;chi2&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">chi2_contrib</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;chi2_contrib must be provided when show=&quot;chi2&quot;.&#39;</span><span class="p">)</span>
+            <span class="n">chi2_contrib</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">chi2_contrib</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">chi2_contrib</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell_ids</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;chi2_contrib length must match number of plotted cells &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cell_ids</span><span class="p">)</span><span class="si">}</span><span class="s2">). Got </span><span class="si">{</span><span class="n">chi2_contrib</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">pc</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="n">chi2_contrib</span><span class="p">)</span>
+            <span class="n">pc</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.6</span><span class="p">)</span>
+            <span class="n">pc</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">pc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Chi-square contribution&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">),</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ann_xy</span><span class="p">,</span> <span class="n">chi2_contrib</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;show must be &quot;counts&quot; or &quot;chi2&quot;.&#39;</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ax</span><span class="p">,</span> <span class="n">cell_ids</span></div>
+</div>
+
+
+
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="c1"># Quadrat statistic</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QStatistic">
+<a class="viewcode-back" href="../../generated/pointpats.QStatistic.html#pointpats.QStatistic">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">QStatistic</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pearson chi-square quadrat test for complete spatial randomness (CSR).</span>
+
+<span class="sd">    This class partitions the study region into quadrats (rectangles or hexagons),</span>
+<span class="sd">    counts the number of events falling in each quadrat, and evaluates departure</span>
+<span class="sd">    from CSR using a Pearson chi-square statistic under an equal-intensity CSR</span>
+<span class="sd">    null model.</span>
+
+<span class="sd">    The primary outputs are the observed chi-square statistic and its analytical</span>
+<span class="sd">    p-value (from the chi-square distribution). Optionally, a simulation-based</span>
+<span class="sd">    (Monte Carlo) p-value can be computed by generating CSR realizations within</span>
+<span class="sd">    the study window and recomputing the chi-square statistic for each</span>
+<span class="sd">    realization.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pp : :class: `.PointPattern` or array_like</span>
+<span class="sd">        Event coordinates as an (n, 2) array-like of floats (x, y).</span>
+<span class="sd">    shape : {&quot;rectangle&quot;, &quot;hexagon&quot;}, default=&quot;rectangle&quot;</span>
+<span class="sd">        Quadrat tessellation type.</span>
+<span class="sd">    nx : int, default=3</span>
+<span class="sd">        Number of columns when `shape=&quot;rectangle&quot;` and `rectangle_width` /</span>
+<span class="sd">        `rectangle_height` are not provided.</span>
+<span class="sd">    ny : int, default=3</span>
+<span class="sd">        Number of rows when `shape=&quot;rectangle&quot;` and `rectangle_width` /</span>
+<span class="sd">        `rectangle_height` are not provided.</span>
+<span class="sd">    rectangle_width : float, default=0</span>
+<span class="sd">        Target rectangle width. Must be provided together with</span>
+<span class="sd">        `rectangle_height`. When both are provided and non-zero, `nx` and `ny`</span>
+<span class="sd">        are ignored and the grid dimensions are computed from the point-set MBB.</span>
+<span class="sd">    rectangle_height : float, default=0</span>
+<span class="sd">        Target rectangle height. Must be provided together with</span>
+<span class="sd">        `rectangle_width`. When both are provided and non-zero, `nx` and `ny`</span>
+<span class="sd">        are ignored and the grid dimensions are computed from the point-set MBB.</span>
+<span class="sd">    lh : float, default=10</span>
+<span class="sd">        Hexagon side length when `shape=&quot;hexagon&quot;`.</span>
+<span class="sd">    realizations : int, default=0</span>
+<span class="sd">        Number of CSR simulations used to compute a Monte Carlo p-value.</span>
+<span class="sd">        If 0, no simulation-based inference is performed.</span>
+<span class="sd">    window : shapely geometry, optional</span>
+<span class="sd">        Study window (e.g., Polygon or MultiPolygon). If None, the window is</span>
+<span class="sd">        taken to be the axis-aligned MBB rectangle of `points`.</span>
+<span class="sd">    rng : None | int | numpy.random.Generator | numpy.random.RandomState, optional</span>
+<span class="sd">        Random number generator control for reproducible CSR simulations when</span>
+<span class="sd">        `realizations &gt; 0`.</span>
+
+<span class="sd">        - None: create a new ``numpy.random.default_rng()``</span>
+<span class="sd">        - int: use as a seed for ``numpy.random.default_rng(seed)``</span>
+<span class="sd">        - Generator: used as-is</span>
+<span class="sd">        - RandomState: wrapped via ``numpy.random.default_rng(RandomState)``</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points : numpy.ndarray</span>
+<span class="sd">        (n, 2) array of event coordinates.</span>
+<span class="sd">    mbb : numpy.ndarray</span>
+<span class="sd">        Bounding box of `points` as ``[xmin, ymin, xmax, ymax]``.</span>
+<span class="sd">    window : shapely geometry</span>
+<span class="sd">        Study window used for simulation and plotting.</span>
+<span class="sd">    shape : str</span>
+<span class="sd">        Quadrat tessellation type: &quot;rectangle&quot; or &quot;hexagon&quot;.</span>
+<span class="sd">    rng : numpy.random.Generator</span>
+<span class="sd">        RNG used for CSR simulations (always stored as a Generator).</span>
+<span class="sd">    mr : RectangleM or HexagonM</span>
+<span class="sd">        Tessellation manager instance.</span>
+<span class="sd">    cell_ids : list of int</span>
+<span class="sd">        Cell identifiers included in the test statistic (all grid cells).</span>
+<span class="sd">    chi2 : float</span>
+<span class="sd">        Observed Pearson chi-square statistic.</span>
+<span class="sd">    df : int</span>
+<span class="sd">        Degrees of freedom for the analytical chi-square reference distribution,</span>
+<span class="sd">        equal to ``k - 1`` where ``k`` is the number of included cells.</span>
+<span class="sd">    chi2_pvalue : float</span>
+<span class="sd">        Analytical p-value from the chi-square distribution.</span>
+<span class="sd">    chi2_contrib : numpy.ndarray</span>
+<span class="sd">        Per-cell chi-square contributions aligned with `cell_ids`, computed as</span>
+<span class="sd">        ``(O - E)^2 / E`` with ``E = mean(O)`` over included cells.</span>
+<span class="sd">    chi2_realizations : numpy.ndarray</span>
+<span class="sd">        Simulated chi-square statistics for CSR realizations. Present only when</span>
+<span class="sd">        `realizations &gt; 0`.</span>
+<span class="sd">    chi2_r_pvalue : float</span>
+<span class="sd">        Monte Carlo p-value based on `chi2_realizations`, computed using the</span>
+<span class="sd">        standard +1 correction:</span>
+<span class="sd">        ``( #{T_sim &gt;= T_obs} + 1 ) / (realizations + 1)``.</span>
+<span class="sd">        Present only when `realizations &gt; 0`.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - The analytical test uses ``scipy.stats.chisquare`` with expected</span>
+<span class="sd">      counts equal across cells (i.e., ``E = mean(O)``). This</span>
+<span class="sd">      corresponds to a homogeneous CSR null with equal-area cells. For</span>
+<span class="sd">      irregular windows, a fully-correct analytical reference would</span>
+<span class="sd">      area-weight expectations.</span>
+
+<span class="sd">    - The simulation-based null generates CSR realizations within `window` with</span>
+<span class="sd">      intensity ``n / area(window)``. Reproducibility depends on passing `rng`</span>
+<span class="sd">      through to the underlying CSR generator (``poisson(..., rng=...)``).</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    RectangleM : Rectangular tessellation over the point-set MBB.</span>
+<span class="sd">    HexagonM : Hexagonal tessellation over the point-set MBB.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="QStatistic.__init__">
+<a class="viewcode-back" href="../../generated/pointpats.QStatistic.html#pointpats.QStatistic.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">pp</span><span class="p">,</span>
+        <span class="n">shape</span><span class="o">=</span><span class="s2">&quot;rectangle&quot;</span><span class="p">,</span>
+        <span class="n">nx</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">ny</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">rectangle_width</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">rectangle_height</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">lh</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">realizations</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">rng</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="n">_as_points_array</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span> <span class="o">=</span> <span class="n">_compute_mbb</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="n">_ensure_window</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbb</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">_coerce_rng</span><span class="p">(</span><span class="n">rng</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">shape</span> <span class="o">==</span> <span class="s2">&quot;rectangle&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mr</span> <span class="o">=</span> <span class="n">RectangleM</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">,</span>
+                <span class="n">count_column</span><span class="o">=</span><span class="n">nx</span><span class="p">,</span>
+                <span class="n">count_row</span><span class="o">=</span><span class="n">ny</span><span class="p">,</span>
+                <span class="n">rectangle_width</span><span class="o">=</span><span class="n">rectangle_width</span><span class="p">,</span>
+                <span class="n">rectangle_height</span><span class="o">=</span><span class="n">rectangle_height</span><span class="p">,</span>
+                <span class="n">window</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">shape</span> <span class="o">==</span> <span class="s2">&quot;hexagon&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mr</span> <span class="o">=</span> <span class="n">HexagonM</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">lh</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;shape must be either &quot;rectangle&quot; or &quot;hexagon&quot;.&#39;</span><span class="p">)</span>
+        <span class="n">dict_id_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mr</span><span class="o">.</span><span class="n">point_location_sta</span><span class="p">()</span>
+
+        <span class="n">obs_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">dict_id_count</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dict_id_count</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">chi2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chi2_pvalue</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chisquare</span><span class="p">(</span><span class="n">obs_counts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">obs_counts</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="n">expected</span> <span class="o">=</span> <span class="n">obs_counts</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">if</span> <span class="n">obs_counts</span><span class="o">.</span><span class="n">size</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">if</span> <span class="n">obs_counts</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">expected</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chi2_contrib</span> <span class="o">=</span> <span class="p">(</span><span class="n">obs_counts</span> <span class="o">-</span> <span class="n">expected</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">expected</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chi2_contrib</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">obs_counts</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="c1"># simulation-based inference under CSR (reproducible via rng)</span>
+        <span class="k">if</span> <span class="n">realizations</span> <span class="ow">and</span> <span class="n">realizations</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">intensity</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">area</span><span class="p">)</span>
+
+            <span class="n">reals</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">,</span> <span class="n">intensity</span><span class="p">,</span> <span class="n">realizations</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rng</span><span class="p">)</span>
+
+            <span class="n">chi2_realizations</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">realizations</span><span class="p">):</span>
+                <span class="n">ri</span> <span class="o">=</span> <span class="n">reals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">pts_i</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ri</span><span class="p">,</span> <span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="n">ri</span><span class="p">)</span>
+                <span class="n">pts_i</span> <span class="o">=</span> <span class="n">_as_points_array</span><span class="p">(</span><span class="n">pts_i</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">shape</span> <span class="o">==</span> <span class="s2">&quot;rectangle&quot;</span><span class="p">:</span>
+                    <span class="n">mr_temp</span> <span class="o">=</span> <span class="n">RectangleM</span><span class="p">(</span>
+                        <span class="n">pts_i</span><span class="p">,</span>
+                        <span class="n">count_column</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mr</span><span class="o">.</span><span class="n">count_column</span><span class="p">,</span>
+                        <span class="n">count_row</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mr</span><span class="o">.</span><span class="n">count_row</span><span class="p">,</span>
+                        <span class="n">window</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">mr_temp</span> <span class="o">=</span> <span class="n">HexagonM</span><span class="p">(</span><span class="n">pts_i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mr</span><span class="o">.</span><span class="n">h_length</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">)</span>
+
+                <span class="n">dtemp</span> <span class="o">=</span> <span class="n">mr_temp</span><span class="o">.</span><span class="n">point_location_sta</span><span class="p">()</span>
+                <span class="n">sim_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">dtemp</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+                <span class="n">chi2_sim</span><span class="p">,</span> <span class="n">_p</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chisquare</span><span class="p">(</span><span class="n">sim_counts</span><span class="p">)</span>
+                <span class="n">chi2_realizations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chi2_sim</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">chi2_realizations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">chi2_realizations</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chi2_r_pvalue</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chi2_realizations</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chi2</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="n">realizations</span> <span class="o">+</span> <span class="mf">1.0</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="QStatistic.plot">
+<a class="viewcode-back" href="../../generated/pointpats.QStatistic.html#pointpats.QStatistic.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Quadrat Count&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="s2">&quot;counts&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="s2">&quot;counts&quot;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="p">,</span> <span class="n">_cell_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mr</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="s2">&quot;counts&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ax</span>
+
+        <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="s2">&quot;chi2&quot;</span><span class="p">:</span>
+            <span class="c1"># get plotted ids</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">plotted_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mr</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="s2">&quot;counts&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+            <span class="n">contrib_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cell_ids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chi2_contrib</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="n">plotted_contrib</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">contrib_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cid</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="k">for</span> <span class="n">cid</span> <span class="ow">in</span> <span class="n">plotted_ids</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span>
+            <span class="p">)</span>
+
+            <span class="n">ax</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mr</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="s2">&quot;chi2&quot;</span><span class="p">,</span> <span class="n">chi2_contrib</span><span class="o">=</span><span class="n">plotted_contrib</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ax</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;show must be either &quot;counts&quot; or &quot;chi2&quot;.&#39;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018-, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

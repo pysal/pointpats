@@ -1,0 +1,3948 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="pointpats.Knox.html">
+      
+      
+        <link rel="next" href="pointpats.mantel.html">
+      
+      
+      <link rel="icon" href="../_static/pysal_favicon.ico">
+    
+    
+      
+        <title>pointpats.KnoxLocal - pointpats</title>
+      
+    
+    
+      
+        
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.2b7fb0df65482c23e.min.css?v=666199ae" />
+        <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+        <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d127c87d" />
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pointpats.KnoxLocal" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="pointpats" class="md-header__button md-logo" aria-label="pointpats" data-md-component="logo">
+      <img src="../_static/pysal_logo.svg" alt="logo">
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            pointpats
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              pointpats.KnoxLocal
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="red"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="red"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/pysal/pointpats/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pysal/pointpats
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="pointpats" class="md-nav__button md-logo" aria-label="pointpats" data-md-component="logo">
+      <img src="../_static/pysal_logo.svg" alt="logo">
+    </a>
+    pointpats
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/pysal/pointpats/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pysal/pointpats
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Home</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Installation</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    <span>User Guide</span>
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            <span>User Guide</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/centrography.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Centrography in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/sd_ellipse.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Standard deviational ellipse in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/Quadrat_statistics.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Quadrat-<wbr>based statistics in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/ripley.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Distance-<wbr>based statistics in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/edge_corrections.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Edge corrections for G, F, J, K, and L functions</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/random.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Simulating random point patterns with pointpats.<wbr>random</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/marks.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Working with marks in pointpats</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../references.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>References</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    <span>API</span>
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            <span>API</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../api.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    <span>API reference</span>
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            <span>API reference</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html#point-pattern" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Point Pattern</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html#point-processes" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Point Processes</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html#centrography" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Centrography</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html#density" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Density</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html#quadrat-based-statistics" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Quadrat Based Statistics</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html#distance-based-statistics" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Distance Based Statistics</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html#window-functions" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Window functions</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api.html#random-distributions" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Random distributions</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_9" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../api.html#space-time-interaction-tests" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    <span>Space-<wbr>Time Interaction Tests</span>
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_1_9" id="__nav_4_1_9_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_1_9">
+            <span class="md-nav__icon md-icon"></span>
+            <span>Space-<wbr>Time Interaction Tests</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="pointpats.SpaceTimeEvents.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>pointpats.<wbr>Space<wbr>Time<wbr>Events</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="pointpats.Knox.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>pointpats.<wbr>Knox</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    <span>pointpats.<wbr>Knox<wbr>Local</span>
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>pointpats.<wbr>Knox<wbr>Local</span>
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal" class="md-nav__link">
+    
+      <span aria-label="Python class" class="objinfo-icon objinfo-icon__data" title="Python class">C</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal (Python class) — Local Knox statistics for space-time interactions."><span>pointpats.<wbr>Knox<wbr>Local</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="pointpats.KnoxLocal">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.__init__.s_coords" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.__init__.s_coords (Python parameter) — spatial coordinates of point events"><span>s_<wbr>coords</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.__init__.t_coords" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.__init__.t_coords (Python parameter) — temporal coordinates of point events (floats or ints, not dateTime)"><span>t_<wbr>coords</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.__init__.delta" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.__init__.delta (Python parameter) — spatial threshold defining distance below which pairs are spatial neighbors"><span>delta</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.__init__.tau" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.__init__.tau (Python parameter) — temporal threshold defining distance below which pairs are temporal neighbors"><span>tau</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.__init__.permutations" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.__init__.permutations (Python parameter) — number of random permutations for inference"><span>permutations</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.__init__.keep" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.__init__.keep (Python parameter) — whether to store realized values of the statistic under permutations"><span>keep</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.__init__.crit" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.__init__.crit (Python parameter) — signifcance level for local statistics"><span>crit</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.__init__.crs" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.__init__.crs (Python parameter) — coordinate reference system string for s_coords"><span>crs</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.s_coords" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.s_coords (Python attribute) — spatial coordinates of point events"><span>s_<wbr>coords</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="s_coords">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.s_coords-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.t_coords" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.t_coords (Python attribute) — temporal coordinates of point events (floats or ints, not dateTime)"><span>t_<wbr>coords</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="t_coords">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.t_coords-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.delta" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.delta (Python attribute) — spatial threshold defining distance below which pairs are spatial neighbors"><span>delta</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="delta">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.delta-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.tau" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.tau (Python attribute) — temporal threshold defining distance below which pairs are temporal neighbors"><span>tau</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="tau">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.tau-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.permutations" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.permutations (Python attribute) — number of random permutations for inference"><span>permutations</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="permutations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.permutations-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.keep" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.keep (Python attribute) — whether to store realized values of the statistic under permutations"><span>keep</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="keep">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.keep-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.nst" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.nst (Python attribute) — number of space-time pairs (global)"><span>nst</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="nst">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.nst-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.p_poisson" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.p_poisson (Python attribute) — Analytical p-value under Poisson assumption (global)"><span>p_<wbr>poisson</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="p_poisson">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.p_poisson-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.p_sim" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.p_sim (Python attribute) — Pseudo p-value based on random permutations (global)"><span>p_<wbr>sim</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="p_sim">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.p_sim-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.expected" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.expected (Python attribute) — Two-by-two array with expected counts under the null of no space-time interactions. [[NST, NS_], [NT_, N__]] where NST is the expected number of space-time pairs, NS_ is the expected number of spatial (but not also temporal) pairs, NT_ is the number of expected temporal (but not also spatial pairs), N__ is the number of pairs that are neighor spatial or temporal neighbors. (global)"><span>expected</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="expected">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.expected-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.observed" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.observed (Python attribute) — Same structure as expected with the observed pair classifications (global)"><span>observed</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="observed">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.observed-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.sim" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.sim (Python attribute) — Global statistics from permutations (if keep=True and keep=True) (global)"><span>sim</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="sim">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.sim-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.p_sims" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.p_sims (Python attribute) — Local psuedo p-values from conditional permutations (if permutations&gt;0)"><span>p_<wbr>sims</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="p_sims">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.p_sims-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.sims" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.sims (Python attribute) — Local statistics from conditional permutations (if keep=True and permutations&gt;0)"><span>sims</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="sims">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.sims-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.nsti" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.nsti (Python attribute) — Local statistics"><span>nsti</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="nsti">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.nsti-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.p_hypergeom" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.p_hypergeom (Python attribute) — Analytical p-values based on hypergeometric distribution"><span>p_<wbr>hypergeom</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="p_hypergeom">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.p_hypergeom-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore" class="md-nav__link">
+    
+      <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore (Python method) — Interactive plotting for space-time hotspots."><span>explore</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="explore">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.crit" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.crit (Python parameter) — critical value for statistical inference, by default 0.05"><span>crit</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.inference" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.inference (Python parameter) — which p-value to use for determining hotspots."><span>inference</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.radius" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.radius (Python parameter) — radius of the circlemarker plotted by folium, passed to geopandas.GeoDataFrame.explore style_kwds as a convenience."><span>radius</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.style_kwds" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.style_kwds (Python parameter) — additional style kewords passed to GeoDataFrame.explore, by default None"><span>style_<wbr>kwds</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.tiles" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.tiles (Python parameter) — tileset passed to GeoDataFrame.explore tiles argument, by default &#34;CartoDB Positron&#34;"><span>tiles</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.plot_edges" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.plot_edges (Python parameter) — Whether to include lines drawn between members of a singnificant hotspot, by default True"><span>plot_<wbr>edges</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.edge_weight" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.edge_weight (Python parameter) — line thickness when plot_edges=True, by default 2"><span>edge_<wbr>weight</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.edge_color" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.edge_color (Python parameter) — color of line when plot_edges=True, by default &#34;black&#34;"><span>edge_<wbr>color</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.colors" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.colors (Python parameter) — mapping of observation type to color, by default {&#34;focal&#34;: &#34;red&#34;, &#34;neighbor&#34;: &#34;yellow&#34;, &#34;nonsig&#34;: &#34;grey&#34;}"><span>colors</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore-returns" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Returns</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore-return-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe" class="md-nav__link">
+    
+      <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.from_dataframe (Python method) — Compute a set of local Knox statistics from a dataframe of Point observations"><span>from_<wbr>dataframe</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="from_dataframe">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe.dataframe" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.from_dataframe.dataframe (Python parameter) — dataframe holding observations."><span>dataframe</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe.time_col" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.from_dataframe.time_col (Python parameter) — column in the dataframe storing the time values (integer coordinate) for each observation."><span>time_<wbr>col</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe.delta" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.from_dataframe.delta (Python parameter) — delta parameter defining the spatial neighbor threshold measured in the same units as the dataframe CRS"><span>delta</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe.tau" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.from_dataframe.tau (Python parameter) — tau parameter defining the temporal neihgbor threshold (in the units measured by time_col)"><span>tau</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe.permutations" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.from_dataframe.permutations (Python parameter) — permutations to use for computational inference, by default 99"><span>permutations</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe.keep" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.from_dataframe.keep (Python parameter) — whether to store realized values of the statistic under permutations"><span>keep</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe-returns" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Returns</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe-return-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.hotspots" class="md-nav__link">
+    
+      <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.hotspots (Python method) — Table of significant space-time clusters that define local hotspots."><span>hotspots</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="hotspots">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.hotspots-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.hotspots.crit" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.hotspots.crit (Python parameter) — critical value for statistical inference, by default 0.05"><span>crit</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.hotspots.inference" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.hotspots.inference (Python parameter) — whether p-values should use permutation or analutical inference, by default &#34;permutation&#34;"><span>inference</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.hotspots.keep_neighbors" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.hotspots.keep_neighbors (Python parameter) — whether to included nonsignificant members of hotspots."><span>keep_<wbr>neighbors</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.hotspots-returns" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Returns</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.hotspots-return-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return type</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.hotspots-raises" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot" class="md-nav__link">
+    
+      <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot (Python method) — plot hotspots"><span>plot</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="plot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot.colors" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot.colors (Python parameter) — mapping of colors to hotspot values, by default {&#34;focal&#34;: &#34;red&#34;, &#34;neighbor&#34;: &#34;yellow&#34;, &#34;nonsig&#34;: &#34;grey&#34;}"><span>colors</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot.crit" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot.crit (Python parameter) — critical value for assessing statistical sgifnicance, by default 0.05"><span>crit</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot.inference" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot.inference (Python parameter) — whether to use permutation or analytic inference, by default &#34;permutation&#34;"><span>inference</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot.point_kwargs" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot.point_kwargs (Python parameter) — additional keyword arguments passsed to point plot, by default None"><span>point_<wbr>kwargs</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot.plot_edges" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot.plot_edges (Python parameter) — whether to plot edges connecting members of the same hotspot subgraph, by default True"><span>plot_<wbr>edges</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot.edge_color" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot.edge_color (Python parameter) — color of edges when plot_edges is True, by default &#39;black&#39;"><span>edge_<wbr>color</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot.edge_kwargs" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot.edge_kwargs (Python parameter) — additional keyword arguments passsed to edge plot, by default None"><span>edge_<wbr>kwargs</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot.ax" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot.ax (Python parameter) — axes object on which to create the plot, by default None"><span>ax</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot-returns" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Returns</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot-return-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="pointpats.mantel.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>pointpats.<wbr>mantel</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="pointpats.jacquez.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>pointpats.<wbr>jacquez</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="pointpats.modified_knox.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>pointpats.<wbr>modified_<wbr>knox</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    <span>For contributors</span>
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            <span>For contributors</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/pysal/mapclassify" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Git<wbr>Hub</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/pysal/mapclassify/releases" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Changelog</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal" class="md-nav__link">
+    
+      <span aria-label="Python class" class="objinfo-icon objinfo-icon__data" title="Python class">C</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal (Python class) — Local Knox statistics for space-time interactions."><span>pointpats.<wbr>Knox<wbr>Local</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="pointpats.KnoxLocal">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.__init__.s_coords" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.__init__.s_coords (Python parameter) — spatial coordinates of point events"><span>s_<wbr>coords</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.__init__.t_coords" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.__init__.t_coords (Python parameter) — temporal coordinates of point events (floats or ints, not dateTime)"><span>t_<wbr>coords</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.__init__.delta" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.__init__.delta (Python parameter) — spatial threshold defining distance below which pairs are spatial neighbors"><span>delta</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.__init__.tau" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.__init__.tau (Python parameter) — temporal threshold defining distance below which pairs are temporal neighbors"><span>tau</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.__init__.permutations" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.__init__.permutations (Python parameter) — number of random permutations for inference"><span>permutations</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.__init__.keep" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.__init__.keep (Python parameter) — whether to store realized values of the statistic under permutations"><span>keep</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.__init__.crit" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.__init__.crit (Python parameter) — signifcance level for local statistics"><span>crit</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.__init__.crs" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.__init__.crs (Python parameter) — coordinate reference system string for s_coords"><span>crs</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.s_coords" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.s_coords (Python attribute) — spatial coordinates of point events"><span>s_<wbr>coords</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="s_coords">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.s_coords-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.t_coords" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.t_coords (Python attribute) — temporal coordinates of point events (floats or ints, not dateTime)"><span>t_<wbr>coords</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="t_coords">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.t_coords-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.delta" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.delta (Python attribute) — spatial threshold defining distance below which pairs are spatial neighbors"><span>delta</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="delta">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.delta-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.tau" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.tau (Python attribute) — temporal threshold defining distance below which pairs are temporal neighbors"><span>tau</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="tau">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.tau-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.permutations" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.permutations (Python attribute) — number of random permutations for inference"><span>permutations</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="permutations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.permutations-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.keep" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.keep (Python attribute) — whether to store realized values of the statistic under permutations"><span>keep</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="keep">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.keep-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.nst" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.nst (Python attribute) — number of space-time pairs (global)"><span>nst</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="nst">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.nst-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.p_poisson" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.p_poisson (Python attribute) — Analytical p-value under Poisson assumption (global)"><span>p_<wbr>poisson</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="p_poisson">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.p_poisson-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.p_sim" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.p_sim (Python attribute) — Pseudo p-value based on random permutations (global)"><span>p_<wbr>sim</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="p_sim">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.p_sim-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.expected" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.expected (Python attribute) — Two-by-two array with expected counts under the null of no space-time interactions. [[NST, NS_], [NT_, N__]] where NST is the expected number of space-time pairs, NS_ is the expected number of spatial (but not also temporal) pairs, NT_ is the number of expected temporal (but not also spatial pairs), N__ is the number of pairs that are neighor spatial or temporal neighbors. (global)"><span>expected</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="expected">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.expected-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.observed" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.observed (Python attribute) — Same structure as expected with the observed pair classifications (global)"><span>observed</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="observed">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.observed-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.sim" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.sim (Python attribute) — Global statistics from permutations (if keep=True and keep=True) (global)"><span>sim</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="sim">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.sim-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.p_sims" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.p_sims (Python attribute) — Local psuedo p-values from conditional permutations (if permutations&gt;0)"><span>p_<wbr>sims</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="p_sims">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.p_sims-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.sims" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.sims (Python attribute) — Local statistics from conditional permutations (if keep=True and permutations&gt;0)"><span>sims</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="sims">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.sims-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.nsti" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.nsti (Python attribute) — Local statistics"><span>nsti</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="nsti">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.nsti-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.p_hypergeom" class="md-nav__link">
+    
+      <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.p_hypergeom (Python attribute) — Analytical p-values based on hypergeometric distribution"><span>p_<wbr>hypergeom</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="p_hypergeom">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.p_hypergeom-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore" class="md-nav__link">
+    
+      <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore (Python method) — Interactive plotting for space-time hotspots."><span>explore</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="explore">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.crit" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.crit (Python parameter) — critical value for statistical inference, by default 0.05"><span>crit</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.inference" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.inference (Python parameter) — which p-value to use for determining hotspots."><span>inference</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.radius" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.radius (Python parameter) — radius of the circlemarker plotted by folium, passed to geopandas.GeoDataFrame.explore style_kwds as a convenience."><span>radius</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.style_kwds" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.style_kwds (Python parameter) — additional style kewords passed to GeoDataFrame.explore, by default None"><span>style_<wbr>kwds</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.tiles" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.tiles (Python parameter) — tileset passed to GeoDataFrame.explore tiles argument, by default &#34;CartoDB Positron&#34;"><span>tiles</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.plot_edges" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.plot_edges (Python parameter) — Whether to include lines drawn between members of a singnificant hotspot, by default True"><span>plot_<wbr>edges</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.edge_weight" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.edge_weight (Python parameter) — line thickness when plot_edges=True, by default 2"><span>edge_<wbr>weight</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.edge_color" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.edge_color (Python parameter) — color of line when plot_edges=True, by default &#34;black&#34;"><span>edge_<wbr>color</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore.colors" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.explore.colors (Python parameter) — mapping of observation type to color, by default {&#34;focal&#34;: &#34;red&#34;, &#34;neighbor&#34;: &#34;yellow&#34;, &#34;nonsig&#34;: &#34;grey&#34;}"><span>colors</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore-returns" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Returns</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.explore-return-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe" class="md-nav__link">
+    
+      <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.from_dataframe (Python method) — Compute a set of local Knox statistics from a dataframe of Point observations"><span>from_<wbr>dataframe</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="from_dataframe">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe.dataframe" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.from_dataframe.dataframe (Python parameter) — dataframe holding observations."><span>dataframe</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe.time_col" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.from_dataframe.time_col (Python parameter) — column in the dataframe storing the time values (integer coordinate) for each observation."><span>time_<wbr>col</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe.delta" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.from_dataframe.delta (Python parameter) — delta parameter defining the spatial neighbor threshold measured in the same units as the dataframe CRS"><span>delta</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe.tau" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.from_dataframe.tau (Python parameter) — tau parameter defining the temporal neihgbor threshold (in the units measured by time_col)"><span>tau</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe.permutations" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.from_dataframe.permutations (Python parameter) — permutations to use for computational inference, by default 99"><span>permutations</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe.keep" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.from_dataframe.keep (Python parameter) — whether to store realized values of the statistic under permutations"><span>keep</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe-returns" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Returns</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.from_dataframe-return-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.hotspots" class="md-nav__link">
+    
+      <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.hotspots (Python method) — Table of significant space-time clusters that define local hotspots."><span>hotspots</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="hotspots">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.hotspots-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.hotspots.crit" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.hotspots.crit (Python parameter) — critical value for statistical inference, by default 0.05"><span>crit</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.hotspots.inference" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.hotspots.inference (Python parameter) — whether p-values should use permutation or analutical inference, by default &#34;permutation&#34;"><span>inference</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.hotspots.keep_neighbors" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.hotspots.keep_neighbors (Python parameter) — whether to included nonsignificant members of hotspots."><span>keep_<wbr>neighbors</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.hotspots-returns" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Returns</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.hotspots-return-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return type</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.hotspots-raises" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Raises</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot" class="md-nav__link">
+    
+      <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot (Python method) — plot hotspots"><span>plot</span></span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="plot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot.colors" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot.colors (Python parameter) — mapping of colors to hotspot values, by default {&#34;focal&#34;: &#34;red&#34;, &#34;neighbor&#34;: &#34;yellow&#34;, &#34;nonsig&#34;: &#34;grey&#34;}"><span>colors</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot.crit" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot.crit (Python parameter) — critical value for assessing statistical sgifnicance, by default 0.05"><span>crit</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot.inference" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot.inference (Python parameter) — whether to use permutation or analytic inference, by default &#34;permutation&#34;"><span>inference</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot.point_kwargs" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot.point_kwargs (Python parameter) — additional keyword arguments passsed to point plot, by default None"><span>point_<wbr>kwargs</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot.plot_edges" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot.plot_edges (Python parameter) — whether to plot edges connecting members of the same hotspot subgraph, by default True"><span>plot_<wbr>edges</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot.edge_color" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot.edge_color (Python parameter) — color of edges when plot_edges is True, by default &#39;black&#39;"><span>edge_<wbr>color</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot.edge_kwargs" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot.edge_kwargs (Python parameter) — additional keyword arguments passsed to edge plot, by default None"><span>edge_<wbr>kwargs</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot.ax" class="md-nav__link">
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="pointpats.KnoxLocal.plot.ax (Python parameter) — axes object on which to create the plot, by default None"><span>ax</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot-returns" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Returns</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointpats.KnoxLocal.plot-return-type" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return type</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                
+                
+                  
+
+
+  
+    <a href="https://github.com/pysal/pointpats/blob/main/docs/source/generated/pointpats.KnoxLocal.rst" title="Edit this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 9h5.5L13 3.5zM6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4c0-1.11.89-2 2-2m.12 13.5 3.74 3.74 1.42-1.41-2.33-2.33 2.33-2.33-1.42-1.41zm11.16 0-3.74-3.74-1.42 1.41 2.33 2.33-2.33 2.33 1.42 1.41z"/></svg>
+    </a>
+  
+  
+
+<h1 id="pointpats-knoxlocal">pointpats.KnoxLocal<a class="headerlink" href="#pointpats-knoxlocal" title="Link to this heading">¶</a></h1>
+<dl class="py class objdesc">
+<dt class="sig sig-object highlight sig-wrap py" id="pointpats.KnoxLocal">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pointpats.</span></span><span class="sig-name descname"><span class="pre">KnoxLocal</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.__init__.s_coords" title="pointpats.KnoxLocal.__init__.s_coords (Python parameter) — spatial coordinates of point events"><span class="n"><span class="pre">s_coords</span></span></a></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.__init__.t_coords" title="pointpats.KnoxLocal.__init__.t_coords (Python parameter) — temporal coordinates of point events (floats or ints, not dateTime)"><span class="n"><span class="pre">t_coords</span></span></a></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.__init__.delta" title="pointpats.KnoxLocal.__init__.delta (Python parameter) — spatial threshold defining distance below which pairs are spatial neighbors"><span class="n"><span class="pre">delta</span></span></a></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.__init__.tau" title="pointpats.KnoxLocal.__init__.tau (Python parameter) — temporal threshold defining distance below which pairs are temporal neighbors"><span class="n"><span class="pre">tau</span></span></a></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.__init__.permutations" title="pointpats.KnoxLocal.__init__.permutations (Python parameter) — number of random permutations for inference"><span class="n"><span class="pre">permutations</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">99</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.__init__.keep" title="pointpats.KnoxLocal.__init__.keep (Python parameter) — whether to store realized values of the statistic under permutations"><span class="n"><span class="pre">keep</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">False</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.__init__.crit" title="pointpats.KnoxLocal.__init__.crit (Python parameter) — signifcance level for local statistics"><span class="n"><span class="pre">crit</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mf">0.05</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.__init__.crs" title="pointpats.KnoxLocal.__init__.crs (Python parameter) — coordinate reference system string for s_coords"><span class="n"><span class="pre">crs</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal" title="pointpats.KnoxLocal.__init__.ids (Python parameter)"><span class="n"><span class="pre">ids</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em></span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats/spacetime.py#L1122-L1629"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal" title="Link to this definition">¶</a></dt>
+<dd><p>Local Knox statistics for space-time interactions.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt id="pointpats.KnoxLocal.__init__.s_coords"><span class="sig-name descname">s_coords</span><span class="p"> : </span><span class="desctype"><span class="desctype">array (nx2)</span></span><a class="headerlink" href="#pointpats.KnoxLocal.__init__.s_coords" title="Permalink to this definition">¶</a></dt><dd><p>spatial coordinates of point events</p>
+</dd>
+<dt id="pointpats.KnoxLocal.__init__.t_coords"><span class="sig-name descname">t_coords</span><span class="p"> : </span><span class="desctype"><span class="desctype">array (nx1)</span></span><a class="headerlink" href="#pointpats.KnoxLocal.__init__.t_coords" title="Permalink to this definition">¶</a></dt><dd><p>temporal coordinates of point events (floats or ints, not dateTime)</p>
+</dd>
+<dt id="pointpats.KnoxLocal.__init__.delta"><span class="sig-name descname">delta</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></span></span><a class="headerlink" href="#pointpats.KnoxLocal.__init__.delta" title="Permalink to this definition">¶</a></dt><dd><p>spatial threshold defining distance below which pairs are spatial
+neighbors</p>
+</dd>
+<dt id="pointpats.KnoxLocal.__init__.tau"><span class="sig-name descname">tau</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></span></span><a class="headerlink" href="#pointpats.KnoxLocal.__init__.tau" title="Permalink to this definition">¶</a></dt><dd><p>temporal threshold defining distance below which pairs are temporal
+neighbors</p>
+</dd>
+<dt id="pointpats.KnoxLocal.__init__.permutations"><span class="sig-name descname">permutations</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></span></span><a class="headerlink" href="#pointpats.KnoxLocal.__init__.permutations" title="Permalink to this definition">¶</a></dt><dd><p>number of random permutations for inference</p>
+</dd>
+<dt id="pointpats.KnoxLocal.__init__.keep"><span class="sig-name descname">keep</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)">bool</a></span></span><a class="headerlink" href="#pointpats.KnoxLocal.__init__.keep" title="Permalink to this definition">¶</a></dt><dd><p>whether to store realized values of the statistic under permutations</p>
+</dd>
+<dt id="pointpats.KnoxLocal.__init__.crit"><span class="sig-name descname">crit</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></span></span><a class="headerlink" href="#pointpats.KnoxLocal.__init__.crit" title="Permalink to this definition">¶</a></dt><dd><p>signifcance level for local statistics</p>
+</dd>
+<dt id="pointpats.KnoxLocal.__init__.crs"><span class="sig-name descname">crs</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a> (optional)</span></span><a class="headerlink" href="#pointpats.KnoxLocal.__init__.crs" title="Permalink to this definition">¶</a></dt><dd><p>coordinate reference system string for s_coords</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.KnoxLocal.s_coords">
+<span class="sig-name descname"><span class="pre">s_coords</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.s_coords" title="Link to this definition">¶</a></dt>
+<dd><p>spatial coordinates of point events</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.s_coords-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.s_coords-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>array (nx2)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.KnoxLocal.t_coords">
+<span class="sig-name descname"><span class="pre">t_coords</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.t_coords" title="Link to this definition">¶</a></dt>
+<dd><p>temporal coordinates of point events (floats or ints, not dateTime)</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.t_coords-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.t_coords-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>array (nx1)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.KnoxLocal.delta">
+<span class="sig-name descname"><span class="pre">delta</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.delta" title="Link to this definition">¶</a></dt>
+<dd><p>spatial threshold defining distance below which pairs are spatial
+neighbors</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.delta-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.delta-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.KnoxLocal.tau">
+<span class="sig-name descname"><span class="pre">tau</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.tau" title="Link to this definition">¶</a></dt>
+<dd><p>temporal threshold defining distance below which pairs are temporal
+neighbors</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.tau-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.tau-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.KnoxLocal.permutations">
+<span class="sig-name descname"><span class="pre">permutations</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.permutations" title="Link to this definition">¶</a></dt>
+<dd><p>number of random permutations for inference</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.permutations-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.permutations-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.KnoxLocal.keep">
+<span class="sig-name descname"><span class="pre">keep</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.keep" title="Link to this definition">¶</a></dt>
+<dd><p>whether to store realized values of the statistic under permutations</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.keep-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.keep-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.KnoxLocal.nst">
+<span class="sig-name descname"><span class="pre">nst</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.nst" title="Link to this definition">¶</a></dt>
+<dd><p>number of space-time pairs (global)</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.nst-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.nst-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.KnoxLocal.p_poisson">
+<span class="sig-name descname"><span class="pre">p_poisson</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.p_poisson" title="Link to this definition">¶</a></dt>
+<dd><p>Analytical p-value under Poisson assumption (global)</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.p_poisson-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.p_poisson-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.KnoxLocal.p_sim">
+<span class="sig-name descname"><span class="pre">p_sim</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.p_sim" title="Link to this definition">¶</a></dt>
+<dd><p>Pseudo p-value based on random permutations (global)</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.p_sim-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.p_sim-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.KnoxLocal.expected">
+<span class="sig-name descname"><span class="pre">expected</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.expected" title="Link to this definition">¶</a></dt>
+<dd><p>Two-by-two array with expected counts under the null of no space-time
+interactions. <code class="docutils literal notranslate"><span class="pre">[[NST,</span> <span class="pre">NS_],</span> <span class="pre">[NT_,</span> <span class="pre">N__]]</span></code> where <code class="docutils literal notranslate"><span class="pre">NST</span></code> is the expected number
+of space-time pairs, <code class="docutils literal notranslate"><span class="pre">NS_</span></code> is the expected number of spatial (but not also
+temporal) pairs, <code class="docutils literal notranslate"><span class="pre">NT_</span></code> is the number of expected temporal (but not also
+spatial pairs), <code class="docutils literal notranslate"><span class="pre">N__</span></code> is the number of pairs that are neighor spatial or
+temporal neighbors. (global)</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.expected-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.expected-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.KnoxLocal.observed">
+<span class="sig-name descname"><span class="pre">observed</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.observed" title="Link to this definition">¶</a></dt>
+<dd><p>Same structure as expected with the observed pair classifications (global)</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.observed-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.observed-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.KnoxLocal.sim">
+<span class="sig-name descname"><span class="pre">sim</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.sim" title="Link to this definition">¶</a></dt>
+<dd><p>Global statistics from permutations (if keep=True and keep=True) (global)</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.sim-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.sim-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.KnoxLocal.p_sims">
+<span class="sig-name descname"><span class="pre">p_sims</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.p_sims" title="Link to this definition">¶</a></dt>
+<dd><p>Local psuedo p-values from conditional permutations (if permutations&gt;0)</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.p_sims-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.p_sims-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.KnoxLocal.sims">
+<span class="sig-name descname"><span class="pre">sims</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.sims" title="Link to this definition">¶</a></dt>
+<dd><p>Local statistics from conditional permutations (if keep=True and
+permutations&gt;0)</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.sims-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.sims-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.KnoxLocal.nsti">
+<span class="sig-name descname"><span class="pre">nsti</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.nsti" title="Link to this definition">¶</a></dt>
+<dd><p>Local statistics</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.nsti-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.nsti-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.KnoxLocal.p_hypergeom">
+<span class="sig-name descname"><span class="pre">p_hypergeom</span></span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.p_hypergeom" title="Link to this definition">¶</a></dt>
+<dd><p>Analytical p-values based on hypergeometric distribution</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.p_hypergeom-type">Type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.p_hypergeom-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<p>Technical details can be found in <span class="bibtex-citation" id="id1">[<a class="reference internal" href="../references.html#id6" title="P. Rogerson. Monitoring point patterns for the development of space-time clusters. Journal of the Royal Statistical Society, Series A, 164:87–96, 2001.">Rogerson, 2001</a>]</span>. The conditional
+permutation inference is unique to pysal.pointpats.</p>
+<p class="example rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">libpysal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">libpysal</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s1">'burkitt.shp'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pointpats.spacetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">Knox</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">local_knox</span> <span class="o">=</span> <span class="n">KnoxLocal</span><span class="p">(</span><span class="n">df</span><span class="p">[[</span><span class="s1">'X'</span><span class="p">,</span> <span class="s1">'Y'</span><span class="p">]],</span> <span class="n">df</span><span class="p">[[</span><span class="s2">"T"</span><span class="p">]],</span> <span class="n">delta</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">keep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">local_knox</span><span class="o">.</span><span class="n">statistic_</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(188,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lres</span> <span class="o">=</span> <span class="n">local_knox</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gt0ids</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lres</span><span class="o">.</span><span class="n">nsti</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gt0ids</span>
+<span class="go">(array([ 25,  26,  30,  31,  35,  36,  41,  42,  46,  47,  51,  52, 102,</span>
+<span class="go">          103, 116, 118, 122, 123, 137, 138, 139, 140, 158, 159, 162, 163]),)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lres</span><span class="o">.</span><span class="n">nsti</span><span class="p">[</span><span class="n">gt0ids</span><span class="p">]</span>
+<span class="go">array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,</span>
+<span class="go">       1., 1., 1., 1., 1., 1., 1., 1., 1.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lres</span><span class="o">.</span><span class="n">p_hypergeom</span><span class="p">[</span><span class="n">gt0ids</span><span class="p">]</span>
+<span class="go">array([0.1348993 , 0.14220663, 0.07335085, 0.08400282, 0.1494317 ,</span>
+<span class="go">       0.21524073, 0.0175806 , 0.04599869, 0.17523687, 0.18209188,</span>
+<span class="go">       0.19111321, 0.16830444, 0.13734428, 0.14703242, 0.06796364,</span>
+<span class="go">       0.03192559, 0.13734428, 0.17523687, 0.12998154, 0.1933476 ,</span>
+<span class="go">       0.13244507, 0.13244507, 0.12502644, 0.14703242, 0.12502644,</span>
+<span class="go">       0.12998154])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lres</span><span class="o">.</span><span class="n">p_sims</span><span class="p">[</span><span class="n">gt0ids</span><span class="p">]</span>
+<span class="go">array([0.3 , 0.33, 0.11, 0.17, 0.3 , 0.42, 0.06, 0.06, 0.33, 0.34, 0.36,</span>
+<span class="go">       0.38, 0.3 , 0.29, 0.41, 0.19, 0.31, 0.39, 0.18, 0.39, 0.48, 0.41,</span>
+<span class="go">       0.22, 0.41, 0.39, 0.32])</span>
+</code></pre></div>
+</div>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils data align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.KnoxLocal.explore" title="pointpats.KnoxLocal.explore (Python method) — Interactive plotting for space-time hotspots."><code class="xref py py-obj docutils literal notranslate"><span class="pre">explore</span></code></a>([crit, inference, radius, ...])</p></td>
+<td><p>Interactive plotting for space-time hotspots.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.KnoxLocal.from_dataframe" title="pointpats.KnoxLocal.from_dataframe (Python method) — Compute a set of local Knox statistics from a dataframe of Point observations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dataframe</span></code></a>(dataframe, time_col, delta, tau)</p></td>
+<td><p>Compute a set of local Knox statistics from a dataframe of Point observations</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pointpats.KnoxLocal.hotspots" title="pointpats.KnoxLocal.hotspots (Python method) — Table of significant space-time clusters that define local hotspots."><code class="xref py py-obj docutils literal notranslate"><span class="pre">hotspots</span></code></a>([crit, inference, keep_neighbors])</p></td>
+<td><p>Table of significant space-time clusters that define local hotspots.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pointpats.KnoxLocal.plot" title="pointpats.KnoxLocal.plot (Python method) — plot hotspots"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([colors, crit, inference, ...])</p></td>
+<td><p>plot hotspots</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method objdesc">
+<dt class="sig sig-object highlight sig-wrap py" id="pointpats.KnoxLocal.explore">
+<span class="sig-name descname"><span class="pre">explore</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.explore.crit" title="pointpats.KnoxLocal.explore.crit (Python parameter) — critical value for statistical inference, by default 0.05"><span class="n"><span class="pre">crit</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mf">0.05</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.explore.inference" title="pointpats.KnoxLocal.explore.inference (Python parameter) — which p-value to use for determining hotspots."><span class="n"><span class="pre">inference</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'permutation'</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.explore.radius" title="pointpats.KnoxLocal.explore.radius (Python parameter) — radius of the circlemarker plotted by folium, passed to geopandas.GeoDataFrame.explore style_kwds as a convenience."><span class="n"><span class="pre">radius</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">5</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.explore.style_kwds" title="pointpats.KnoxLocal.explore.style_kwds (Python parameter) — additional style kewords passed to GeoDataFrame.explore, by default None"><span class="n"><span class="pre">style_kwds</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.explore.tiles" title="pointpats.KnoxLocal.explore.tiles (Python parameter) — tileset passed to GeoDataFrame.explore tiles argument, by default &quot;CartoDB Positron&quot;"><span class="n"><span class="pre">tiles</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'CartoDB Positron'</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.explore.plot_edges" title="pointpats.KnoxLocal.explore.plot_edges (Python parameter) — Whether to include lines drawn between members of a singnificant hotspot, by default True"><span class="n"><span class="pre">plot_edges</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">True</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.explore.edge_weight" title="pointpats.KnoxLocal.explore.edge_weight (Python parameter) — line thickness when plot_edges=True, by default 2"><span class="n"><span class="pre">edge_weight</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">2</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.explore.edge_color" title="pointpats.KnoxLocal.explore.edge_color (Python parameter) — color of line when plot_edges=True, by default &quot;black&quot;"><span class="n"><span class="pre">edge_color</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'black'</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.explore.colors" title="pointpats.KnoxLocal.explore.colors (Python parameter) — mapping of observation type to color, by default {&quot;focal&quot;: &quot;red&quot;, &quot;neighbor&quot;: &quot;yellow&quot;, &quot;nonsig&quot;: &quot;grey&quot;}"><span class="n"><span class="pre">colors</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="p">{</span><span class="s1">'focal'</span><span class="p">:</span> <span class="s1">'red'</span><span class="p">,</span> <span class="s1">'neighbor'</span><span class="p">:</span> <span class="s1">'yellow'</span><span class="p">,</span> <span class="s1">'nonsig'</span><span class="p">:</span> <span class="s1">'grey'</span><span class="p">}</span></code></em></span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats/spacetime.py#L1518-L1619"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.explore" title="Link to this definition">¶</a></dt>
+<dd><p>Interactive plotting for space-time hotspots.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.explore-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.explore-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt id="pointpats.KnoxLocal.explore.crit"><span class="sig-name descname">crit</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.explore.crit" title="Permalink to this definition">¶</a></dt><dd><p>critical value for statistical inference, by default 0.05</p>
+</dd>
+<dt id="pointpats.KnoxLocal.explore.inference"><span class="sig-name descname">inference</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.explore.inference" title="Permalink to this definition">¶</a></dt><dd><p>which p-value to use for determining hotspots. Either “permutation” or
+“analytic”, by default “permutation”</p>
+</dd>
+<dt id="pointpats.KnoxLocal.explore.radius"><span class="sig-name descname">radius</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.explore.radius" title="Permalink to this definition">¶</a></dt><dd><p>radius of the circlemarker plotted by folium, passed to
+geopandas.GeoDataFrame.explore style_kwds as a convenience. Ignored if
+<cite>style_kwds</cite> is passed directly, by default 5</p>
+</dd>
+<dt id="pointpats.KnoxLocal.explore.style_kwds"><span class="sig-name descname">style_kwds</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.explore.style_kwds" title="Permalink to this definition">¶</a></dt><dd><p>additional style kewords passed to GeoDataFrame.explore, by default None</p>
+</dd>
+<dt id="pointpats.KnoxLocal.explore.tiles"><span class="sig-name descname">tiles</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.explore.tiles" title="Permalink to this definition">¶</a></dt><dd><p>tileset passed to GeoDataFrame.explore <cite>tiles</cite> argument, by default
+“CartoDB Positron”</p>
+</dd>
+<dt id="pointpats.KnoxLocal.explore.plot_edges"><span class="sig-name descname">plot_edges</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)">bool</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.explore.plot_edges" title="Permalink to this definition">¶</a></dt><dd><p>Whether to include lines drawn between members of a singnificant hotspot, by
+default True</p>
+</dd>
+<dt id="pointpats.KnoxLocal.explore.edge_weight"><span class="sig-name descname">edge_weight</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.explore.edge_weight" title="Permalink to this definition">¶</a></dt><dd><p>line thickness when <cite>plot_edges=True</cite>, by default 2</p>
+</dd>
+<dt id="pointpats.KnoxLocal.explore.edge_color"><span class="sig-name descname">edge_color</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.explore.edge_color" title="Permalink to this definition">¶</a></dt><dd><p>color of line when <cite>plot_edges=True</cite>, by default “black”</p>
+</dd>
+<dt id="pointpats.KnoxLocal.explore.colors"><span class="sig-name descname">colors</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.explore.colors" title="Permalink to this definition">¶</a></dt><dd><p>mapping of observation type to color,
+by default {“focal”: “red”, “neighbor”: “yellow”, “nonsig”: “grey”}</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even" id="pointpats.KnoxLocal.explore-returns">Returns<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.explore-returns" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><p>an interactive map showing locally-significant spacetime hotspots</p>
+</dd>
+<dt class="field-odd" id="pointpats.KnoxLocal.explore-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.explore-return-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>folium.Map</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method objdesc">
+<dt class="sig sig-object highlight sig-wrap py" id="pointpats.KnoxLocal.from_dataframe">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_dataframe</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.from_dataframe.dataframe" title="pointpats.KnoxLocal.from_dataframe.dataframe (Python parameter) — dataframe holding observations."><span class="n"><span class="pre">dataframe</span></span></a></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.from_dataframe.time_col" title="pointpats.KnoxLocal.from_dataframe.time_col (Python parameter) — column in the dataframe storing the time values (integer coordinate) for each observation."><span class="n"><span class="pre">time_col</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.from_dataframe.delta" title="pointpats.KnoxLocal.from_dataframe.delta (Python parameter) — delta parameter defining the spatial neighbor threshold measured in the same units as the dataframe CRS"><span class="n"><span class="pre">delta</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.from_dataframe.tau" title="pointpats.KnoxLocal.from_dataframe.tau (Python parameter) — tau parameter defining the temporal neihgbor threshold (in the units measured by time_col)"><span class="n"><span class="pre">tau</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.from_dataframe.permutations" title="pointpats.KnoxLocal.from_dataframe.permutations (Python parameter) — permutations to use for computational inference, by default 99"><span class="n"><span class="pre">permutations</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">99</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.from_dataframe.keep" title="pointpats.KnoxLocal.from_dataframe.keep (Python parameter) — whether to store realized values of the statistic under permutations"><span class="n"><span class="pre">keep</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">False</span></code></em></span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats/spacetime.py#L1300-L1350"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.from_dataframe" title="Link to this definition">¶</a></dt>
+<dd><p>Compute a set of local Knox statistics from a dataframe of Point observations</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.from_dataframe-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.from_dataframe-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt id="pointpats.KnoxLocal.from_dataframe.dataframe"><span class="sig-name descname">dataframe</span><span class="p"> : </span><span class="desctype"><span class="desctype">geopandas.GeoDataFrame</span></span><a class="headerlink" href="#pointpats.KnoxLocal.from_dataframe.dataframe" title="Permalink to this definition">¶</a></dt><dd><p>dataframe holding observations. Should be in a projected coordinate system
+with geometries stored as Points</p>
+</dd>
+<dt id="pointpats.KnoxLocal.from_dataframe.time_col"><span class="sig-name descname">time_col</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a></span></span><a class="headerlink" href="#pointpats.KnoxLocal.from_dataframe.time_col" title="Permalink to this definition">¶</a></dt><dd><p>column in the dataframe storing the time values (integer coordinate)
+for each observation. For example if the observations are stored with
+a timestamp, the time_col should be converted to a series of integers
+representing, e.g. hours, days, seconds, etc.</p>
+</dd>
+<dt id="pointpats.KnoxLocal.from_dataframe.delta"><span class="sig-name descname">delta</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></span></span><a class="headerlink" href="#pointpats.KnoxLocal.from_dataframe.delta" title="Permalink to this definition">¶</a></dt><dd><p>delta parameter defining the spatial neighbor threshold measured in the
+same units as the dataframe CRS</p>
+</dd>
+<dt id="pointpats.KnoxLocal.from_dataframe.tau"><span class="sig-name descname">tau</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></span></span><a class="headerlink" href="#pointpats.KnoxLocal.from_dataframe.tau" title="Permalink to this definition">¶</a></dt><dd><p>tau parameter defining the temporal neihgbor threshold (in the units
+measured by <cite>time_col</cite>)</p>
+</dd>
+<dt id="pointpats.KnoxLocal.from_dataframe.permutations"><span class="sig-name descname">permutations</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.from_dataframe.permutations" title="Permalink to this definition">¶</a></dt><dd><p>permutations to use for computational inference, by default 99</p>
+</dd>
+<dt id="pointpats.KnoxLocal.from_dataframe.keep"><span class="sig-name descname">keep</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)">bool</a></span></span><a class="headerlink" href="#pointpats.KnoxLocal.from_dataframe.keep" title="Permalink to this definition">¶</a></dt><dd><p>whether to store realized values of the statistic under permutations</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even" id="pointpats.KnoxLocal.from_dataframe-returns">Returns<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.from_dataframe-returns" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><p>a fitted KnoxLocal class</p>
+</dd>
+<dt class="field-odd" id="pointpats.KnoxLocal.from_dataframe-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.from_dataframe-return-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>pointpats.spacetime.LocalKnox</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method objdesc">
+<dt class="sig sig-object highlight py" id="pointpats.KnoxLocal.hotspots">
+<span class="sig-name descname"><span class="pre">hotspots</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.hotspots.crit" title="pointpats.KnoxLocal.hotspots.crit (Python parameter) — critical value for statistical inference, by default 0.05"><span class="n"><span class="pre">crit</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mf">0.05</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.hotspots.inference" title="pointpats.KnoxLocal.hotspots.inference (Python parameter) — whether p-values should use permutation or analutical inference, by default &quot;permutation&quot;"><span class="n"><span class="pre">inference</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'permutation'</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.hotspots.keep_neighbors" title="pointpats.KnoxLocal.hotspots.keep_neighbors (Python parameter) — whether to included nonsignificant members of hotspots."><span class="n"><span class="pre">keep_neighbors</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">True</span></code></em></span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats/spacetime.py#L1352-L1427"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.hotspots" title="Link to this definition">¶</a></dt>
+<dd><p>Table of significant space-time clusters that define local hotspots.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.hotspots-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.hotspots-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt id="pointpats.KnoxLocal.hotspots.crit"><span class="sig-name descname">crit</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.hotspots.crit" title="Permalink to this definition">¶</a></dt><dd><p>critical value for statistical inference, by default 0.05</p>
+</dd>
+<dt id="pointpats.KnoxLocal.hotspots.inference"><span class="sig-name descname">inference</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.hotspots.inference" title="Permalink to this definition">¶</a></dt><dd><p>whether p-values should use permutation or analutical inference, by default
+“permutation”</p>
+</dd>
+<dt id="pointpats.KnoxLocal.hotspots.keep_neighbors"><span class="sig-name descname">keep_neighbors</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)">bool</a></span></span><a class="headerlink" href="#pointpats.KnoxLocal.hotspots.keep_neighbors" title="Permalink to this definition">¶</a></dt><dd><p>whether to included nonsignificant members of hotspots. While these
+observations are not themselves significant, these still define the spatial
+extent of the cluster, and the the focal observation cannot become
+significant without their presence. If True, return all members of a
+significant hotspot, else return only the significant locations</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even" id="pointpats.KnoxLocal.hotspots-returns">Returns<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.hotspots-returns" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><p>dataframe of significant hotspots</p>
+</dd>
+<dt class="field-odd" id="pointpats.KnoxLocal.hotspots-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.hotspots-return-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.1)">pandas.DataFrame</a></p>
+</dd>
+<dt class="field-even" id="pointpats.KnoxLocal.hotspots-raises">Raises<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.hotspots-raises" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – if <cite>inference</cite> is not in {‘permutation’, ‘analytic’}</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method objdesc">
+<dt class="sig sig-object highlight sig-wrap py" id="pointpats.KnoxLocal.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.plot.colors" title="pointpats.KnoxLocal.plot.colors (Python parameter) — mapping of colors to hotspot values, by default {&quot;focal&quot;: &quot;red&quot;, &quot;neighbor&quot;: &quot;yellow&quot;, &quot;nonsig&quot;: &quot;grey&quot;}"><span class="n"><span class="pre">colors</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="p">{</span><span class="s1">'focal'</span><span class="p">:</span> <span class="s1">'red'</span><span class="p">,</span> <span class="s1">'neighbor'</span><span class="p">:</span> <span class="s1">'yellow'</span><span class="p">,</span> <span class="s1">'nonsig'</span><span class="p">:</span> <span class="s1">'grey'</span><span class="p">}</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.plot.crit" title="pointpats.KnoxLocal.plot.crit (Python parameter) — critical value for assessing statistical sgifnicance, by default 0.05"><span class="n"><span class="pre">crit</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="mf">0.05</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.plot.inference" title="pointpats.KnoxLocal.plot.inference (Python parameter) — whether to use permutation or analytic inference, by default &quot;permutation&quot;"><span class="n"><span class="pre">inference</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'permutation'</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.plot.point_kwargs" title="pointpats.KnoxLocal.plot.point_kwargs (Python parameter) — additional keyword arguments passsed to point plot, by default None"><span class="n"><span class="pre">point_kwargs</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.plot.plot_edges" title="pointpats.KnoxLocal.plot.plot_edges (Python parameter) — whether to plot edges connecting members of the same hotspot subgraph, by default True"><span class="n"><span class="pre">plot_edges</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">True</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.plot.edge_color" title="pointpats.KnoxLocal.plot.edge_color (Python parameter) — color of edges when plot_edges is True, by default 'black'"><span class="n"><span class="pre">edge_color</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">'black'</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.plot.edge_kwargs" title="pointpats.KnoxLocal.plot.edge_kwargs (Python parameter) — additional keyword arguments passsed to edge plot, by default None"><span class="n"><span class="pre">edge_kwargs</span></span></a><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#pointpats.KnoxLocal.plot.ax" title="pointpats.KnoxLocal.plot.ax (Python parameter) — axes object on which to create the plot, by default None"><span class="n"><span class="pre">ax</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em></span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pysal/pointpats/blob/main/pointpats/spacetime.py#L1429-L1516"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pointpats.KnoxLocal.plot" title="Link to this definition">¶</a></dt>
+<dd><p>plot hotspots</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="pointpats.KnoxLocal.plot-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.plot-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt id="pointpats.KnoxLocal.plot.colors"><span class="sig-name descname">colors</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.plot.colors" title="Permalink to this definition">¶</a></dt><dd><p>mapping of colors to hotspot values, by default
+{“focal”: “red”, “neighbor”: “yellow”, “nonsig”: “grey”}</p>
+</dd>
+<dt id="pointpats.KnoxLocal.plot.crit"><span class="sig-name descname">crit</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.plot.crit" title="Permalink to this definition">¶</a></dt><dd><p>critical value for assessing statistical sgifnicance, by default 0.05</p>
+</dd>
+<dt id="pointpats.KnoxLocal.plot.inference"><span class="sig-name descname">inference</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.plot.inference" title="Permalink to this definition">¶</a></dt><dd><p>whether to use permutation or analytic inference, by default “permutation”</p>
+</dd>
+<dt id="pointpats.KnoxLocal.plot.point_kwargs"><span class="sig-name descname">point_kwargs</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.plot.point_kwargs" title="Permalink to this definition">¶</a></dt><dd><p>additional keyword arguments passsed to point plot, by default None</p>
+</dd>
+<dt id="pointpats.KnoxLocal.plot.plot_edges"><span class="sig-name descname">plot_edges</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)">bool</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.plot.plot_edges" title="Permalink to this definition">¶</a></dt><dd><p>whether to plot edges connecting members of the same hotspot subgraph,
+by default True</p>
+</dd>
+<dt id="pointpats.KnoxLocal.plot.edge_color"><span class="sig-name descname">edge_color</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.plot.edge_color" title="Permalink to this definition">¶</a></dt><dd><p>color of edges when plot_edges is True, by default ‘black’</p>
+</dd>
+<dt id="pointpats.KnoxLocal.plot.edge_kwargs"><span class="sig-name descname">edge_kwargs</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.plot.edge_kwargs" title="Permalink to this definition">¶</a></dt><dd><p>additional keyword arguments passsed to edge plot, by default None</p>
+</dd>
+<dt id="pointpats.KnoxLocal.plot.ax"><span class="sig-name descname">ax</span><span class="p"> : </span><span class="desctype"><span class="desctype"><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.11.2)">matplotlib.axes.Axes</a>, optional</span></span><a class="headerlink" href="#pointpats.KnoxLocal.plot.ax" title="Permalink to this definition">¶</a></dt><dd><p>axes object on which to create the plot, by default None</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even" id="pointpats.KnoxLocal.plot-returns">Returns<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.plot-returns" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><p>plot of local space-time hotspots</p>
+</dd>
+<dt class="field-odd" id="pointpats.KnoxLocal.plot-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#pointpats.KnoxLocal.plot-return-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.11.2)">matplotlib.axes.Axes</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        &#169; Copyright 2018-, pysal developers.
+        
+    </div>
+  
+    Created using
+    <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
+    9.2.0.
+     and
+    <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.top", "search.share", "search.suggest", "toc.follow", "toc.sticky", "content.code.copy", "content.action.edit"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": null, "versionPath": "https://pysal.org/pointpats/versions.json"}}</script>
+    
+      
+        <script src="../_static/sphinx_immaterial_theme.567b0e0fd947ea7d9.min.js?v=5850e81b"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+    
+  </body>
+</html>

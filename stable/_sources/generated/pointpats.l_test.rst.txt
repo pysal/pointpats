@@ -1,0 +1,6 @@
+﻿pointpats.l\_test
+=================
+
+.. currentmodule:: pointpats
+
+.. autofunction:: l_test
