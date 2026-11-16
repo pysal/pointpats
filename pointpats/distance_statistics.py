@@ -1318,7 +1318,7 @@ def _ripley_test(
     # --- PARALLEL SIMULATION BLOCK ---
     if n_simulations <= 0:
         warnings.warn(
-            "n_simulations must be positive. No simulations performed.",
+            # "n_simulations must be positive. No simulations performed.",
             stacklevel=2,
         )
         simulations_array = numpy.empty((0, len(observed_support)))

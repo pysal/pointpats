@@ -30,3 +30,5 @@ doc/generated
 
 docs/_build
 docs/generated
+
+docs/source/generated

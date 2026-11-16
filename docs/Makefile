@@ -1,11 +1,11 @@
 # Minimal makefile for Sphinx documentation
 #
 
-# You can set these variables from the command line.
-SPHINXOPTS    =
-SPHINXBUILD   = sphinx-build
-SPHINXPROJ    = PACKAGE_NAME
-SOURCEDIR     = .
+# You can set these variables from the command line, and also
+# from the environment for the first two.
+SPHINXOPTS    ?=
+SPHINXBUILD   ?= sphinx-build
+SOURCEDIR     = source
 BUILDDIR      = build
 
 # Put it first so that "make" without argument is like "make help".
@@ -18,16 +18,3 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-
-github:
-	@make html
-
-sync:
-	@rsync -avh build/html/ ../docs/ --delete
-	@make clean
-	touch .nojekyll
-
-clean:
-	rm -rf $(BUILDDIR)/*
-	rm -rf auto_examples/
-	rm -rf generated/

@@ -16,6 +16,14 @@ This [pointpats](https://github.com/pysal/pointpats) package is intended to supp
 
 It currently works on cartesian coordinates. Users with data in geographic coordinates need to project their data prior to using this module.
 
+### What you can do with ``pointpats``
+
+- Build and summarize **point pattern objects** from coordinate data.
+- Compute **centrographic measures** (mean center, standard distance, ellipses).
+- Perform **quadrat statistics** for tests of complete spatial randomness.
+- Use **distance-based functions** (G, K, L) and simulation envelopes.
+- Work with **marked patterns** and **simulated point processes**.
+
 ## Documentation
 
 Online documentation is available [here](http://pysal.org/pointpats/).
@@ -39,24 +47,30 @@ To search for or report bugs, please see pointpats' [issues](https://github.com/
 ## BibTeX Citation
 
 ```
-@software{wei_kang_2023_7706219,
-  author       = {Wei Kang and
+@software{sergio_rey_2026_20814583,
+  author       = {Sergio Rey and
+                  Wei Kang and
                   Levi John Wolf and
-                  Sergio Rey and
+                  James Gaboardi and
+                  eli knaap and
+                  Martin Fleischmann and
                   Hu Shao and
                   Mridul Seth and
-                  Martin Fleischmann and
                   Sugam Srivastava and
-                  James Gaboardi and
+                  R Virinchi and
+                  privateAGI and
                   Giovanni Palla and
                   Dani Arribas-Bel and
-                  Qiusheng Wu},
-  title        = {pysal/pointpats: pointpats 2.3.0},
-  month        = mar,
-  year         = 2023,
+                  Matt Richards and
+                  Qiusheng Wu and
+                  Taher Chegini and
+                  stevee404},
+  title        = {pysal/pointpats: v2.6.0},
+  month        = jun,
+  year         = 2026,
   publisher    = {Zenodo},
-  version      = {v2.3.0},
-  doi          = {10.5281/zenodo.7706219},
-  url          = {https://doi.org/10.5281/zenodo.7706219}
+  version      = {v2.6.0},
+  doi          = {10.5281/zenodo.20814583},
+  url          = {https://doi.org/10.5281/zenodo.20814583},
 }
 ```
