@@ -1,0 +1,25 @@
+---
+name: docs
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - geopandas
+  - libpysal
+  - matplotlib
+  - numpy
+  - pandas
+  - scikit-learn
+  - scipy
+  - shapely
+  - statsmodels
+  # docs
+  - myst-nb
+  - sphinx
+  - sphinxcontrib-bibtex
+  - sphinx-autosummary-accessors
+  - sphinx-copybutton
+  - sphinx-immaterial  
+  - pip
+  - pip:
+      - KDEpy
