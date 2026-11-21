@@ -19,7 +19,7 @@ dependencies:
   - sphinxcontrib-bibtex
   - sphinx-autosummary-accessors
   - sphinx-copybutton
-  - sphinx-immaterial  
+  - sphinx-immaterial
   - pip
   - pip:
       - KDEpy

@@ -29,18 +29,19 @@ jobs:
           - ci/envs/312-latest.yaml
           - ci/envs/313-latest.yaml
           - ci/envs/314-latest.yaml
-          - ci/envs/314-numba-latest.yaml
-          - ci/envs/314-dev.yaml
+          - ci/envs/315-latest.yaml
+          - ci/envs/315-numba-latest.yaml
+          - ci/envs/315-dev.yaml
         include:
           # no numba
-          - environment-file: ci/envs/314-latest.yaml
-            os: macos-latest # Apple Silicon
-          - environment-file: ci/envs/314-latest.yaml
+          - environment-file: ci/envs/315-latest.yaml
+            os: macos-latest
+          - environment-file: ci/envs/315-latest.yaml
             os: windows-latest
           # with numba
-          - environment-file: ci/envs/314-numba-latest.yaml
-            os: macos-latest # Apple Silicon
-          - environment-file: ci/envs/314-numba-latest.yaml
+          - environment-file: ci/envs/315-numba-latest.yaml
+            os: macos-latest
+          - environment-file: ci/envs/315-numba-latest.yaml
             os: windows-latest
 
     defaults:
