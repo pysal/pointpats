@@ -25,14 +25,14 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: GIS",
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 dependencies = [
-    "libpysal >=4.12",
-    "geopandas >= 1.1.0",
+    "libpysal >=4.13",
+    "geopandas >= 1.2.0",
     "matplotlib >=3.10",
-    "numpy >=2.0.0",
+    "numpy >=2.2.0",
     "pandas >=2.3.0",
-    "scipy >=1.14.0",
+    "scipy >=1.15.0",
     "shapely >=2.1"
 ]
 
@@ -42,8 +42,8 @@ Repository = "https://github.com/pysal/pointpats"
 
 [project.optional-dependencies]
 plus = [
-    "numba>=0.60",
-    "scikit-learn>=1.5.0",
+    "numba>=0.61",
+    "scikit-learn>=1.6.0",
 ]
 dev = [
     "pre-commit",
