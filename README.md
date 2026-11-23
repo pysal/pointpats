@@ -4,6 +4,7 @@
 [![codecov](https://codecov.io/gh/pysal/pointpats/branch/main/graph/badge.svg)](https://codecov.io/gh/pysal/pointpats)
 [![Documentation](https://img.shields.io/static/v1.svg?label=docs&message=current&color=9cf)](http://pysal.org/pointpats/)
 [![PyPI version](https://badge.fury.io/py/pointpats.svg)](https://badge.fury.io/py/pointpats)
+[![Discord](https://img.shields.io/badge/Discord-join%20chat-7289da?style=flat&logo=discord&logoColor=cccccc&link=https://discord.gg/he6Y8D2ap3)](https://discord.gg/he6Y8D2ap3)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7706219.svg)](https://doi.org/10.5281/zenodo.7706219)
 
 Statistical analysis of planar point patterns.
@@ -43,6 +44,10 @@ As part of the PySAL project, pointpats development follows  [PySAL's documentat
 ## Bug reports
 
 To search for or report bugs, please see pointpats' [issues](https://github.com/pysal/pointpats/issues).
+
+## Get in touch
+
+If you have a question regarding pointpats, feel free to open an [issue](https://github.com/pysal/pointpats/issues) on GitHub or join a chat on [Discord](https://discord.gg/he6Y8D2ap3).
 
 ## BibTeX Citation
 
