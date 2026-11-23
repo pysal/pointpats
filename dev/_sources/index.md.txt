@@ -36,6 +36,6 @@ API reference <api>
 :caption: For contributors
 :maxdepth: 1
 
-GitHub <https://github.com/pysal/mapclassify>
-Changelog <https://github.com/pysal/mapclassify/releases>
+GitHub <https://github.com/pysal/pointpats>
+Changelog <https://github.com/pysal/pointpats/releases>
 ```
