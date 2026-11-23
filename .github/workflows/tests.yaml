@@ -25,8 +25,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         environment-file:
-          - ci/envs/312-oldest.yaml
-          - ci/envs/312-latest.yaml
+          - ci/envs/313-oldest.yaml
           - ci/envs/313-latest.yaml
           - ci/envs/314-latest.yaml
           - ci/envs/315-latest.yaml
