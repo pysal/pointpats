@@ -1,0 +1,26 @@
+name: test
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.15
+  - geopandas
+  - libpysal
+  - matplotlib
+  - numba
+  - numpy
+  - pandas
+  - scikit-learn
+  - scipy
+  - shapely
+
+  # tests
+  - statsmodels
+  - pytest
+  - pytest-cov
+  - pytest-xdist
+  - codecov
+
+  - pip
+  - pip:
+      - KDEpy
