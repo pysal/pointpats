@@ -272,7 +272,9 @@ def normal(hull, center=None, cov=None, size=None, rng=None):
         i_observation = 0
         replication_cov = cov[i_replication] if cov.ndim == 3 else cov
         replication_sd = numpy.diagonal(replication_cov) ** 0.5
-        replication_cor = (1 / replication_sd) * replication_cov * (1 / replication_sd)
+        # Divide entry (i, j) by sd_i * sd_j; broadcasting alone would divide
+        # every column j by sd_j twice, giving an asymmetric matrix.
+        replication_cor = replication_cov / numpy.outer(replication_sd, replication_sd)
 
         while i_observation < n_observations:
             # candidate = numpy.random.multivariate_normal((0, 0), replication_cor)
