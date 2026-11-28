@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import pytest
 import shapely
@@ -42,13 +44,22 @@ def test_poisson_output_shape():
 
 
 def test_normal_output_with_custom_cov():
+    # A valid covariance with unequal variances: it used to be rescaled into an
+    # asymmetric "correlation" matrix, so numpy warned and sampled the wrong law.
     cov = np.array([[1, 0.5], [0.5, 2]])
-    with pytest.warns(
-        RuntimeWarning,
-        match="covariance is not symmetric positive-semidefinite.",
-    ):
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", RuntimeWarning)
         result = normal(square_hull, cov=cov, size=(20, 3), rng=42)
     assert result.shape == (3, 20, 2)
+
+
+def test_normal_sample_covariance_matches_cov():
+    # A window far wider than the spread, so rejection at the boundary does not
+    # truncate the distribution.
+    cov = np.array([[1.0, 0.5], [0.5, 2.0]])
+    window = np.array([-50.0, -50.0, 50.0, 50.0])
+    pts = normal(window, center=(0.0, 0.0), cov=cov, size=(20_000, 1), rng=0)
+    np.testing.assert_allclose(np.cov(pts.T), cov, atol=0.06)
 
 
 def test_all_points_within_hull_poisson():
